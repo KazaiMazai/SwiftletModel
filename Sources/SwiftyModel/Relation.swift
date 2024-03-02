@@ -7,15 +7,15 @@
 
 import Foundation
 
-typealias Relation<T: IdentifiableEntity> = EnititesRelation<T, Unidirectional>
+typealias Relation<T: IdentifiableEntity> = RelatedEntity<T, Unidirectional>
 
-typealias BiRelation<T: IdentifiableEntity> = EnititesRelation<T, Bidirectional>
+typealias BiRelation<T: IdentifiableEntity> = RelatedEntity<T, Bidirectional>
 
 enum Unidirectional { }
 
 enum Bidirectional { }
 
-indirect enum EnititesRelation<T: IdentifiableEntity, Direction> {
+indirect enum RelatedEntity<T: IdentifiableEntity, Direction> {
     case faulted(T.ID)
     case entity(T)
     
@@ -63,33 +63,33 @@ indirect enum EnititesRelation<T: IdentifiableEntity, Direction> {
     }
 }
 
-extension EnititesRelation where Direction == Bidirectional {
+extension RelatedEntity where Direction == Bidirectional {
     func relation() -> Relation<T> {
         Relation.faulted(id)
     }
 }
 
-extension EnititesRelation: Codable where T: Codable {
+extension RelatedEntity: Codable where T: Codable {
     
 }
  
 extension Collection  {
-    func getEntities<T, Direction>() -> [T] where Element == EnititesRelation<T, Direction> {
+    func getEntities<T, Direction>() -> [T] where Element == RelatedEntity<T, Direction> {
         self.map { $0.entity }
             .compactMap { $0 }
     }
     
-    func getIds<T, Direction>() -> [T.ID] where Element == EnititesRelation<T, Direction>  {
+    func getIds<T, Direction>() -> [T.ID] where Element == RelatedEntity<T, Direction>  {
         self.map { $0.id }
     }
     
-    func `in`<T, Direction>(_ repository: Repository) -> [T] where Element == EnititesRelation<T, Direction> {
+    func `in`<T, Direction>(_ repository: Repository) -> [T] where Element == RelatedEntity<T, Direction> {
         repository.findAllExisting(getIds())
     }
 }
 
 extension Array {
-    mutating func normalize<T, Direction>() where Element == EnititesRelation<T, Direction> {
+    mutating func normalize<T, Direction>() where Element == RelatedEntity<T, Direction> {
         self = map { $0.normalized() }
     }
 }
