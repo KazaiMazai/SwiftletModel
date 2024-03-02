@@ -77,31 +77,15 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     
-    mutating func save<T: IdentifiableEntity>(_ relatedEntity: Relation<T>) {
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>) {
         save(relatedEntity.entity)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relatedEntities: some Collection<Relation<T>>) {
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>) {
         relatedEntities.forEach { save($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relatedEntities: (any Collection<Relation<T>>)?) {
-        guard let relatedEntities else {
-            return
-        }
-        
-        save(relatedEntities)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relatedEntity: BiRelation<T>) {
-        save(relatedEntity.entity)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relatedEntities: some Collection<BiRelation<T>>) {
-        relatedEntities.forEach { save($0) }
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relatedEntities: (any Collection<BiRelation<T>>)?) {
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?) {
         guard let relatedEntities else {
             return
         }

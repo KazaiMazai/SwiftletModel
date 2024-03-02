@@ -15,7 +15,7 @@ enum Unidirectional { }
 
 enum Bidirectional { }
 
-indirect enum RelatedEntity<T: IdentifiableEntity, Direction> {
+indirect enum RelatedEntity<T: IdentifiableEntity, RelationKind> {
     case faulted(T.ID)
     case entity(T)
     
@@ -63,7 +63,7 @@ indirect enum RelatedEntity<T: IdentifiableEntity, Direction> {
     }
 }
 
-extension RelatedEntity where Direction == Bidirectional {
+extension RelatedEntity where RelationKind == Bidirectional {
     func relation() -> Relation<T> {
         Relation.faulted(id)
     }
