@@ -47,8 +47,8 @@ extension IdentifiableEntity {
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, BiRelation<E>?>,
-                     inverse: KeyPath<E, BiRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
+    func relation<E>(_ keyPath: KeyPath<Self, MutualRelation<E>?>,
+                     inverse: KeyPath<E, MutualRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
@@ -59,8 +59,8 @@ extension IdentifiableEntity {
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, BiRelation<E>?>,
-                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
+    func relation<E>(_ keyPath: KeyPath<Self, MutualRelation<E>?>,
+                     inverse: KeyPath<E, [MutualRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
@@ -71,9 +71,9 @@ extension IdentifiableEntity {
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, [BiRelation<E>]?>,
+    func relation<E>(_ keyPath: KeyPath<Self, [MutualRelation<E>]?>,
                      option: RelationsRepository.Option,
-                     inverse: KeyPath<E, BiRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
+                     inverse: KeyPath<E, MutualRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
@@ -84,9 +84,9 @@ extension IdentifiableEntity {
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, [BiRelation<E>]?>,
+    func relation<E>(_ keyPath: KeyPath<Self, [MutualRelation<E>]?>,
                      option: RelationsRepository.Option,
-                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
+                     inverse: KeyPath<E, [MutualRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,

@@ -9,12 +9,12 @@ import Foundation
 
 typealias Relation<T: IdentifiableEntity> = RelatedEntity<T, Unidirectional>
 
-typealias BiRelation<T: IdentifiableEntity> = RelatedEntity<T, Bidirectional>
+typealias MutualRelation<T: IdentifiableEntity> = RelatedEntity<T, Bidirectional>
 
 enum Unidirectional { }
 
 enum Bidirectional { }
-
+ 
 indirect enum RelatedEntity<T: IdentifiableEntity, RelationKind> {
     case faulted(T.ID)
     case entity(T)
@@ -65,7 +65,7 @@ indirect enum RelatedEntity<T: IdentifiableEntity, RelationKind> {
 
 extension RelatedEntity where RelationKind == Bidirectional {
     func relation() -> Relation<T> {
-        Relation.faulted(id)
+        Relation(id)
     }
 }
 

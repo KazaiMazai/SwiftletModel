@@ -51,11 +51,11 @@ extension Collection {
         compactMap { $0.related(relationKeyPath) }
     }
     
-    func related<T, E>(_ relationKeyPath: KeyPath<T, BiRelation<E>?>) -> [Entity<E>] where Element == Entity<T> {
+    func related<T, E>(_ relationKeyPath: KeyPath<T, MutualRelation<E>?>) -> [Entity<E>] where Element == Entity<T> {
         compactMap { $0.related(relationKeyPath) }
     }
     
-    func related<T, E>(_ relationKeyPath: KeyPath<T, [BiRelation<E>]?>) -> [[Entity<E>]] where Element == Entity<T> {
+    func related<T, E>(_ relationKeyPath: KeyPath<T, [MutualRelation<E>]?>) -> [[Entity<E>]] where Element == Entity<T> {
         compactMap { $0.related(relationKeyPath) }
     }
 }

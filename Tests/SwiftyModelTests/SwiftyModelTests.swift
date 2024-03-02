@@ -15,8 +15,8 @@ final class SwiftyModelTests: XCTestCase {
         let id: String
         let name: String
         var messages: [Relation<Message>]?
-        var follows: [BiRelation<User>]?
-        var followedBy: [BiRelation<User>]?
+        var follows: [MutualRelation<User>]?
+        var followedBy: [MutualRelation<User>]?
         
         mutating func normalize() {
             messages?.normalize()
@@ -27,7 +27,7 @@ final class SwiftyModelTests: XCTestCase {
     struct Message: IdentifiableEntity, Codable {
         let id: String
         let text: String
-        var attachments: [BiRelation<Attachment>]?
+        var attachments: [MutualRelation<Attachment>]?
         
         mutating func normalize() {
             attachments?.normalize()
@@ -37,7 +37,7 @@ final class SwiftyModelTests: XCTestCase {
     struct Attachment: IdentifiableEntity, Codable {
         let id: String
         let link: String
-        var message: BiRelation<Message>?
+        var message: MutualRelation<Message>?
         
         mutating func normalize() {
             message?.normalize()
@@ -47,7 +47,7 @@ final class SwiftyModelTests: XCTestCase {
 
     func test() {
         let attachment = Attachment(id: "1", link: "")
-        let message = Message(id: "1", text: "the message", attachments: [BiRelation(attachment)])
+        let message = Message(id: "1", text: "the message", attachments: [MutualRelation(attachment)])
         
         var storage = Repository()
         let user = User(id: "2", name: "alice", messages: [Relation(message)])

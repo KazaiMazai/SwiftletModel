@@ -16,6 +16,25 @@ struct RelationsRepository: Codable {
 }
 
 extension RelationsRepository {
+    enum Option {
+        case append
+        case replace
+    }
+}
+
+extension RelationsRepository {
+    struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity & Codable> {
+        let id: T.ID
+        let name: String
+        let inverseName: String?
+        let relation: [Relation<E>]
+        let option: RelationsRepository.Option
+        let inverseOption: RelationsRepository.Option?
+    }
+}
+
+
+extension RelationsRepository {
     mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
         _ entityRelation: StoredRelation<T, E>) {
             
