@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum SaveOption {
+    case append
+    case replace
+}
+
 struct EntityRelation<T: IdentifiableEntity, E: IdentifiableEntity & Codable> {
     let id: T.ID
     let name: String
