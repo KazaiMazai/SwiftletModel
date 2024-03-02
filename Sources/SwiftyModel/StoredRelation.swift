@@ -14,11 +14,13 @@ extension RelationsRepository {
     }
 }
 
-struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity & Codable> {
-    let id: T.ID
-    let name: String
-    let inverseName: String?
-    let relation: [Relation<E>]
-    let option: RelationsRepository.Option
-    let inverseOption: RelationsRepository.Option?
+extension RelationsRepository {
+    struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity & Codable> {
+        let id: T.ID
+        let name: String
+        let inverseName: String?
+        let relation: [Relation<E>]
+        let option: RelationsRepository.Option
+        let inverseOption: RelationsRepository.Option?
+    }
 }

@@ -25,8 +25,8 @@ extension IdentifiableEntity {
 
 extension IdentifiableEntity {
     func relation<E>(_ keyPath: KeyPath<Self, [Relation<E>]?>,
-                     option: RelationsRepository.Option) -> StoredRelation<Self, E> {
-        StoredRelation(
+                     option: RelationsRepository.Option) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: nil,
@@ -36,8 +36,8 @@ extension IdentifiableEntity {
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, Relation<E>?>) -> StoredRelation<Self, E> {
-        StoredRelation(
+    func relation<E>(_ keyPath: KeyPath<Self, Relation<E>?>) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: nil,
@@ -48,8 +48,8 @@ extension IdentifiableEntity {
     }
     
     func relation<E>(_ keyPath: KeyPath<Self, BiRelation<E>?>,
-                     inverse: KeyPath<E, BiRelation<Self>?>) -> StoredRelation<Self, E> {
-        StoredRelation(
+                     inverse: KeyPath<E, BiRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
@@ -60,8 +60,8 @@ extension IdentifiableEntity {
     }
     
     func relation<E>(_ keyPath: KeyPath<Self, BiRelation<E>?>,
-                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> StoredRelation<Self, E> {
-        StoredRelation(
+                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
@@ -73,8 +73,8 @@ extension IdentifiableEntity {
     
     func relation<E>(_ keyPath: KeyPath<Self, [BiRelation<E>]?>,
                      option: RelationsRepository.Option,
-                     inverse: KeyPath<E, BiRelation<Self>?>) -> StoredRelation<Self, E> {
-        StoredRelation(
+                     inverse: KeyPath<E, BiRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
@@ -86,8 +86,8 @@ extension IdentifiableEntity {
     
     func relation<E>(_ keyPath: KeyPath<Self, [BiRelation<E>]?>,
                      option: RelationsRepository.Option,
-                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> StoredRelation<Self, E> {
-        StoredRelation(
+                     inverse: KeyPath<E, [BiRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
+        RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,

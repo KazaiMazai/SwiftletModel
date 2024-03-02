@@ -101,7 +101,9 @@ extension Repository {
 }
 
 extension Repository {
-    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(_ entityRelation: StoredRelation<T, E>) {
+    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
+        _ entityRelation: RelationsRepository.StoredRelation<T, E>) {
+            
         relationsRepository.save(entityRelation)
     }
 }
