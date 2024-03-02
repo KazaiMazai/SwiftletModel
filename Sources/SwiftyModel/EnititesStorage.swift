@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct EntitiesStorage {
+struct EntitiesRepository {
     typealias EntityID = String
     typealias EntityName = String
     typealias RelationName = String
@@ -17,7 +17,7 @@ struct EntitiesStorage {
     
 }
 
-extension EntitiesStorage {
+extension EntitiesRepository {
     func all<T>() -> [T] {
         let key = String(reflecting: T.self)
         return storages[key]?.compactMap { $0.value as? T } ?? []
@@ -38,7 +38,7 @@ extension EntitiesStorage {
     }
 }
 
-extension EntitiesStorage {
+extension EntitiesRepository {
     
     @discardableResult
     mutating func remove<T: IdentifiableEntity>(_ id: T.ID) -> T? {

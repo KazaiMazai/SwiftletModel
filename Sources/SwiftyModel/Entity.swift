@@ -22,7 +22,7 @@ struct Entity<T: IdentifiableEntity> {
     
     func related<E: IdentifiableEntity>(_ relationKeyPath: KeyPath<T, Relation<E>?>) -> Entity<E>? {
         repository
-            .relations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
             .first
             .flatMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
@@ -30,14 +30,14 @@ struct Entity<T: IdentifiableEntity> {
     
     func related<E: IdentifiableEntity>(_ relationKeyPath: KeyPath<T, [Relation<E>]?>) -> [Entity<E>] {
         repository
-            .relations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
             .compactMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
     }
     
     func related<E: IdentifiableEntity>(_ relationKeyPath: KeyPath<T, BiRelation<E>?>) -> Entity<E>? {
         repository
-            .relations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
             .first
             .flatMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
@@ -45,7 +45,7 @@ struct Entity<T: IdentifiableEntity> {
     
     func related<E: IdentifiableEntity>(_ relationKeyPath: KeyPath<T, [BiRelation<E>]?>) -> [Entity<E>] {
         repository
-            .relations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
             .compactMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
         

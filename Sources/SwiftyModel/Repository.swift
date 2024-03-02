@@ -8,86 +8,9 @@
 import Foundation
 
 struct Repository {
-    typealias EntityID = String
-    typealias EntityName = String
-    typealias RelationName = String
-    
-    private var entities = EntitiesStorage()
-    private var relations = RelationsStorage()
-    
+    private var entitiesRepository = EntitiesRepository()
+    private var relationsRepository = RelationsRepository()
 }
-
-
-extension Repository {
-    func all<T>() -> [T] {
-        entities.all()
-    }
-    
-    func find<T: IdentifiableEntity>(_ id: T.ID) -> T? {
-        entities.find(id)
-    }
-    
-    func findAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
-        entities.findAll(ids)
-    }
-    
-    func findAllExisting<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T] {
-        entities.findAllExisting(ids)
-    }
-    
-    @discardableResult
-    mutating func remove<T: IdentifiableEntity>(_ id: T.ID) -> T? {
-        entities.remove(id)
-    }
-    
-    @discardableResult
-    mutating func removeAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
-        entities.removeAll(ids)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ entity: T) {
-        entities.save(entity)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ entity: T?) {
-        entities.save(entity)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ entities: [T]) {
-        self.entities.save(entities)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relation: Relation<T>) {
-        entities.save(relation)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<Relation<T>>) {
-        entities.save(relations)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<Relation<T>>)?) {
-        entities.save(relations)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relation: BiRelation<T>) {
-        entities.save(relation)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<BiRelation<T>>) {
-        entities.save(relations)
-    }
-    
-    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<BiRelation<T>>)?) {
-        entities.save(relations)
-    }
-}
-
-extension Repository {
-    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(_ entityRelation: EntityRelation<T, E>) {
-        relations.save(entityRelation)
-    }
-}
-
 
 extension Repository {
     func find<T: IdentifiableEntity>(_ id: T.ID) -> Entity<T> {
@@ -101,11 +24,87 @@ extension Repository {
     func find<T: IdentifiableEntity>(_ ids: [T.ID]) -> [Entity<T>] {
         ids.map { find($0) }
     }
+    
+    func all<T>() -> [T] {
+        entitiesRepository.all()
+    }
+    
+    func find<T: IdentifiableEntity>(_ id: T.ID) -> T? {
+        entitiesRepository.find(id)
+    }
+    
+    func findAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
+        entitiesRepository.findAll(ids)
+    }
+    
+    func findAllExisting<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T] {
+        entitiesRepository.findAllExisting(ids)
+    }
 }
 
 extension Repository {
-    func relations<T: IdentifiableEntity>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
-        relations.relations(for: type, relationName: relationName, id: id)
+    
+    @discardableResult
+    mutating func remove<T: IdentifiableEntity>(_ id: T.ID) -> T? {
+        entitiesRepository.remove(id)
+    }
+    
+    @discardableResult
+    mutating func removeAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
+        entitiesRepository.removeAll(ids)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ entity: T) {
+        entitiesRepository.save(entity)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ entity: T?) {
+        entitiesRepository.save(entity)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ entities: [T]) {
+        self.entitiesRepository.save(entities)
+    }
+}
+
+extension Repository {
+    
+    mutating func save<T: IdentifiableEntity>(_ relation: Relation<T>) {
+        entitiesRepository.save(relation)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<Relation<T>>) {
+        entitiesRepository.save(relations)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<Relation<T>>)?) {
+        entitiesRepository.save(relations)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ relation: BiRelation<T>) {
+        entitiesRepository.save(relation)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<BiRelation<T>>) {
+        entitiesRepository.save(relations)
+    }
+    
+    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<BiRelation<T>>)?) {
+        entitiesRepository.save(relations)
+    }
+}
+
+extension Repository {
+    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(_ entityRelation: EntityRelation<T, E>) {
+        relationsRepository.save(entityRelation)
+    }
+}
+
+ 
+
+extension Repository {
+    func findRelations<T: IdentifiableEntity>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
+        relationsRepository.findRelations(for: type, relationName: relationName, id: id)
     }
 }
 
