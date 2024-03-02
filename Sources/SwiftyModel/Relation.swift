@@ -7,7 +7,15 @@
 
 import Foundation
 
-indirect enum Relation<T: IdentifiableEntity>: Hashable {
+typealias Relation<T: IdentifiableEntity> = EnititesRelation<T, Unidirectional>
+
+typealias BiRelation<T: IdentifiableEntity> = EnititesRelation<T, Bidirectional>
+
+enum Unidirectional { }
+
+enum Bidirectional { }
+
+indirect enum EnititesRelation<T: IdentifiableEntity, Direction> {
     case faulted(T.ID)
     case entity(T)
     
@@ -46,7 +54,7 @@ indirect enum Relation<T: IdentifiableEntity>: Hashable {
         return copy
     }
     
-    static func == (lhs: Relation<T>, rhs: Relation<T>) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
     
@@ -55,89 +63,33 @@ indirect enum Relation<T: IdentifiableEntity>: Hashable {
     }
 }
 
-
-indirect enum BiRelation<T: IdentifiableEntity>: Hashable {
-    case faulted(T.ID)
-    case entity(T)
-    
-    var id: T.ID {
-        switch self {
-        case .faulted(let id):
-            return id
-        case .entity(let entity):
-            return entity.id
-        }
-    }
-    
-    var entity: T? {
-        switch self {
-        case .faulted:
-            return nil
-        case .entity(let entity):
-            return entity        }
-    }
-    
-    init(_ id: T.ID) {
-        self = .faulted(id)
-    }
-    
-    init(_ entity: T) {
-        self = .entity(entity)
-    }
- 
-    func normalized() -> BiRelation<T> {
-        var copy = self
-        copy.normalize()
-        return copy
-    }
-    
-    mutating func normalize() {
-        self = .faulted(id)
-    }
-    
+extension EnititesRelation where Direction == Bidirectional {
     func relation() -> Relation<T> {
         Relation.faulted(id)
     }
-    
-    static func == (lhs: BiRelation<T>, rhs: BiRelation<T>) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
 }
 
-extension Relation: Codable where T: Codable {
+extension EnititesRelation: Codable where T: Codable {
     
 }
-
-extension BiRelation: Codable where T: Codable {
-    
-}
-
-
+ 
 extension Collection  {
-    func getEntities<T>() -> [T] where Element == Relation<T> {
+    func getEntities<T, Direction>() -> [T] where Element == EnititesRelation<T, Direction> {
         self.map { $0.entity }
             .compactMap { $0 }
     }
     
-    func getIds<T>() -> [T.ID] where Element == Relation<T>  {
+    func getIds<T, Direction>() -> [T.ID] where Element == EnititesRelation<T, Direction>  {
         self.map { $0.id }
     }
     
-    func `in`<T>(_ repository: Repository) -> [T] where Element == Relation<T> {
+    func `in`<T, Direction>(_ repository: Repository) -> [T] where Element == EnititesRelation<T, Direction> {
         repository.findAllExisting(getIds())
     }
 }
 
 extension Array {
-    mutating func normalize<T>()where Element == Relation<T> {
-        self = map { $0.normalized() }
-    }
-    
-    mutating func normalize<T>()  where Element == BiRelation<T> {
+    mutating func normalize<T, Direction>() where Element == EnititesRelation<T, Direction> {
         self = map { $0.normalized() }
     }
 }
