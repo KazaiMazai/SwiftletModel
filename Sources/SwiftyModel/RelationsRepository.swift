@@ -17,7 +17,7 @@ struct RelationsRepository: Codable {
 
 extension RelationsRepository {
     mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ entityRelation: EntityRelation<T, E>) {
+        _ entityRelation: StoredRelation<T, E>) {
             
             saveRelation(
                 T.self,
@@ -66,7 +66,7 @@ extension RelationsRepository {
         id: T.ID,
         relationName: String,
         relations: [Relation<E>],
-        option: SaveOption) {
+        option: RelationsRepository.Option) {
             
             let key = String(reflecting: T.self)
             

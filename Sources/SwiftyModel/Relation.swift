@@ -40,7 +40,7 @@ indirect enum Relation<T: IdentifiableEntity>: Hashable {
         self = .faulted(id)
     }
     
-    func normalized() -> Relation<T> {
+    func normalized() -> Self {
         var copy = self
         copy.normalize()
         return copy

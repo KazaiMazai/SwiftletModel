@@ -58,9 +58,7 @@ extension EntitiesRepository {
     mutating func save<T: IdentifiableEntity>(_ entity: T) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
-        var normalizedCopy = entity
-        normalizedCopy.normalize()
-        storage[entity.id.description] = normalizedCopy
+        storage[entity.id.description] = entity.normalized()
         storages[key] = storage
     }
     
@@ -75,36 +73,39 @@ extension EntitiesRepository {
     mutating func save<T: IdentifiableEntity>(_ entities: [T]) {
         entities.forEach { save($0) }
     }
+}
+
+extension EntitiesRepository {
     
-    mutating func save<T: IdentifiableEntity>(_ relation: Relation<T>) {
-        save(relation.entity)
+    mutating func save<T: IdentifiableEntity>(_ relatedEntity: Relation<T>) {
+        save(relatedEntity.entity)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<Relation<T>>) {
-        relations.forEach { save($0) }
+    mutating func save<T: IdentifiableEntity>(_ relatedEntities: some Collection<Relation<T>>) {
+        relatedEntities.forEach { save($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<Relation<T>>)?) {
-        guard let relations else {
+    mutating func save<T: IdentifiableEntity>(_ relatedEntities: (any Collection<Relation<T>>)?) {
+        guard let relatedEntities else {
             return
         }
         
-        save(relations)
+        save(relatedEntities)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relation: BiRelation<T>) {
-        save(relation.entity)
+    mutating func save<T: IdentifiableEntity>(_ relatedEntity: BiRelation<T>) {
+        save(relatedEntity.entity)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relations: some Collection<BiRelation<T>>) {
-        relations.forEach { save($0) }
+    mutating func save<T: IdentifiableEntity>(_ relatedEntities: some Collection<BiRelation<T>>) {
+        relatedEntities.forEach { save($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ relations: (any Collection<BiRelation<T>>)?) {
-        guard let relations else {
+    mutating func save<T: IdentifiableEntity>(_ relatedEntities: (any Collection<BiRelation<T>>)?) {
+        guard let relatedEntities else {
             return
         }
         
-        save(relations)
+        save(relatedEntities)
     }
 }

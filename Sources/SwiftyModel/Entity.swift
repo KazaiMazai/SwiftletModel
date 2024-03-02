@@ -19,7 +19,9 @@ struct Entity<T: IdentifiableEntity> {
     func resolve() -> T? {
         repository.find(id)
     }
-    
+}
+
+extension Entity {
     func related<E: IdentifiableEntity>(_ relationKeyPath: KeyPath<T, Relation<E>?>) -> Entity<E>? {
         repository
             .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
