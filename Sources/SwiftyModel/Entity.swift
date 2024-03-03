@@ -8,7 +8,7 @@
 import Foundation
 
 struct Entity<T: IdentifiableEntity> {
-    var repository: Repository
+    let repository: Repository
     let id: T.ID
     
     init(repository: Repository, id: T.ID) {

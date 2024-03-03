@@ -61,19 +61,19 @@ extension Repository {
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T,
-                                              options: Merge<T> = .replacing) {
+                                              options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T?,
-                                              options: Merge<T> = .replacing) {
+                                              options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entities: [T],
-                                              options: Merge<T> = .replacing) {
+                                              options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entities, options: options)
     }
@@ -81,13 +81,13 @@ extension Repository {
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>?,
-                                                 options: Merge<T> = .replacing) {
+                                                 options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>,
-                                                 options: Merge<T> = .replacing) {
+                                                 options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntity, options: options)
     }
@@ -96,13 +96,13 @@ extension Repository {
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>,
-                                                 options: Merge<T> = .replacing) {
+                                                 options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntities, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?,
-                                                 options: Merge<T> = .replacing) {
+                                                 options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntities, options: options)
     }
@@ -110,9 +110,9 @@ extension Repository {
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ entityRelation: RelationsRepository.StoredRelation<T, E>) {
+        _ relation: EntitiesLink<T, E>) {
             
-        relationsRepository.save(entityRelation)
+        relationsRepository.save(relation)
     }
 }
 

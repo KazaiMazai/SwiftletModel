@@ -15,7 +15,7 @@ enum Unidirectional { }
 
 enum Bidirectional { }
  
-indirect enum RelatedEntity<T: IdentifiableEntity, RelationKind> {
+indirect enum RelatedEntity<T: IdentifiableEntity, KindOfRelation> {
     case faulted(T.ID)
     case entity(T)
     
@@ -60,12 +60,6 @@ indirect enum RelatedEntity<T: IdentifiableEntity, RelationKind> {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-    }
-}
-
-extension RelatedEntity where RelationKind == Bidirectional {
-    func relation() -> Relation<T> {
-        Relation(id)
     }
 }
 

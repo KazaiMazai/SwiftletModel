@@ -55,7 +55,7 @@ extension EntitiesRepository {
         ids.map { remove($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entity: T, options: Merge<T>) {
+    mutating func save<T: IdentifiableEntity>(_ entity: T, options: MergeStrategy<T>) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
           
@@ -73,7 +73,7 @@ extension EntitiesRepository {
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T?,
-                                              options: Merge<T>) {
+                                              options: MergeStrategy<T>) {
         guard let entity else {
             return
         }
@@ -82,7 +82,7 @@ extension EntitiesRepository {
     }
     
     mutating func save<T: IdentifiableEntity>(_ entities: [T],
-                                              options: Merge<T>) {
+                                              options: MergeStrategy<T>) {
         
         entities.forEach { save($0, options: options) }
     }
@@ -90,25 +90,25 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>?,
-                                                 options: Merge<T>) {
+                                                 options: MergeStrategy<T>) {
         
         save(relatedEntity?.entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>,
-                                                 options: Merge<T>) {
+                                                 options: MergeStrategy<T>) {
         
         save(relatedEntity.entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>,
-                                                 options: Merge<T>) {
+                                                 options: MergeStrategy<T>) {
         
         relatedEntities.forEach { save($0, options: options) }
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?,
-                                                 options: Merge<T>) {
+                                                 options: MergeStrategy<T>) {
         
         guard let relatedEntities else {
             return

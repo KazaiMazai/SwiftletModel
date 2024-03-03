@@ -15,50 +15,50 @@ struct RelationsRepository: Codable {
     fileprivate var relations: [EntityName: [EntityID: [RelationName: Set<EntityID>]]] = [:]
 }
 
-extension RelationsRepository {
-    enum Option {
-        case append
-        case replace
-    }
+enum Option {
+    case append
+    case replace
+    case remove
+    case replaceIfNotEmpty
 }
 
-extension RelationsRepository {
-    struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity> {
-        let id: T.ID
-        let name: String
-        let inverseName: String?
-        let relatedEntities: [Relation<E>]
-        let option: RelationsRepository.Option
-        let inverseOption: RelationsRepository.Option?
-    }
+struct Link {
+    let name: String
+    let updateOption: Option
 }
 
+struct EntitiesLink<T: IdentifiableEntity, E: IdentifiableEntity> {
+    let parent: T.ID
+    let children: [E.ID]
+    let direct: Link
+    let inverse: Link?
+}
 
 extension RelationsRepository {
     mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ entityRelation: StoredRelation<T, E>) {
+        _ entitiesLink: EntitiesLink<T, E>) {
             
             saveRelation(
                 T.self,
-                id: entityRelation.id,
-                relationName: entityRelation.name,
-                relations: entityRelation.relatedEntities,
-                option: entityRelation.option
+                childrenType: E.self,
+                id: entitiesLink.parent,
+                relationName: entitiesLink.direct.name,
+                children: entitiesLink.children,
+                option: entitiesLink.direct.updateOption
             )
             
-            guard let inverseName = entityRelation.inverseName else {
+            guard let inverseUpdate = entitiesLink.inverse else {
                 return
             }
             
-            let reversedRelation = Relation<T>(entityRelation.id)
-            
-            entityRelation.relatedEntities.forEach {
+            entitiesLink.children.forEach {
                 saveRelation(
                     E.self,
-                    id: $0.id,
-                    relationName: inverseName,
-                    relations: [reversedRelation],
-                    option: entityRelation.inverseOption ?? .append
+                    childrenType: T.self,
+                    id: $0,
+                    relationName: inverseUpdate.name,
+                    children: [entitiesLink.parent],
+                    option: inverseUpdate.updateOption
                 )
             }
         }
@@ -75,34 +75,57 @@ extension RelationsRepository {
             let relationsForName = entityRelation[relationName] ?? []
             return relationsForName
         }
-    
 }
 
 extension RelationsRepository {
     
-    private mutating func saveRelation<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ entityType: T.Type,
-        id: T.ID,
-        relationName: String,
-        relations: [Relation<E>],
-        option: RelationsRepository.Option) {
-            
-            let key = String(reflecting: T.self)
-            
-            var entitiesRelations = self.relations[key] ?? [:]
-            var entityRelation = entitiesRelations[id.description] ?? [:]
-            var relationsForName = entityRelation[relationName] ?? []
-            
-            switch option {
-            case .append:
-                relations.forEach { relationsForName.insert($0.id.description) }
-            case .replace:
-                relationsForName = Set(relations.map { $0.id.description })
+    mutating func setRelations<T: IdentifiableEntity>(for: T.Type,
+                                                      relationName: String,
+                                                      id: T.ID,
+                                                      relations: Set<String>) {
+        
+        let key = String(reflecting: T.self)
+        
+        var entitiesRelations = self.relations[key] ?? [:]
+        var entityRelation = entitiesRelations[id.description] ?? [:]
+        
+        entityRelation[relationName] = relations
+        entitiesRelations[id.description] = entityRelation
+        self.relations[key] = entitiesRelations
+    }
+    
+    private mutating func saveRelation<T: IdentifiableEntity, E: IdentifiableEntity>(_ parentType: T.Type,
+                                                                                     childrenType: E.Type,
+                                                                                     id: T.ID,
+                                                                                     relationName: String,
+                                                                                     children: [E.ID],
+                                                                                     option: Option) {
+        
+        var existingRelations = findRelations(
+            for: T.self,
+            relationName: relationName,
+            id: id
+        )
+        
+        switch option {
+        case .append:
+            children.forEach { existingRelations.insert($0.description) }
+        case .replace:
+            existingRelations = Set(children.map { $0.description })
+        case .replaceIfNotEmpty:
+            if !children.isEmpty {
+                existingRelations = Set(children.map { $0.description })
             }
-            
-            entityRelation[relationName] = relationsForName
-            entitiesRelations[id.description] = entityRelation
-            self.relations[key] = entitiesRelations
+        case .remove:
+            children.forEach { existingRelations.remove($0.description) }
         }
+        
+        setRelations(
+            for: T.self,
+            relationName: relationName,
+            id: id,
+            relations: existingRelations
+        )
+    }
 }
 
