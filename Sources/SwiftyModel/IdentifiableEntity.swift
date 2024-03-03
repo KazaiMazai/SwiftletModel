@@ -24,13 +24,20 @@ extension IdentifiableEntity {
 }
 
 extension IdentifiableEntity {
+    func getEntity(in repository: Repository) -> Entity<Self> {
+        Entity(repository: repository, id: id)
+    }
+}
+
+
+extension IdentifiableEntity {
     func relation<E>(_ keyPath: KeyPath<Self, [Relation<E>]?>,
                      option: RelationsRepository.Option) -> RelationsRepository.StoredRelation<Self, E> {
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: nil,
-            relation: self[keyPath: keyPath] ?? [],
+            relatedEntities: self[keyPath: keyPath] ?? [],
             option: option,
             inverseOption: nil
         )
@@ -41,31 +48,35 @@ extension IdentifiableEntity {
             id: id,
             name: keyPath.relationName,
             inverseName: nil,
-            relation: [self[keyPath: keyPath]].compactMap { $0 },
+            relatedEntities: [self[keyPath: keyPath]].compactMap { $0 },
             option: .replace,
             inverseOption: nil
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, MutualRelation<E>?>,
+    func relation<E>(
+        _ keyPath: KeyPath<Self, MutualRelation<E>?>,
                      inverse: KeyPath<E, MutualRelation<Self>?>) -> RelationsRepository.StoredRelation<Self, E> {
+                         
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
-            relation: [self[keyPath: keyPath]].compactMap { $0?.relation() },
+            relatedEntities: [self[keyPath: keyPath]].compactMap { $0?.relation() },
             option: .replace,
             inverseOption: .replace
         )
     }
     
-    func relation<E>(_ keyPath: KeyPath<Self, MutualRelation<E>?>,
+    func relation<E>(
+        _ keyPath: KeyPath<Self, MutualRelation<E>?>,
                      inverse: KeyPath<E, [MutualRelation<Self>]?>) -> RelationsRepository.StoredRelation<Self, E> {
+                         
         RelationsRepository.StoredRelation(
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
-            relation: [self[keyPath: keyPath]].compactMap { $0?.relation() },
+            relatedEntities: [self[keyPath: keyPath]].compactMap { $0?.relation() },
             option: .replace,
             inverseOption: .append
         )
@@ -78,7 +89,7 @@ extension IdentifiableEntity {
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
-            relation: self[keyPath: keyPath]?.compactMap { $0.relation() } ?? [],
+            relatedEntities: self[keyPath: keyPath]?.compactMap { $0.relation() } ?? [],
             option: option,
             inverseOption: .replace
         )
@@ -91,7 +102,7 @@ extension IdentifiableEntity {
             id: id,
             name: keyPath.relationName,
             inverseName: inverse.relationName,
-            relation: self[keyPath: keyPath]?.compactMap { $0.relation() } ?? [],
+            relatedEntities: self[keyPath: keyPath]?.compactMap { $0.relation() } ?? [],
             option: option,
             inverseOption: .append
         )

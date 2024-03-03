@@ -8,7 +8,7 @@
 import Foundation
 
 struct Entity<T: IdentifiableEntity> {
-    private let repository: Repository
+    var repository: Repository
     let id: T.ID
     
     init(repository: Repository, id: T.ID) {
@@ -22,40 +22,19 @@ struct Entity<T: IdentifiableEntity> {
 }
 
 extension Entity {
-    func related<E: IdentifiableEntity, R>(_ relationKeyPath: KeyPath<T, RelatedEntity<E, R>?>) -> Entity<E>? {
+    func related<E: IdentifiableEntity, R>(_ keyPath: KeyPath<T, RelatedEntity<E, R>?>) -> Entity<E>? {
         repository
-            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: keyPath.relationName, id: id)
             .first
             .flatMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
     }
     
-    func related<E: IdentifiableEntity, R>(_ relationKeyPath: KeyPath<T, [RelatedEntity<E, R>]?>) -> [Entity<E>] {
+    func related<E: IdentifiableEntity, R>(_ keyPath: KeyPath<T, [RelatedEntity<E, R>]?>) -> [Entity<E>] {
         repository
-            .findRelations(for: T.self, relationName: relationKeyPath.relationName, id: id)
+            .findRelations(for: T.self, relationName: keyPath.relationName, id: id)
             .compactMap { E.ID($0) }
             .map { Entity<E>(repository: repository, id:  $0) }
     }
 }
  
-extension Collection {
-    func resolve<T>() -> [T?] where Element == Entity<T> {
-        map { $0.resolve() }
-    }
-    
-    func related<T, E>(_ relationKeyPath: KeyPath<T, Relation<E>?>) -> [Entity<E>] where Element == Entity<T> {
-        compactMap { $0.related(relationKeyPath) }
-    }
-    
-    func related<T, E>(_ relationKeyPath: KeyPath<T, [Relation<E>]?>) -> [[Entity<E>]] where Element == Entity<T> {
-        compactMap { $0.related(relationKeyPath) }
-    }
-    
-    func related<T, E>(_ relationKeyPath: KeyPath<T, MutualRelation<E>?>) -> [Entity<E>] where Element == Entity<T> {
-        compactMap { $0.related(relationKeyPath) }
-    }
-    
-    func related<T, E>(_ relationKeyPath: KeyPath<T, [MutualRelation<E>]?>) -> [[Entity<E>]] where Element == Entity<T> {
-        compactMap { $0.related(relationKeyPath) }
-    }
-}

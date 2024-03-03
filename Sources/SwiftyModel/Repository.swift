@@ -61,47 +61,50 @@ extension Repository {
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T,
-                                              merge: Merge<T> = .replace) {
+                                              options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(entity, merge: merge)
+        entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T?,
-                                              merge: Merge<T> = .replace) {
+                                              options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(entity, merge: merge)
+        entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entities: [T],
-                                              merge: Merge<T> = .replace) {
+                                              options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(entities, merge: merge)
+        entitiesRepository.save(entities, options: options)
     }
 }
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>?,
-                                                 merge: Merge<T> = .replace) {
+                                                 options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(relatedEntity, merge: merge)
+        entitiesRepository.save(relatedEntity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>,
-                                                 merge: Merge<T> = .replace) {
+                                                 options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(relatedEntity, merge: merge)
+        entitiesRepository.save(relatedEntity, options: options)
     }
+}
     
+
+extension Repository {
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>,
-                                                 merge: Merge<T> = .replace) {
+                                                 options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(relatedEntities, merge: merge)
+        entitiesRepository.save(relatedEntities, options: options)
     }
     
     mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?,
-                                                 merge: Merge<T> = .replace) {
+                                                 options: Merge<T> = .replacing) {
         
-        entitiesRepository.save(relatedEntities, merge: merge)
+        entitiesRepository.save(relatedEntities, options: options)
     }
 }
 

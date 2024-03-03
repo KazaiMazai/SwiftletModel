@@ -55,41 +55,65 @@ extension EntitiesRepository {
         ids.map { remove($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entity: T) {
+    mutating func save<T: IdentifiableEntity>(_ entity: T, options: Merge<T>) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
-        storage[entity.id.description] = entity.normalized()
+          
+        guard let existing: T = find(entity.id) else {
+            storage[entity.id.description] = entity.normalized()
+            storages[key] = storage
+            return
+        }
+        
+        let new = entity.normalized()
+        let merged = options.merge(existing, new)
+        
+        storage[entity.id.description] = merged
         storages[key] = storage
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entity: T?) {
+    mutating func save<T: IdentifiableEntity>(_ entity: T?,
+                                              options: Merge<T>) {
         guard let entity else {
             return
         }
         
-        save(entity)
+        save(entity, options: options)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entities: [T]) {
-        entities.forEach { save($0) }
+    mutating func save<T: IdentifiableEntity>(_ entities: [T],
+                                              options: Merge<T>) {
+        
+        entities.forEach { save($0, options: options) }
     }
 }
 
 extension EntitiesRepository {
-    
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>) {
-        save(relatedEntity.entity)
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>?,
+                                                 options: Merge<T>) {
+        
+        save(relatedEntity?.entity, options: options)
     }
     
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>) {
-        relatedEntities.forEach { save($0) }
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>,
+                                                 options: Merge<T>) {
+        
+        save(relatedEntity.entity, options: options)
     }
     
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?) {
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>,
+                                                 options: Merge<T>) {
+        
+        relatedEntities.forEach { save($0, options: options) }
+    }
+    
+    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?,
+                                                 options: Merge<T>) {
+        
         guard let relatedEntities else {
             return
         }
         
-        save(relatedEntities)
+        save(relatedEntities, options: options)
     }
 }
