@@ -23,11 +23,11 @@ extension RelationsRepository {
 }
 
 extension RelationsRepository {
-    struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity & Codable> {
+    struct StoredRelation<T: IdentifiableEntity, E: IdentifiableEntity> {
         let id: T.ID
         let name: String
         let inverseName: String?
-        let relation: [Relation<E>]
+        let relatedEntities: [Relation<E>]
         let option: RelationsRepository.Option
         let inverseOption: RelationsRepository.Option?
     }
@@ -42,7 +42,7 @@ extension RelationsRepository {
                 T.self,
                 id: entityRelation.id,
                 relationName: entityRelation.name,
-                relations: entityRelation.relation,
+                relations: entityRelation.relatedEntities,
                 option: entityRelation.option
             )
             
@@ -52,7 +52,7 @@ extension RelationsRepository {
             
             let reversedRelation = Relation<T>(entityRelation.id)
             
-            entityRelation.relation.forEach {
+            entityRelation.relatedEntities.forEach {
                 saveRelation(
                     E.self,
                     id: $0.id,

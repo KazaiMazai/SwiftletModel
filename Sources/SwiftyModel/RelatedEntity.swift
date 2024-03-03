@@ -72,22 +72,6 @@ extension RelatedEntity where RelationKind == Bidirectional {
 extension RelatedEntity: Codable where T: Codable {
     
 }
- 
-extension Collection  {
-    func getEntities<T, Direction>() -> [T] where Element == RelatedEntity<T, Direction> {
-        self.map { $0.entity }
-            .compactMap { $0 }
-    }
-    
-    func getIds<T, Direction>() -> [T.ID] where Element == RelatedEntity<T, Direction>  {
-        self.map { $0.id }
-    }
-    
-    func `in`<T, Direction>(_ repository: Repository) -> [T] where Element == RelatedEntity<T, Direction> {
-        repository.findAllExisting(getIds())
-    }
-}
-
 extension Array {
     mutating func normalize<T, Direction>() where Element == RelatedEntity<T, Direction> {
         self = map { $0.normalized() }
