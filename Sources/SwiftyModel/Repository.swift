@@ -44,7 +44,7 @@ extension Repository {
 
 extension Repository {
     func findRelations<T: IdentifiableEntity>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
-        relationsRepository.findRelations(for: type, relationName: relationName, id: id)
+        relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
 

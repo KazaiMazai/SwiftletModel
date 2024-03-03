@@ -7,14 +7,6 @@
 
 import Foundation
 
-struct RelationsRepository: Codable {
-    typealias EntityID = String
-    typealias EntityName = String
-    typealias RelationName = String
-    
-    fileprivate var relations: [EntityName: [EntityID: [RelationName: Set<EntityID>]]] = [:]
-}
-
 enum Option {
     case append
     case replace
@@ -27,48 +19,58 @@ struct Link {
     let updateOption: Option
 }
 
-struct EntitiesLink<T: IdentifiableEntity, E: IdentifiableEntity> {
-    let parent: T.ID
-    let children: [E.ID]
+struct EntitiesLink<Parent: IdentifiableEntity, Child: IdentifiableEntity> {
+    let parent: Parent.ID
+    let children: [Child.ID]
     let direct: Link
     let inverse: Link?
 }
 
-extension RelationsRepository {
-    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ entitiesLink: EntitiesLink<T, E>) {
-            
-            saveRelation(
-                T.self,
-                childrenType: E.self,
-                id: entitiesLink.parent,
-                relationName: entitiesLink.direct.name,
-                children: entitiesLink.children,
-                option: entitiesLink.direct.updateOption
-            )
-            
-            guard let inverseUpdate = entitiesLink.inverse else {
-                return
-            }
-            
-            entitiesLink.children.forEach {
-                saveRelation(
-                    E.self,
-                    childrenType: T.self,
-                    id: $0,
-                    relationName: inverseUpdate.name,
-                    children: [entitiesLink.parent],
-                    option: inverseUpdate.updateOption
-                )
-            }
-        }
+struct RelationsRepository: Codable {
+    typealias EntityID = String
+    typealias EntityName = String
+    typealias RelationName = String
     
-    func findRelations<T: IdentifiableEntity>(
-        for: T.Type,
+    fileprivate var relations: [EntityName: [EntityID: [RelationName: Set<EntityID>]]] = [:]
+}
+
+extension RelationsRepository {
+    mutating func save<Parent, Child>(
+        _ entitiesLink: EntitiesLink<Parent, Child>)
+    
+    where Parent: IdentifiableEntity, Child: IdentifiableEntity {
+        
+        saveChildren(
+            Parent.self,
+            childrenType: Child.self,
+            id: entitiesLink.parent,
+            relationName: entitiesLink.direct.name,
+            children: entitiesLink.children,
+            option: entitiesLink.direct.updateOption
+        )
+        
+        guard let inverseUpdate = entitiesLink.inverse else {
+            return
+        }
+        
+        entitiesLink.children.forEach {
+            saveChildren(
+                Child.self,
+                childrenType: Parent.self,
+                id: $0,
+                relationName: inverseUpdate.name,
+                children: [entitiesLink.parent],
+                option: inverseUpdate.updateOption
+            )
+        }
+    }
+    
+    func findChildren<Parent: IdentifiableEntity>(
+        for: Parent.Type,
         relationName: String,
-        id: T.ID) -> Set<String> {
+        id: Parent.ID) -> Set<String> {
             
-            let key = String(reflecting: T.self)
+            let key = String(reflecting: Parent.self)
             
             let entitiesRelations = relations[key] ?? [:]
             let entityRelation = entitiesRelations[id.description] ?? [:]
@@ -79,12 +81,12 @@ extension RelationsRepository {
 
 extension RelationsRepository {
     
-    mutating func setRelations<T: IdentifiableEntity>(for: T.Type,
-                                                      relationName: String,
-                                                      id: T.ID,
-                                                      relations: Set<String>) {
+    mutating func setChildren<Parent: IdentifiableEntity>(for: Parent.Type,
+                                                          relationName: String,
+                                                          id: Parent.ID,
+                                                          relations: Set<String>) {
         
-        let key = String(reflecting: T.self)
+        let key = String(reflecting: Parent.self)
         
         var entitiesRelations = self.relations[key] ?? [:]
         var entityRelation = entitiesRelations[id.description] ?? [:]
@@ -94,15 +96,19 @@ extension RelationsRepository {
         self.relations[key] = entitiesRelations
     }
     
-    private mutating func saveRelation<T: IdentifiableEntity, E: IdentifiableEntity>(_ parentType: T.Type,
-                                                                                     childrenType: E.Type,
-                                                                                     id: T.ID,
-                                                                                     relationName: String,
-                                                                                     children: [E.ID],
-                                                                                     option: Option) {
-        
-        var existingRelations = findRelations(
-            for: T.self,
+    private mutating func saveChildren<Parent, Child>(_ parentType: Parent.Type,
+                                                      childrenType: Child.Type,
+                                                      id: Parent.ID,
+                                                      relationName: String,
+                                                      children: [Child.ID],
+                                                      option: Option)
+    where
+
+    Parent: IdentifiableEntity,
+    Child: IdentifiableEntity {
+    
+        var existingRelations = findChildren(
+            for: Parent.self,
             relationName: relationName,
             id: id
         )
@@ -120,8 +126,8 @@ extension RelationsRepository {
             children.forEach { existingRelations.remove($0.description) }
         }
         
-        setRelations(
-            for: T.self,
+        setChildren(
+            for: Parent.self,
             relationName: relationName,
             id: id,
             relations: existingRelations
