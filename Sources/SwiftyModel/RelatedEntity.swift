@@ -14,6 +14,7 @@ typealias MutualRelation<T: IdentifiableEntity> = RelatedEntity<T, Bidirectional
 enum Unidirectional { }
 
 enum Bidirectional { }
+
  
 indirect enum RelatedEntity<T: IdentifiableEntity, KindOfRelation> {
     case faulted(T.ID)
@@ -71,3 +72,87 @@ extension Array {
         self = map { $0.normalized() }
     }
 }
+
+
+enum ToOne: RelationshipKindProtocol {
+    static var isCollection: Bool { false }
+}
+
+enum ToMany: RelationshipKindProtocol {
+    static var isCollection: Bool { true }
+}
+ 
+protocol RelationshipKindProtocol {
+    static var isCollection: Bool { get }
+}
+
+indirect enum Relationship<T: IdentifiableEntity, Direction, Kind: RelationshipKindProtocol> {
+    case faulted([T.ID])
+    case entity([T])
+    
+    var ids: [T.ID] {
+        switch self {
+        case .faulted(let ids):
+            return ids
+        case .entity(let entity):
+            return entity.map { $0.id }
+        }
+    }
+    
+    var entity: [T] {
+        switch self {
+        case .faulted:
+            return []
+        case .entity(let entity):
+            return entity        }
+    }
+    
+ 
+    mutating func normalize() {
+        self = .faulted(ids)
+    }
+    
+    func normalized() -> Self {
+        var copy = self
+        copy.normalize()
+        return copy
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.ids == rhs.ids
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ids)
+    }
+}
+
+extension Relationship where Kind == ToOne {
+    init(_ id: T.ID) {
+        self = .faulted([id])
+    }
+
+    init(_ entity: T) {
+        self = .entity([entity])
+    }
+    
+    static var isToMany: Bool {
+        false
+    }
+}
+
+extension Relationship where Kind == ToMany {
+    init(_ ids: [T.ID]) {
+        self = .faulted(ids)
+    }
+
+    init(_ entity: [T]) {
+        self = .entity(entity)
+    }
+    
+    static var isToMany: Bool {
+        true
+    }
+}
+
+

@@ -41,6 +41,91 @@ extension KeyPaths.MutualRelation {
 
     typealias ToOneOptional<Parent, Child: IdentifiableEntity> = KeyPath<Parent, MutualRelation<Child>?>
 }
+ 
+
+extension IdentifiableEntity {
+    func relation<Child, Kind>(_ keyPath: KeyPath<Self, Relationship<Child, Unidirectional, Kind>>,
+                               replace: Bool = true) -> EntitiesLink<Self, Child> {
+        
+        
+        let append: Option = Kind.isCollection ? .append : .replaceIfNotEmpty
+        let updateOption: Option = replace ? .replace : append
+        
+        return EntitiesLink(
+            parent: id,
+            children: children(keyPath),
+            direct: Link(
+                name: keyPath.relationName,
+                updateOption: updateOption
+            ),
+            inverse: nil
+        )
+    }
+    
+    func relation<Child, Kind>(_ keyPath: KeyPath<Self, Relationship<Child, Unidirectional, Kind>?>,
+                               replace: Bool = true) -> EntitiesLink<Self, Child> {
+        
+        
+        let append: Option = Kind.isCollection ? .append : .replaceIfNotEmpty
+        let updateOption: Option = replace ? .replace : append
+        
+        return EntitiesLink(
+            parent: id,
+            children: children(keyPath),
+            direct: Link(
+                name: keyPath.relationName,
+                updateOption: updateOption
+            ),
+            inverse: nil
+        )
+    }
+    
+    func relation<Child, Kind, InverseKind>(_ keyPath: KeyPath<Self, Relationship<Child, Bidirectional, Kind>>,
+                               replace: Bool = true,
+                               inverse: KeyPath<Child, Relationship<Self, Bidirectional, InverseKind>>) -> EntitiesLink<Self, Child> {
+        
+        let append: Option = Kind.isCollection ? .append : .replaceIfNotEmpty
+        let updateOption: Option = replace ? .replace : append
+        
+        let inverseUpdateOption: Option = InverseKind.isCollection ? .append : .replace
+        
+        return EntitiesLink(
+            parent: id,
+            children: children(keyPath),
+            direct: Link(
+                name: keyPath.relationName,
+                updateOption: updateOption
+            ),
+            inverse: Link(
+                name: inverse.relationName,
+                updateOption: inverseUpdateOption
+            )
+        )
+    }
+    
+    func relation<Child, Kind, InverseKind>(_ keyPath: KeyPath<Self, Relationship<Child, Bidirectional, Kind>?>,
+                               replace: Bool = true,
+                               inverse: KeyPath<Child, Relationship<Self, Bidirectional, InverseKind>>) -> EntitiesLink<Self, Child> {
+        
+        let append: Option = Kind.isCollection ? .append : .replaceIfNotEmpty
+        let updateOption: Option = replace ? .replace : append
+        
+        let inverseUpdateOption: Option = InverseKind.isCollection ? .append : .replace
+        
+        return EntitiesLink(
+            parent: id,
+            children: children(keyPath),
+            direct: Link(
+                name: keyPath.relationName,
+                updateOption: updateOption
+            ),
+            inverse: Link(
+                name: inverse.relationName,
+                updateOption: inverseUpdateOption
+            )
+        )
+    }
+}
 
 extension IdentifiableEntity {
     func relation<E>(_ keyPath: KeyPaths.Relation.ToManyOptional<Self, E>,
@@ -252,5 +337,16 @@ fileprivate extension IdentifiableEntity {
     
     func children<Child, RelationType>(_ keyPath: KeyPath<Self, RelatedEntity<Child, RelationType>>) -> [Child.ID] {
         [self[keyPath: keyPath]].map { $0.id }
+    }
+}
+
+
+fileprivate extension IdentifiableEntity {
+    func children<Child, Direction, Kind>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Kind>?>) -> [Child.ID] {
+        self[keyPath: keyPath]?.ids ?? []
+    }
+    
+    func children<Child, Direction, Kind>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Kind>>) -> [Child.ID] {
+        self[keyPath: keyPath].ids
     }
 }
