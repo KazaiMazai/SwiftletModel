@@ -8,15 +8,16 @@
 @testable import SwiftyModel
 import Foundation
 
+
 struct Message: IdentifiableEntity, Codable {
     let id: String
     let text: String
-    var author: Relation<User>?
-    var chat: MutualRelation<Chat>?
-    var attachment: MutualRelation<Attachment>?
-    var replies: [MutualRelation<Message>]?
-    var replyTo: MutualRelation<Message>?
-    var viewers: [Relation<User>]?
+    var author: ToOne<User>?
+    var chat: ToOneMutual<Chat>?
+    var attachment: ToOneMutual<Attachment>?
+    var replies: ToManyMutual<Message>?
+    var replyTo: ToOneMutual<Message>?
+    var viewers: ToMany<User>?
     
     mutating func normalize() {
         author?.normalize()
@@ -36,7 +37,7 @@ struct Message: IdentifiableEntity, Codable {
     }
 }
 
-extension Entity where T == Message {
+extension Query where Entity == Message {
     var isMyMessage: Bool? {
         related(\.author)?.isMe
     }

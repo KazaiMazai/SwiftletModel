@@ -12,7 +12,7 @@ struct CurrentUser: IdentifiableEntity, Codable {
    static let me = "me"
     
     private(set) var id: String = CurrentUser.me
-    var user: Relation<User>?
+    var user: ToOne<User>?
     
     mutating func normalize() {
         user?.normalize()
@@ -39,7 +39,7 @@ struct User: IdentifiableEntity, Codable {
     var avatar: Avatar?
     var profile: Profile?
     
-    var chats: [MutualRelation<Chat>]?
+    var chats: ToManyMutual<Chat>?
     
     mutating func normalize() {
         chats?.normalize()
@@ -65,10 +65,10 @@ extension MergeStrategy {
     }
 }
 
-extension Entity where T == User {
+extension Query where Entity == User {
     var isMe: Bool {
         repository
-            .find(CurrentUser.self, id: CurrentUser.me)
+            .query(CurrentUser.self, id: CurrentUser.me)
             .related(\.user)?.id == id
     }
 }

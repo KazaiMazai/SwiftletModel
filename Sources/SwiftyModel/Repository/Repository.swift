@@ -13,17 +13,7 @@ struct Repository {
 }
 
 extension Repository {
-    func find<T: IdentifiableEntity>(_ id: T.ID) -> Entity<T> {
-        find(T.self, id: id)
-    }
-    
-    func find<T: IdentifiableEntity>(_ type: T.Type, id: T.ID) -> Entity<T> {
-        Entity(repository: self, id: id)
-    }
-    
-    func find<T: IdentifiableEntity>(_ ids: [T.ID]) -> [Entity<T>] {
-        ids.map { find($0) }
-    }
+   
     
     func all<T>() -> [T] {
         entitiesRepository.all()
@@ -80,33 +70,19 @@ extension Repository {
 }
 
 extension Repository {
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>?,
-                                                 options: MergeStrategy<T> = .replace) {
+    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>?,
+                                                    options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntity, options: options)
     }
     
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntity: RelatedEntity<T, R>,
-                                                 options: MergeStrategy<T> = .replace) {
+    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>,
+                                                    options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntity, options: options)
     }
 }
-    
-
-extension Repository {
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: some Collection<RelatedEntity<T, R>>,
-                                                 options: MergeStrategy<T> = .replace) {
-        
-        entitiesRepository.save(relatedEntities, options: options)
-    }
-    
-    mutating func save<T: IdentifiableEntity, R>(_ relatedEntities: (any Collection<RelatedEntity<T, R>>)?,
-                                                 options: MergeStrategy<T> = .replace) {
-        
-        entitiesRepository.save(relatedEntities, options: options)
-    }
-}
+ 
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(

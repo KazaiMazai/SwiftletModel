@@ -16,20 +16,18 @@ protocol IdentifiableEntity {
 }
 
 extension IdentifiableEntity {
-    func getEntity(in repository: Repository) -> Entity<Self> {
-        Entity(repository: repository, id: id)
+    func query(in repository: Repository) -> Query<Self> {
+        Query(repository: repository, id: id)
     }
     
-    static func find(_ id: ID, in repository: Repository) -> Entity<Self> {
-        repository.find(id)
+    static func query(_ id: ID, in repository: Repository) -> Query<Self> {
+        repository.query(id)
     }
     
-    static func find(_ ids: [ID], in repository: Repository) -> [Entity<Self>] {
-        repository.find(ids)
+    static func query(_ ids: [ID], in repository: Repository) -> [Query<Self>] {
+        repository.query(ids)
     }
 }
-
-
 
 extension IdentifiableEntity {
     func normalized() -> Self {
@@ -38,7 +36,6 @@ extension IdentifiableEntity {
         return copy
     }
 }
-
 
 extension KeyPath {
     var relationName: String {
