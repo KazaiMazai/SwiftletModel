@@ -83,67 +83,59 @@ public struct Relationship<T: IdentifiableEntity, Direction, Relation: RelationP
 }
 
 public extension Relationship where Relation == ToManyRelation, Optionality == NotRequired {
-    init(_ ids: [T.ID]) {
-        state = .faulted(ids)
-    }
-
-    init(_ entity: [T]) {
-        state = .entity(entity)
-    }
-    
-    init(_ ids: [T.ID]?) {
+    init(ids: [T.ID]?, elidable: Bool = true) {
         guard let ids else {
-            state = .null
+            state = .none(explicitNil: elidable)
             return
         }
         
         state = .faulted(ids)
     }
 
-    init(_ entity: [T]?) {
-        guard let entity else {
-            state = .null
+    init(_ entities: [T]?, elidable: Bool = true) {
+        guard let entities else {
+            state = .none(explicitNil: elidable)
             return
         }
         
-        state =  .entity(entity)
+        state = .entity(entities)
     }
 }
 
 public extension Relationship where Relation == ToManyRelation, Optionality == Required {
-    init(_ ids: [T.ID]) {
+    init(ids: [T.ID]) {
         state = .faulted(ids)
     }
 
-    init(_ entity: [T]) {
-        state = .entity(entity)
+    init(_ entities: [T]) {
+        state = .entity(entities)
     }
 }
 
 public extension Relationship where Relation == ToManyRelation, Optionality == RequiredNotEmpty {
-    init?(_ ids: [T.ID]) {
+    init?(ids: [T.ID]) {
         guard !ids.isEmpty else {
             return nil
         }
         state = .faulted(ids)
     }
 
-    init?(_ entity: [T]) {
-        guard !entity.isEmpty else {
+    init?(_ entities: [T]) {
+        guard !entities.isEmpty else {
             return nil
         }
-        state = .entity(entity)
+        state = .entity(entities)
     }
 }
 
 public extension Relationship where Optionality == NotRequired {
     init() {
-        state = .none
+        state = .none(explicitNil: false)
     }
 }
 
-public extension Relationship where Relation == ToOneRelation {
-    init(_ id: T.ID) {
+public extension Relationship where Relation == ToOneRelation, Optionality == Required {
+    init(id: T.ID) {
         state = .faulted([id])
     }
 
@@ -154,26 +146,24 @@ public extension Relationship where Relation == ToOneRelation {
 
 public extension Relationship where Relation == ToOneRelation, Optionality == NotRequired {
    
-    init(_ id: T.ID?) {
+    init(id: T.ID?, elidable: Bool = true) {
         guard let id else {
-            state = .null
+            state = .none(explicitNil: elidable)
             return
         }
         
         state = .faulted([id])
     }
 
-    init(_ entity: T?) {
+    init(_ entity: T?, elidable: Bool = true) {
         guard let entity else {
-            state = .null
+            state = .none(explicitNil: elidable)
             return
         }
         
-        state =  .entity([entity])
+        state = .entity([entity])
     }
-
 }
-
 
 extension Relationship: Codable where T: Codable {
     
@@ -183,14 +173,12 @@ extension Relationship.State: Codable where T: Codable {
     
 }
  
-
 extension Relationship {
     
     indirect enum State<T: IdentifiableEntity>: Hashable {
         case faulted([T.ID])
         case entity([T])
-        case none
-        case null
+        case none(explicitNil: Bool)
         
         var ids: [T.ID] {
             switch self {
@@ -198,7 +186,7 @@ extension Relationship {
                 return ids
             case .entity(let entity):
                 return entity.map { $0.id }
-            case .none, .null:
+            case .none:
                 return []
             }
         }
@@ -209,13 +197,13 @@ extension Relationship {
                 return []
             case .entity(let entity):
                 return entity
-            case .none, .null:
+            case .none:
                 return []
             }
         }
         
         mutating func normalize() {
-            self = .none
+            self = .none(explicitNil: false)
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
