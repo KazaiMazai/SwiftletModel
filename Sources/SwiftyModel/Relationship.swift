@@ -19,7 +19,6 @@ public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectiona
 
 public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
 
-
 typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation>
 
 typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation>
@@ -44,29 +43,12 @@ public protocol DirectionProtocol {
     
 }
 
-public indirect enum Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, Relation: RelationProtocol>: Hashable {
-    case faulted([T.ID])
-    case entity([T])
-    
-    var ids: [T.ID] {
-        switch self {
-        case .faulted(let ids):
-            return ids
-        case .entity(let entity):
-            return entity.map { $0.id }
-        }
-    }
-    
-    var entity: [T] {
-        switch self {
-        case .faulted:
-            return []
-        case .entity(let entity):
-            return entity        }
-    }
+
+public struct Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, Relation: RelationProtocol>: Hashable {
+    var state: State<T>
     
     public mutating func normalize() {
-        self = .faulted(ids)
+        state.normalize()
     }
     
     public func normalized() -> Self {
@@ -76,38 +58,91 @@ public indirect enum Relationship<T: IdentifiableEntity, Direction: DirectionPro
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.ids == rhs.ids
+        lhs.state == rhs.state
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(ids)
+        hasher.combine(state)
     }
-}
-
-public extension Relationship where Relation == ToOneRelation {
-    init(_ id: T.ID) {
-        self = .faulted([id])
+    
+    var ids: [T.ID] {
+        state.ids
     }
-
-    init(_ entity: T) {
-        self = .entity([entity])
+    
+    var entity: [T] {
+        state.entity
     }
 }
 
 public extension Relationship where Relation == ToManyRelation {
     init(_ ids: [T.ID]) {
-        self = .faulted(ids)
+        state = .faulted(ids)
     }
 
     init(_ entity: [T]) {
-        self = .entity(entity)
+        state = .entity(entity)
     }
 }
  
+
+public extension Relationship where Relation == ToOneRelation {
+    init(_ id: T.ID) {
+        state = .faulted([id])
+    }
+
+    init(_ entity: T) {
+        state = .entity([entity])
+    }
+}
 
 extension Relationship: Codable where T: Codable {
     
 }
 
-
+extension Relationship.State: Codable where T: Codable {
+    
+}
  
+
+extension Relationship {
+    
+    indirect enum State<T: IdentifiableEntity>: Hashable {
+        case faulted([T.ID])
+        case entity([T])
+        case none
+        
+        var ids: [T.ID] {
+            switch self {
+            case .faulted(let ids):
+                return ids
+            case .entity(let entity):
+                return entity.map { $0.id }
+            case .none:
+                return []
+            }
+        }
+        
+        var entity: [T] {
+            switch self {
+            case .faulted:
+                return []
+            case .entity(let entity):
+                return entity
+            case .none:
+                return []
+            }
+        }
+        
+        mutating func normalize() {
+            self = .faulted(ids)
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.ids == rhs.ids
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(ids)
+        }
+    }
+}
