@@ -90,6 +90,24 @@ public extension Relationship where Relation == ToManyRelation, Optionality == N
     init(_ entity: [T]) {
         state = .entity(entity)
     }
+    
+    init(_ ids: [T.ID]?) {
+        guard let ids else {
+            state = .null
+            return
+        }
+        
+        state = .faulted(ids)
+    }
+
+    init(_ entity: [T]?) {
+        guard let entity else {
+            state = .null
+            return
+        }
+        
+        state =  .entity(entity)
+    }
 }
 
 public extension Relationship where Relation == ToManyRelation, Optionality == Required {
@@ -134,6 +152,29 @@ public extension Relationship where Relation == ToOneRelation {
     }
 }
 
+public extension Relationship where Relation == ToOneRelation, Optionality == NotRequired {
+   
+    init(_ id: T.ID?) {
+        guard let id else {
+            state = .null
+            return
+        }
+        
+        state = .faulted([id])
+    }
+
+    init(_ entity: T?) {
+        guard let entity else {
+            state = .null
+            return
+        }
+        
+        state =  .entity([entity])
+    }
+
+}
+
+
 extension Relationship: Codable where T: Codable {
     
 }
@@ -149,6 +190,7 @@ extension Relationship {
         case faulted([T.ID])
         case entity([T])
         case none
+        case null
         
         var ids: [T.ID] {
             switch self {
@@ -156,7 +198,7 @@ extension Relationship {
                 return ids
             case .entity(let entity):
                 return entity.map { $0.id }
-            case .none:
+            case .none, .null:
                 return []
             }
         }
@@ -167,13 +209,13 @@ extension Relationship {
                 return []
             case .entity(let entity):
                 return entity
-            case .none:
+            case .none, .null:
                 return []
             }
         }
         
         mutating func normalize() {
-            self = .faulted(ids)
+            self = .none
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
