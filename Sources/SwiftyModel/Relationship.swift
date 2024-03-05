@@ -7,25 +7,25 @@
 
 import Foundation
 
-public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToOneRelation>
+public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToOneRelation, NotRequired>
  
-public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToManyRelation>
+public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToManyRelation, NotRequired>
  
-public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation>
+public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation, NotRequired>
 
-public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation>
+public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation, NotRequired>
 
-public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
+public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation, NotRequired>
 
-public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
+public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation, NotRequired>
 
-typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation>
+typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation, NotRequired>
 
-typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation>
+typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation, NotRequired>
 
-public enum Unidirectional: DirectionProtocol { }
+public enum Unidirectional { }
 
-public enum Bidirectional: DirectionProtocol { }
+public enum Bidirectional { }
  
 public enum ToOneRelation: RelationProtocol {
     public static var isCollection: Bool { false }
@@ -39,12 +39,20 @@ public protocol RelationProtocol {
     static var isCollection: Bool { get }
 }
 
-public protocol DirectionProtocol {
+
+public enum Required {
     
 }
 
+public enum NotRequired {
+    
+}
 
-public struct Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, Relation: RelationProtocol>: Hashable {
+public enum RequiredNotEmpty {
+    
+}
+
+public struct Relationship<T: IdentifiableEntity, Direction, Relation: RelationProtocol, Optionality>: Hashable {
     var state: State<T>
     
     public mutating func normalize() {
@@ -74,7 +82,7 @@ public struct Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, 
     }
 }
 
-public extension Relationship where Relation == ToManyRelation {
+public extension Relationship where Relation == ToManyRelation, Optionality == NotRequired {
     init(_ ids: [T.ID]) {
         state = .faulted(ids)
     }
@@ -83,7 +91,38 @@ public extension Relationship where Relation == ToManyRelation {
         state = .entity(entity)
     }
 }
- 
+
+public extension Relationship where Relation == ToManyRelation, Optionality == Required {
+    init(_ ids: [T.ID]) {
+        state = .faulted(ids)
+    }
+
+    init(_ entity: [T]) {
+        state = .entity(entity)
+    }
+}
+
+public extension Relationship where Relation == ToManyRelation, Optionality == RequiredNotEmpty {
+    init?(_ ids: [T.ID]) {
+        guard !ids.isEmpty else {
+            return nil
+        }
+        state = .faulted(ids)
+    }
+
+    init?(_ entity: [T]) {
+        guard !entity.isEmpty else {
+            return nil
+        }
+        state = .entity(entity)
+    }
+}
+
+public extension Relationship where Optionality == NotRequired {
+    init() {
+        state = .none
+    }
+}
 
 public extension Relationship where Relation == ToOneRelation {
     init(_ id: T.ID) {

@@ -12,10 +12,10 @@ struct CurrentUser: IdentifiableEntity, Codable {
    static let me = "me"
     
     private(set) var id: String = CurrentUser.me
-    var user: ToOne<User>?
+    var user = ToOne<User>()
     
     mutating func normalize() {
-        user?.normalize()
+        user.normalize()
     }
 }
 
@@ -39,10 +39,10 @@ struct User: IdentifiableEntity, Codable {
     var avatar: Avatar?
     var profile: Profile?
     
-    var chats: ManyToMany<Chat>?
+    var chats = ManyToMany<Chat>()
     
     mutating func normalize() {
-        chats?.normalize()
+        chats.normalize()
     }
     
     func save(_ repository: inout Repository) {

@@ -89,13 +89,7 @@ extension EntitiesRepository {
 }
 
 extension EntitiesRepository {
-    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>?,
-                                                 options: MergeStrategy<T>) {
-        
-        relatedEntity?.entity.forEach { save($0, options: options) }
-    }
-    
-    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>,
+    mutating func save<T: IdentifiableEntity, R, K, O>(_ relatedEntity: Relationship<T, R, K, O>,
                                                  options: MergeStrategy<T>) {
         
         relatedEntity.entity.forEach { save($0, options: options) }

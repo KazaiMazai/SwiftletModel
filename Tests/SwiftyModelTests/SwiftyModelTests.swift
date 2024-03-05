@@ -17,7 +17,7 @@ final class SwiftyModelTests: XCTestCase {
         let message = Message(id: "1", text: "the message", attachment: OneToOne(attachment))
         let chat = Chat(id: "1", messages: OneToMany([message]))
         
-            var user = User(id: "2", name: "alice")
+        var user = User(id: "2", name: "alice")
         user.chats = ManyToMany([chat])
  
         let currentUser = CurrentUser(user: ToOne(user))

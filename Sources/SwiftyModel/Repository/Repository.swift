@@ -70,13 +70,7 @@ extension Repository {
 }
 
 extension Repository {
-    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>?,
-                                                    options: MergeStrategy<T> = .replace) {
-        
-        entitiesRepository.save(relatedEntity, options: options)
-    }
-    
-    mutating func save<T: IdentifiableEntity, R, K>(_ relatedEntity: Relationship<T, R, K>,
+    mutating func save<T: IdentifiableEntity, R, K, Optionality>(_ relatedEntity: Relationship<T, R, K, Optionality>,
                                                     options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(relatedEntity, options: options)

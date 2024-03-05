@@ -24,23 +24,6 @@ extension IdentifiableEntity {
             inverse: nil
         )
     }
-    
-    func relation<Child, Relation>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation>?>,
-        replace: Bool = true
-        
-    ) -> EntitiesLink<Self, Child> {
-        
-        EntitiesLink(
-            parent: id,
-            children: children(keyPath),
-            direct: Link(
-                name: keyPath.relationName,
-                updateOption: Relation.directLinkOption(replace)
-            ),
-            inverse: nil
-        )
-    }
 }
 
 fileprivate extension IdentifiableEntity {
@@ -49,31 +32,6 @@ fileprivate extension IdentifiableEntity {
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>>,
         replace: Bool = true,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>>
-        
-    ) -> EntitiesLink<Self, Child> {
-        
-        EntitiesLink(
-            parent: id,
-            children: children(keyPath),
-            direct: Link(
-                name: keyPath.relationName,
-                updateOption: Relation.directLinkOption(replace)
-            ),
-            inverse: Link(
-                name: inverse.relationName,
-                updateOption: InverseRelation.inverseLinkOption()
-            )
-        )
-    }
-}
-
-
-fileprivate extension IdentifiableEntity {
-    
-    func saveRelation<Child, Relation, InverseRelation>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>?>,
-        replace: Bool = true,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>?>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -109,45 +67,9 @@ extension IdentifiableEntity {
         )
     }
     
-    func removeRelation<Child, Relation>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation>?>
-        
-    ) -> EntitiesLink<Self, Child> {
-        
-        EntitiesLink(
-            parent: id,
-            children: children(keyPath),
-            direct: Link(
-                name: keyPath.relationName,
-                updateOption: .remove
-            ),
-            inverse: nil
-        )
-    }
-    
     func removeRelation<Child, Relation, InverseRelation>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>>
-        
-    ) -> EntitiesLink<Self, Child> {
-        
-        EntitiesLink(
-            parent: id,
-            children: children(keyPath),
-            direct: Link(
-                name: keyPath.relationName,
-                updateOption: .remove
-            ),
-            inverse: Link(
-                name: inverse.relationName,
-                updateOption: .remove
-            )
-        )
-    }
-    
-    func removeRelation<Child, Relation, InverseRelation>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>?>,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>?>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -178,11 +100,7 @@ fileprivate extension RelationProtocol {
 }
 
 fileprivate extension IdentifiableEntity {
-    func children<Child, Direction, Relation>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation>?>) -> [Child.ID] {
-        self[keyPath: keyPath]?.ids ?? []
-    }
-    
-    func children<Child, Direction, Relation>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation>>) -> [Child.ID] {
+    func children<Child, Direction, Relation, Optionality>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation, Optionality>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
 }
@@ -191,9 +109,9 @@ fileprivate extension IdentifiableEntity {
 extension IdentifiableEntity {
     
     func relation<Child>(
-        _ keyPath: KeyPath<Self, OneToMany<Child>?>,
+        _ keyPath: KeyPath<Self, OneToMany<Child>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, ManyToOne<Self>?>
+        inverse: KeyPath<Child, ManyToOne<Self>>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -201,9 +119,9 @@ extension IdentifiableEntity {
     }
     
     func relation<Child>(
-        _ keyPath: KeyPath<Self, ManyToOne<Child>?>,
+        _ keyPath: KeyPath<Self, ManyToOne<Child>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, OneToMany<Self>?>
+        inverse: KeyPath<Child, OneToMany<Self>>
 
     ) -> EntitiesLink<Self, Child> {
         
@@ -211,9 +129,9 @@ extension IdentifiableEntity {
     }
     
     func relation<Child>(
-        _ keyPath: KeyPath<Self, ManyToMany<Child>?>,
+        _ keyPath: KeyPath<Self, ManyToMany<Child>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, ManyToMany<Self>?>
+        inverse: KeyPath<Child, ManyToMany<Self>>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -221,9 +139,9 @@ extension IdentifiableEntity {
     }
     
     func relation<Child>(
-        _ keyPath: KeyPath<Self, OneToOne<Child>?>,
+        _ keyPath: KeyPath<Self, OneToOne<Child>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, OneToOne<Self>?>
+        inverse: KeyPath<Child, OneToOne<Self>>
         
     ) -> EntitiesLink<Self, Child> {
         
