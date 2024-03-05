@@ -14,11 +14,11 @@ final class SwiftyModelTests: XCTestCase {
         var storage = Repository()
         
         let attachment = Attachment(id: "1", kind: .file(URL(string: "http://google.com")!))
-        let message = Message(id: "1", text: "the message", attachment: ToOneMutual(attachment))
-        let chat = Chat(id: "1", messages: ToManyMutual(message))
+        let message = Message(id: "1", text: "the message", attachment: OneToOne(attachment))
+        let chat = Chat(id: "1", messages: OneToMany([message]))
         
             var user = User(id: "2", name: "alice")
-            user.chats = ToManyMutual([chat])
+        user.chats = ManyToMany([chat])
  
         let currentUser = CurrentUser(user: ToOne(user))
  

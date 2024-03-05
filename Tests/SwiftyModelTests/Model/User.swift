@@ -39,7 +39,7 @@ struct User: IdentifiableEntity, Codable {
     var avatar: Avatar?
     var profile: Profile?
     
-    var chats: ToManyMutual<Chat>?
+    var chats: ManyToMany<Chat>?
     
     mutating func normalize() {
         chats?.normalize()

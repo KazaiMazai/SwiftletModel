@@ -13,10 +13,10 @@ struct Message: IdentifiableEntity, Codable {
     let id: String
     let text: String
     var author: ToOne<User>?
-    var chat: ToOneMutual<Chat>?
-    var attachment: ToOneMutual<Attachment>?
-    var replies: ToManyMutual<Message>?
-    var replyTo: ToOneMutual<Message>?
+    var chat: ManyToOne<Chat>?
+    var attachment: OneToOne<Attachment>?
+    var replies: ManyToOne<Message>?
+    var replyTo: OneToOne<Message>?
     var viewers: ToMany<User>?
     
     mutating func normalize() {
