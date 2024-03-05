@@ -41,8 +41,11 @@ extension IdentifiableEntity {
             inverse: nil
         )
     }
+}
+
+fileprivate extension IdentifiableEntity {
     
-    func relation<Child, Relation, InverseRelation>(
+    func saveRelation<Child, Relation, InverseRelation>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>>,
         replace: Bool = true,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>>
@@ -62,8 +65,12 @@ extension IdentifiableEntity {
             )
         )
     }
+}
+
+
+fileprivate extension IdentifiableEntity {
     
-    func relation<Child, Relation, InverseRelation>(
+    func saveRelation<Child, Relation, InverseRelation>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>?>,
         replace: Bool = true,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>?>
@@ -177,5 +184,49 @@ fileprivate extension IdentifiableEntity {
     
     func children<Child, Direction, Relation>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
+    }
+}
+ 
+
+extension IdentifiableEntity {
+    
+    func relation<Child>(
+        _ keyPath: KeyPath<Self, OneToMany<Child>?>,
+        replace: Bool = true,
+        inverse: KeyPath<Child, ManyToOne<Self>?>
+        
+    ) -> EntitiesLink<Self, Child> {
+        
+        saveRelation(keyPath, replace: replace, inverse: inverse)
+    }
+    
+    func relation<Child>(
+        _ keyPath: KeyPath<Self, ManyToOne<Child>?>,
+        replace: Bool = true,
+        inverse: KeyPath<Child, OneToMany<Self>?>
+
+    ) -> EntitiesLink<Self, Child> {
+        
+        saveRelation(keyPath, replace: replace, inverse: inverse)
+    }
+    
+    func relation<Child>(
+        _ keyPath: KeyPath<Self, ManyToMany<Child>?>,
+        replace: Bool = true,
+        inverse: KeyPath<Child, ManyToMany<Self>?>
+        
+    ) -> EntitiesLink<Self, Child> {
+        
+        saveRelation(keyPath, replace: replace, inverse: inverse)
+    }
+    
+    func relation<Child>(
+        _ keyPath: KeyPath<Self, OneToOne<Child>?>,
+        replace: Bool = true,
+        inverse: KeyPath<Child, OneToOne<Self>?>
+        
+    ) -> EntitiesLink<Self, Child> {
+        
+        saveRelation(keyPath, replace: replace, inverse: inverse)
     }
 }

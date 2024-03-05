@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol IdentifiableEntity {
+public protocol IdentifiableEntity {
     associatedtype ID: Hashable & Codable & LosslessStringConvertible
     
     var id: ID { get }

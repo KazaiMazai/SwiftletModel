@@ -7,37 +7,44 @@
 
 import Foundation
 
-typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToOneRelation>
+public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToOneRelation>
+ 
+public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToManyRelation>
+ 
+public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation>
 
-typealias ToOneMutual<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation>
+public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation>
 
-typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToManyRelation>
+public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
 
-typealias ToManyMutual<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
+public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation>
+
 
 typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation>
+
 typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation>
 
-enum Unidirectional: DirectionProtocol { }
+public enum Unidirectional: DirectionProtocol { }
 
-enum Bidirectional: DirectionProtocol { }
+public enum Bidirectional: DirectionProtocol { }
  
-enum ToOneRelation: RelationProtocol {
-    static var isCollection: Bool { false }
+public enum ToOneRelation: RelationProtocol {
+    public static var isCollection: Bool { false }
 }
 
-enum ToManyRelation: RelationProtocol {
-    static var isCollection: Bool { true }
+public enum ToManyRelation: RelationProtocol {
+    public static var isCollection: Bool { true }
 }
  
-protocol RelationProtocol {
+public protocol RelationProtocol {
     static var isCollection: Bool { get }
 }
 
-protocol DirectionProtocol {
+public protocol DirectionProtocol {
+    
 }
 
-indirect enum Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, Relation: RelationProtocol>: Hashable {
+public indirect enum Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, Relation: RelationProtocol>: Hashable {
     case faulted([T.ID])
     case entity([T])
     
@@ -58,26 +65,26 @@ indirect enum Relationship<T: IdentifiableEntity, Direction: DirectionProtocol, 
             return entity        }
     }
     
-    mutating func normalize() {
+    public mutating func normalize() {
         self = .faulted(ids)
     }
     
-    func normalized() -> Self {
+    public func normalized() -> Self {
         var copy = self
         copy.normalize()
         return copy
     }
     
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.ids == rhs.ids
     }
     
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(ids)
     }
 }
 
-extension Relationship where Relation == ToOneRelation {
+public extension Relationship where Relation == ToOneRelation {
     init(_ id: T.ID) {
         self = .faulted([id])
     }
@@ -87,17 +94,13 @@ extension Relationship where Relation == ToOneRelation {
     }
 }
 
-extension Relationship where Relation == ToManyRelation {
+public extension Relationship where Relation == ToManyRelation {
     init(_ ids: [T.ID]) {
         self = .faulted(ids)
     }
 
     init(_ entity: [T]) {
         self = .entity(entity)
-    }
-    
-    init(_ entity: T) {
-        self = .entity([entity])
     }
 }
  
