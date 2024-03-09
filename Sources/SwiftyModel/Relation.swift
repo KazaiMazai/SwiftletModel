@@ -8,8 +8,8 @@
 import Foundation
 
 extension IdentifiableEntity {
-    func relation<Child, Relation>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation>>,
+    func relation<Child, Relation, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>,
         replace: Bool = true
         
     ) -> EntitiesLink<Self, Child> {
@@ -26,18 +26,17 @@ extension IdentifiableEntity {
     }
 }
 
+typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
 
-typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation, Constraint.Optional>
-
-typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation, Constraint.Optional>
+typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
 
 
 fileprivate extension IdentifiableEntity {
     
-    func saveRelation<Child, Relation, InverseRelation>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>>,
+    func saveRelation<Child, Relation, Constraint, InverseRelation, InverseConstraint>(
+        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>>
+        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -57,8 +56,8 @@ fileprivate extension IdentifiableEntity {
 }
 
 extension IdentifiableEntity {
-    func removeRelation<Child, Relation>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation>>
+    func removeRelation<Child, Relation, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -73,9 +72,9 @@ extension IdentifiableEntity {
         )
     }
     
-    func removeRelation<Child, Relation, InverseRelation>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation>>,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation>>
+    func removeRelation<Child, Relation, Constraint, InverseRelation, InverseConstraint>(
+        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
+        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
     ) -> EntitiesLink<Self, Child> {
         
@@ -110,44 +109,52 @@ fileprivate extension IdentifiableEntity {
         self[keyPath: keyPath].ids
     }
 }
- 
 
+
+typealias ManyToOneRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+
+typealias OneToOneRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+
+typealias OneToManyRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+
+typealias ManyToManyRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+ 
 extension IdentifiableEntity {
     
-    func relation<Child>(
-        _ keyPath: KeyPath<Self, OneToMany<Child>>,
+    func relation<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, ManyToOne<Self>>
+        inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>
         
     ) -> EntitiesLink<Self, Child> {
         
         saveRelation(keyPath, replace: replace, inverse: inverse)
     }
     
-    func relation<Child>(
-        _ keyPath: KeyPath<Self, ManyToOne<Child>>,
+    func relation<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, OneToMany<Self>>
+        inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>
 
     ) -> EntitiesLink<Self, Child> {
         
         saveRelation(keyPath, replace: replace, inverse: inverse)
     }
     
-    func relation<Child>(
-        _ keyPath: KeyPath<Self, ManyToMany<Child>>,
+    func relation<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, ManyToManyRelation<Child, Constaint>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, ManyToMany<Self>>
+        inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>
         
     ) -> EntitiesLink<Self, Child> {
         
         saveRelation(keyPath, replace: replace, inverse: inverse)
     }
     
-    func relation<Child>(
-        _ keyPath: KeyPath<Self, OneToOne<Child>>,
+    func relation<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, OneToOneRelation<Child, Constaint>>,
         replace: Bool = true,
-        inverse: KeyPath<Child, OneToOne<Self>>
+        inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>
         
     ) -> EntitiesLink<Self, Child> {
         

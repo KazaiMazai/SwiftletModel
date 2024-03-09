@@ -19,6 +19,8 @@ public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectiona
 
 public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Optional>
 
+
+
 public enum Required {
     public typealias RelationConstraint = Constraint.Required
     
