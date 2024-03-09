@@ -26,6 +26,12 @@ extension IdentifiableEntity {
     }
 }
 
+
+typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation, Constraint.Optional>
+
+typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation, Constraint.Optional>
+
+
 fileprivate extension IdentifiableEntity {
     
     func saveRelation<Child, Relation, InverseRelation>(
