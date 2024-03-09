@@ -7,52 +7,72 @@
 
 import Foundation
 
-public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToOneRelation, NotRequired>
+public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToOne, Constraint.Nullable>
  
-public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, ToManyRelation, NotRequired>
+public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToMany, Constraint.Nullable>
  
-public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation, NotRequired>
+public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Nullable>
 
-public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToOneRelation, NotRequired>
+public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Nullable>
 
-public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation, NotRequired>
+public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Nullable>
 
-public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, ToManyRelation, NotRequired>
+public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Nullable>
 
-typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation, NotRequired>
+public enum Required {
+    
+    public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToOne, Constraint.Required>
+     
+    public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToMany, Constraint.Required>
+     
+    public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Required>
 
-typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation, NotRequired>
+    public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Required>
+
+    public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Required>
+
+    public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Required>
+
+}
+
+typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Bidirectional, Relation, Constraint.Nullable>
+
+typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol> = Relationship<T, Unidirectional, Relation, Constraint.Nullable>
 
 public enum Unidirectional { }
 
 public enum Bidirectional { }
  
-public enum ToOneRelation: RelationProtocol {
-    public static var isCollection: Bool { false }
-}
-
-public enum ToManyRelation: RelationProtocol {
-    public static var isCollection: Bool { true }
-}
- 
 public protocol RelationProtocol {
     static var isCollection: Bool { get }
 }
 
-
-public enum Required {
+public enum Relation {
+    public enum ToMany: RelationProtocol {
+        public static var isCollection: Bool { true }
+    }
     
+   public enum ToOne: RelationProtocol {
+       public static var isCollection: Bool { false }
+   }
 }
 
-public enum NotRequired {
+public enum Constraint {
     
+    public enum Required {
+        
+    }
+
+    public enum Nullable {
+        
+    }
+
+    public enum NotEmpty {
+        
+    }
 }
 
-public enum RequiredNotEmpty {
-    
-}
-
-public struct Relationship<T: IdentifiableEntity, Direction, Relation: RelationProtocol, Optionality>: Hashable {
+public struct Relationship<T: IdentifiableEntity, Direction, RelationType: RelationProtocol, Optionality>: Hashable {
     var state: State<T>
     
     public mutating func normalize() {
@@ -82,7 +102,7 @@ public struct Relationship<T: IdentifiableEntity, Direction, Relation: RelationP
     }
 }
 
-public extension Relationship where Relation == ToManyRelation, Optionality == NotRequired {
+public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.Nullable {
     init(ids: [T.ID]?, elidable: Bool = true) {
         guard let ids else {
             state = .none(explicitNil: elidable)
@@ -102,7 +122,7 @@ public extension Relationship where Relation == ToManyRelation, Optionality == N
     }
 }
 
-public extension Relationship where Relation == ToManyRelation, Optionality == Required {
+public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.Required {
     init(ids: [T.ID]) {
         state = .faulted(ids)
     }
@@ -112,7 +132,7 @@ public extension Relationship where Relation == ToManyRelation, Optionality == R
     }
 }
 
-public extension Relationship where Relation == ToManyRelation, Optionality == RequiredNotEmpty {
+public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.NotEmpty {
     init?(ids: [T.ID]) {
         guard !ids.isEmpty else {
             return nil
@@ -128,13 +148,13 @@ public extension Relationship where Relation == ToManyRelation, Optionality == R
     }
 }
 
-public extension Relationship where Optionality == NotRequired {
+public extension Relationship where Optionality == Constraint.Nullable {
     init() {
         state = .none(explicitNil: false)
     }
 }
 
-public extension Relationship where Relation == ToOneRelation, Optionality == Required {
+public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Required {
     init(id: T.ID) {
         state = .faulted([id])
     }
@@ -144,7 +164,7 @@ public extension Relationship where Relation == ToOneRelation, Optionality == Re
     }
 }
 
-public extension Relationship where Relation == ToOneRelation, Optionality == NotRequired {
+public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Nullable {
    
     init(id: T.ID?, elidable: Bool = true) {
         guard let id else {

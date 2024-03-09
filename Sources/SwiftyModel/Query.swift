@@ -39,7 +39,7 @@ extension Repository {
 
 extension Query {
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, ToOneRelation, Optionality>>) -> Query<Child>? {
+    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToOne, Optionality>>) -> Query<Child>? {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .first
@@ -47,7 +47,7 @@ extension Query {
             .map { Query<Child>(repository: repository, id:  $0) }
     }
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, ToManyRelation, Optionality>>) -> [Query<Child>] {
+    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToMany, Optionality>>) -> [Query<Child>] {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .compactMap { Child.ID($0) }
@@ -58,7 +58,7 @@ extension Query {
 extension Collection {
     
     func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, ToOneRelation, Optionality>>) -> [Query<Child>]
+        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToOne, Optionality>>) -> [Query<Child>]
     
     where Element == Query<Entity> {
         
@@ -66,7 +66,7 @@ extension Collection {
     }
     
     func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, ToManyRelation, Optionality>>) -> [[Query<Child>]]
+        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToMany, Optionality>>) -> [[Query<Child>]]
     
     where Element == Query<Entity> {
         
