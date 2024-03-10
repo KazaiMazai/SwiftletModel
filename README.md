@@ -14,4 +14,7 @@ Domain Model implementation as a plain struct in Swift.
 - CoreData/SwiftData sync (in development)
 
 SwiftyModel is like an ORM but without a database.
+
+
+**Notice:** the package is in early development stage.
  
