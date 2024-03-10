@@ -11,7 +11,6 @@ enum Option {
     case append
     case replace
     case remove
-    case replaceIfNotEmpty
 }
 
 struct Link {
@@ -118,10 +117,6 @@ extension RelationsRepository {
             children.forEach { existingRelations.insert($0.description) }
         case .replace:
             existingRelations = Set(children.map { $0.description })
-        case .replaceIfNotEmpty:
-            if !children.isEmpty {
-                existingRelations = Set(children.map { $0.description })
-            }
         case .remove:
             children.forEach { existingRelations.remove($0.description) }
         }

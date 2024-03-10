@@ -123,7 +123,7 @@ public extension Relationship where RelationType == Relation.ToMany, Optionality
             return
         }
         
-        state = .faulted(ids)
+        state = .faulted(ids, replace: elidable)
     }
 
     init(_ entities: [T]?, elidable: Bool = true) {
@@ -132,17 +132,17 @@ public extension Relationship where RelationType == Relation.ToMany, Optionality
             return
         }
         
-        state = .entity(entities)
+        state = .entity(entities, replace: elidable)
     }
 }
 
 public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.Required {
     init(ids: [T.ID]) {
-        state = .faulted(ids)
+        state = .faulted(ids, replace: true)
     }
 
     init(_ entities: [T]) {
-        state = .entity(entities)
+        state = .entity(entities, replace: true)
     }
 }
 
@@ -151,14 +151,14 @@ public extension Relationship where RelationType == Relation.ToMany, Optionality
         guard !ids.isEmpty else {
             return nil
         }
-        state = .faulted(ids)
+        state = .faulted(ids, replace: true)
     }
 
     init?(_ entities: [T]) {
         guard !entities.isEmpty else {
             return nil
         }
-        state = .entity(entities)
+        state = .entity(entities, replace: true)
     }
 }
 
@@ -170,11 +170,11 @@ public extension Relationship where Optionality == Constraint.Optional {
 
 public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Required {
     init(id: T.ID) {
-        state = .faulted([id])
+        state = .faulted([id], replace: true)
     }
 
     init(_ entity: T) {
-        state = .entity([entity])
+        state = .entity([entity], replace: true)
     }
 }
 
@@ -186,7 +186,7 @@ public extension Relationship where RelationType == Relation.ToOne, Optionality 
             return
         }
         
-        state = .faulted([id])
+        state = .faulted([id], replace: true)
     }
 
     init(_ entity: T?, elidable: Bool = true) {
@@ -195,7 +195,7 @@ public extension Relationship where RelationType == Relation.ToOne, Optionality 
             return
         }
         
-        state = .entity([entity])
+        state = .entity([entity], replace: true)
     }
 }
 
@@ -210,15 +210,15 @@ extension Relationship.State: Codable where T: Codable {
 extension Relationship {
     
     indirect enum State<T: IdentifiableEntity>: Hashable {
-        case faulted([T.ID])
-        case entity([T])
+        case faulted([T.ID], replace: Bool)
+        case entity([T], replace: Bool)
         case none(explicitNil: Bool)
         
         var ids: [T.ID] {
             switch self {
-            case .faulted(let ids):
+            case .faulted(let ids, _):
                 return ids
-            case .entity(let entity):
+            case .entity(let entity, _):
                 return entity.map { $0.id }
             case .none:
                 return []
@@ -229,7 +229,7 @@ extension Relationship {
             switch self {
             case .faulted:
                 return []
-            case .entity(let entity):
+            case .entity(let entity, _):
                 return entity
             case .none:
                 return []
@@ -247,5 +247,27 @@ extension Relationship {
         func hash(into hasher: inout Hasher) {
             hasher.combine(ids)
         }
+        
+        var shouldReplace: Bool {
+            switch self {
+            case .faulted(_, let replace):
+                return replace
+            case .entity(_, let replace):
+                return replace
+            case .none(let explicitNil):
+                return explicitNil
+            }
+        }
     }
 }
+
+extension Relationship {
+    var directLinkSaveOption: Option {
+        state.shouldReplace ? .replace : .append
+    }
+    
+    var inverseLinkSaveOption: Option {
+        RelationType.isCollection ? .append : .replace
+    }
+}
+
