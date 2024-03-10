@@ -8,7 +8,6 @@
 @testable import SwiftyModel
 import Foundation
 
-
 struct Message: IdentifiableEntity, Codable {
     let id: String
     let text: String
@@ -18,7 +17,9 @@ struct Message: IdentifiableEntity, Codable {
     var replies: ManyToOne<Message> = .none
     var replyTo: OneToOne<Message> = .none
     var viewers: ToMany<User> = .none
-    
+}
+
+extension Message {
     mutating func normalize() {
         author.normalize()
         chat.normalize()
