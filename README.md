@@ -1,3 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Logo.svg">
+  <img src="Logo.svg">
+</picture>
+
 # SwiftyModel
 
 Domain Model implementation as a plain struct in Swift. 
