@@ -162,13 +162,19 @@ public extension Relationship where RelationType == Relation.ToMany, Optionality
     }
 }
 
-public extension Relationship where Optionality == Constraint.Optional {
-    init() {
-        state = .none(explicitNil: false)
+public extension Relationship {
+    static var none: Self {
+        Relationship(state: .none(explicitNil: false))
     }
 }
 
-public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Required {
+public extension Relationship where Optionality == Constraint.Optional {
+    static var null: Self {
+        Relationship(state: .none(explicitNil: true))
+    }
+}
+
+public extension Relationship where RelationType == Relation.ToOne {
     init(id: T.ID) {
         state = .faulted([id], replace: true)
     }
@@ -179,20 +185,17 @@ public extension Relationship where RelationType == Relation.ToOne, Optionality 
 }
 
 public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Optional {
-   
-    init(id: T.ID?, elidable: Bool = true) {
+   init?(id: T.ID?) {
         guard let id else {
-            state = .none(explicitNil: elidable)
-            return
+            return nil
         }
         
         state = .faulted([id], replace: true)
     }
 
-    init(_ entity: T?, elidable: Bool = true) {
+    init?(_ entity: T?) {
         guard let entity else {
-            state = .none(explicitNil: elidable)
-            return
+            return nil
         }
         
         state = .entity([entity], replace: true)
@@ -258,12 +261,18 @@ extension Relationship {
                 return explicitNil
             }
         }
+        
     }
 }
 
 extension Relationship {
     var directLinkSaveOption: Option {
-        state.shouldReplace ? .replace : .append
+        switch state {
+        case .faulted(_, let replace), .entity(_, let replace):
+            return replace ? .replace : .append
+        case .none(let explicitNil):
+            return explicitNil ? .remove : .append
+        }
     }
     
     var inverseLinkSaveOption: Option {
