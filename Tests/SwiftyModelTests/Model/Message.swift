@@ -12,12 +12,12 @@ import Foundation
 struct Message: IdentifiableEntity, Codable {
     let id: String
     let text: String
-    var author = ToOne<User>()
-    var chat = ManyToOne<Chat>()
-    var attachment = OneToOne<Attachment>()
-    var replies = ManyToOne<Message>()
-    var replyTo = OneToOne<Message>()
-    var viewers = ToMany<User>()
+    var author: ToOne<User> = .none
+    var chat: ManyToOne<Chat> = .none
+    var attachment: OneToOne<Attachment> = .none
+    var replies: ManyToOne<Message> = .none
+    var replyTo: OneToOne<Message> = .none
+    var viewers: ToMany<User> = .none
     
     mutating func normalize() {
         author.normalize()

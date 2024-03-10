@@ -14,7 +14,7 @@ final class SwiftyModelTests: XCTestCase {
         var user = User(id: "2", name: "alice")
         user.chats = ManyToMany([chat])
  
-        let currentUser = CurrentUser(user: ToOne(nil, elidable: false))
+        let currentUser = CurrentUser(user: ToOne(user))
  
         user.save(&storage)
         storage.save(user)

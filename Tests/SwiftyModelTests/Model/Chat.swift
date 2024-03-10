@@ -10,8 +10,8 @@ import Foundation
 
 struct Chat: IdentifiableEntity, Codable {
     let id: String
-    var users = ManyToMany<User>()
-    var messages = OneToMany<Message>()
+    var users: ManyToMany<User> = .none
+    var messages: OneToMany<Message> = .none
     
     mutating func normalize() {
         users.normalize()

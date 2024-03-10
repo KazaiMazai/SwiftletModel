@@ -19,7 +19,7 @@ extension Attachment {
 struct Attachment: IdentifiableEntity, Codable {
     let id: String 
     var kind: Kind
-    var message = OneToOne<Message>()
+    var message: OneToOne<Message> = .none
     
     mutating func normalize() {
         message.normalize()
