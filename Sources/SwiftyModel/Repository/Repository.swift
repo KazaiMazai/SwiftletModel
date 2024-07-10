@@ -1,20 +1,23 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 02/03/2024.
 //
 
 import Foundation
 
-struct Repository {
+public struct Repository {
     private var entitiesRepository = EntitiesRepository()
     private var relationsRepository = RelationsRepository()
+    
+    public init() {
+        
+    }
 }
 
 extension Repository {
-   
-    
+
     func all<T>() -> [T] {
         entitiesRepository.all()
     }
@@ -51,19 +54,19 @@ extension Repository {
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T,
-                                              options: MergeStrategy<T> = .replace) {
+                                              options: MergeStrategy<T> = T.defaultMergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entity: T?,
-                                              options: MergeStrategy<T> = .replace) {
+                                              options: MergeStrategy<T> = T.defaultMergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: IdentifiableEntity>(_ entities: [T],
-                                              options: MergeStrategy<T> = .replace) {
+                                              options: MergeStrategy<T> = T.defaultMergeStraregy()) {
         
         entitiesRepository.save(entities, options: options)
     }
@@ -71,18 +74,19 @@ extension Repository {
 
 extension Repository {
     mutating func save<T: IdentifiableEntity, R, K, Optionality>(_ relatedEntity: Relationship<T, R, K, Optionality>,
-                                                    options: MergeStrategy<T> = .replace) {
+                                                                 options: MergeStrategy<T> = T.defaultMergeStraregy()) {
         
         entitiesRepository.save(relatedEntity, options: options)
     }
 }
- 
+
 
 extension Repository {
-    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(
-        _ relation: EntitiesLink<T, E>) {
-            
+    mutating func save<T: IdentifiableEntity, E: IdentifiableEntity>(_ relation: EntitiesLink<T, E>) {
+        
         relationsRepository.save(relation)
     }
 }
+
+
 

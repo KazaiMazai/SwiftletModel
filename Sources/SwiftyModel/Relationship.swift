@@ -157,7 +157,7 @@ public extension Relationship where RelationType == Relation.ToMany, Constraints
         state = .faulted(ids, replace: elidable)
     }
 
-    init?(_ entities: [T], elidable: Bool = true) {
+    init?(entities: [T], elidable: Bool = true) {
         guard !entities.isEmpty else {
             return nil
         }
