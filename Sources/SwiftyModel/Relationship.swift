@@ -86,8 +86,8 @@ public enum Constraint {
     }
 }
 
-public struct Relationship<T: IdentifiableEntity, Direction, RelationType: RelationProtocol, Optionality>: Hashable {
-    var state: State<T>
+public struct Relationship<T: IdentifiableEntity, Direction, RelationType: RelationProtocol, Constraints>: Hashable {
+    private var state: State<T>
     
     public mutating func normalize() {
         state.normalize()
@@ -116,51 +116,6 @@ public struct Relationship<T: IdentifiableEntity, Direction, RelationType: Relat
     }
 }
 
-public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.Optional {
-    init(ids: [T.ID]?, elidable: Bool = true) {
-        guard let ids else {
-            state = .none(explicitNil: elidable)
-            return
-        }
-        
-        state = .faulted(ids, replace: elidable)
-    }
-
-    init(_ entities: [T]?, elidable: Bool = true) {
-        guard let entities else {
-            state = .none(explicitNil: elidable)
-            return
-        }
-        
-        state = .entity(entities, replace: elidable)
-    }
-}
-
-public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.Required {
-    init(ids: [T.ID]) {
-        state = .faulted(ids, replace: true)
-    }
-
-    init(_ entities: [T]) {
-        state = .entity(entities, replace: true)
-    }
-}
-
-public extension Relationship where RelationType == Relation.ToMany, Optionality == Constraint.NotEmpty {
-    init?(ids: [T.ID]) {
-        guard !ids.isEmpty else {
-            return nil
-        }
-        state = .faulted(ids, replace: true)
-    }
-
-    init?(_ entities: [T]) {
-        guard !entities.isEmpty else {
-            return nil
-        }
-        state = .entity(entities, replace: true)
-    }
-}
 
 public extension Relationship {
     static var none: Self {
@@ -168,11 +123,48 @@ public extension Relationship {
     }
 }
 
-public extension Relationship where Optionality == Constraint.Optional {
+public extension Relationship where Constraints == Constraint.Optional {
     static var null: Self {
         Relationship(state: .none(explicitNil: true))
     }
 }
+
+public extension Relationship where RelationType == Relation.ToMany, Constraints == Constraint.Optional {
+    init(ids: [T.ID], elidable: Bool = true) {
+        state = .faulted(ids, replace: elidable)
+    }
+
+    init(_ entities: [T], elidable: Bool = true) {
+        state = .entity(entities, replace: elidable)
+    }
+}
+
+public extension Relationship where RelationType == Relation.ToMany, Constraints == Constraint.Required {
+    init(ids: [T.ID], elidable: Bool = true) {
+        state = .faulted(ids, replace: elidable)
+    }
+
+    init(entities: [T], elidable: Bool = true) {
+        state = .entity(entities, replace: elidable)
+    }
+}
+
+public extension Relationship where RelationType == Relation.ToMany, Constraints == Constraint.NotEmpty {
+    init?(ids: [T.ID], elidable: Bool = true) {
+        guard !ids.isEmpty else {
+            return nil
+        }
+        state = .faulted(ids, replace: elidable)
+    }
+
+    init?(entities: [T], elidable: Bool = true) {
+        guard !entities.isEmpty else {
+            return nil
+        }
+        state = .entity(entities, replace: elidable)
+    }
+}
+
 
 public extension Relationship where RelationType == Relation.ToOne {
     init(id: T.ID) {
@@ -180,24 +172,6 @@ public extension Relationship where RelationType == Relation.ToOne {
     }
 
     init(_ entity: T) {
-        state = .entity([entity], replace: true)
-    }
-}
-
-public extension Relationship where RelationType == Relation.ToOne, Optionality == Constraint.Optional {
-   init?(id: T.ID?) {
-        guard let id else {
-            return nil
-        }
-        
-        state = .faulted([id], replace: true)
-    }
-
-    init?(_ entity: T?) {
-        guard let entity else {
-            return nil
-        }
-        
         state = .entity([entity], replace: true)
     }
 }
@@ -210,61 +184,6 @@ extension Relationship.State: Codable where T: Codable {
     
 }
  
-extension Relationship {
-    
-    indirect enum State<T: IdentifiableEntity>: Hashable {
-        case faulted([T.ID], replace: Bool)
-        case entity([T], replace: Bool)
-        case none(explicitNil: Bool)
-        
-        var ids: [T.ID] {
-            switch self {
-            case .faulted(let ids, _):
-                return ids
-            case .entity(let entity, _):
-                return entity.map { $0.id }
-            case .none:
-                return []
-            }
-        }
-        
-        var entity: [T] {
-            switch self {
-            case .faulted:
-                return []
-            case .entity(let entity, _):
-                return entity
-            case .none:
-                return []
-            }
-        }
-        
-        mutating func normalize() {
-            self = .none(explicitNil: false)
-        }
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.ids == rhs.ids
-        }
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(ids)
-        }
-        
-        var shouldReplace: Bool {
-            switch self {
-            case .faulted(_, let replace):
-                return replace
-            case .entity(_, let replace):
-                return replace
-            case .none(let explicitNil):
-                return explicitNil
-            }
-        }
-        
-    }
-}
-
 extension Relationship {
     var directLinkSaveOption: Option {
         switch state {
@@ -280,3 +199,45 @@ extension Relationship {
     }
 }
 
+private extension Relationship {
+   
+   indirect enum State<T: IdentifiableEntity>: Hashable {
+       case faulted([T.ID], replace: Bool)
+       case entity([T], replace: Bool)
+       case none(explicitNil: Bool)
+       
+       var ids: [T.ID] {
+           switch self {
+           case .faulted(let ids, _):
+               return ids
+           case .entity(let entity, _):
+               return entity.map { $0.id }
+           case .none:
+               return []
+           }
+       }
+       
+       var entity: [T] {
+           switch self {
+           case .faulted:
+               return []
+           case .entity(let entity, _):
+               return entity
+           case .none:
+               return []
+           }
+       }
+       
+       mutating func normalize() {
+           self = .none(explicitNil: false)
+       }
+       
+       static func == (lhs: Self, rhs: Self) -> Bool {
+           lhs.ids == rhs.ids
+       }
+       
+       func hash(into hasher: inout Hasher) {
+           hasher.combine(ids)
+       }
+   }
+}

@@ -7,47 +7,65 @@
 
 import Foundation
 
-struct MergeStrategy<T> {
-    let merge: (T, T) -> T
+public struct MergeStrategy<T> {
+    let merge: (_ old: T, _ new: T) -> T
+    
+    public init(merge: @escaping (T, T) -> T) {
+        self.merge = merge
+    }
 }
  
-extension MergeStrategy {
+public extension MergeStrategy {
     static var replace: MergeStrategy<T> {
         MergeStrategy(merge: { _, new in new })
     }
 }
 
-extension MergeStrategy {
-    static func keepingOldIfNil<T>() -> MergeStrategy<Optional<T>>   {
-        MergeStrategy<Optional<T>> { old, new in
-            new ?? old
-        }
-    }
-    
-    static func appending<T>() -> MergeStrategy<[T]>   {
-        MergeStrategy<[T]> { old, new in
-            [old, new].flatMap { $0 }
-        }
-    }
-    
-    static func appending<T>() -> MergeStrategy<Optional<[T]>>   {
-        MergeStrategy<Optional<[T]>> { old, new in
-            let result = MergeStrategy<[T]>
-                .appending()
-                .merge(old ?? [], new ?? [])
-            
-            return result.isEmpty ? nil : result
+public extension MergeStrategy {
+    init(_ strategies: MergeStrategy<T>...) {
+        merge = { old, new in
+            strategies.reduce(new, { partialResult, strategy in
+                strategy.merge(old, partialResult)
+            })
         }
     }
 }
 
-extension IdentifiableEntity {
-    func merge<Property>(_ keyPath: WritableKeyPath<Self, Property>,
-                          with existing: Self,
-                          using mergeStrategy: MergeStrategy<Property>) -> Self {
-         
-        var selfCopy = self
-        selfCopy[keyPath: keyPath] = mergeStrategy.merge(existing[keyPath: keyPath], self[keyPath: keyPath])
-        return selfCopy
+public extension MergeStrategy {
+    
+    static func patch<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Optional<Value>>) -> MergeStrategy<Entity>   {
+        MergeStrategy<Entity> { old, new in
+            var new = new
+            new[keyPath: keyPath] = new[keyPath: keyPath] ?? old[keyPath: keyPath]
+            return new
+        }
+    }
+    
+    static func patch<Value>() -> MergeStrategy<Optional<Value>>   {
+        MergeStrategy<Optional<Value>> { old, new in
+            new ?? old
+        }
     }
 }
+
+public extension MergeStrategy {
+    static func append<Entity, Value>(_ keyPath: WritableKeyPath<Entity, [Value]>) -> MergeStrategy<Entity>   {
+        MergeStrategy<Entity> { old, new in
+            var new = new
+            new[keyPath: keyPath] = [old[keyPath: keyPath], new[keyPath: keyPath]].flatMap { $0 }
+            return new
+        }
+    }
+    
+    static func append<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Optional<[Value]>>) -> MergeStrategy<Entity>   {
+        MergeStrategy<Entity> { old, new in
+            var new = new
+            let result = [old[keyPath: keyPath], new[keyPath: keyPath]]
+                .compactMap { $0 }
+                .flatMap { $0 }
+            new[keyPath: keyPath] = result.isEmpty ? nil : result
+            return new
+        }
+    }
+}
+

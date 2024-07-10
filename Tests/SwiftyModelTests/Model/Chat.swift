@@ -20,7 +20,7 @@ struct Chat: IdentifiableEntity, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(users, options: .mergingWithExising)
+        repository.save(users)
         repository.save(relation(\.users, inverse: \.chats))
         
         repository.save(messages)

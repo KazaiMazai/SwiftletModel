@@ -8,17 +8,17 @@
 @testable import SwiftyModel
 import Foundation
 
-struct CurrentUser: IdentifiableEntity, Codable {
-   static let me = "me"
+struct Current: IdentifiableEntity, Codable {
+    static let id: String = "current"
     
-    private(set) var id: String = CurrentUser.me
+    private(set) var id: String = Current.id
+    
     var user: ToOne<User> = .none
     
     mutating func normalize() {
         user.normalize()
     }
 }
-
 
 extension User {
     struct Profile: Codable {
@@ -36,39 +36,32 @@ extension User {
 struct User: IdentifiableEntity, Codable {
     let id: String
     let name: String
-    var avatar: Avatar?
-    var profile: Profile?
-    
-    var chats: ManyToMany<Chat> = .none
-    
+    private(set) var avatar: Avatar?
+    private(set) var profile: Profile?
+    private(set) var chats: ManyToMany<Chat> = .none
+     
     mutating func normalize() {
         chats.normalize()
     }
     
     func save(_ repository: inout Repository) {
-        repository.save(self, options: .mergingWithExising)
-       
+        repository.save(self)
         repository.save(chats)
         repository.save(relation(\.chats, inverse: \.users))
     }
-}
-
-extension MergeStrategy {
-    static var mergingWithExising: MergeStrategy<User> {
-        
-        MergeStrategy<User> { exisingUser, newUser in
-            
-            newUser
-                .merge(\.profile, with: exisingUser, using: .keepingOldIfNil())
-                .merge(\.avatar, with: exisingUser, using: .keepingOldIfNil())
-        }
+    
+    static func defaultMergeStraregy() -> MergeStrategy<User> {
+        MergeStrategy(
+            .patch(\.profile),
+            .patch(\.avatar)
+        )
     }
 }
 
 extension Query where Entity == User {
     var isMe: Bool {
         repository
-            .query(CurrentUser.self, id: CurrentUser.me)
+            .query(Current.self, id: Current.id)
             .related(\.user)?.id == id
     }
 }

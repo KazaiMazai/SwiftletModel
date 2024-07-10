@@ -13,6 +13,14 @@ public protocol IdentifiableEntity {
     var id: ID { get }
     
     mutating func normalize()
+    
+    static func defaultMergeStraregy() -> MergeStrategy<Self>
+}
+
+public extension IdentifiableEntity {
+    static func defaultMergeStraregy() -> MergeStrategy<Self> {
+        MergeStrategy.replace
+    }
 }
 
 extension IdentifiableEntity {

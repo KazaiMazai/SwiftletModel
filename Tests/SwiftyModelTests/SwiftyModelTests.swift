@@ -11,10 +11,9 @@ final class SwiftyModelTests: XCTestCase {
         let chat = Chat(id: "1", messages: OneToMany([message]))
          
         
-        var user = User(id: "2", name: "alice")
-        user.chats = ManyToMany([chat])
- 
-        let currentUser = CurrentUser(user: ToOne(user))
+        var user = User(id: "2", name: "alice", chats: ManyToMany([chat]))
+        
+        let currentUser = Current(user: ToOne(user))
  
         user.save(&storage)
         storage.save(user)
@@ -24,6 +23,7 @@ final class SwiftyModelTests: XCTestCase {
         storage.save(currentUser)
         storage.save(currentUser.user)
         storage.save(currentUser.relation(\.user))
+        
 
         storage.save(message)
         storage.save(attachment)

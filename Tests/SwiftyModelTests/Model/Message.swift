@@ -31,8 +31,9 @@ extension Message {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(author, options: .mergingWithExising)
-       
+        repository.save(author)
+        repository.save(relation(\.author))
+
         repository.save(chat)
         repository.save(relation(\.chat, inverse: \.messages))
     }

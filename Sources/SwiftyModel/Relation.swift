@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 extension IdentifiableEntity {
     func relation<Child, Relation, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
