@@ -39,7 +39,7 @@ extension Repository {
 
 extension Query {
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToOne, Optionality>>) -> Query<Child>? {
+    func related<Child, Direction, Constraint>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToOne, Constraint>>) -> Query<Child>? {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .first
@@ -47,7 +47,7 @@ extension Query {
             .map { Query<Child>(repository: repository, id:  $0) }
     }
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToMany, Optionality>>) -> [Query<Child>] {
+    func related<Child, Direction, Constraint>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToMany, Constraint>>) -> [Query<Child>] {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .compactMap { Child.ID($0) }
@@ -57,16 +57,16 @@ extension Query {
 
 extension Collection {
     
-    func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToOne, Optionality>>) -> [Query<Child>]
+    func related<Entity, Child, Direction, Constraint>(
+        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToOne, Constraint>>) -> [Query<Child>]
     
     where Element == Query<Entity> {
         
         compactMap { $0.related(keyPath) }
     }
     
-    func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToMany, Optionality>>) -> [[Query<Child>]]
+    func related<Entity, Child, Direction, Constraint>(
+        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, RelationKind.ToMany, Constraint>>) -> [[Query<Child>]]
     
     where Element == Query<Entity> {
         

@@ -8,8 +8,8 @@
 import Foundation
 
 extension EntityModel {
-    func relation<Child, Relation, Constraint>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
+    func relation<Child, Kind, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Kind, Constraint>>
         
     ) -> EntitiesAttachment<Self, Child> {
         
@@ -25,15 +25,15 @@ extension EntityModel {
     }
 }
 
-typealias MutualRelation<T: EntityModel, Relation: RelationKindProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
+typealias MutualRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relationship<T, Bidirectional, Kind, Constraint>
 
-typealias OneWayRelation<T: EntityModel, Relation: RelationKindProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
+typealias OneWayRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relationship<T, Unidirectional, Kind, Constraint>
 
 
 fileprivate extension EntityModel {
     
-    func saveRelation<Child, Relation, Constraint, InverseRelation, InverseConstraint>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
+    func saveRelation<Child, Kind, Constraint, InverseRelation, InverseConstraint>(
+        _ keyPath: KeyPath<Self, MutualRelation<Child, Kind, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
     ) -> EntitiesAttachment<Self, Child> {
@@ -54,8 +54,8 @@ fileprivate extension EntityModel {
 }
 
 extension EntityModel {
-    func removeRelation<Child, Relation, Constraint>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
+    func removeRelation<Child, Kind, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Kind, Constraint>>
         
     ) -> EntitiesAttachment<Self, Child> {
         
@@ -70,8 +70,8 @@ extension EntityModel {
         )
     }
     
-    func removeRelation<Child, Relation, Constraint, InverseRelation, InverseConstraint>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
+    func removeRelation<Child, Kind, Constraint, InverseRelation, InverseConstraint>(
+        _ keyPath: KeyPath<Self, MutualRelation<Child, Kind, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
     ) -> EntitiesAttachment<Self, Child> {
@@ -92,7 +92,7 @@ extension EntityModel {
 }
 
 fileprivate extension EntityModel {
-    func children<Child, Direction, Relation, Optionality>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation, Optionality>>) -> [Child.ID] {
+    func children<Child, Direction, Kind, Constraint>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Kind, Constraint>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
 }
