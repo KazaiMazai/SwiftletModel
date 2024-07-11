@@ -25,9 +25,9 @@ extension EntityModel {
     }
 }
 
-typealias MutualRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relationship<T, Bidirectional, Kind, Constraint>
+typealias MutualRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relation<T, Bidirectional, Kind, Constraint>
 
-typealias OneWayRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relationship<T, Unidirectional, Kind, Constraint>
+typealias OneWayRelation<T: EntityModel, Kind: RelationKindProtocol, Constraint> = Relation<T, Unidirectional, Kind, Constraint>
 
 
 fileprivate extension EntityModel {
@@ -92,19 +92,19 @@ extension EntityModel {
 }
 
 fileprivate extension EntityModel {
-    func children<Child, Direction, Kind, Constraint>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Kind, Constraint>>) -> [Child.ID] {
+    func children<Child, Direction, Kind, Constraint>(_ keyPath: KeyPath<Self, Relation<Child, Direction, Kind, Constraint>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
 }
 
 
-typealias ManyToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint>
+typealias ManyToOneRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint>
 
-typealias OneToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint>
+typealias OneToOneRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint>
 
-typealias OneToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint>
+typealias OneToManyRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint>
 
-typealias ManyToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint>
+typealias ManyToManyRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint>
  
 extension EntityModel {
     

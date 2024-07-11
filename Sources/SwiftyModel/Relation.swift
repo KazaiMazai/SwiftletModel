@@ -7,50 +7,50 @@
 
 import Foundation
 
-public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToOne, Constraint.Optional>
+public typealias ToOne<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToOne, Constraint.Optional>
  
-public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToMany, Constraint.Optional>
+public typealias ToMany<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToMany, Constraint.Optional>
  
-public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint.Optional>
+public typealias ManyToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint.Optional>
 
-public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint.Optional>
+public typealias OneToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint.Optional>
 
-public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint.Optional>
+public typealias OneToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint.Optional>
 
-public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint.Optional>
+public typealias ManyToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint.Optional>
 
 
 
 public enum Required {
     public typealias RelationConstraint = Constraint.Required
     
-    public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
 }
 
 public enum NotEmpty {
     public typealias RelationConstraint = Constraint.NotEmpty
     
-    public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relation<T, Unidirectional, RelationKind.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
 }
 
 public enum Unidirectional { }
@@ -61,7 +61,7 @@ public protocol RelationKindProtocol {
     static var isToMany: Bool { get }
 }
 
-extension Relationship: Storable {
+extension Relation: Storable {
     public func save(_ repository: inout Repository) {
         entity.forEach { $0.save(&repository) }
     }
@@ -92,7 +92,7 @@ public enum Constraint {
     }
 }
 
-public struct Relationship<T: EntityModel, Direction, Kind: RelationKindProtocol, Constraints>: Hashable {
+public struct Relation<T: EntityModel, Direction, Kind: RelationKindProtocol, Constraints>: Hashable {
     private var state: State<T>
     
     public mutating func normalize() {
@@ -123,19 +123,19 @@ public struct Relationship<T: EntityModel, Direction, Kind: RelationKindProtocol
 }
 
 
-public extension Relationship {
+public extension Relation {
     static var none: Self {
-        Relationship(state: .none(explicitNil: false))
+        Relation(state: .none(explicitNil: false))
     }
 }
 
-public extension Relationship where Constraints == Constraint.Optional {
+public extension Relation where Constraints == Constraint.Optional {
     static var null: Self {
-        Relationship(state: .none(explicitNil: true))
+        Relation(state: .none(explicitNil: true))
     }
 }
 
-public extension Relationship where Kind == RelationKind.ToMany, Constraints == Constraint.Optional {
+public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.Optional {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -145,7 +145,7 @@ public extension Relationship where Kind == RelationKind.ToMany, Constraints == 
     }
 }
 
-public extension Relationship where Kind == RelationKind.ToMany, Constraints == Constraint.Required {
+public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.Required {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -155,7 +155,7 @@ public extension Relationship where Kind == RelationKind.ToMany, Constraints == 
     }
 }
 
-public extension Relationship where Kind == RelationKind.ToMany, Constraints == Constraint.NotEmpty {
+public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.NotEmpty {
     init?(ids: [T.ID], elidable: Bool = true) {
         guard !ids.isEmpty else {
             return nil
@@ -172,7 +172,7 @@ public extension Relationship where Kind == RelationKind.ToMany, Constraints == 
 }
 
 
-public extension Relationship where Kind == RelationKind.ToOne {
+public extension Relation where Kind == RelationKind.ToOne {
     init(id: T.ID) {
         state = .faulted([id], replace: true)
     }
@@ -182,15 +182,15 @@ public extension Relationship where Kind == RelationKind.ToOne {
     }
 }
 
-extension Relationship: Codable where T: Codable {
+extension Relation: Codable where T: Codable {
     
 }
 
-extension Relationship.State: Codable where T: Codable {
+extension Relation.State: Codable where T: Codable {
     
 }
  
-extension Relationship {
+extension Relation {
     var directLinkSaveOption: Option {
         switch state {
         case .faulted(_, let replace), .entity(_, let replace):
@@ -205,7 +205,7 @@ extension Relationship {
     }
 }
 
-private extension Relationship {
+private extension Relation {
    
    indirect enum State<T: EntityModel>: Hashable {
        case faulted([T.ID], replace: Bool)

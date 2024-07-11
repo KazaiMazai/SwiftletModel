@@ -73,7 +73,7 @@ extension Repository {
 }
 
 extension Repository {
-    mutating func save<T: EntityModel, R, K, Optionality>(_ relatedEntity: Relationship<T, R, K, Optionality>,
+    mutating func save<T: EntityModel, R, K, Optionality>(_ relatedEntity: Relation<T, R, K, Optionality>,
                                                                  options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(relatedEntity, options: options)
