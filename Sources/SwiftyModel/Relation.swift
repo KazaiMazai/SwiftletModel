@@ -7,33 +7,33 @@
 
 import Foundation
 
-public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, Constraint.Optional>
+public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, Relations.Optional>
  
-public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, Constraint.Optional>
+public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, Relations.Optional>
  
-public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint.Optional>
+public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Relations.Optional>
 
-public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint.Optional>
+public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Relations.Optional>
 
-public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint.Optional>
+public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Relations.Optional>
 
-public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint.Optional>
+public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Relations.Optional>
 
-typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.Mutual, Cardinality, Constraint>
+typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
 
-typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.OneWay, Cardinality, Constraint>
+typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
 
-typealias ManyToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+typealias ManyToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-typealias OneToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+typealias OneToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-typealias OneToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
+typealias OneToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
 
-typealias ManyToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
+typealias ManyToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
  
 
 public enum Required {
-    public typealias RelationConstraint = Constraint.Required
+    public typealias RelationConstraint = Relations.Required
     
     public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
      
@@ -49,7 +49,7 @@ public enum Required {
 }
 
 public enum NotEmpty {
-    public typealias RelationConstraint = Constraint.NotEmpty
+    public typealias RelationConstraint = Relations.NotEmpty
     
     public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
      
@@ -72,10 +72,8 @@ public protocol CardinalityProtocol {
     static var isToMany: Bool { get }
 }
 
-extension Relation: Storable {
-    public func save(_ repository: inout Repository) {
-        entity.forEach { $0.save(&repository) }
-    }
+public protocol ConstraintsProtocol {
+    
 }
 
 public enum Relations {
@@ -91,26 +89,24 @@ public enum Relations {
    public enum ToOne: CardinalityProtocol {
        public static var isToMany: Bool { false }
    }
-}
-
-public enum Constraint {
     
-    public enum Required {
+    public enum Required: ConstraintsProtocol {
         
     }
-
-    public enum Optional {
+    
+    public enum Optional: ConstraintsProtocol {
         
     }
-
-    public enum NotEmpty {
+    
+    public enum NotEmpty: ConstraintsProtocol {
         
     }
 }
 
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
-                                                                                    Cardinality: CardinalityProtocol {
+                                                                                    Cardinality: CardinalityProtocol,
+                                                                                    Constraints: ConstraintsProtocol {
         
     private var state: State<T>
     
@@ -141,6 +137,11 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
     }
 }
 
+extension Relation: Storable {
+    public func save(_ repository: inout Repository) {
+        entity.forEach { $0.save(&repository) }
+    }
+}
 
 public extension Relation {
     static var none: Self {
@@ -148,13 +149,13 @@ public extension Relation {
     }
 }
 
-public extension Relation where Constraints == Constraint.Optional {
+public extension Relation where Constraints == Relations.Optional {
     static var null: Self {
         Relation(state: .none(explicitNil: true))
     }
 }
 
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Constraint.Optional {
+public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.Optional {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -164,7 +165,7 @@ public extension Relation where Cardinality == Relations.ToMany, Constraints == 
     }
 }
 
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Constraint.Required {
+public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.Required {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -174,7 +175,7 @@ public extension Relation where Cardinality == Relations.ToMany, Constraints == 
     }
 }
 
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Constraint.NotEmpty {
+public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.NotEmpty {
     init?(ids: [T.ID], elidable: Bool = true) {
         guard !ids.isEmpty else {
             return nil
