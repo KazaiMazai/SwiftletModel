@@ -7,61 +7,61 @@
 
 import Foundation
 
-public typealias ToOne<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToOne, Constraint.Optional>
+public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, Constraint.Optional>
  
-public typealias ToMany<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToMany, Constraint.Optional>
+public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, Constraint.Optional>
  
-public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, Constraint.Optional>
+public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint.Optional>
 
-public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, Constraint.Optional>
+public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint.Optional>
 
-public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, Constraint.Optional>
+public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint.Optional>
 
-public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, Constraint.Optional>
+public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint.Optional>
 
-typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.Bidirectional, Cardinality, Constraint>
+typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.Mutual, Cardinality, Constraint>
 
-typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.Unidirectional, Cardinality, Constraint>
+typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Relations.OneWay, Cardinality, Constraint>
 
-typealias ManyToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Bidirectional, Relations.ToOne, Constraint>
+typealias ManyToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-typealias OneToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Bidirectional, Relations.ToOne, Constraint>
+typealias OneToOneRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-typealias OneToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Bidirectional, Relations.ToMany, Constraint>
+typealias OneToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
 
-typealias ManyToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Bidirectional, Relations.ToMany, Constraint>
+typealias ManyToManyRelation<T: EntityModel, Constraint> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
  
 
 public enum Required {
     public typealias RelationConstraint = Constraint.Required
     
-    public typealias ToOne<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
 }
 
 public enum NotEmpty {
     public typealias RelationConstraint = Constraint.NotEmpty
     
-    public typealias ToOne<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: EntityModel> = Relation<T, Relations.Unidirectional, Relations.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Bidirectional, Relations.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
 }
 
 public protocol DirectionalityProtocol {
@@ -80,9 +80,9 @@ extension Relation: Storable {
 
 public enum Relations {
     
-    public enum Unidirectional: DirectionalityProtocol { }
+    public enum OneWay: DirectionalityProtocol { }
 
-    public enum Bidirectional: DirectionalityProtocol { }
+    public enum Mutual: DirectionalityProtocol { }
      
     public enum ToMany: CardinalityProtocol {
         public static var isToMany: Bool { true }
