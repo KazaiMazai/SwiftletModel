@@ -93,15 +93,6 @@ fileprivate extension EntityModel {
     }
 }
 
-
-typealias ManyToOneRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint>
-
-typealias OneToOneRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToOne, Constraint>
-
-typealias OneToManyRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint>
-
-typealias ManyToManyRelation<T: EntityModel, Constraint> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint>
- 
 extension EntityModel {
     
     func relation<Child, Constaint, InverseConstraint>(
