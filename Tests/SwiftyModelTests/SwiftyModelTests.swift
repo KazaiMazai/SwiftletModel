@@ -4,61 +4,40 @@ import XCTest
 final class SwiftyModelTests: XCTestCase {
    
     func test() {
-        var storage = Repository()
+        var repository = Repository()
         
+        let author = User(id: "1", name: "Bob")
         let attachment = Attachment(id: "1", kind: .file(URL(string: "http://google.com")!))
-        let message = Message(id: "1", text: "the message", attachment: OneToOne(attachment))
-        let chat = Chat(id: "1", messages: OneToMany([message]))
-         
-        
-        var user = User(id: "2", name: "alice", chats: ManyToMany([chat]))
-        
+        let message = Message(id: "1", text: "Hello world", author: ToOne(author), attachment: OneToOne(attachment))
+        let chat = Chat(id: "1", users: ManyToMany([author], elidable: false), messages: OneToMany([message]))
+        let user = User(id: "2", name: "Alice", chats: ManyToMany([chat], elidable: false))
         let currentUser = Current(user: ToOne(user))
- 
-        user.save(&storage)
-        storage.save(user)
-        storage.save(user.chats)
-        storage.save(user.relation(\.chats, inverse: \.users))
-
-        storage.save(currentUser)
-        storage.save(currentUser.user)
-        storage.save(currentUser.relation(\.user))
         
-
-        storage.save(message)
-        storage.save(attachment)
+        currentUser.save(&repository)
+           
+        let allMessages: [Message] = repository.all()
         
-        let retrievedUser: [Chat] = storage
+        let retrievedUser: [Chat] = repository
             .query(User.self, id: "2")
             .related(\.chats)
             .resolve()
             .compactMap { $0 }
 
 
-        storage.save(message.relation(\.attachment, inverse: \.message))
-        storage.save(attachment.relation(\.message, inverse: \.attachment))
-        storage.save(user.relation(\.chats, inverse: \.users))
-
         let attachments: Attachment? = Message
-            .query("1", in: storage)
+            .query("1", in: repository)
             .related(\.attachment)?
             .resolve()
         
-        let messages = Chat.query("1", in: storage)
+        let messages = Chat
+            .query("1", in: repository)
             .related(\.messages)
             .resolve()
             .compactMap { $0 }
-         
-        messages
-            .map { message in
-            (message,
-             message
-                .query(in: storage)
-                .related(\.author)
-            )
-        }
+          
+        XCTAssertEqual(Chat.query("1", in: repository).related(\.users).count, 2)
 
-        let messageAttachment = storage
+        let messageAttachment = repository
             .query(Message.self, id: "1")
             .related(\.attachment)?
             .resolve()
@@ -72,14 +51,14 @@ final class SwiftyModelTests: XCTestCase {
 //            .related(\.message)?
 //            .resolve() ?? []
         
-        let retrievedMessage = storage
+        let retrievedMessage = repository
             .query(Attachment.self, id: "1")
             .related(\.message)?
             .resolve()
         
         print(retrievedMessage?.text)
         
-        let users: [User] = storage.all()
+        let users: [User] = repository.all()
     }
     
 }
