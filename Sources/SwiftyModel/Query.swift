@@ -36,10 +36,12 @@ extension Repository {
     }
 }
 
-
 extension Query {
     
-    func related<Child, Direction, Constraint>(_ keyPath: KeyPath<Entity, Relation<Child, Direction, Relations.ToOne, Constraint>>) -> Query<Child>? {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
+    
+    ) -> Query<Child>? {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .first
@@ -47,7 +49,10 @@ extension Query {
             .map { Query<Child>(repository: repository, id:  $0) }
     }
     
-    func related<Child, Direction, Constraint>(_ keyPath: KeyPath<Entity, Relation<Child, Direction, Relations.ToMany, Constraint>>) -> [Query<Child>] {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    
+    ) -> [Query<Child>] {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .compactMap { Child.ID($0) }
@@ -57,16 +62,16 @@ extension Query {
 
 extension Collection {
     
-    func related<Entity, Child, Direction, Constraint>(
-        _ keyPath: KeyPath<Entity, Relation<Child, Direction, Relations.ToOne, Constraint>>) -> [Query<Child>]
+    func related<Entity, Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
     
     where Element == Query<Entity> {
         
         compactMap { $0.related(keyPath) }
     }
     
-    func related<Entity, Child, Direction, Constraint>(
-        _ keyPath: KeyPath<Entity, Relation<Child, Direction, Relations.ToMany, Constraint>>) -> [[Query<Child>]]
+    func related<Entity, Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [[Query<Child>]]
     
     where Element == Query<Entity> {
         
