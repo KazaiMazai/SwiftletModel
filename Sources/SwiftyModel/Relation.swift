@@ -96,7 +96,10 @@ public enum Constraint {
     }
 }
 
-public struct Relation<T: EntityModel, Directionality: DirectionalityProtocol, Cardinality: CardinalityProtocol, Constraints>: Hashable {
+public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
+                                                                                    Directionality: DirectionalityProtocol,
+                                                                                    Cardinality: CardinalityProtocol {
+        
     private var state: State<T>
     
     public mutating func normalize() {
