@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 02/03/2024.
 //
@@ -13,16 +13,16 @@ enum Option {
     case remove
 }
 
-struct Link {
+struct AttachmentAttribute {
     let name: String
     let updateOption: Option
 }
 
-struct EntitiesLink<Parent: EntityModel, Child: EntityModel> {
+struct EntitiesAttachment<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID
     let children: [Child.ID]
-    let direct: Link
-    let inverse: Link?
+    let direct: AttachmentAttribute
+    let inverse: AttachmentAttribute?
 }
 
 struct RelationsRepository: Codable {
@@ -35,30 +35,30 @@ struct RelationsRepository: Codable {
 
 extension RelationsRepository {
     mutating func save<Parent, Child>(
-        _ entitiesLink: EntitiesLink<Parent, Child>)
+        _ entitiesAttachment: EntitiesAttachment<Parent, Child>)
     
     where Parent: EntityModel, Child: EntityModel {
         
         saveChildren(
             Parent.self,
             childrenType: Child.self,
-            id: entitiesLink.parent,
-            relationName: entitiesLink.direct.name,
-            children: entitiesLink.children,
-            option: entitiesLink.direct.updateOption
+            id: entitiesAttachment.parent,
+            relationName: entitiesAttachment.direct.name,
+            children: entitiesAttachment.children,
+            option: entitiesAttachment.direct.updateOption
         )
         
-        guard let inverseUpdate = entitiesLink.inverse else {
+        guard let inverseUpdate = entitiesAttachment.inverse else {
             return
         }
         
-        entitiesLink.children.forEach {
+        entitiesAttachment.children.forEach {
             saveChildren(
                 Child.self,
                 childrenType: Parent.self,
                 id: $0,
                 relationName: inverseUpdate.name,
-                children: [entitiesLink.parent],
+                children: [entitiesAttachment.parent],
                 option: inverseUpdate.updateOption
             )
         }
@@ -81,9 +81,9 @@ extension RelationsRepository {
 extension RelationsRepository {
     
     mutating func setChildren<Parent: EntityModel>(for: Parent.Type,
-                                                          relationName: String,
-                                                          id: Parent.ID,
-                                                          relations: Set<String>) {
+                                                   relationName: String,
+                                                   id: Parent.ID,
+                                                   relations: Set<String>) {
         
         let key = String(reflecting: Parent.self)
         
@@ -102,31 +102,31 @@ extension RelationsRepository {
                                                       children: [Child.ID],
                                                       option: Option)
     where
-
-    Parent: EntityModel,
-    Child: EntityModel {
     
-        var existingRelations = findChildren(
-            for: Parent.self,
-            relationName: relationName,
-            id: id
-        )
-        
-        switch option {
-        case .append:
-            children.forEach { existingRelations.insert($0.description) }
-        case .replace:
-            existingRelations = Set(children.map { $0.description })
-        case .remove:
-            children.forEach { existingRelations.remove($0.description) }
-        }
-        
-        setChildren(
-            for: Parent.self,
-            relationName: relationName,
-            id: id,
-            relations: existingRelations
-        )
+Parent: EntityModel,
+Child: EntityModel {
+    
+    var existingRelations = findChildren(
+        for: Parent.self,
+        relationName: relationName,
+        id: id
+    )
+    
+    switch option {
+    case .append:
+        children.forEach { existingRelations.insert($0.description) }
+    case .replace:
+        existingRelations = Set(children.map { $0.description })
+    case .remove:
+        children.forEach { existingRelations.remove($0.description) }
     }
+    
+    setChildren(
+        for: Parent.self,
+        relationName: relationName,
+        id: id,
+        relations: existingRelations
+    )
+}
 }
 

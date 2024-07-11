@@ -11,12 +11,12 @@ extension EntityModel {
     func relation<Child, Relation, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
-        EntitiesLink(
+        EntitiesAttachment(
             parent: id,
             children: children(keyPath),
-            direct: Link(
+            direct: AttachmentAttribute(
                 name: keyPath.relationName,
                 updateOption: self[keyPath: keyPath].directLinkSaveOption
             ),
@@ -36,16 +36,16 @@ fileprivate extension EntityModel {
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
-        EntitiesLink(
+        EntitiesAttachment(
             parent: id,
             children: children(keyPath),
-            direct: Link(
+            direct: AttachmentAttribute(
                 name: keyPath.relationName,
                 updateOption: self[keyPath: keyPath].directLinkSaveOption
             ),
-            inverse: Link(
+            inverse: AttachmentAttribute(
                 name: inverse.relationName,
                 updateOption: self[keyPath: keyPath].inverseLinkSaveOption
             )
@@ -57,12 +57,12 @@ extension EntityModel {
     func removeRelation<Child, Relation, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
-        EntitiesLink(
+        EntitiesAttachment(
             parent: id,
             children: children(keyPath),
-            direct: Link(
+            direct: AttachmentAttribute(
                 name: keyPath.relationName,
                 updateOption: .remove
             ),
@@ -74,16 +74,16 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
-        EntitiesLink(
+        EntitiesAttachment(
             parent: id,
             children: children(keyPath),
-            direct: Link(
+            direct: AttachmentAttribute(
                 name: keyPath.relationName,
                 updateOption: .remove
             ),
-            inverse: Link(
+            inverse: AttachmentAttribute(
                 name: inverse.relationName,
                 updateOption: .remove
             )
@@ -112,7 +112,7 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
         saveRelation(keyPath, inverse: inverse)
     }
@@ -121,7 +121,7 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>
 
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
         saveRelation(keyPath, inverse: inverse)
     }
@@ -130,7 +130,7 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, ManyToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
         saveRelation(keyPath, inverse: inverse)
     }
@@ -139,7 +139,7 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, OneToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>
         
-    ) -> EntitiesLink<Self, Child> {
+    ) -> EntitiesAttachment<Self, Child> {
         
         saveRelation(keyPath, inverse: inverse)
     }
