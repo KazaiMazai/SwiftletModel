@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Query<Entity: IdentifiableEntity> {
+struct Query<Entity: EntityModel> {
     let repository: Repository
     let id: Entity.ID
     
@@ -23,23 +23,25 @@ extension Collection {
 }
 
 extension Repository {
-    func query<Entity: IdentifiableEntity>(_ id: Entity.ID) -> Query<Entity> {
+    func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
         query(Entity.self, id: id)
     }
     
-    func query<Entity: IdentifiableEntity>(_ type: Entity.Type, id: Entity.ID) -> Query<Entity> {
+    func query<Entity: EntityModel>(_ type: Entity.Type, id: Entity.ID) -> Query<Entity> {
         Query(repository: self, id: id)
     }
     
-    func query<Entity: IdentifiableEntity>(_ ids: [Entity.ID]) -> [Query<Entity>] {
+    func query<Entity: EntityModel>(_ ids: [Entity.ID]) -> [Query<Entity>] {
         ids.map { query($0) }
     }
 }
 
-
 extension Query {
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToOne, Optionality>>) -> Query<Child>? {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
+    
+    ) -> Query<Child>? {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .first
@@ -47,7 +49,10 @@ extension Query {
             .map { Query<Child>(repository: repository, id:  $0) }
     }
     
-    func related<Child, Direction, Optionality>(_ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToMany, Optionality>>) -> [Query<Child>] {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    
+    ) -> [Query<Child>] {
         repository
             .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
             .compactMap { Child.ID($0) }
@@ -57,16 +62,16 @@ extension Query {
 
 extension Collection {
     
-    func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToOne, Optionality>>) -> [Query<Child>]
+    func related<Entity, Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
     
     where Element == Query<Entity> {
         
         compactMap { $0.related(keyPath) }
     }
     
-    func related<Entity, Child, Direction, Optionality>(
-        _ keyPath: KeyPath<Entity, Relationship<Child, Direction, Relation.ToMany, Optionality>>) -> [[Query<Child>]]
+    func related<Entity, Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [[Query<Child>]]
     
     where Element == Query<Entity> {
         

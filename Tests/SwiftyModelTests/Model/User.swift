@@ -8,7 +8,7 @@
 @testable import SwiftyModel
 import Foundation
 
-struct Current: IdentifiableEntity, Codable {
+struct Current: EntityModel, Codable {
     static let id: String = "current"
     
     private(set) var id: String = Current.id
@@ -40,7 +40,7 @@ extension User {
     }
 }
     
-struct User: IdentifiableEntity, Codable {
+struct User: EntityModel, Codable {
     let id: String
     let name: String
     private(set) var avatar: Avatar?
