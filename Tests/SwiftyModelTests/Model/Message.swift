@@ -8,7 +8,7 @@
 @testable import SwiftyModel
 import Foundation
 
-struct Message: IdentifiableEntity, Codable {
+struct Message: EntityModel, Codable {
     let id: String
     let text: String
     private(set) var author: ToOne<User> = .none

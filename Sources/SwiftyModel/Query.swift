@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Query<Entity: IdentifiableEntity> {
+struct Query<Entity: EntityModel> {
     let repository: Repository
     let id: Entity.ID
     
@@ -23,15 +23,15 @@ extension Collection {
 }
 
 extension Repository {
-    func query<Entity: IdentifiableEntity>(_ id: Entity.ID) -> Query<Entity> {
+    func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
         query(Entity.self, id: id)
     }
     
-    func query<Entity: IdentifiableEntity>(_ type: Entity.Type, id: Entity.ID) -> Query<Entity> {
+    func query<Entity: EntityModel>(_ type: Entity.Type, id: Entity.ID) -> Query<Entity> {
         Query(repository: self, id: id)
     }
     
-    func query<Entity: IdentifiableEntity>(_ ids: [Entity.ID]) -> [Query<Entity>] {
+    func query<Entity: EntityModel>(_ ids: [Entity.ID]) -> [Query<Entity>] {
         ids.map { query($0) }
     }
 }

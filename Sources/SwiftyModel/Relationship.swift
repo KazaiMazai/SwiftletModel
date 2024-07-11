@@ -7,50 +7,50 @@
 
 import Foundation
 
-public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToOne, Constraint.Optional>
+public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToOne, Constraint.Optional>
  
-public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToMany, Constraint.Optional>
+public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToMany, Constraint.Optional>
  
-public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Optional>
+public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Optional>
 
-public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Optional>
+public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, Constraint.Optional>
 
-public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Optional>
+public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Optional>
 
-public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Optional>
+public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, Constraint.Optional>
 
 
 
 public enum Required {
     public typealias RelationConstraint = Constraint.Required
     
-    public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
 }
 
 public enum NotEmpty {
     public typealias RelationConstraint = Constraint.NotEmpty
     
-    public typealias ToOne<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToOne, RelationConstraint>
+    public typealias ToOne<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToOne, RelationConstraint>
      
-    public typealias ToMany<T: IdentifiableEntity> = Relationship<T, Unidirectional, Relation.ToMany, RelationConstraint>
+    public typealias ToMany<T: EntityModel> = Relationship<T, Unidirectional, Relation.ToMany, RelationConstraint>
      
-    public typealias ManyToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
+    public typealias ManyToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
 
-    public typealias OneToOne<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
+    public typealias OneToOne<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToOne, RelationConstraint>
 
-    public typealias OneToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
+    public typealias OneToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
 
-    public typealias ManyToMany<T: IdentifiableEntity> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
+    public typealias ManyToMany<T: EntityModel> = Relationship<T, Bidirectional, Relation.ToMany, RelationConstraint>
 }
 
 public enum Unidirectional { }
@@ -92,7 +92,7 @@ public enum Constraint {
     }
 }
 
-public struct Relationship<T: IdentifiableEntity, Direction, RelationType: RelationProtocol, Constraints>: Hashable {
+public struct Relationship<T: EntityModel, Direction, RelationType: RelationProtocol, Constraints>: Hashable {
     private var state: State<T>
     
     public mutating func normalize() {
@@ -207,7 +207,7 @@ extension Relationship {
 
 private extension Relationship {
    
-   indirect enum State<T: IdentifiableEntity>: Hashable {
+   indirect enum State<T: EntityModel>: Hashable {
        case faulted([T.ID], replace: Bool)
        case entity([T], replace: Bool)
        case none(explicitNil: Bool)

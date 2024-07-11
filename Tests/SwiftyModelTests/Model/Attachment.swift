@@ -16,7 +16,7 @@ extension Attachment {
     }
 }
 
-struct Attachment: IdentifiableEntity, Codable {
+struct Attachment: EntityModel, Codable {
     let id: String 
     var kind: Kind
     var message: OneToOne<Message> = .none

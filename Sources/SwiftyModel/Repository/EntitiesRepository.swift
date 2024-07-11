@@ -13,7 +13,7 @@ struct EntitiesRepository {
     typealias EntityName = String
     typealias RelationName = String
      
-    private var storages: [EntityName: [EntityID: any IdentifiableEntity]] = [:]
+    private var storages: [EntityName: [EntityID: any EntityModel]] = [:]
     
 }
 
@@ -23,17 +23,17 @@ extension EntitiesRepository {
         return storages[key]?.compactMap { $0.value as? T } ?? []
     }
     
-    func find<T: IdentifiableEntity>(_ id: T.ID) -> T? {
+    func find<T: EntityModel>(_ id: T.ID) -> T? {
         let key = EntityName(reflecting: T.self)
         let storage = storages[key] ?? [:]
         return storage[id.description] as? T
     }
     
-    func findAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
+    func findAll<T: EntityModel>(_ ids: [T.ID]) -> [T?] {
         ids.map { find($0) }
     }
     
-    func findAllExisting<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T] {
+    func findAllExisting<T: EntityModel>(_ ids: [T.ID]) -> [T] {
         findAll(ids).compactMap { $0 }
     }
 }
@@ -41,7 +41,7 @@ extension EntitiesRepository {
 extension EntitiesRepository {
     
     @discardableResult
-    mutating func remove<T: IdentifiableEntity>(_ id: T.ID) -> T? {
+    mutating func remove<T: EntityModel>(_ id: T.ID) -> T? {
         let key = EntityName(reflecting: T.self)
         var storage = storages[key] ?? [:]
         let value = storage[id.description] as? T
@@ -51,11 +51,11 @@ extension EntitiesRepository {
     }
     
     @discardableResult
-    mutating func removeAll<T: IdentifiableEntity>(_ ids: [T.ID]) -> [T?] {
+    mutating func removeAll<T: EntityModel>(_ ids: [T.ID]) -> [T?] {
         ids.map { remove($0) }
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entity: T, options: MergeStrategy<T>) {
+    mutating func save<T: EntityModel>(_ entity: T, options: MergeStrategy<T>) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
           
@@ -72,7 +72,7 @@ extension EntitiesRepository {
         storages[key] = storage
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entity: T?,
+    mutating func save<T: EntityModel>(_ entity: T?,
                                               options: MergeStrategy<T>) {
         guard let entity else {
             return
@@ -81,7 +81,7 @@ extension EntitiesRepository {
         save(entity, options: options)
     }
     
-    mutating func save<T: IdentifiableEntity>(_ entities: [T],
+    mutating func save<T: EntityModel>(_ entities: [T],
                                               options: MergeStrategy<T>) {
         
         entities.forEach { save($0, options: options) }
@@ -89,7 +89,7 @@ extension EntitiesRepository {
 }
 
 extension EntitiesRepository {
-    mutating func save<T: IdentifiableEntity, R, K, O>(_ relatedEntity: Relationship<T, R, K, O>,
+    mutating func save<T: EntityModel, R, K, O>(_ relatedEntity: Relationship<T, R, K, O>,
                                                  options: MergeStrategy<T>) {
         
         relatedEntity.entity.forEach { save($0, options: options) }

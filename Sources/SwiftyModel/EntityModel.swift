@@ -11,25 +11,25 @@ public protocol Storable {
     func save(_ repository: inout Repository)
 }
 
-public protocol IdentifiableEntity: Storable {
+public protocol EntityModel: Storable {
     associatedtype ID: Hashable & Codable & LosslessStringConvertible
     
     var id: ID { get }
     
     mutating func normalize()
     
-    static func defaultMergeStraregy() -> MergeStrategy<Self>
+    static func mergeStraregy() -> MergeStrategy<Self>
     
 }
 
 
-public extension IdentifiableEntity {
-    static func defaultMergeStraregy() -> MergeStrategy<Self> {
+public extension EntityModel {
+    static func mergeStraregy() -> MergeStrategy<Self> {
         MergeStrategy.replace
     }
 }
 
-extension IdentifiableEntity {
+extension EntityModel {
     func query(in repository: Repository) -> Query<Self> {
         Query(repository: repository, id: id)
     }
@@ -43,7 +43,7 @@ extension IdentifiableEntity {
     }
 }
 
-extension IdentifiableEntity {
+extension EntityModel {
     func normalized() -> Self {
         var copy = self
         copy.normalize()

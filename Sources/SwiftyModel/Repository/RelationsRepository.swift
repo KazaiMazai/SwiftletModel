@@ -18,7 +18,7 @@ struct Link {
     let updateOption: Option
 }
 
-struct EntitiesLink<Parent: IdentifiableEntity, Child: IdentifiableEntity> {
+struct EntitiesLink<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID
     let children: [Child.ID]
     let direct: Link
@@ -37,7 +37,7 @@ extension RelationsRepository {
     mutating func save<Parent, Child>(
         _ entitiesLink: EntitiesLink<Parent, Child>)
     
-    where Parent: IdentifiableEntity, Child: IdentifiableEntity {
+    where Parent: EntityModel, Child: EntityModel {
         
         saveChildren(
             Parent.self,
@@ -64,7 +64,7 @@ extension RelationsRepository {
         }
     }
     
-    func findChildren<Parent: IdentifiableEntity>(
+    func findChildren<Parent: EntityModel>(
         for: Parent.Type,
         relationName: String,
         id: Parent.ID) -> Set<String> {
@@ -80,7 +80,7 @@ extension RelationsRepository {
 
 extension RelationsRepository {
     
-    mutating func setChildren<Parent: IdentifiableEntity>(for: Parent.Type,
+    mutating func setChildren<Parent: EntityModel>(for: Parent.Type,
                                                           relationName: String,
                                                           id: Parent.ID,
                                                           relations: Set<String>) {
@@ -103,8 +103,8 @@ extension RelationsRepository {
                                                       option: Option)
     where
 
-    Parent: IdentifiableEntity,
-    Child: IdentifiableEntity {
+    Parent: EntityModel,
+    Child: EntityModel {
     
         var existingRelations = findChildren(
             for: Parent.self,

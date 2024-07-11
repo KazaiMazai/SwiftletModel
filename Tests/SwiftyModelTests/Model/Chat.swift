@@ -8,7 +8,7 @@
 @testable import SwiftyModel
 import Foundation
 
-struct Chat: IdentifiableEntity, Codable {
+struct Chat: EntityModel, Codable {
     let id: String
     var users: ManyToMany<User> = .none
     var messages: OneToMany<Message> = .none

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension IdentifiableEntity {
+extension EntityModel {
     func relation<Child, Relation, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
         
@@ -25,12 +25,12 @@ extension IdentifiableEntity {
     }
 }
 
-typealias MutualRelation<T: IdentifiableEntity, Relation: RelationProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
+typealias MutualRelation<T: EntityModel, Relation: RelationProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
 
-typealias OneWayRelation<T: IdentifiableEntity, Relation: RelationProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
+typealias OneWayRelation<T: EntityModel, Relation: RelationProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
 
 
-fileprivate extension IdentifiableEntity {
+fileprivate extension EntityModel {
     
     func saveRelation<Child, Relation, Constraint, InverseRelation, InverseConstraint>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Relation, Constraint>>,
@@ -53,7 +53,7 @@ fileprivate extension IdentifiableEntity {
     }
 }
 
-extension IdentifiableEntity {
+extension EntityModel {
     func removeRelation<Child, Relation, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Relation, Constraint>>
         
@@ -91,22 +91,22 @@ extension IdentifiableEntity {
     }
 }
 
-fileprivate extension IdentifiableEntity {
+fileprivate extension EntityModel {
     func children<Child, Direction, Relation, Optionality>(_ keyPath: KeyPath<Self, Relationship<Child, Direction, Relation, Optionality>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
 }
 
 
-typealias ManyToOneRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+typealias ManyToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
 
-typealias OneToOneRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+typealias OneToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
 
-typealias OneToManyRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+typealias OneToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
 
-typealias ManyToManyRelation<T: IdentifiableEntity, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+typealias ManyToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
  
-extension IdentifiableEntity {
+extension EntityModel {
     
     func relation<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
