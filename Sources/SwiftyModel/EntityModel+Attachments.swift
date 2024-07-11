@@ -25,9 +25,9 @@ extension EntityModel {
     }
 }
 
-typealias MutualRelation<T: EntityModel, Relation: RelationProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
+typealias MutualRelation<T: EntityModel, Relation: RelationKindProtocol, Constraint> = Relationship<T, Bidirectional, Relation, Constraint>
 
-typealias OneWayRelation<T: EntityModel, Relation: RelationProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
+typealias OneWayRelation<T: EntityModel, Relation: RelationKindProtocol, Constraint> = Relationship<T, Unidirectional, Relation, Constraint>
 
 
 fileprivate extension EntityModel {
@@ -98,13 +98,13 @@ fileprivate extension EntityModel {
 }
 
 
-typealias ManyToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+typealias ManyToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint>
 
-typealias OneToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToOne, Constraint>
+typealias OneToOneRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToOne, Constraint>
 
-typealias OneToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+typealias OneToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint>
 
-typealias ManyToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, Relation.ToMany, Constraint>
+typealias ManyToManyRelation<T: EntityModel, Constraint> = Relationship<T, Bidirectional, RelationKind.ToMany, Constraint>
  
 extension EntityModel {
     

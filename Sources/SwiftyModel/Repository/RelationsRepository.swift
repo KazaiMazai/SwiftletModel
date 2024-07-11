@@ -7,24 +7,6 @@
 
 import Foundation
 
-enum Option {
-    case append
-    case replace
-    case remove
-}
-
-struct AttachmentAttribute {
-    let name: String
-    let updateOption: Option
-}
-
-struct EntitiesAttachment<Parent: EntityModel, Child: EntityModel> {
-    let parent: Parent.ID
-    let children: [Child.ID]
-    let direct: AttachmentAttribute
-    let inverse: AttachmentAttribute?
-}
-
 struct RelationsRepository: Codable {
     typealias EntityID = String
     typealias EntityName = String
