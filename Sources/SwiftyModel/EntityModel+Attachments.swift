@@ -25,10 +25,6 @@ extension EntityModel {
     }
 }
 
-typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Bidirectional, Cardinality, Constraint>
-
-typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Unidirectional, Cardinality, Constraint>
-
 
 fileprivate extension EntityModel {
     

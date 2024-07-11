@@ -19,6 +19,9 @@ public typealias OneToMany<T: EntityModel> = Relation<T, Bidirectional, Relation
 
 public typealias ManyToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, Constraint.Optional>
 
+typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Bidirectional, Cardinality, Constraint>
+
+typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint> = Relation<T, Unidirectional, Cardinality, Constraint>
 
 
 public enum Required {
