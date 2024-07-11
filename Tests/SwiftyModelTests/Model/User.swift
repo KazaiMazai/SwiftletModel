@@ -18,6 +18,13 @@ struct Current: IdentifiableEntity, Codable {
     mutating func normalize() {
         user.normalize()
     }
+    
+    func save(_ repostory: inout Repository) {
+        repostory.save(self)
+        repostory.save(relation(\.user))
+        
+        user.save(&repostory)
+    }
 }
 
 extension User {
@@ -46,8 +53,8 @@ struct User: IdentifiableEntity, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(chats)
         repository.save(relation(\.chats, inverse: \.users))
+        chats.save(&repository)
     }
     
     static func defaultMergeStraregy() -> MergeStrategy<User> {

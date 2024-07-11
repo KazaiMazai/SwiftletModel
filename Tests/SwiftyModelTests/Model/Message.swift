@@ -11,12 +11,12 @@ import Foundation
 struct Message: IdentifiableEntity, Codable {
     let id: String
     let text: String
-    var author: ToOne<User> = .none
-    var chat: ManyToOne<Chat> = .none
-    var attachment: OneToOne<Attachment> = .none
-    var replies: ManyToOne<Message> = .none
-    var replyTo: OneToOne<Message> = .none
-    var viewers: ToMany<User> = .none
+    private(set) var author: ToOne<User> = .none
+    private(set) var chat: ManyToOne<Chat> = .none
+    private(set) var attachment: OneToOne<Attachment> = .none
+    private(set) var replies: ManyToOne<Message> = .none
+    private(set) var replyTo: OneToOne<Message> = .none
+    private(set) var viewers: ToMany<User> = .none
 }
 
 extension Message {
@@ -31,11 +31,20 @@ extension Message {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(author)
+       
         repository.save(relation(\.author))
-
-        repository.save(chat)
         repository.save(relation(\.chat, inverse: \.messages))
+        repository.save(relation(\.attachment, inverse: \.message))
+        repository.save(relation(\.replies, inverse: \.replyTo))
+        repository.save(relation(\.replyTo, inverse: \.replies))
+        repository.save(relation(\.viewers))
+        
+        author.save(&repository)
+        chat.save(&repository)
+        attachment.save(&repository)
+        replies.save(&repository)
+        replyTo.save(&repository)
+        viewers.save(&repository)
     }
 }
 

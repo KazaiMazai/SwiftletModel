@@ -24,4 +24,10 @@ struct Attachment: IdentifiableEntity, Codable {
     mutating func normalize() {
         message.normalize()
     }
+    
+    func save(_ repository: inout Repository) {
+        repository.save(self)
+        repository.save(relation(\.message, inverse: \.attachment))
+        message.save(&repository)
+    }
 }

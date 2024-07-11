@@ -7,7 +7,11 @@
 
 import Foundation
 
-public protocol IdentifiableEntity {
+public protocol Storable {
+    func save(_ repository: inout Repository)
+}
+
+public protocol IdentifiableEntity: Storable {
     associatedtype ID: Hashable & Codable & LosslessStringConvertible
     
     var id: ID { get }
@@ -15,7 +19,9 @@ public protocol IdentifiableEntity {
     mutating func normalize()
     
     static func defaultMergeStraregy() -> MergeStrategy<Self>
+    
 }
+
 
 public extension IdentifiableEntity {
     static func defaultMergeStraregy() -> MergeStrategy<Self> {

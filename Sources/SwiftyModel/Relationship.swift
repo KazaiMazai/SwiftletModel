@@ -61,6 +61,12 @@ public protocol RelationProtocol {
     static var isCollection: Bool { get }
 }
 
+extension Relationship: Storable {
+    public func save(_ repository: inout Repository) {
+        entity.forEach { $0.save(&repository) }
+    }
+}
+
 public enum Relation {
     public enum ToMany: RelationProtocol {
         public static var isCollection: Bool { true }
