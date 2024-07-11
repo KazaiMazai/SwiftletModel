@@ -53,11 +53,15 @@ public enum NotEmpty {
     public typealias ManyToMany<T: EntityModel> = Relation<T, Bidirectional, RelationKind.ToMany, RelationConstraint>
 }
 
-public enum Unidirectional { }
+public enum Unidirectional: DirectionalityProtocol { }
 
-public enum Bidirectional { }
+public enum Bidirectional: DirectionalityProtocol { }
  
-public protocol RelationKindProtocol {
+public protocol DirectionalityProtocol {
+    
+}
+
+public protocol CardinalityProtocol {
     static var isToMany: Bool { get }
 }
 
@@ -68,11 +72,11 @@ extension Relation: Storable {
 }
 
 public enum RelationKind {
-    public enum ToMany: RelationKindProtocol {
+    public enum ToMany: CardinalityProtocol {
         public static var isToMany: Bool { true }
     }
     
-   public enum ToOne: RelationKindProtocol {
+   public enum ToOne: CardinalityProtocol {
        public static var isToMany: Bool { false }
    }
 }
@@ -92,7 +96,7 @@ public enum Constraint {
     }
 }
 
-public struct Relation<T: EntityModel, Direction, Kind: RelationKindProtocol, Constraints>: Hashable {
+public struct Relation<T: EntityModel, Directionality: DirectionalityProtocol, Cardinality: CardinalityProtocol, Constraints>: Hashable {
     private var state: State<T>
     
     public mutating func normalize() {
@@ -135,7 +139,7 @@ public extension Relation where Constraints == Constraint.Optional {
     }
 }
 
-public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.Optional {
+public extension Relation where Cardinality == RelationKind.ToMany, Constraints == Constraint.Optional {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -145,7 +149,7 @@ public extension Relation where Kind == RelationKind.ToMany, Constraints == Cons
     }
 }
 
-public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.Required {
+public extension Relation where Cardinality == RelationKind.ToMany, Constraints == Constraint.Required {
     init(ids: [T.ID], elidable: Bool = true) {
         state = .faulted(ids, replace: elidable)
     }
@@ -155,7 +159,7 @@ public extension Relation where Kind == RelationKind.ToMany, Constraints == Cons
     }
 }
 
-public extension Relation where Kind == RelationKind.ToMany, Constraints == Constraint.NotEmpty {
+public extension Relation where Cardinality == RelationKind.ToMany, Constraints == Constraint.NotEmpty {
     init?(ids: [T.ID], elidable: Bool = true) {
         guard !ids.isEmpty else {
             return nil
@@ -172,7 +176,7 @@ public extension Relation where Kind == RelationKind.ToMany, Constraints == Cons
 }
 
 
-public extension Relation where Kind == RelationKind.ToOne {
+public extension Relation where Cardinality == RelationKind.ToOne {
     init(id: T.ID) {
         state = .faulted([id], replace: true)
     }
@@ -201,7 +205,7 @@ extension Relation {
     }
     
     var inverseLinkSaveOption: Option {
-        Kind.isToMany ? .append : .replace
+        Cardinality.isToMany ? .append : .replace
     }
 }
 
