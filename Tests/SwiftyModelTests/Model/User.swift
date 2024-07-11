@@ -13,7 +13,7 @@ struct Current: EntityModel, Codable {
     
     private(set) var id: String = Current.id
     
-    var user: ToOne<User> = .none
+    var user: HasOne<User> = .none
     
     mutating func normalize() {
         user.normalize()
@@ -45,7 +45,7 @@ struct User: EntityModel, Codable {
     let name: String
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    private(set) var chats: ManyToMany<Chat> = .none
+    private(set) var chats: HasMany<Chat> = .none
      
     mutating func normalize() {
         chats.normalize()

@@ -8,10 +8,10 @@ final class SwiftyModelTests: XCTestCase {
         
         let author = User(id: "1", name: "Bob")
         let attachment = Attachment(id: "1", kind: .file(URL(string: "http://google.com")!))
-        let message = Message(id: "1", text: "Hello world", author: ToOne(author), attachment: OneToOne(attachment))
-        let chat = Chat(id: "1", users: ManyToMany([author], elidable: false), messages: OneToMany([message]))
-        let user = User(id: "2", name: "Alice", chats: ManyToMany([chat], elidable: false))
-        let currentUser = Current(user: ToOne(user))
+        let message = Message(id: "1", text: "Hello world", author: HasOne(author), attachment: HasOneMutual(attachment))
+        let chat = Chat(id: "1", users: HasManyMutual([author], elidable: false), messages: HasManyMutual([message]))
+        let user = User(id: "2", name: "Alice", chats: HasManyMutual([chat], elidable: false))
+        let currentUser = Current(user: HasOne(user))
         
         currentUser.save(&repository)
            
