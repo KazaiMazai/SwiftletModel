@@ -7,49 +7,33 @@
 
 import Foundation
 
-public typealias HasOne<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Optional>
+public enum Relations { }
 
-public typealias BelongsTo<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Required>
-
-public typealias HasMany<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.Required>
-
-public typealias HasManyNonEmpty<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
-
-public typealias ToOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Optional>
-
-public typealias FromOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Required>
-
-public typealias ToMany<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.Required>
-
-public typealias ToManyNonEmpty<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
-
-public typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
-
-public typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
-
-public enum Relations {
+public extension Relations {
+    enum OneWay: DirectionalityProtocol { }
     
-    public enum OneWay: DirectionalityProtocol { }
-    
-    public enum Mutual: DirectionalityProtocol { }
-    
-    public enum ToMany: CardinalityProtocol {
+    enum Mutual: DirectionalityProtocol { }
+}
+
+public extension Relations {
+    enum ToMany: CardinalityProtocol {
         public static var isToMany: Bool { true }
     }
     
-    public enum ToOne: CardinalityProtocol {
+    enum ToOne: CardinalityProtocol {
         public static var isToMany: Bool { false }
     }
+}
+
+public extension Relations {
+    enum Required: ConstraintsProtocol, RequiredRelation { }
     
-    public enum Required: ConstraintsProtocol, RequiredRelation {
-        
-    }
+    enum Optional: ConstraintsProtocol, OptionalRelation { }
+}
+
+public extension Relations {
     
-    public enum Optional: ConstraintsProtocol, OptionalRelation {
-        
-    }
-    
-    public struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyValidation {
+    struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyValidation {
         public enum Errors: Error {
             case empty
         }
@@ -68,10 +52,6 @@ public enum Relations {
     }
 }
 
-public protocol CardinalityProtocol {
-    static var isToMany: Bool { get }
-}
-
 public protocol DirectionalityProtocol { }
 
 public protocol ConstraintsProtocol { }
@@ -79,6 +59,10 @@ public protocol ConstraintsProtocol { }
 public protocol RequiredRelation { }
 
 public protocol OptionalRelation { }
+
+public protocol CardinalityProtocol {
+    static var isToMany: Bool { get }
+}
 
 public protocol ToManyValidation: ConstraintsProtocol {
     associatedtype Entity: EntityModel

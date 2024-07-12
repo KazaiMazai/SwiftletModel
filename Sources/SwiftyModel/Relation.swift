@@ -7,6 +7,66 @@
 
 import Foundation
 
+public typealias HasOne = Relations.HasOne
+
+public typealias BelongsTo = Relations.BelongsTo
+
+public typealias HasMany = Relations.HasMany
+
+public typealias HasManyNonEmpty = Relations.HasManyNonEmpty
+
+public typealias ToOne = Relations.ToOneRelation
+
+public typealias FromOne = Relations.FromOne
+
+public typealias ToMany = Relations.ToManyRelation
+
+public typealias ToManyNonEmpty = Relations.ToManyNonEmpty
+
+public typealias MutualRelation = Relations.MutualRelation
+
+public typealias OneWayRelation = Relations.OneWayRelation
+
+public typealias MutualToOne = Relations.MutualToOne
+
+public typealias MutualToMany = Relations.MutualToMany
+
+public typealias OneWayToOne = Relations.OneWayToOne
+
+public typealias OneWayToMany = Relations.OneWayToMany
+
+public extension Relations {
+    
+    typealias HasOne<T: EntityModel> = Relation<T, Mutual, ToOne, Optional>
+
+    typealias BelongsTo<T: EntityModel> = Relation<T, Mutual, ToOne, Required>
+
+    typealias HasMany<T: EntityModel> = Relation<T, Mutual, ToMany, Required>
+
+    typealias HasManyNonEmpty<T: EntityModel> = Relation<T, Mutual, ToMany, NonEmpty<T>>
+
+    typealias ToOneRelation<T: EntityModel> = Relation<T, OneWay, ToOne, Optional>
+
+    typealias FromOne<T: EntityModel> = Relation<T, OneWay, ToOne, Required>
+
+    typealias ToManyRelation<T: EntityModel> = Relation<T, OneWay, ToMany, Required>
+
+    typealias ToManyNonEmpty<T: EntityModel> = Relation<T, OneWay, ToMany, NonEmpty<T>>
+
+    typealias MutualToOne<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Mutual, ToOne, Constraint>
+
+    typealias MutualToMany<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Mutual, ToMany, Constraint>
+
+    typealias OneWayToOne<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, OneWay, ToOne, Constraint>
+
+    typealias OneWayToMany<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, OneWay, ToMany, Constraint>
+    
+    typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Mutual, Cardinality, Constraint>
+
+    typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, OneWay, Cardinality, Constraint>
+
+}
+
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
                                                                                     Cardinality: CardinalityProtocol,
