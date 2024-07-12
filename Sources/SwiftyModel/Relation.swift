@@ -7,21 +7,21 @@
 
 import Foundation
 
-public typealias HasOne = Relations.HasOne
+public typealias HasOne = Relations.MutualToOneOptional
 
-public typealias BelongsTo = Relations.BelongsTo
+public typealias BelongsTo = Relations.MutualToOneRequired
 
-public typealias HasMany = Relations.HasMany
+public typealias HasMany = Relations.MutualToManyRequired
 
-public typealias HasManyNonEmpty = Relations.HasManyNonEmpty
+public typealias HasManyNonEmpty = Relations.MutualToManyNonEmpty
 
 public typealias ToOne = Relations.OneWayToOneOptional
 
-public typealias FromOne = Relations.FromOne
+public typealias FromOne = Relations.OneWayToOneRequired
 
 public typealias ToMany = Relations.OneWayToManyRequired
 
-public typealias ToManyNonEmpty = Relations.ToManyNonEmpty
+public typealias ToManyNonEmpty = Relations.OneWayToManyNonEmpty
 
 public typealias MutualRelation = Relations.MutualRelation
 
@@ -37,21 +37,21 @@ public typealias OneWayToMany = Relations.OneWayToMany
 
 public extension Relations {
     
-    typealias HasOne<T: EntityModel> = Relation<T, Mutual, ToOne, Optional>
+    typealias MutualToOneOptional<T: EntityModel> = Relation<T, Mutual, ToOne, Optional>
 
-    typealias BelongsTo<T: EntityModel> = Relation<T, Mutual, ToOne, Required>
+    typealias MutualToOneRequired<T: EntityModel> = Relation<T, Mutual, ToOne, Required>
 
-    typealias HasMany<T: EntityModel> = Relation<T, Mutual, ToMany, Required>
+    typealias MutualToManyRequired<T: EntityModel> = Relation<T, Mutual, ToMany, Required>
 
-    typealias HasManyNonEmpty<T: EntityModel> = Relation<T, Mutual, ToMany, NonEmpty<T>>
+    typealias MutualToManyNonEmpty<T: EntityModel> = Relation<T, Mutual, ToMany, NonEmpty<T>>
 
     typealias OneWayToOneOptional<T: EntityModel> = Relation<T, OneWay, ToOne, Optional>
 
-    typealias FromOne<T: EntityModel> = Relation<T, OneWay, ToOne, Required>
+    typealias OneWayToOneRequired<T: EntityModel> = Relation<T, OneWay, ToOne, Required>
 
     typealias OneWayToManyRequired<T: EntityModel> = Relation<T, OneWay, ToMany, Required>
 
-    typealias ToManyNonEmpty<T: EntityModel> = Relation<T, OneWay, ToMany, NonEmpty<T>>
+    typealias OneWayToManyNonEmpty<T: EntityModel> = Relation<T, OneWay, ToMany, NonEmpty<T>>
 
     typealias MutualToOne<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Mutual, ToOne, Constraint>
 
@@ -64,7 +64,6 @@ public extension Relations {
     typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Mutual, Cardinality, Constraint>
 
     typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, OneWay, Cardinality, Constraint>
-
 }
 
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
