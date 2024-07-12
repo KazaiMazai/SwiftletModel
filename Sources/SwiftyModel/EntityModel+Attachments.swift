@@ -1,13 +1,95 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 03/03/2024.
 //
 
 import Foundation
 
-extension EntityModel {
+
+
+fileprivate extension EntityModel {
+    func saveEntity<Child, Directionality, Cardinality, Constraint>(
+        _ keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
+        _ repository: inout Repository) {
+            
+            self[keyPath: keyPath].save(&repository)
+    }
+}
+
+
+public extension EntityModel {
+    func save<Child, Cardinality, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
+        _ repository: inout Repository) {
+            
+            saveEntity(keyPath, &repository)
+            repository.save(relation(keyPath))
+    }
+}
+
+public extension EntityModel {
+    func removeRelation<Child, Cardinality, Constraint>(
+        _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
+        _  repository: inout Repository) {
+            
+            repository.save(removeRelation(keyPath))
+    }
+    
+    func removeRelation<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+        _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
+        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
+        _  repository: inout Repository)  {
+            
+            repository.save(removeRelation(keyPath, inverse: inverse))
+    }
+}
+
+public extension EntityModel {
+    
+    func save<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
+        inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>,
+        _  repository: inout Repository) {
+            
+            saveEntity(keyPath, &repository)
+            repository.save(relation(keyPath, inverse: inverse))
+    }
+    
+    func save<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
+        inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>,
+        _  repository: inout Repository) {
+            
+            saveEntity(keyPath, &repository)
+            repository.save(relation(keyPath, inverse: inverse))
+    }
+    
+    func save<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, ManyToManyRelation<Child, Constaint>>,
+        inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>,
+        _  repository: inout Repository) {
+            
+            saveEntity(keyPath, &repository)
+            repository.save(relation(keyPath, inverse: inverse))
+    }
+    
+    func save<Child, Constaint, InverseConstraint>(
+        _ keyPath: KeyPath<Self, OneToOneRelation<Child, Constaint>>,
+        inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>,
+        _  repository: inout Repository){
+            
+            saveEntity(keyPath, &repository)
+            repository.save(relation(keyPath, inverse: inverse))
+    }
+}
+
+
+//MARK: -  Private
+
+
+fileprivate extension EntityModel {
     func relation<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
@@ -93,14 +175,6 @@ fileprivate extension EntityModel {
     }
 }
 
-typealias ManyToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
-
-typealias OneToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
-
-typealias OneToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
-
-typealias ManyToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
-
 extension EntityModel {
     
     func relation<Child, Constaint, InverseConstraint>(
@@ -115,7 +189,7 @@ extension EntityModel {
     func relation<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>
-
+        
     ) -> EntitiesAttachment<Self, Child> {
         
         saveRelation(keyPath, inverse: inverse)
@@ -139,3 +213,4 @@ extension EntityModel {
         saveRelation(keyPath, inverse: inverse)
     }
 }
+

@@ -35,6 +35,15 @@ public typealias OneWayToOne = Relations.OneWayToOne
 
 public typealias OneWayToMany = Relations.OneWayToMany
 
+public typealias ManyToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+
+public typealias OneToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+
+public typealias OneToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
+
+public typealias ManyToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
+
+
 public extension Relations {
     
     typealias MutualToOneOptional<T: EntityModel> = Relation<T, Mutual, ToOne, Optional>
