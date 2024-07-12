@@ -15,11 +15,11 @@ public typealias HasMany = Relations.HasMany
 
 public typealias HasManyNonEmpty = Relations.HasManyNonEmpty
 
-public typealias ToOne = Relations.ToOneRelation
+public typealias ToOne = Relations.OneWayToOneOptional
 
 public typealias FromOne = Relations.FromOne
 
-public typealias ToMany = Relations.ToManyRelation
+public typealias ToMany = Relations.OneWayToManyRequired
 
 public typealias ToManyNonEmpty = Relations.ToManyNonEmpty
 
@@ -45,11 +45,11 @@ public extension Relations {
 
     typealias HasManyNonEmpty<T: EntityModel> = Relation<T, Mutual, ToMany, NonEmpty<T>>
 
-    typealias ToOneRelation<T: EntityModel> = Relation<T, OneWay, ToOne, Optional>
+    typealias OneWayToOneOptional<T: EntityModel> = Relation<T, OneWay, ToOne, Optional>
 
     typealias FromOne<T: EntityModel> = Relation<T, OneWay, ToOne, Required>
 
-    typealias ToManyRelation<T: EntityModel> = Relation<T, OneWay, ToMany, Required>
+    typealias OneWayToManyRequired<T: EntityModel> = Relation<T, OneWay, ToMany, Required>
 
     typealias ToManyNonEmpty<T: EntityModel> = Relation<T, OneWay, ToMany, NonEmpty<T>>
 
