@@ -1,71 +1,31 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 02/03/2024.
 //
 
 import Foundation
 
-public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, Relations.Optional>
- 
-public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, Relations.Optional>
- 
-public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Relations.Optional>
+public typealias HasOne<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Optional>
 
-public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, Relations.Optional>
+public typealias BelongsTo<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Required>
 
-public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Relations.Optional>
+public typealias HasMany<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.Required>
 
-public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, Relations.Optional>
+public typealias HasManyNonEmpty<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
 
-typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
+public typealias ToOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Optional>
 
-typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
+public typealias FromOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Required>
 
-typealias ManyToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+public typealias ToMany<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.Required>
 
-typealias OneToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
+public typealias ToManyNonEmpty<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
 
-typealias OneToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
+public typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
 
-typealias ManyToManyRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
-
-typealias ToOneRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToOne, Constraint>
-
-typealias ToManyRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>
-
-public enum Required {
-    public typealias RelationConstraint = Relations.Required
-    
-    public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
-     
-    public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, RelationConstraint>
-     
-    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
-
-    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
-
-    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
-
-    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
-}
-
-public enum NotEmpty {
-    public typealias RelationConstraint = Relations.NotEmpty
-    
-    public typealias ToOne<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToOne, RelationConstraint>
-     
-    public typealias ToMany<T: EntityModel> = Relation<T, Relations.OneWay, Relations.ToMany, RelationConstraint>
-     
-    public typealias ManyToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
-
-    public typealias OneToOne<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToOne, RelationConstraint>
-
-    public typealias OneToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
-
-    public typealias ManyToMany<T: EntityModel> = Relation<T, Relations.Mutual, Relations.ToMany, RelationConstraint>
-}
+public typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
 
 public protocol DirectionalityProtocol {
     
@@ -79,30 +39,61 @@ public protocol ConstraintsProtocol {
     
 }
 
+public protocol RequiredRelation {
+    
+}
+
+public protocol OptionalRelation {
+    
+}
+
+public protocol ToManyRelationValidator: ConstraintsProtocol {
+    associatedtype Entity: EntityModel
+    
+    static func validate(models: [Entity]) throws
+    
+    static func validate(ids: [Entity.ID]) throws
+}
+
+
 public enum Relations {
     
     public enum OneWay: DirectionalityProtocol { }
-
+    
     public enum Mutual: DirectionalityProtocol { }
-     
+    
     public enum ToMany: CardinalityProtocol {
         public static var isToMany: Bool { true }
     }
     
-   public enum ToOne: CardinalityProtocol {
-       public static var isToMany: Bool { false }
-   }
+    public enum ToOne: CardinalityProtocol {
+        public static var isToMany: Bool { false }
+    }
     
-    public enum Required: ConstraintsProtocol {
+    public enum Required: ConstraintsProtocol, RequiredRelation {
         
     }
     
-    public enum Optional: ConstraintsProtocol {
+    public enum Optional: ConstraintsProtocol, OptionalRelation {
         
     }
     
-    public enum NotEmpty: ConstraintsProtocol {
+    public struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyRelationValidator {
+        public enum Errors: Error {
+            case empty
+        }
+         
+        public static func validate(models: [T]) throws {
+            guard !models.isEmpty else {
+                throw Errors.empty
+            }
+        }
         
+        public static func validate(ids: [T.ID]) throws {
+            guard !ids.isEmpty else {
+                throw Errors.empty
+            }
+        }
     }
 }
 
@@ -110,7 +101,7 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
                                                                                     Directionality: DirectionalityProtocol,
                                                                                     Cardinality: CardinalityProtocol,
                                                                                     Constraints: ConstraintsProtocol {
-        
+    
     private var state: State<T>
     
     public mutating func normalize() {
@@ -152,58 +143,68 @@ public extension Relation {
     }
 }
 
-public extension Relation where Constraints == Relations.Optional {
+public extension Relation where Cardinality == Relations.ToOne {
+    static func set(id: T.ID) -> Self {
+        Relation(state: .faulted([id], replace: true))
+    }
+    
+    static func set(_ entity: T) -> Self {
+        Relation(state: .entity([entity], replace: true))
+    }
+}
+
+public extension Relation where Cardinality == Relations.ToOne,
+                                Constraints: OptionalRelation {
     static var null: Self {
         Relation(state: .none(explicitNil: true))
     }
 }
 
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.Optional {
-    init(ids: [T.ID], elidable: Bool = true) {
-        state = .faulted(ids, replace: elidable)
+public extension Relation where Cardinality == Relations.ToMany,
+                                Constraints: RequiredRelation {
+    
+    static func set(ids: [T.ID]) -> Self {
+        Relation(state: .faulted(ids, replace: true))
     }
-
-    init(_ entities: [T], elidable: Bool = true) {
-        state = .entity(entities, replace: elidable)
+    
+    static func set(_ entities: [T]) -> Self {
+        Relation(state: .entity(entities, replace: true))
     }
-}
-
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.Required {
-    init(ids: [T.ID], elidable: Bool = true) {
-        state = .faulted(ids, replace: elidable)
+    
+    static func append(ids: [T.ID]) -> Self {
+        Relation(state: .faulted(ids, replace: false))
     }
-
-    init(entities: [T], elidable: Bool = true) {
-        state = .entity(entities, replace: elidable)
-    }
-}
-
-public extension Relation where Cardinality == Relations.ToMany, Constraints == Relations.NotEmpty {
-    init?(ids: [T.ID], elidable: Bool = true) {
-        guard !ids.isEmpty else {
-            return nil
-        }
-        state = .faulted(ids, replace: elidable)
-    }
-
-    init?(entities: [T], elidable: Bool = true) {
-        guard !entities.isEmpty else {
-            return nil
-        }
-        state = .entity(entities, replace: elidable)
+    
+    static func append(_ entities: [T]) -> Self {
+        Relation(state: .entity(entities, replace: false))
     }
 }
 
-
-public extension Relation where Cardinality == Relations.ToOne {
-    init(id: T.ID) {
-        state = .faulted([id], replace: true)
+public extension Relation where Cardinality == Relations.ToMany,
+                                Constraints: ToManyRelationValidator,
+                                Constraints.Entity == T {
+    
+    static func set(ids: [T.ID]) throws -> Self {
+        try Constraints.validate(ids: ids)
+        return Relation(state: .faulted(ids, replace: true))
     }
-
-    init(_ entity: T) {
-        state = .entity([entity], replace: true)
+    
+    static func set(_ entities: [T]) throws -> Self {
+        try Constraints.validate(models: entities)
+        return Relation(state: .entity(entities, replace: true))
+    }
+    
+    static func append(ids: [T.ID]) throws -> Self {
+        try Constraints.validate(ids: ids)
+        return Relation(state: .faulted(ids, replace: false))
+    }
+    
+    static func append(_ entities: [T]) throws -> Self {
+        try Constraints.validate(models: entities)
+        return Relation(state: .entity(entities, replace: false))
     }
 }
+
 
 extension Relation: Codable where T: Codable {
     
@@ -212,7 +213,7 @@ extension Relation: Codable where T: Codable {
 extension Relation.State: Codable where T: Codable {
     
 }
- 
+
 extension Relation {
     var directLinkSaveOption: Option {
         switch state {
@@ -229,44 +230,44 @@ extension Relation {
 }
 
 private extension Relation {
-   
-   indirect enum State<T: EntityModel>: Hashable {
-       case faulted([T.ID], replace: Bool)
-       case entity([T], replace: Bool)
-       case none(explicitNil: Bool)
-       
-       var ids: [T.ID] {
-           switch self {
-           case .faulted(let ids, _):
-               return ids
-           case .entity(let entity, _):
-               return entity.map { $0.id }
-           case .none:
-               return []
-           }
-       }
-       
-       var entity: [T] {
-           switch self {
-           case .faulted:
-               return []
-           case .entity(let entity, _):
-               return entity
-           case .none:
-               return []
-           }
-       }
-       
-       mutating func normalize() {
-           self = .none(explicitNil: false)
-       }
-       
-       static func == (lhs: Self, rhs: Self) -> Bool {
-           lhs.ids == rhs.ids
-       }
-       
-       func hash(into hasher: inout Hasher) {
-           hasher.combine(ids)
-       }
-   }
+    
+    indirect enum State<T: EntityModel>: Hashable {
+        case faulted([T.ID], replace: Bool)
+        case entity([T], replace: Bool)
+        case none(explicitNil: Bool)
+        
+        var ids: [T.ID] {
+            switch self {
+            case .faulted(let ids, _):
+                return ids
+            case .entity(let entity, _):
+                return entity.map { $0.id }
+            case .none:
+                return []
+            }
+        }
+        
+        var entity: [T] {
+            switch self {
+            case .faulted:
+                return []
+            case .entity(let entity, _):
+                return entity
+            case .none:
+                return []
+            }
+        }
+        
+        mutating func normalize() {
+            self = .none(explicitNil: false)
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.ids == rhs.ids
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(ids)
+        }
+    }
 }

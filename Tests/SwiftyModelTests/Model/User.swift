@@ -19,11 +19,11 @@ struct Current: EntityModel, Codable {
         user.normalize()
     }
     
-    func save(_ repostory: inout Repository) {
-        repostory.save(self)
-        repostory.save(relation(\.user))
+    func save(_ repository: inout Repository) {
+        repository.save(self)
+        repository.save(relation(\.user))
         
-        user.save(&repostory)
+        user.save(&repository)
     }
 }
 
@@ -42,10 +42,10 @@ extension User {
     
 struct User: EntityModel, Codable {
     let id: String
-    let name: String
+    private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    private(set) var chats: ManyToMany<Chat> = .none
+    private(set) var chats: HasMany<Chat> = .none
      
     mutating func normalize() {
         chats.normalize()
@@ -59,6 +59,7 @@ struct User: EntityModel, Codable {
     
     static func defaultMergeStraregy() -> MergeStrategy<User> {
         MergeStrategy(
+            .patch(\.name),
             .patch(\.profile),
             .patch(\.avatar)
         )

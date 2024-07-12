@@ -6,14 +6,62 @@ final class SwiftyModelTests: XCTestCase {
     func test() {
         var repository = Repository()
         
-        let author = User(id: "1", name: "Bob")
-        let attachment = Attachment(id: "1", kind: .file(URL(string: "http://google.com")!))
-        let message = Message(id: "1", text: "Hello world", author: ToOne(author), attachment: OneToOne(attachment))
-        let chat = Chat(id: "1", users: ManyToMany([author], elidable: false), messages: OneToMany([message]))
-        let user = User(id: "2", name: "Alice", chats: ManyToMany([chat], elidable: false))
-        let currentUser = Current(user: ToOne(user))
+        let bob = User(id: "1", name: "Bob")
+        let alice = User(id: "2", name: "Alice")
         
+        let chat = Chat(
+            id: "1",
+            users: (try? .set([bob, alice])) ?? .none,
+            messages: .set([
+                Message(
+                    id: "1",
+                    text: "Hey Alice",
+                    author: .set(bob),
+                    attachment: .set(
+                        Attachment(
+                            id: "1",
+                            kind: .file(URL(string: "http://google.com")!)
+                        )
+                    )
+                ),
+                
+                Message(
+                    id: "2",
+                    text: "Hey Bob",
+                    author: .set(alice)
+                )
+            ])
+        )
+         
+        chat.save(&repository)
+        let currentUser = Current(user: .set(alice))
         currentUser.save(&repository)
+        
+        
+        let updatedChat = Chat(
+            id: "1",
+            messages: .append([
+                Message(
+                    id: "3",
+                    text: "It's late, I'm gonna leave",
+                    author: .set(User(id: "1"))
+                ),
+                Message(
+                    id: "4",
+                    text: "Bye Alice",
+                    author: .set(User(id: "1"))
+                ),
+                
+                Message(
+                    id: "5",
+                    text: "Bye Bye",
+                    author: .set(User(id: "2"))
+                )
+            ])
+        )
+        
+        updatedChat.save(&repository)
+        
            
         let allMessages: [Message] = repository.all()
         
@@ -35,7 +83,15 @@ final class SwiftyModelTests: XCTestCase {
             .resolve()
             .compactMap { $0 }
           
-        XCTAssertEqual(Chat.query("1", in: repository).related(\.users).count, 2)
+        XCTAssertEqual(Chat.query("1", in: repository).related(\.messages).count, 5)
+        XCTAssertEqual(
+            Attachment
+                .query("1", in: repository)
+                .related(\.message)?
+                .related(\.chat)?
+                .related(\.messages).count, 
+            5
+        )
 
         let messageAttachment = repository
             .query(Message.self, id: "1")
