@@ -3,7 +3,7 @@ import XCTest
 
 final class SwiftyModelTests: XCTestCase {
    
-    func test() {
+    func test() throws {
         var repository = Repository()
         
         let bob = User(id: "1", name: "Bob")
@@ -11,57 +11,51 @@ final class SwiftyModelTests: XCTestCase {
         
         let chat = Chat(
             id: "1",
-            users: (try? .set([bob, alice])) ?? .none,
-            messages: .set([
+            users: .relation([bob, alice]),
+            messages: .relation([
                 Message(
                     id: "1",
                     text: "Hey Alice",
-                    author: .set(bob),
-                    attachment: .set(
-                        Attachment(
-                            id: "1",
-                            kind: .file(URL(string: "http://google.com")!)
-                        )
-                    )
+                    author: .relation(bob),
+                    attachment: .nullify
                 ),
                 
                 Message(
                     id: "2",
                     text: "Hey Bob",
-                    author: .set(alice)
+                    author: .relation(alice)
                 )
             ])
         )
          
         chat.save(&repository)
-        let currentUser = Current(user: .set(alice))
+        let currentUser = Current(user: .relation(alice))
         currentUser.save(&repository)
         
         
         let updatedChat = Chat(
             id: "1",
-            messages: .append([
+            messages: .insert([
                 Message(
                     id: "3",
                     text: "It's late, I'm gonna leave",
-                    author: .set(User(id: "1"))
+                    author: .relation(User(id: "1"))
                 ),
                 Message(
                     id: "4",
                     text: "Bye Alice",
-                    author: .set(User(id: "1"))
+                    author: .relation(User(id: "1"))
                 ),
-                
                 Message(
                     id: "5",
                     text: "Bye Bye",
-                    author: .set(User(id: "2"))
+                    author: .relation(User(id: "2"))
                 )
             ])
         )
         
         updatedChat.save(&repository)
-        
+       
            
         let allMessages: [Message] = repository.all()
         

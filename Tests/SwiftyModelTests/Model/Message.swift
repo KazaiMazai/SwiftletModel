@@ -12,7 +12,7 @@ struct Message: EntityModel, Codable {
     let id: String
     let text: String
     private(set) var author: ToOne<User> = .none
-    private(set) var chat: BelongsTo<Chat> = .none
+    private(set) var chat: BelongsTo<Chat>
     private(set) var attachment: HasOne<Attachment> = .none
     private(set) var replies: HasMany<Message> = .none
     private(set) var replyTo: HasOne<Message> = .none

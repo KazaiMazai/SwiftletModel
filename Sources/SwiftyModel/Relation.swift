@@ -114,26 +114,26 @@ public extension Relation {
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: OptionalRelation {
-    static func set(id: T.ID) -> Self {
+    static func relation(id: T.ID) -> Self {
         Relation(state: .faulted([id], replace: true))
     }
     
-    static func set(_ entity: T) -> Self {
+    static func relation(_ entity: T) -> Self {
         Relation(state: .entity([entity], replace: true))
     }
-
-    static var null: Self {
+    
+    static var nullify: Self {
         Relation(state: .none(explicitNil: true))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: RequiredRelation {
-    static func set(id: T.ID) -> Self {
+    static func relation(id: T.ID) -> Self {
         Relation(state: .faulted([id], replace: true))
     }
     
-    static func set(_ entity: T) -> Self {
+    static func relation(_ entity: T) -> Self {
         Relation(state: .entity([entity], replace: true))
     }
 }
@@ -142,11 +142,11 @@ public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: ToOneValidation,
                                 Constraints.Entity == T {
     
-    static func set(id: T.ID) -> Self {
+    static func relation(id: T.ID) -> Self {
         Relation(state: .faulted([id], replace: true))
     }
     
-    static func set(_ entity: T) throws -> Self {
+    static func relation(_ entity: T) throws -> Self {
         try Constraints.validate(model: entity)
         return Relation(state: .entity([entity], replace: true))
     }
@@ -155,19 +155,19 @@ public extension Relation where Cardinality == Relations.ToOne,
 public extension Relation where Cardinality == Relations.ToMany,
                                 Constraints: RequiredRelation {
     
-    static func set(ids: [T.ID]) -> Self {
+    static func relation(ids: [T.ID]) -> Self {
         Relation(state: .faulted(ids, replace: true))
     }
     
-    static func set(_ entities: [T]) -> Self {
+    static func relation(_ entities: [T]) -> Self {
         Relation(state: .entity(entities, replace: true))
     }
     
-    static func append(ids: [T.ID]) -> Self {
+    static func insert(ids: [T.ID]) -> Self {
         Relation(state: .faulted(ids, replace: false))
     }
     
-    static func append(_ entities: [T]) -> Self {
+    static func insert(_ entities: [T]) -> Self {
         Relation(state: .entity(entities, replace: false))
     }
 }
@@ -176,22 +176,22 @@ public extension Relation where Cardinality == Relations.ToMany,
                                 Constraints: ToManyValidation,
                                 Constraints.Entity == T {
     
-    static func set(ids: [T.ID]) throws -> Self {
+    static func relation(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
         return Relation(state: .faulted(ids, replace: true))
     }
     
-    static func set(_ entities: [T]) throws -> Self {
+    static func relation(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
         return Relation(state: .entity(entities, replace: true))
     }
     
-    static func append(ids: [T.ID]) throws -> Self {
+    static func insert(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
         return Relation(state: .faulted(ids, replace: false))
     }
     
-    static func append(_ entities: [T]) throws -> Self {
+    static func insert(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
         return Relation(state: .entity(entities, replace: false))
     }

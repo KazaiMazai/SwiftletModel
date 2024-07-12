@@ -66,6 +66,17 @@ struct User: EntityModel, Codable {
     }
 }
 
+extension User {
+    
+    struct Validation: ToOneValidation {
+        
+        static func validate(model: User) throws {
+            
+        }
+    }
+    
+}
+
 extension Query where Entity == User {
     var isMe: Bool {
         repository

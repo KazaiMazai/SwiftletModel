@@ -10,7 +10,7 @@ import Foundation
 
 struct Chat: EntityModel, Codable {
     let id: String
-    var users: HasManyNonEmpty<User> = .none
+    var users: HasMany<User> = .none
     var messages: HasMany<Message> = .none
     
     mutating func normalize() {
