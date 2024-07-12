@@ -82,12 +82,9 @@ extension RelationsRepository {
                                                       id: Parent.ID,
                                                       relationName: String,
                                                       children: [Child.ID],
-                                                      option: Option)
-    where
-    
-Parent: EntityModel,
-Child: EntityModel {
-    
+                                                      option: Option) where Parent: EntityModel,
+                                                                            Child: EntityModel {
+                                                                                
     var existingRelations = findChildren(
         for: Parent.self,
         relationName: relationName,
