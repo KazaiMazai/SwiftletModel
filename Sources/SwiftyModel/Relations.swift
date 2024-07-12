@@ -49,7 +49,7 @@ public enum Relations {
         
     }
     
-    public struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyRelationValidator {
+    public struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyValidation {
         public enum Errors: Error {
             case empty
         }
@@ -80,7 +80,7 @@ public protocol RequiredRelation { }
 
 public protocol OptionalRelation { }
 
-public protocol ToManyRelationValidator: ConstraintsProtocol {
+public protocol ToManyValidation: ConstraintsProtocol {
     associatedtype Entity: EntityModel
     
     static func validate(models: [Entity]) throws
@@ -88,7 +88,7 @@ public protocol ToManyRelationValidator: ConstraintsProtocol {
     static func validate(ids: [Entity.ID]) throws
 }
 
-public protocol ToOneRelationValidator: ConstraintsProtocol {
+public protocol ToOneValidation: ConstraintsProtocol {
     associatedtype Entity: EntityModel
     
     static func validate(model: Entity) throws

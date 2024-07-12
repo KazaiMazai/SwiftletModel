@@ -80,7 +80,7 @@ public extension Relation where Cardinality == Relations.ToOne,
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: ToOneRelationValidator,
+                                Constraints: ToOneValidation,
                                 Constraints.Entity == T {
     
     static func set(id: T.ID) -> Self {
@@ -114,7 +114,7 @@ public extension Relation where Cardinality == Relations.ToMany,
 }
 
 public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: ToManyRelationValidator,
+                                Constraints: ToManyValidation,
                                 Constraints.Entity == T {
     
     static func set(ids: [T.ID]) throws -> Self {
