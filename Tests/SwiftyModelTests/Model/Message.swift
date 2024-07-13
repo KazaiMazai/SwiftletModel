@@ -11,12 +11,12 @@ import Foundation
 struct Message: EntityModel, Codable {
     let id: String
     let text: String
-    private(set) var author: ToOne<User> = .none
-    private(set) var chat: BelongsTo<Chat> = .none
-    private(set) var attachment: HasOne<Attachment> = .none
-    private(set) var replies: HasMany<Message> = .none
-    private(set) var replyTo: HasOne<Message> = .none
-    private(set) var viewers: ToMany<User> = .none
+    var author: ToOne<User> = .none
+    var chat: BelongsTo<Chat> = .none
+    var attachment: HasOne<Attachment> = .none
+    var replies: HasMany<Message> = .none
+    var replyTo: HasOne<Message> = .none
+    var viewedBy: ToMany<User> = .none
 }
 
 extension Message {
@@ -26,25 +26,18 @@ extension Message {
         attachment.normalize()
         replies.normalize()
         replyTo.normalize()
-        viewers.normalize()
+        viewedBy.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
        
-        repository.save(relation(\.author))
-        repository.save(relation(\.chat, inverse: \.messages))
-        repository.save(relation(\.attachment, inverse: \.message))
-        repository.save(relation(\.replies, inverse: \.replyTo))
-        repository.save(relation(\.replyTo, inverse: \.replies))
-        repository.save(relation(\.viewers))
-        
-        author.save(&repository)
-        chat.save(&repository)
-        attachment.save(&repository)
-        replies.save(&repository)
-        replyTo.save(&repository)
-        viewers.save(&repository)
+        save(\.author, to: &repository)
+        save(\.chat, inverse: \.messages, to: &repository)
+        save(\.attachment, inverse: \.message, to: &repository)
+        save(\.replies, inverse: \.replyTo, to: &repository)
+        save(\.replyTo, inverse: \.replies, to: &repository)
+        save(\.viewedBy, to: &repository)
     }
 }
 

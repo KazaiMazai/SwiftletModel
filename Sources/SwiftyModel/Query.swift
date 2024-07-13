@@ -36,10 +36,6 @@ extension Repository {
     }
 }
 
-typealias ToOneRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToOne, Constraint>
-
-typealias ToManyRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>
-
 extension Query {
     
     func related<Child, Directionality, Constraints>(
@@ -47,7 +43,7 @@ extension Query {
     
     ) -> Query<Child>? {
         repository
-            .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
+            .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .first
             .flatMap { Child.ID($0) }
             .map { Query<Child>(repository: repository, id:  $0) }
@@ -58,7 +54,7 @@ extension Query {
     
     ) -> [Query<Child>] {
         repository
-            .findRelations(for: Entity.self, relationName: keyPath.relationName, id: id)
+            .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             .map { Query<Child>(repository: repository, id:  $0) }
     }

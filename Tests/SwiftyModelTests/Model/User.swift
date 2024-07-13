@@ -8,10 +8,10 @@
 @testable import SwiftyModel
 import Foundation
 
-struct Current: EntityModel, Codable {
+struct CurrentUser: EntityModel, Codable {
     static let id: String = "current"
     
-    private(set) var id: String = Current.id
+    private(set) var id: String = CurrentUser.id
     
     var user: ToOne<User> = .none
     
@@ -21,9 +21,7 @@ struct Current: EntityModel, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(relation(\.user))
-        
-        user.save(&repository)
+        save(\.user, to: &repository)
     }
 }
 
@@ -45,7 +43,7 @@ struct User: EntityModel, Codable {
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    private(set) var chats: HasMany<Chat> = .none
+    var chats: HasMany<Chat> = .none
      
     mutating func normalize() {
         chats.normalize()
@@ -53,11 +51,10 @@ struct User: EntityModel, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(relation(\.chats, inverse: \.users))
-        chats.save(&repository)
+        save(\User.chats, inverse: \Chat.users, to: &repository)
     }
     
-    static func defaultMergeStraregy() -> MergeStrategy<User> {
+    static func mergeStraregy() -> MergeStrategy<User> {
         MergeStrategy(
             .patch(\.name),
             .patch(\.profile),
@@ -69,7 +66,7 @@ struct User: EntityModel, Codable {
 extension Query where Entity == User {
     var isMe: Bool {
         repository
-            .query(Current.self, id: Current.id)
+            .query(CurrentUser.self, id: CurrentUser.id)
             .related(\.user)?.id == id
     }
 }

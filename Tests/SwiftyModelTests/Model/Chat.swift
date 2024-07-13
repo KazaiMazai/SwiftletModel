@@ -10,7 +10,7 @@ import Foundation
 
 struct Chat: EntityModel, Codable {
     let id: String
-    var users: HasManyNonEmpty<User> = .none
+    var users: HasMany<User> = .none
     var messages: HasMany<Message> = .none
     
     mutating func normalize() {
@@ -20,10 +20,9 @@ struct Chat: EntityModel, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(relation(\.users, inverse: \.chats))
-        repository.save(relation(\.messages, inverse: \.chat))
         
-        users.save(&repository)
-        messages.save(&repository)
+        save(\.users, inverse: \.chats, to: &repository)
+        save(\.messages, inverse: \.chat, to: &repository)
     }
 }
+

@@ -17,7 +17,7 @@ public struct Repository {
 }
 
 extension Repository {
-
+    
     func all<T>() -> [T] {
         entitiesRepository.all()
     }
@@ -36,7 +36,7 @@ extension Repository {
 }
 
 extension Repository {
-    func findRelations<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
+    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
         relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
@@ -54,39 +54,26 @@ extension Repository {
     }
     
     mutating func save<T: EntityModel>(_ entity: T,
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entity: T?,
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entities: [T],
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entities, options: options)
     }
 }
 
 extension Repository {
-    mutating func save<T: EntityModel, R, K, Optionality>(_ relatedEntity: Relation<T, R, K, Optionality>,
-                                                                 options: MergeStrategy<T> = T.mergeStraregy()) {
-        
-        entitiesRepository.save(relatedEntity, options: options)
+    mutating func save<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
+        relationsRepository.saveLinks(links)
     }
 }
-
-
-extension Repository {
-    mutating func save<T: EntityModel, E: EntityModel>(_ relation: EntitiesAttachment<T, E>) {
-        
-        relationsRepository.save(relation)
-    }
-}
-
-
-

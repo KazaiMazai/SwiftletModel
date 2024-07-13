@@ -7,11 +7,12 @@
 
 import Foundation
 
-struct EntitiesAttachment<Parent: EntityModel, Child: EntityModel> {
+typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: [Link<Parent, Child>], inverse: [Link<Child, Parent>])
+
+struct Link<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID
     let children: [Child.ID]
-    let direct: AttachmentAttribute
-    let inverse: AttachmentAttribute?
+    let attribute: LinkAttribute
 }
 
 enum Option {
@@ -20,7 +21,8 @@ enum Option {
     case remove
 }
 
-struct AttachmentAttribute {
+struct LinkAttribute {
     let name: String
     let updateOption: Option
 }
+

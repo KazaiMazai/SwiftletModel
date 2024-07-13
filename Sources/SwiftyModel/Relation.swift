@@ -7,95 +7,6 @@
 
 import Foundation
 
-public typealias HasOne<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Optional>
-
-public typealias BelongsTo<T: EntityModel> = MutualRelation<T, Relations.ToOne, Relations.Required>
-
-public typealias HasMany<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.Required>
-
-public typealias HasManyNonEmpty<T: EntityModel> = MutualRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
-
-public typealias ToOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Optional>
-
-public typealias FromOne<T: EntityModel> = OneWayRelation<T, Relations.ToOne, Relations.Required>
-
-public typealias ToMany<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.Required>
-
-public typealias ToManyNonEmpty<T: EntityModel> = OneWayRelation<T, Relations.ToMany, Relations.NonEmpty<T>>
-
-public typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
-
-public typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
-
-public protocol DirectionalityProtocol {
-    
-}
-
-public protocol CardinalityProtocol {
-    static var isToMany: Bool { get }
-}
-
-public protocol ConstraintsProtocol {
-    
-}
-
-public protocol RequiredRelation {
-    
-}
-
-public protocol OptionalRelation {
-    
-}
-
-public protocol ToManyRelationValidator: ConstraintsProtocol {
-    associatedtype Entity: EntityModel
-    
-    static func validate(models: [Entity]) throws
-    
-    static func validate(ids: [Entity.ID]) throws
-}
-
-
-public enum Relations {
-    
-    public enum OneWay: DirectionalityProtocol { }
-    
-    public enum Mutual: DirectionalityProtocol { }
-    
-    public enum ToMany: CardinalityProtocol {
-        public static var isToMany: Bool { true }
-    }
-    
-    public enum ToOne: CardinalityProtocol {
-        public static var isToMany: Bool { false }
-    }
-    
-    public enum Required: ConstraintsProtocol, RequiredRelation {
-        
-    }
-    
-    public enum Optional: ConstraintsProtocol, OptionalRelation {
-        
-    }
-    
-    public struct NonEmpty<T: EntityModel>: ConstraintsProtocol, ToManyRelationValidator {
-        public enum Errors: Error {
-            case empty
-        }
-         
-        public static func validate(models: [T]) throws {
-            guard !models.isEmpty else {
-                throw Errors.empty
-            }
-        }
-        
-        public static func validate(ids: [T.ID]) throws {
-            guard !ids.isEmpty else {
-                throw Errors.empty
-            }
-        }
-    }
-}
 
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
@@ -133,7 +44,7 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
 
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
-        entity.forEach { $0.save(&repository) }
+        entity.forEach { entity in entity.save(&repository) }
     }
 }
 
@@ -143,68 +54,90 @@ public extension Relation {
     }
 }
 
-public extension Relation where Cardinality == Relations.ToOne {
-    static func set(id: T.ID) -> Self {
+public extension Relation where Cardinality == Relations.ToOne,
+                                Constraints: OptionalRelation {
+    static func relation(id: T.ID) -> Self {
         Relation(state: .faulted([id], replace: true))
     }
     
-    static func set(_ entity: T) -> Self {
+    static func relation(_ entity: T) -> Self {
+        Relation(state: .entity([entity], replace: true))
+    }
+    
+    static var nullify: Self {
+        Relation(state: .none(explicitNil: true))
+    }
+}
+
+public extension Relation where Cardinality == Relations.ToOne,
+                                Constraints: RequiredRelation {
+    static func relation(id: T.ID) -> Self {
+        Relation(state: .faulted([id], replace: true))
+    }
+    
+    static func relation(_ entity: T) -> Self {
         Relation(state: .entity([entity], replace: true))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: OptionalRelation {
-    static var null: Self {
-        Relation(state: .none(explicitNil: true))
+                                Constraints: ToOneValidation,
+                                Constraints.Entity == T {
+    
+    static func relation(id: T.ID) -> Self {
+        Relation(state: .faulted([id], replace: true))
+    }
+    
+    static func relation(_ entity: T) throws -> Self {
+        try Constraints.validate(model: entity)
+        return Relation(state: .entity([entity], replace: true))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToMany,
                                 Constraints: RequiredRelation {
     
-    static func set(ids: [T.ID]) -> Self {
+    static func relation(ids: [T.ID]) -> Self {
         Relation(state: .faulted(ids, replace: true))
     }
     
-    static func set(_ entities: [T]) -> Self {
+    static func relation(_ entities: [T]) -> Self {
         Relation(state: .entity(entities, replace: true))
     }
     
-    static func append(ids: [T.ID]) -> Self {
+    static func insert(ids: [T.ID]) -> Self {
         Relation(state: .faulted(ids, replace: false))
     }
     
-    static func append(_ entities: [T]) -> Self {
+    static func insert(_ entities: [T]) -> Self {
         Relation(state: .entity(entities, replace: false))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: ToManyRelationValidator,
+                                Constraints: ToManyValidation,
                                 Constraints.Entity == T {
     
-    static func set(ids: [T.ID]) throws -> Self {
+    static func relation(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
         return Relation(state: .faulted(ids, replace: true))
     }
     
-    static func set(_ entities: [T]) throws -> Self {
+    static func relation(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
         return Relation(state: .entity(entities, replace: true))
     }
     
-    static func append(ids: [T.ID]) throws -> Self {
+    static func insert(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
         return Relation(state: .faulted(ids, replace: false))
     }
     
-    static func append(_ entities: [T]) throws -> Self {
+    static func insert(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
         return Relation(state: .entity(entities, replace: false))
     }
 }
-
 
 extension Relation: Codable where T: Codable {
     
