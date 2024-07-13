@@ -27,7 +27,6 @@ struct Attachment: EntityModel, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        repository.save(relation(\.message, inverse: \.attachment))
-        message.save(&repository)
+        save(\.message, inverse: \.attachment, to: &repository)
     }
 }
