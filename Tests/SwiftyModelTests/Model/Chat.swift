@@ -25,3 +25,4 @@ struct Chat: EntityModel, Codable {
         save(\.messages, inverse: \.chat, to: &repository)
     }
 }
+

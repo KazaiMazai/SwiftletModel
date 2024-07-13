@@ -8,10 +8,10 @@
 @testable import SwiftyModel
 import Foundation
 
-struct Current: EntityModel, Codable {
+struct CurrentUser: EntityModel, Codable {
     static let id: String = "current"
     
-    private(set) var id: String = Current.id
+    private(set) var id: String = CurrentUser.id
     
     var user: ToOne<User> = .none
     
@@ -63,21 +63,10 @@ struct User: EntityModel, Codable {
     }
 }
 
-extension User {
-    
-    struct Validation: ToOneValidation {
-        
-        static func validate(model: User) throws {
-            
-        }
-    }
-    
-}
-
 extension Query where Entity == User {
     var isMe: Bool {
         repository
-            .query(Current.self, id: Current.id)
+            .query(CurrentUser.self, id: CurrentUser.id)
             .related(\.user)?.id == id
     }
 }
