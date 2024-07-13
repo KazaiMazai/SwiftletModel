@@ -21,14 +21,16 @@ extension RelationsRepository {
     
     where Parent: EntityModel, Child: EntityModel {
         
-        saveChildren(
-            Parent.self,
-            childrenType: Child.self,
-            id: links.direct.parent,
-            relationName: links.direct.attribute.name,
-            children: links.direct.children,
-            option: links.direct.attribute.updateOption
-        )
+        links.direct.forEach { link in
+            saveChildren(
+                Parent.self,
+                childrenType: Child.self,
+                id: link.parent,
+                relationName: link.attribute.name,
+                children: link.children,
+                option: link.attribute.updateOption
+            )
+        }
         
         links.inverse.forEach { link in
             saveChildren(

@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: Link<Parent, Child>, inverse: [Link<Child, Parent>])
+typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: [Link<Parent, Child>], inverse: [Link<Child, Parent>])
 
 struct Link<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID

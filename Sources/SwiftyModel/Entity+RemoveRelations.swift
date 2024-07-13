@@ -91,14 +91,14 @@ fileprivate extension EntityModel {
     ) -> Links<Self, Child> {
         
         Links(
-            direct: Link(
+            direct: [Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
                     updateOption: .remove
                 )
-            ),
+            )],
             inverse: []
         )
     }
@@ -111,14 +111,14 @@ fileprivate extension EntityModel {
     ) -> Links<Self, Child> {
         
         Links(
-            direct: Link(
+            direct: [Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
                     updateOption: .remove
                 )
-            ),
+            )],
             inverse: children.map { child in
                 Link(
                     parent: child,

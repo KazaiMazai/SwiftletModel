@@ -114,14 +114,14 @@ fileprivate extension EntityModel {
     ) -> Links<Self, Child> {
         
         Links(
-            direct: Link(
+            direct: [Link(
                 parent: id,
                 children: children(keyPath),
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
                     updateOption: self[keyPath: keyPath].directLinkSaveOption
                 )
-            ),
+            )],
             inverse: []
         )
     }
@@ -134,14 +134,14 @@ fileprivate extension EntityModel {
         
         let children = children(keyPath)
         return Links(
-            direct: Link(
+            direct: [Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
                     updateOption: self[keyPath: keyPath].directLinkSaveOption
                 )
-            ),
+            )],
             inverse: children.map { child in
                 Link(
                     parent: child,
