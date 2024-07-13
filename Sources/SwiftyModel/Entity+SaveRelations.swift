@@ -14,7 +14,7 @@ public extension EntityModel {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         to repository: inout Repository) {
             
-            saveRelatedEntity(at: keyPath, &repository)
+            saveEntity(at: keyPath, &repository)
             attach(keyPath, in: &repository)
     }
 }
@@ -26,7 +26,7 @@ public extension EntityModel {
         inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveRelatedEntity(at: keyPath, &repository)
+            saveEntity(at: keyPath, &repository)
             attach(keyPath, inverse: inverse, in: &repository)
     }
     
@@ -35,7 +35,7 @@ public extension EntityModel {
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveRelatedEntity(at: keyPath, &repository)
+            saveEntity(at: keyPath, &repository)
             attach(keyPath, inverse: inverse, in: &repository)
     }
     
@@ -44,7 +44,7 @@ public extension EntityModel {
         inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveRelatedEntity(at: keyPath, &repository)
+            saveEntity(at: keyPath, &repository)
             attach(keyPath, inverse: inverse, in: &repository)
     }
     
@@ -53,39 +53,20 @@ public extension EntityModel {
         inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>,
         to repository: inout Repository){
             
-            saveRelatedEntity(at: keyPath, &repository)
+            saveEntity(at: keyPath, &repository)
             attach(keyPath, inverse: inverse, in: &repository)
     }
 }
 
-
 //MARK: -  Private
 
-fileprivate extension EntityModel {
-    func detachIfNeeded<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
-        allExcept keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository)  {
-            
-            switch self[keyPath: keyPath].directLinkSaveOption {
-            case .append:
-                return
-            case .replace, .remove:
-                let enititesAtKeyPath = Set(children(keyPath))
-                let children = repository
-                    .findRelations(for: Self.self, relationName: keyPath.relationName, id: id)
-                    .compactMap { Child.ID($0) }
-                    .filter { !enititesAtKeyPath.contains($0) }
-                
-                detach(children, relation: keyPath, inverse: inverse, in: &repository)
-            }
-    }
-    
+private extension EntityModel {
+
     func attach<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
-            repository.save(attachmentLink(keyPath))
+            repository.save(links(children(keyPath), keyPath))
         }
     
     func attach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -93,22 +74,35 @@ fileprivate extension EntityModel {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in repository: inout Repository) {
             
-            detachIfNeeded(allExcept: keyPath, inverse: inverse, in: &repository)
-            repository.save(attachmentLink(keyPath, inverse: inverse))
+            let children = children(keyPath)
+            switch relationAt(keyPath).directLinkSaveOption {
+            case .append:
+                repository.save(links(children, keyPath, inverse: inverse))
+            case .replace, .remove:
+                let enititesAtKeyPath = Set(children)
+                let toRemove = repository
+                    .findRelations(for: Self.self, relationName: keyPath.relationName, id: id)
+                    .compactMap { Child.ID($0) }
+                    .filter { !enititesAtKeyPath.contains($0) }
+                
+                repository.save(removeLinks(toRemove, keyPath, inverse: inverse))
+                repository.save(links(children, keyPath, inverse: inverse))
+            }
         }
 }
 
-fileprivate extension EntityModel {
-    func saveRelatedEntity<Child, Directionality, Cardinality, Constraint>(
+private extension EntityModel {
+    func saveEntity<Child, Directionality, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
         _ repository: inout Repository) {
             
-            self[keyPath: keyPath].save(&repository)
+            relationAt(keyPath).save(&repository)
     }
 }
  
-fileprivate extension EntityModel {
-    func attachmentLink<Child, Cardinality, Constraint>(
+private extension EntityModel {
+    func links<Child, Cardinality, Constraint>(
+        _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
     ) -> Links<Self, Child> {
@@ -116,30 +110,30 @@ fileprivate extension EntityModel {
         Links(
             direct: [Link(
                 parent: id,
-                children: children(keyPath),
+                children: children,
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
-                    updateOption: self[keyPath: keyPath].directLinkSaveOption
+                    updateOption: relationAt(keyPath).directLinkSaveOption
                 )
             )],
             inverse: []
         )
     }
 
-    func attachmentLink<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+    func links<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+        _ children: [Child.ID],
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
     ) -> Links<Self, Child> {
         
-        let children = children(keyPath)
-        return Links(
+        Links(
             direct: [Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.relationName,
-                    updateOption: self[keyPath: keyPath].directLinkSaveOption
+                    updateOption: relationAt(keyPath).directLinkSaveOption
                 )
             )],
             inverse: children.map { child in
@@ -148,7 +142,7 @@ fileprivate extension EntityModel {
                     children: [id],
                     attribute: LinkAttribute(
                         name: inverse.relationName,
-                        updateOption: self[keyPath: keyPath].inverseLinkSaveOption
+                        updateOption: relationAt(keyPath).inverseLinkSaveOption
                     )
                 )
             }

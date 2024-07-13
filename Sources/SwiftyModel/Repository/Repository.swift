@@ -17,7 +17,7 @@ public struct Repository {
 }
 
 extension Repository {
-
+    
     func all<T>() -> [T] {
         entitiesRepository.all()
     }
@@ -54,36 +54,34 @@ extension Repository {
     }
     
     mutating func save<T: EntityModel>(_ entity: T,
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entity: T?,
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entities: [T],
-                                              options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entities, options: options)
     }
 }
 
 extension Repository {
-    mutating func save<T: EntityModel, R, K, Optionality>(_ relatedEntity: Relation<T, R, K, Optionality>,
-                                                                 options: MergeStrategy<T> = T.mergeStraregy()) {
-        
+    mutating func save<T: EntityModel, R, K, Constraints>(_ relatedEntity: Relation<T, R, K, Constraints>,
+                                                          options: MergeStrategy<T> = T.mergeStraregy()) {
+
         entitiesRepository.save(relatedEntity, options: options)
     }
 }
 
-
 extension Repository {
-    mutating func save<T: EntityModel, E: EntityModel>(_ relation: Links<T, E>) {
-        
-        relationsRepository.saveAttachment(relation)
+    mutating func save<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
+        relationsRepository.saveLinks(links)
     }
 }

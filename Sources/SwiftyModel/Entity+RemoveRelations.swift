@@ -70,7 +70,7 @@ public extension EntityModel {
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
-            repository.save(removeLink(entities, keyPath))
+            repository.save(removeLinks(entities, keyPath))
         }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -79,12 +79,12 @@ public extension EntityModel {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in repository: inout Repository)  {
             
-            repository.save(removeLink(entities, keyPath, inverse: inverse))
+            repository.save(removeLinks(entities, keyPath, inverse: inverse))
         }
 }
 
-fileprivate extension EntityModel {
-    func removeLink<Child, Cardinality, Constraint>(
+extension EntityModel {
+    func removeLinks<Child, Cardinality, Constraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
@@ -103,7 +103,7 @@ fileprivate extension EntityModel {
         )
     }
     
-    func removeLink<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+    func removeLinks<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>

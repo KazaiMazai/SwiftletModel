@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 extension User {
     static let bob = User(id: "1", name: "Bob")
     static let alice = User(id: "2", name: "Alice")
@@ -16,9 +15,8 @@ extension User {
     static let tom = User(id: "5", name: "Tom")
 }
 
-
 extension Attachment {
-    static let imageOne = Attachment(id: "1", kind: .file(URL(string: "http://google.com/image.jpg")!))
+    static let imageOne = Attachment(id: "1", kind: .file(URL(string: "http://google.com/image-1.jpg")!))
     static let imageTwo = Attachment(id: "2", kind: .file(URL(string: "http://google.com/image-2.jpg")!))
 }
 

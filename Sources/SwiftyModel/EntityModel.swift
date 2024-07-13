@@ -60,4 +60,9 @@ extension EntityModel {
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
+    
+    func relationAt<Child, Direction, Cardinality, Constraint>(
+        _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>) -> Relation<Child, Direction, Cardinality, Constraint> {
+        self[keyPath: keyPath]
+    }
 }

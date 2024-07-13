@@ -16,31 +16,14 @@ struct RelationsRepository: Codable {
 }
 
 extension RelationsRepository {
-    mutating func saveAttachment<Parent, Child>(
-        _ links: Links<Parent, Child>)
-    
-    where Parent: EntityModel, Child: EntityModel {
+    mutating func saveLinks<Parent, Child>(_ links: Links<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
         
         links.direct.forEach { link in
-            saveChildren(
-                Parent.self,
-                childrenType: Child.self,
-                id: link.parent,
-                relationName: link.attribute.name,
-                children: link.children,
-                option: link.attribute.updateOption
-            )
+            saveLink(link)
         }
         
         links.inverse.forEach { link in
-            saveChildren(
-                Child.self,
-                childrenType: Parent.self,
-                id: link.parent,
-                relationName: link.attribute.name,
-                children: link.children,
-                option: link.attribute.updateOption
-            )
+            saveLink(link)
         }
     }
     
@@ -58,7 +41,7 @@ extension RelationsRepository {
         }
 }
 
-extension RelationsRepository {
+private extension RelationsRepository {
     
     mutating func setChildren<Parent: EntityModel>(for: Parent.Type,
                                                    relationName: String,
@@ -75,35 +58,29 @@ extension RelationsRepository {
         self.relations[key] = entitiesRelations
     }
     
-    private mutating func saveChildren<Parent, Child>(_ parentType: Parent.Type,
-                                                      childrenType: Child.Type,
-                                                      id: Parent.ID,
-                                                      relationName: String,
-                                                      children: [Child.ID],
-                                                      option: Option) where Parent: EntityModel,
-                                                                            Child: EntityModel {
-                                                                                
-    var existingRelations = findChildren(
-        for: Parent.self,
-        relationName: relationName,
-        id: id
-    )
-    
-    switch option {
-    case .append:
-        children.forEach { existingRelations.insert($0.description) }
-    case .replace:
-        existingRelations = Set(children.map { $0.description })
-    case .remove:
-        children.forEach { existingRelations.remove($0.description) }
+    mutating func saveLink<Parent, Child>(_ link: Link<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
+        
+        var existingRelations = findChildren(
+            for: Parent.self,
+            relationName: link.attribute.name,
+            id: link.parent
+        )
+        
+        switch link.attribute.updateOption {
+        case .append:
+            link.children.forEach { existingRelations.insert($0.description) }
+        case .replace:
+            existingRelations = Set(link.children.map { $0.description })
+        case .remove:
+            link.children.forEach { existingRelations.remove($0.description) }
+        }
+        
+        setChildren(
+            for: Parent.self,
+            relationName: link.attribute.name,
+            id: link.parent,
+            relations: existingRelations
+        )
     }
-    
-    setChildren(
-        for: Parent.self,
-        relationName: relationName,
-        id: id,
-        relations: existingRelations
-    )
-}
 }
 

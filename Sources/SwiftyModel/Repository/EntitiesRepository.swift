@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 02/03/2024.
 //
@@ -12,7 +12,7 @@ struct EntitiesRepository {
     typealias EntityID = String
     typealias EntityName = String
     typealias RelationName = String
-     
+    
     private var storages: [EntityName: [EntityID: any EntityModel]] = [:]
 }
 
@@ -57,7 +57,7 @@ extension EntitiesRepository {
     mutating func save<T: EntityModel>(_ entity: T, options: MergeStrategy<T>) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
-          
+        
         guard let existing: T = find(entity.id) else {
             storage[entity.id.description] = entity.normalized()
             storages[key] = storage
@@ -72,7 +72,7 @@ extension EntitiesRepository {
     }
     
     mutating func save<T: EntityModel>(_ entity: T?,
-                                              options: MergeStrategy<T>) {
+                                       options: MergeStrategy<T>) {
         guard let entity else {
             return
         }
@@ -81,7 +81,7 @@ extension EntitiesRepository {
     }
     
     mutating func save<T: EntityModel>(_ entities: [T],
-                                              options: MergeStrategy<T>) {
+                                       options: MergeStrategy<T>) {
         
         entities.forEach { save($0, options: options) }
     }
@@ -89,7 +89,7 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     mutating func save<T: EntityModel, R, K, O>(_ relatedEntity: Relation<T, R, K, O>,
-                                                 options: MergeStrategy<T>) {
+                                                options: MergeStrategy<T>) {
         
         relatedEntity.entity.forEach { save($0, options: options) }
     }
