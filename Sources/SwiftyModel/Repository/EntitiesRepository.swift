@@ -14,7 +14,6 @@ struct EntitiesRepository {
     typealias RelationName = String
      
     private var storages: [EntityName: [EntityID: any EntityModel]] = [:]
-    
 }
 
 extension EntitiesRepository {

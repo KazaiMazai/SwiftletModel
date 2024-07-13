@@ -17,7 +17,7 @@ struct RelationsRepository: Codable {
 
 extension RelationsRepository {
     mutating func saveAttachment<Parent, Child>(
-        _ entitiesAttachment: EntitiesAttachment<Parent, Child>)
+        _ entitiesAttachment: Link<Parent, Child>)
     
     where Parent: EntityModel, Child: EntityModel {
         
