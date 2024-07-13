@@ -12,6 +12,10 @@ struct Link<Parent: EntityModel, Child: EntityModel> {
     let children: [Child.ID]
     let direct: LinkAttribute
     let inverse: LinkAttribute?
+    
+    var isReplacing: Bool {
+        direct.updateOption == .replace
+    }
 }
 
 enum Option {

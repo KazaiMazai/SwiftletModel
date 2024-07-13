@@ -54,3 +54,10 @@ extension KeyPath {
         String(describing: self)
     }
 }
+
+extension EntityModel {
+    func children<Child, Direction, Cardinality, Constraint>(
+        _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>) -> [Child.ID] {
+        self[keyPath: keyPath].ids
+    }
+}
