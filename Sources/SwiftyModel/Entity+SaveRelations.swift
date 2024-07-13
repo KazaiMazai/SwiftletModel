@@ -66,7 +66,7 @@ private extension EntityModel {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
-            repository.save(links(children(keyPath), keyPath))
+            repository.save(links(relationIds(keyPath), keyPath))
         }
     
     func attach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -74,18 +74,18 @@ private extension EntityModel {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in repository: inout Repository) {
             
-            let children = children(keyPath)
-            switch relationAt(keyPath).directLinkSaveOption {
+            let children = relationIds(keyPath)
+            switch relation(keyPath).directLinkSaveOption {
             case .append:
                 repository.save(links(children, keyPath, inverse: inverse))
             case .replace, .remove:
-                let enititesAtKeyPath = Set(children)
-                let toRemove = repository
-                    .findRelations(for: Self.self, relationName: keyPath.relationName, id: id)
+                let enititesToKeep = Set(children)
+                let oddExisingChildren = repository
+                    .findChildren(for: Self.self, relationName: keyPath.name, id: id)
                     .compactMap { Child.ID($0) }
-                    .filter { !enititesAtKeyPath.contains($0) }
+                    .filter { !enititesToKeep.contains($0) }
                 
-                repository.save(removeLinks(toRemove, keyPath, inverse: inverse))
+                repository.save(removeLinks(oddExisingChildren, keyPath, inverse: inverse))
                 repository.save(links(children, keyPath, inverse: inverse))
             }
         }
@@ -96,7 +96,7 @@ private extension EntityModel {
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
         _ repository: inout Repository) {
             
-            relationAt(keyPath).save(&repository)
+            relation(keyPath).save(&repository)
     }
 }
  
@@ -112,8 +112,8 @@ private extension EntityModel {
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
-                    name: keyPath.relationName,
-                    updateOption: relationAt(keyPath).directLinkSaveOption
+                    name: keyPath.name,
+                    updateOption: relation(keyPath).directLinkSaveOption
                 )
             )],
             inverse: []
@@ -132,8 +132,8 @@ private extension EntityModel {
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
-                    name: keyPath.relationName,
-                    updateOption: relationAt(keyPath).directLinkSaveOption
+                    name: keyPath.name,
+                    updateOption: relation(keyPath).directLinkSaveOption
                 )
             )],
             inverse: children.map { child in
@@ -141,8 +141,8 @@ private extension EntityModel {
                     parent: child,
                     children: [id],
                     attribute: LinkAttribute(
-                        name: inverse.relationName,
-                        updateOption: relationAt(keyPath).inverseLinkSaveOption
+                        name: inverse.name,
+                        updateOption: relation(keyPath).inverseLinkSaveOption
                     )
                 )
             }

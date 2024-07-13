@@ -50,18 +50,18 @@ extension EntityModel {
 }
 
 extension KeyPath {
-    var relationName: String {
+    var name: String {
         String(describing: self)
     }
 }
 
 extension EntityModel {
-    func children<Child, Direction, Cardinality, Constraint>(
+    func relationIds<Child, Direction, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>) -> [Child.ID] {
         self[keyPath: keyPath].ids
     }
     
-    func relationAt<Child, Direction, Cardinality, Constraint>(
+    func relation<Child, Direction, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>) -> Relation<Child, Direction, Cardinality, Constraint> {
         self[keyPath: keyPath]
     }

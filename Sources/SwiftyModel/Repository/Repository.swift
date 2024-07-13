@@ -36,7 +36,7 @@ extension Repository {
 }
 
 extension Repository {
-    func findRelations<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
+    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
         relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
@@ -69,14 +69,6 @@ extension Repository {
                                        options: MergeStrategy<T> = T.mergeStraregy()) {
         
         entitiesRepository.save(entities, options: options)
-    }
-}
-
-extension Repository {
-    mutating func save<T: EntityModel, R, K, Constraints>(_ relatedEntity: Relation<T, R, K, Constraints>,
-                                                          options: MergeStrategy<T> = T.mergeStraregy()) {
-
-        entitiesRepository.save(relatedEntity, options: options)
     }
 }
 

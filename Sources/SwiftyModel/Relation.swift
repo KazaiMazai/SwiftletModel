@@ -44,7 +44,7 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
 
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
-        entity.forEach { $0.save(&repository) }
+        entity.forEach { entity in entity.save(&repository) }
     }
 }
 

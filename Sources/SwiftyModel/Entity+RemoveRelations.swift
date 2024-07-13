@@ -15,7 +15,7 @@ public extension EntityModel {
         in repository: inout Repository) {
             
             let children = repository
-                .findRelations(for: Self.self, relationName: keyPath.relationName, id: id)
+                .findChildren(for: Self.self, relationName: keyPath.name, id: id)
                 .compactMap { Child.ID($0) }
             
             detach(children, relation: keyPath, in: &repository)
@@ -27,7 +27,7 @@ public extension EntityModel {
         in repository: inout Repository)  {
             
             let children = repository
-                .findRelations(for: Self.self, relationName: keyPath.relationName, id: id)
+                .findChildren(for: Self.self, relationName: keyPath.name, id: id)
                 .compactMap { Child.ID($0) }
             
             detach(children, relation: keyPath, inverse: inverse, in: &repository)
@@ -37,7 +37,7 @@ public extension EntityModel {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
-            detach(children(keyPath), relation: keyPath, in: &repository)
+            detach(relationIds(keyPath), relation: keyPath, in: &repository)
         }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -45,7 +45,7 @@ public extension EntityModel {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in repository: inout Repository)  {
             
-            detach(children(keyPath), relation: keyPath, inverse: inverse, in: &repository)
+            detach(relationIds(keyPath), relation: keyPath, inverse: inverse, in: &repository)
         }
     
     func detach<Child, Cardinality, Constraint>(
@@ -95,7 +95,7 @@ extension EntityModel {
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
-                    name: keyPath.relationName,
+                    name: keyPath.name,
                     updateOption: .remove
                 )
             )],
@@ -115,7 +115,7 @@ extension EntityModel {
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
-                    name: keyPath.relationName,
+                    name: keyPath.name,
                     updateOption: .remove
                 )
             )],
@@ -124,7 +124,7 @@ extension EntityModel {
                     parent: child,
                     children: [id],
                     attribute: LinkAttribute(
-                        name: inverse.relationName,
+                        name: inverse.name,
                         updateOption: .remove
                     )
                 )

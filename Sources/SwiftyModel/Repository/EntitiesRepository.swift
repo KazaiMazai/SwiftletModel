@@ -86,11 +86,3 @@ extension EntitiesRepository {
         entities.forEach { save($0, options: options) }
     }
 }
-
-extension EntitiesRepository {
-    mutating func save<T: EntityModel, R, K, O>(_ relatedEntity: Relation<T, R, K, O>,
-                                                options: MergeStrategy<T>) {
-        
-        relatedEntity.entity.forEach { save($0, options: options) }
-    }
-}
