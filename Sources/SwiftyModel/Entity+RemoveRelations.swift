@@ -7,7 +7,7 @@
 
 import Foundation
 
-//MARK: - Detach Relation
+//MARK: - Detach Relations
 
 public extension EntityModel {
     func detach<Child, Cardinality, Constraint>(

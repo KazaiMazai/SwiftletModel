@@ -14,8 +14,8 @@ public extension EntityModel {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         to repository: inout Repository) {
             
-            saveEntity(at: keyPath, &repository)
-            attach(keyPath, in: &repository)
+            saveEntity(at: keyPath, in: &repository)
+            saveRelation(at: keyPath, in: &repository)
     }
 }
 
@@ -26,8 +26,8 @@ public extension EntityModel {
         inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveEntity(at: keyPath, &repository)
-            attach(keyPath, inverse: inverse, in: &repository)
+            saveEntity(at: keyPath, in: &repository)
+            saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
@@ -35,8 +35,8 @@ public extension EntityModel {
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveEntity(at: keyPath, &repository)
-            attach(keyPath, inverse: inverse, in: &repository)
+            saveEntity(at: keyPath, in: &repository)
+            saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
@@ -44,8 +44,8 @@ public extension EntityModel {
         inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>,
         to repository: inout Repository) {
             
-            saveEntity(at: keyPath, &repository)
-            attach(keyPath, inverse: inverse, in: &repository)
+            saveEntity(at: keyPath, in: &repository)
+            saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
@@ -53,8 +53,8 @@ public extension EntityModel {
         inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>,
         to repository: inout Repository){
             
-            saveEntity(at: keyPath, &repository)
-            attach(keyPath, inverse: inverse, in: &repository)
+            saveEntity(at: keyPath, in: &repository)
+            saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
 }
 
@@ -62,15 +62,15 @@ public extension EntityModel {
 
 private extension EntityModel {
 
-    func attach<Child, Cardinality, Constraint>(
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
+    func saveRelation<Child, Cardinality, Constraint>(
+        at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
             repository.save(links(relationIds(keyPath), keyPath))
         }
     
-    func attach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
+    func saveRelation<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+        at keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in repository: inout Repository) {
             
@@ -94,7 +94,7 @@ private extension EntityModel {
 private extension EntityModel {
     func saveEntity<Child, Directionality, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
-        _ repository: inout Repository) {
+        in repository: inout Repository) {
             
             relation(keyPath).save(&repository)
     }
