@@ -111,15 +111,18 @@ fileprivate extension EntityModel {
     func attachmentLink<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
-    ) -> Link<Self, Child> {
+    ) -> Links<Self, Child> {
         
-        Link(parent: id,
-             children: children(keyPath),
-             direct: LinkAttribute(
-                name: keyPath.relationName,
-                updateOption: self[keyPath: keyPath].directLinkSaveOption
-             ),
-             inverse: nil
+        Links(
+            direct: StoredLink(
+                parent: id,
+                children: children(keyPath),
+                attribute: LinkAttribute(
+                    name: keyPath.relationName,
+                    updateOption: self[keyPath: keyPath].directLinkSaveOption
+                )
+            ),
+            inverse: []
         )
     }
 
@@ -127,18 +130,29 @@ fileprivate extension EntityModel {
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
-    ) -> Link<Self, Child> {
+    ) -> Links<Self, Child> {
         
-        Link(parent: id,
-             children: children(keyPath),
-             direct: LinkAttribute(
-                name: keyPath.relationName,
-                updateOption: self[keyPath: keyPath].directLinkSaveOption
-             ),
-             inverse: LinkAttribute(
-                name: inverse.relationName,
-                updateOption: self[keyPath: keyPath].inverseLinkSaveOption
-             )
+        let children = children(keyPath)
+        let inverseLinkSaveOption = self[keyPath: keyPath].inverseLinkSaveOption
+        return Links(
+            direct: StoredLink(
+                parent: id,
+                children: children,
+                attribute: LinkAttribute(
+                    name: keyPath.relationName,
+                    updateOption: self[keyPath: keyPath].directLinkSaveOption
+                )
+            ),
+            inverse: children.map { child in
+                StoredLink(
+                    parent: child,
+                    children: [id],
+                    attribute: LinkAttribute(
+                        name: inverse.relationName,
+                        updateOption: inverseLinkSaveOption
+                    )
+                )
+            }
         )
     }
 }

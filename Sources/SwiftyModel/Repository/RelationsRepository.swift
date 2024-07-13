@@ -17,31 +17,27 @@ struct RelationsRepository: Codable {
 
 extension RelationsRepository {
     mutating func saveAttachment<Parent, Child>(
-        _ entitiesAttachment: Link<Parent, Child>)
+        _ links: Links<Parent, Child>)
     
     where Parent: EntityModel, Child: EntityModel {
         
         saveChildren(
             Parent.self,
             childrenType: Child.self,
-            id: entitiesAttachment.parent,
-            relationName: entitiesAttachment.direct.name,
-            children: entitiesAttachment.children,
-            option: entitiesAttachment.direct.updateOption
+            id: links.direct.parent,
+            relationName: links.direct.attribute.name,
+            children: links.direct.children,
+            option: links.direct.attribute.updateOption
         )
         
-        guard let inverseUpdate = entitiesAttachment.inverse else {
-            return
-        }
-        
-        entitiesAttachment.children.forEach {
+        links.inverse.forEach { link in
             saveChildren(
                 Child.self,
                 childrenType: Parent.self,
-                id: $0,
-                relationName: inverseUpdate.name,
-                children: [entitiesAttachment.parent],
-                option: inverseUpdate.updateOption
+                id: link.parent,
+                relationName: link.attribute.name,
+                children: link.children,
+                option: link.attribute.updateOption
             )
         }
     }

@@ -82,7 +82,7 @@ extension Repository {
 
 
 extension Repository {
-    mutating func save<T: EntityModel, E: EntityModel>(_ relation: Link<T, E>) {
+    mutating func save<T: EntityModel, E: EntityModel>(_ relation: Links<T, E>) {
         
         relationsRepository.saveAttachment(relation)
     }

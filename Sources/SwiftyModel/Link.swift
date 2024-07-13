@@ -7,15 +7,12 @@
 
 import Foundation
 
-struct Link<Parent: EntityModel, Child: EntityModel> {
+typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: StoredLink<Parent, Child>, inverse: [StoredLink<Child, Parent>])
+
+struct StoredLink<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID
     let children: [Child.ID]
-    let direct: LinkAttribute
-    let inverse: LinkAttribute?
-    
-    var isReplacing: Bool {
-        direct.updateOption == .replace
-    }
+    let attribute: LinkAttribute
 }
 
 enum Option {

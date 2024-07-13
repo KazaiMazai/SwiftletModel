@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 13/07/2024.
 //
@@ -19,7 +19,7 @@ public extension EntityModel {
                 .compactMap { Child.ID($0) }
             
             detach(children, relation: keyPath, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         all keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
@@ -31,14 +31,14 @@ public extension EntityModel {
                 .compactMap { Child.ID($0) }
             
             detach(children, relation: keyPath, inverse: inverse, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in repository: inout Repository) {
             
             detach(children(keyPath), relation: keyPath, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
@@ -46,7 +46,7 @@ public extension EntityModel {
         in repository: inout Repository)  {
             
             detach(children(keyPath), relation: keyPath, inverse: inverse, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint>(
         _ entities: Child.ID...,
@@ -54,7 +54,7 @@ public extension EntityModel {
         in repository: inout Repository) {
             
             detach(entities, relation: keyPath, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ entities: Child.ID...,
@@ -63,7 +63,7 @@ public extension EntityModel {
         in repository: inout Repository)  {
             
             detach(entities, relation: keyPath, inverse: inverse, in: &repository)
-    }
+        }
     
     func detach<Child, Cardinality, Constraint>(
         _ entities: [Child.ID],
@@ -71,7 +71,7 @@ public extension EntityModel {
         in repository: inout Repository) {
             
             repository.save(removeLink(entities, keyPath))
-    }
+        }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ entities: [Child.ID],
@@ -80,7 +80,7 @@ public extension EntityModel {
         in repository: inout Repository)  {
             
             repository.save(removeLink(entities, keyPath, inverse: inverse))
-    }
+        }
 }
 
 fileprivate extension EntityModel {
@@ -88,15 +88,18 @@ fileprivate extension EntityModel {
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
-    ) -> Link<Self, Child> {
+    ) -> Links<Self, Child> {
         
-        Link(parent: id,
-             children: children,
-             direct: LinkAttribute(
-                name: keyPath.relationName,
-                updateOption: .remove
-             ),
-             inverse: nil
+        Links(
+            direct: StoredLink(
+                parent: id,
+                children: children,
+                attribute: LinkAttribute(
+                    name: keyPath.relationName,
+                    updateOption: .remove
+                )
+            ),
+            inverse: []
         )
     }
     
@@ -105,18 +108,27 @@ fileprivate extension EntityModel {
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
         
-    ) -> Link<Self, Child> {
+    ) -> Links<Self, Child> {
         
-        Link(parent: id,
-             children: children,
-             direct: LinkAttribute(
-                name: keyPath.relationName,
-                updateOption: .remove
-             ),
-             inverse: LinkAttribute(
-                name: inverse.relationName,
-                updateOption: .remove
-             )
+        Links(
+            direct: StoredLink(
+                parent: id,
+                children: children,
+                attribute: LinkAttribute(
+                    name: keyPath.relationName,
+                    updateOption: .remove
+                )
+            ),
+            inverse: children.map { child in
+                StoredLink(
+                    parent: child,
+                    children: [id],
+                    attribute: LinkAttribute(
+                        name: inverse.relationName,
+                        updateOption: .remove
+                    )
+                )
+            }
         )
     }
 }
