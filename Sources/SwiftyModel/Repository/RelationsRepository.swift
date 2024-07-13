@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import Collections
 
 struct RelationsRepository: Codable {
     typealias EntityID = String
     typealias EntityName = String
     typealias RelationName = String
     
-    fileprivate var relations: [EntityName: [EntityID: [RelationName: Set<EntityID>]]] = [:]
+    fileprivate var relations: [EntityName: [EntityID: [RelationName: OrderedSet<EntityID>]]] = [:]
 }
 
 extension RelationsRepository {
@@ -30,7 +31,7 @@ extension RelationsRepository {
     func findChildren<Parent: EntityModel>(
         for: Parent.Type,
         relationName: String,
-        id: Parent.ID) -> Set<String> {
+        id: Parent.ID) -> OrderedSet<String> {
             
             let key = String(reflecting: Parent.self)
             
@@ -46,7 +47,7 @@ private extension RelationsRepository {
     mutating func setChildren<Parent: EntityModel>(for: Parent.Type,
                                                    relationName: String,
                                                    id: Parent.ID,
-                                                   relations: Set<String>) {
+                                                   relations: OrderedSet<String>) {
         
         let key = String(reflecting: Parent.self)
         
@@ -65,12 +66,12 @@ private extension RelationsRepository {
             relationName: link.attribute.name,
             id: link.parent
         )
-        
+      
         switch link.attribute.updateOption {
         case .append:
-            link.children.forEach { existingRelations.insert($0.description) }
+            link.children.forEach { existingRelations.append($0.description) }
         case .replace:
-            existingRelations = Set(link.children.map { $0.description })
+            existingRelations = OrderedSet(link.children.map { $0.description })
         case .remove:
             link.children.forEach { existingRelations.remove($0.description) }
         }

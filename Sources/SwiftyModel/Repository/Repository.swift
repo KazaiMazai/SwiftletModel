@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Collections
 
 public struct Repository {
     private var entitiesRepository = EntitiesRepository()
@@ -36,7 +37,7 @@ extension Repository {
 }
 
 extension Repository {
-    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> Set<String> {
+    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
         relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
