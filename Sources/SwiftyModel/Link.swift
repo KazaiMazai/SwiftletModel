@@ -7,9 +7,9 @@
 
 import Foundation
 
-typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: StoredLink<Parent, Child>, inverse: [StoredLink<Child, Parent>])
+typealias Links<Parent: EntityModel, Child: EntityModel> = (direct: Link<Parent, Child>, inverse: [Link<Child, Parent>])
 
-struct StoredLink<Parent: EntityModel, Child: EntityModel> {
+struct Link<Parent: EntityModel, Child: EntityModel> {
     let parent: Parent.ID
     let children: [Child.ID]
     let attribute: LinkAttribute

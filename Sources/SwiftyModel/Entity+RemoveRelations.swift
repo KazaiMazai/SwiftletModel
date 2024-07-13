@@ -91,7 +91,7 @@ fileprivate extension EntityModel {
     ) -> Links<Self, Child> {
         
         Links(
-            direct: StoredLink(
+            direct: Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
@@ -111,7 +111,7 @@ fileprivate extension EntityModel {
     ) -> Links<Self, Child> {
         
         Links(
-            direct: StoredLink(
+            direct: Link(
                 parent: id,
                 children: children,
                 attribute: LinkAttribute(
@@ -120,7 +120,7 @@ fileprivate extension EntityModel {
                 )
             ),
             inverse: children.map { child in
-                StoredLink(
+                Link(
                     parent: child,
                     children: [id],
                     attribute: LinkAttribute(
