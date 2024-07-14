@@ -43,7 +43,7 @@ final class ToOneTests: XCTestCase {
     
     func test_WhenNullify_InverseIsRemoved() {
         var message = initialMessage
-        message.attachment = .nullify
+        message.attachment = .null
         message.save(&repository)
         
         let messageForAttachment = Attachment
@@ -55,7 +55,7 @@ final class ToOneTests: XCTestCase {
     
     func test_WhenNullify_RelationIsRemoved() {
         var message = initialMessage
-        message.attachment = .nullify
+        message.attachment = .null
         message.save(&repository)
         
         let attachment = message
