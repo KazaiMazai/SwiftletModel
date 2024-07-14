@@ -12,10 +12,10 @@ struct Query<Entity: EntityModel> {
     let id: Entity.ID
     private let resolved: Entity?
     
-    init(repository: Repository, id: Entity.ID, entity: Entity? = nil) {
+    init(repository: Repository, id: Entity.ID, resolved: Entity? = nil) {
         self.repository = repository
         self.id = id
-        self.resolved = entity
+        self.resolved = resolved
     }
     
     func resolve() -> Entity? {
@@ -102,7 +102,7 @@ extension Query {
             .flatMap { $0.resolve() }
             .map { .relation($0) } ?? .none
         
-        return Query(repository: repository, id: id, entity: entity)
+        return Query(repository: repository, id: id, resolved: entity)
     }
     
     func with<Child, Directionality, Constraints>(
@@ -119,6 +119,6 @@ extension Query {
                 .compactMap { $0.resolve() }
         )
         
-        return Query(repository: repository, id: id, entity: entity)
+        return Query(repository: repository, id: id, resolved: entity)
     }
 }
