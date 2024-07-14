@@ -62,5 +62,35 @@ final class ManyToManyTests: XCTestCase {
         
         XCTAssertTrue(bobsChats.isEmpty)
     }
+    
+    func test_Encoding() {
+        var chat = Chat.one
+        chat.users = .relation([.bob, .alice, .tom])
+        chat.save(&repository)
+        chat.messages = .relation([
+            Message(id: "1",
+                    text: "hello",
+                    author: .relation(.alice),
+                    attachment: .relation(.imageOne))
+        ])
+        chat.users = .fragment([.john, .michael])
+        chat.save(&repository)
+        
+        let bob = User
+            .query(User.bob.id, in: repository)
+            .with(\.chats) {
+                $0.with(\.users)
+                    .with(\.messages) {
+                        $0.with(\.attachment)
+                    }
+            }
+            .resolve()
+        
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+       
+        let string = String(data: try! encoder.encode(bob), encoding: .utf8) ?? ""
+        print(string)
+    }
 }
    

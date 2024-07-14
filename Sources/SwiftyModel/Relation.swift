@@ -40,6 +40,28 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
     var entities: [T] {
         state.entities
     }
+    
+    fileprivate init(state: State<T>) {
+        self.state = state
+    }
+}
+
+extension Relation: Codable where T: Codable {
+    
+    public init(from decoder: Decoder) throws where T: Codable {
+        let topLevelContainer = try decoder.singleValueContainer()
+        state = try topLevelContainer.decode(State.self)
+    }
+
+    public func encode(to encoder: Encoder) throws where T: Codable {
+       try state.encode(to: encoder)
+//        var topLevelContainer = encoder.singleValueContainer()
+//        if state == .none {
+//            try topLevelContainer.encodeNil()
+//            return
+//        }
+//        try topLevelContainer.encode(state)
+    }
 }
 
 extension Relation: Storable {
@@ -50,33 +72,33 @@ extension Relation: Storable {
 
 public extension Relation {
     static var none: Self {
-        Relation(state: .none(explicitNil: false))
+        Relation(state: .none)
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: OptionalRelation {
     static func relation(id: T.ID) -> Self {
-        Relation(state: .ids(ids: [id]))
+        Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .included(items: [entity]))
+        Relation(state: State(entity))
     }
     
     static var null: Self {
-        Relation(state: .none(explicitNil: true))
+        Relation(state: State(nil))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: RequiredRelation {
     static func relation(id: T.ID) -> Self {
-        Relation(state: .ids(ids:[id]))
+        Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .included(items: [entity]))
+        Relation(state: State(entity))
     }
 }
 
@@ -85,12 +107,12 @@ public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints.Entity == T {
     
     static func relation(id: T.ID) -> Self {
-        Relation(state: .ids(ids:[id]))
+        Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) throws -> Self {
         try Constraints.validate(model: entity)
-        return Relation(state: .included(items:[entity]))
+        return Relation(state: State(entity))
     }
 }
 
@@ -98,19 +120,19 @@ public extension Relation where Cardinality == Relations.ToMany,
                                 Constraints: RequiredRelation {
     
     static func relation(ids: [T.ID]) -> Self {
-        Relation(state: .ids(ids:ids))
+        Relation(state: State(ids: ids, fragment: false))
     }
     
     static func relation(_ entities: [T]) -> Self {
-        Relation(state: .included(items:entities))
+        Relation(state: State(entities, fragment: false))
     }
     
     static func fragment(ids: [T.ID]) -> Self {
-        Relation(state: .fragmentIds(ids: ids))
+        Relation(state: State(ids: ids, fragment: true))
     }
     
     static func fragment(_ entities: [T]) -> Self {
-        Relation(state: .fragment(items:entities))
+        Relation(state: State(entities, fragment: true))
     }
 }
 
@@ -120,42 +142,34 @@ public extension Relation where Cardinality == Relations.ToMany,
     
     static func relation(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
-        return Relation(state: .ids(ids: ids))
+        return Relation(state: State(ids: ids, fragment: false))
     }
     
     static func relation(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
-        return Relation(state: .included(items: entities))
+        return Relation(state: State(entities, fragment: false))
     }
     
     static func fragment(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
-        return Relation(state: .fragmentIds(ids: ids))
+        return Relation(state: State(ids: ids, fragment: true))
     }
     
     static func fragment(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
-        return Relation(state: .fragment(items: entities))
+        return Relation(state: State(entities, fragment: true))
     }
-}
-
-extension Relation: Codable where T: Codable {
-    
-}
-
-extension Relation.State: Codable where Entity: Codable {
-    
 }
 
 extension Relation {
     var directLinkSaveOption: Option {
         switch state {
-        case .ids, .included:
+        case .entity:
             return .replace
-        case .fragment, .fragmentIds:
+        case .entities(_, _, let fragment):
+            return fragment ? .append : .replace
+        case .none:
             return .append
-        case .none(let explicitNil):
-            return explicitNil ? .remove : .append
         }
     }
     
@@ -167,18 +181,32 @@ extension Relation {
 private extension Relation {
     
     indirect enum State<Entity: EntityModel>: Hashable {
-        case ids(ids: [Entity.ID])
-        case included(items: [Entity])
-        case fragmentIds(ids: [Entity.ID])
-        case fragment(items: [Entity])
-        case none(explicitNil: Bool)
+        case entity(id: Entity.ID?, entity: Entity?)
+        case entities(ids: [Entity.ID], items: [Entity]?, fragment: Bool)
+        case none
+        
+        init(_ items: [Entity], fragment: Bool) {
+            self = .entities(ids: items.map { $0.id} , items: items, fragment: fragment)
+        }
+        
+        init(ids: [Entity.ID], fragment: Bool) {
+            self = .entities(ids: ids , items: nil, fragment: fragment)
+        }
+        
+        init(id: Entity.ID?) {
+            self = .entity(id: id, entity: nil)
+        }
+        
+        init(_ entity: Entity?) {
+            self = .entity(id: entity?.id, entity: entity)
+        }
         
         var ids: [Entity.ID] {
             switch self {
-            case .ids(let ids), .fragmentIds(let ids):
+            case .entity(let ids, _):
+                return [ids].compactMap { $0 }
+            case .entities(let ids, _, _):
                 return ids
-            case .included(let entities), .fragment(let entities):
-                return entities.map { $0.id }
             case .none:
                 return []
             }
@@ -186,17 +214,17 @@ private extension Relation {
         
         var entities: [Entity] {
             switch self {
-            case .ids, .fragmentIds:
-                return []
-            case .included(let entities), .fragment(let entities):
-                return entities
+            case .entity(_, let entity):
+                return [entity].compactMap { $0 }
+            case .entities(_, let entities, _):
+                return entities ?? []
             case .none:
                 return []
             }
         }
         
         mutating func normalize() {
-            self = .none(explicitNil: false)
+            self = .none
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
@@ -209,16 +237,137 @@ private extension Relation {
     }
 }
 
+extension Relation.State: Codable where Entity: Codable {
+//    enum CodingKeys: String, CodingKey {
+//        case ids
+//        case included = "items"
+//        case fragmentIds
+//        case fragment
+//        case none
+//    }
+//    
+//    enum IdsCodingKeys: String, CodingKey {
+//        case ids = "relation"
+//    }
+//    
+//    enum IncludedCodingKeys: String, CodingKey {
+//        case items = "relation"
+//    }
+//    
+//    enum FragmentIdsCodingKeys: String, CodingKey {
+//        case ids = "relation"
+//    }
+//    
+//    enum FragmentCodingKeys: String, CodingKey {
+//        case items = "relation"
+//    }
+
+//    init(from decoder: Decoder) throws where T: Codable {
+//        var topLevelContainer = try decoder.singleValueContainer()
+//        self = try topLevelContainer.decode(RelationState.self)
+//    }
+//
+//    func encode(to encoder: Encoder) throws where T: Codable {
+//        var topLevelContainer = encoder.singleValueContainer()
+//        try topLevelContainer.encode(self)
+//    }
+    
+//    
+//    func encode(to encoder: Encoder) throws {
+//        
+//        switch self {
+//        case .ids(let state):
+//            var container = encoder.container(keyedBy: CodingKeys.self)
+//            try container.encode(state, forKey: .ids)
+//        case .included(items: let items):
+//            var container = encoder.container(keyedBy: CodingKeys.self)
+//            try container.encode(items, forKey: .included)
+//        case .fragmentIds(let ids):
+//            var container = encoder.container(keyedBy: CodingKeys.self)
+//            try container.encode(ids, forKey: .fragmentIds)
+//        case .fragment(let items):
+//            var container = encoder.container(keyedBy: CodingKeys.self)
+//            try container.encode(items, forKey: .fragment)
+//        case .none:
+//            var container = encoder.singleValueContainer()
+//            try container.encodeNil()
+//        }
+//    }
+//
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        guard let key = container.allKeys.first else {
+//            self = .none
+//            return
+//        }
+//        
+//        switch key {
+//        case .ids:
+//            self = .ids(ids: try container.decode([Entity.ID].self, forKey: .ids))
+//        case .included:
+//            self = .included(items: try container.decode([Entity].self, forKey: .included))
+//        case .fragmentIds:
+//            self = .fragmentIds(ids: try container.decode([Entity.ID].self, forKey: .fragmentIds))
+//        case .fragment:
+//            self = .fragment(items: try container.decode([Entity].self, forKey: .fragment))
+//        case .none:
+//            self = .none
+//        }
+//    }
+}
+
+
 extension Relation where Cardinality == Relations.ToOne {
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .included(items: [entity]))
+        Relation(state: State(entity))
     }
 }
 
 extension Relation where Cardinality == Relations.ToMany {
     
     static func relation(_ entities: [T]) -> Self {
-        Relation(state: .included(items: entities))
+        Relation(state: State(entities, fragment: false))
+    }
+}
+
+struct SomeDetails: Codable {
+    let count: Int
+    let name: String
+    let type: String
+}
+
+
+struct SomeObject: Codable {
+    let id: Int
+    let details: SomeDetails
+
+    enum CodingKeys: String, CodingKey {
+        case id
+    }
+
+    enum DetailKeys: String, CodingKey {
+        case count, name, type
+    }
+
+    init(from decoder: Decoder) throws {
+        let topLevelContainer = try decoder.container(keyedBy: CodingKeys.self)
+        let detailContainer = try decoder.container(keyedBy: DetailKeys.self)
+
+        id = try topLevelContainer.decode(Int.self, forKey: .id)
+        details = SomeDetails(
+            count: try detailContainer.decode(Int.self, forKey: .count),
+            name: try detailContainer.decode(String.self, forKey: .name),
+            type: try detailContainer.decode(String.self, forKey: .type))
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var topLevelContainer = encoder.container(keyedBy: CodingKeys.self)
+        try topLevelContainer.encode(id, forKey: .id)
+
+        var detailContainer = encoder.container(keyedBy: DetailKeys.self)
+        try detailContainer.encode(details.count, forKey: .count)
+        try detailContainer.encode(details.name, forKey: .name)
+        try detailContainer.encode(details.type, forKey: .type)
     }
 }
