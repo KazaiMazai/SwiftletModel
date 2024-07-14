@@ -10,9 +10,16 @@ import Foundation
 struct Query<Entity: EntityModel> {
     let repository: Repository
     let id: Entity.ID
+    private let resolved: Entity?
+    
+    init(repository: Repository, id: Entity.ID, entity: Entity? = nil) {
+        self.repository = repository
+        self.id = id
+        self.resolved = entity
+    }
     
     func resolve() -> Entity? {
-        repository.find(id)
+        resolved ?? repository.find(id)
     }
 }
 
@@ -80,35 +87,38 @@ extension Collection {
 }
 
 extension Query {
-    func resolve<Child, Directionality, Constraints>(
-        with keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: (Query<Child>) -> Child? = { $0.resolve() }) -> Entity? {
+    typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
+    
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: QueryModifier<Child> = { $0 }) -> Query {
             
         guard var entity = resolve() else {
-            return nil
+            return self
         }
         
         entity[keyPath: keyPath] = related(keyPath)
-            .flatMap { nested($0) }
+            .map { nested($0) }
+            .flatMap { $0.resolve() }
             .map { .relation($0) } ?? .none
         
-        return entity
-            
+        return Query(repository: repository, id: id, entity: entity)
     }
     
-    func resolve<Child, Directionality, Constraints>(
-        with keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: (Query<Child>) -> Child? = { $0.resolve() }) -> Entity? {
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: QueryModifier<Child> = { $0 }) -> Query {
         
         guard var entity = resolve() else {
-            return nil
+            return self
         }
           
         entity[keyPath: keyPath] = .relation(
             related(keyPath)
-                .compactMap { nested($0) }
+                .map { nested($0) }
+                .compactMap { $0.resolve() }
         )
         
-        return entity
+        return Query(repository: repository, id: id, entity: entity)
     }
 }
