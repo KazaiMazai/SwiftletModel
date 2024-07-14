@@ -17,8 +17,8 @@ struct Query<Entity: EntityModel> {
 }
 
 extension Collection {
-    func resolve<Entity>() -> [Entity?] where Element == Query<Entity> {
-        map { $0.resolve() }
+    func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
+        compactMap { $0.resolve() }
     }
 }
 
@@ -76,5 +76,39 @@ extension Collection {
     where Element == Query<Entity> {
         
         compactMap { $0.related(keyPath) }
+    }
+}
+
+extension Query {
+    func resolve<Child, Directionality, Constraints>(
+        with keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: (Query<Child>) -> Child? = { $0.resolve() }) -> Entity? {
+            
+        guard var entity = resolve() else {
+            return nil
+        }
+        
+        entity[keyPath: keyPath] = related(keyPath)
+            .flatMap { nested($0) }
+            .map { .relation($0) } ?? .none
+        
+        return entity
+            
+    }
+    
+    func resolve<Child, Directionality, Constraints>(
+        with keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: (Query<Child>) -> Child? = { $0.resolve() }) -> Entity? {
+        
+        guard var entity = resolve() else {
+            return nil
+        }
+          
+        entity[keyPath: keyPath] = .relation(
+            related(keyPath)
+                .compactMap { nested($0) }
+        )
+        
+        return entity
     }
 }
