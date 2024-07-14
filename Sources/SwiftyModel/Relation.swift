@@ -37,14 +37,14 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
         state.ids
     }
     
-    var entity: [T] {
-        state.entity
+    var entities: [T] {
+        state.entities
     }
 }
 
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
-        entity.forEach { entity in entity.save(&repository) }
+        entities.forEach { entity in entity.save(&repository) }
     }
 }
 
@@ -105,11 +105,11 @@ public extension Relation where Cardinality == Relations.ToMany,
         Relation(state: .entity(entities, replace: true))
     }
     
-    static func insert(ids: [T.ID]) -> Self {
+    static func fragment(ids: [T.ID]) -> Self {
         Relation(state: .faulted(ids, replace: false))
     }
     
-    static func insert(_ entities: [T]) -> Self {
+    static func fragment(_ entities: [T]) -> Self {
         Relation(state: .entity(entities, replace: false))
     }
 }
@@ -128,12 +128,12 @@ public extension Relation where Cardinality == Relations.ToMany,
         return Relation(state: .entity(entities, replace: true))
     }
     
-    static func insert(ids: [T.ID]) throws -> Self {
+    static func fragment(ids: [T.ID]) throws -> Self {
         try Constraints.validate(ids: ids)
         return Relation(state: .faulted(ids, replace: false))
     }
     
-    static func insert(_ entities: [T]) throws -> Self {
+    static func fragment(_ entities: [T]) throws -> Self {
         try Constraints.validate(models: entities)
         return Relation(state: .entity(entities, replace: false))
     }
@@ -180,7 +180,7 @@ private extension Relation {
             }
         }
         
-        var entity: [T] {
+        var entities: [T] {
             switch self {
             case .faulted:
                 return []

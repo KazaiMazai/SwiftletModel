@@ -34,7 +34,7 @@ final class ManyToManyTests: XCTestCase {
         chat.users = .relation([.bob, .alice, .tom])
         chat.save(&repository)
         
-        chat.users = .insert([.john, .michael])
+        chat.users = .fragment([.john, .michael])
         chat.save(&repository)
          
         let chatUsers = Chat
