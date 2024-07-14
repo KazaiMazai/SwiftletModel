@@ -9,16 +9,56 @@ import Foundation
 
 struct Query<Entity: EntityModel> {
     let repository: Repository
-    let id: Entity.ID
+    private let state: State
+    
+    init(repository: Repository, id: Entity.ID) {
+        self.repository = repository
+        self.state = .initial(id)
+    }
+    
+    init(repository: Repository, resolved: Entity) {
+        self.repository = repository
+        self.state = .resolved(resolved)
+    }
+    
+    var id: Entity.ID {
+        state.id
+    }
     
     func resolve() -> Entity? {
-        repository.find(id)
+        state.resolved ?? repository.find(id)
+    }
+}
+
+private extension Query {
+    
+    enum State {
+        case initial(Entity.ID)
+        case resolved(Entity)
+        
+        var id: Entity.ID {
+            switch self {
+            case .initial(let id):
+                return id
+            case .resolved(let entity):
+                return entity.id
+            }
+        }
+        
+        var resolved: Entity? {
+            switch self {
+            case .initial:
+                return nil
+            case .resolved(let entity):
+                return entity
+            }
+        }
     }
 }
 
 extension Collection {
-    func resolve<Entity>() -> [Entity?] where Element == Query<Entity> {
-        map { $0.resolve() }
+    func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
+        compactMap { $0.resolve() }
     }
 }
 
@@ -76,5 +116,42 @@ extension Collection {
     where Element == Query<Entity> {
         
         compactMap { $0.related(keyPath) }
+    }
+}
+
+extension Query {
+    typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
+    
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: QueryModifier<Child> = { $0 }) -> Query {
+            
+        guard var entity = resolve() else {
+            return self
+        }
+        
+        entity[keyPath: keyPath] = related(keyPath)
+            .map { nested($0) }
+            .flatMap { $0.resolve() }
+            .map { .relation($0) } ?? .none
+        
+        return Query(repository: repository, resolved: entity)
+    }
+    
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: QueryModifier<Child> = { $0 }) -> Query {
+        
+        guard var entity = resolve() else {
+            return self
+        }
+          
+        entity[keyPath: keyPath] = .relation(
+            related(keyPath)
+                .map { nested($0) }
+                .compactMap { $0.resolve() }
+        )
+        
+        return Query(repository: repository, resolved: entity)
     }
 }

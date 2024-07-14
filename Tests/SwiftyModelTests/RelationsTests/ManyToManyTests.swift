@@ -26,7 +26,7 @@ final class ManyToManyTests: XCTestCase {
             .related(\.chats)
             .resolve() 
         
-        XCTAssertEqual(bobChats.compactMap { $0?.id }, [Chat.one.id, Chat.two.id])
+        XCTAssertEqual(bobChats.compactMap { $0.id }, [Chat.one.id, Chat.two.id])
     }
     
     func test_WhenRelationUpdatedWithInsert_NewRelationsInserted() {
@@ -44,7 +44,7 @@ final class ManyToManyTests: XCTestCase {
         
         let expectedChatUsers = [User.bob.id, User.alice.id, User.tom.id, User.john.id, User.michael.id]
         
-        XCTAssertEqual(chatUsers.compactMap { $0?.id },
+        XCTAssertEqual(chatUsers.compactMap { $0.id },
                        expectedChatUsers)
     }
     

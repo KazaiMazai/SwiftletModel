@@ -204,3 +204,17 @@ private extension Relation {
         }
     }
 }
+
+extension Relation where Cardinality == Relations.ToOne {
+    
+    static func relation(_ entity: T) -> Self {
+        Relation(state: .entity([entity], replace: true))
+    }
+}
+
+extension Relation where Cardinality == Relations.ToMany {
+    
+    static func relation(_ entities: [T]) -> Self {
+        Relation(state: .entity(entities, replace: true))
+    }
+}
