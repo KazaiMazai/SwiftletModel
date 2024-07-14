@@ -143,7 +143,7 @@ extension Relation: Codable where T: Codable {
     
 }
 
-extension Relation.State: Codable where T: Codable {
+extension Relation.State: Codable where Entity: Codable {
     
 }
 
@@ -166,14 +166,14 @@ extension Relation {
 
 private extension Relation {
     
-    indirect enum State<T: EntityModel>: Hashable {
-        case ids(ids: [T.ID])
-        case included(items: [T])
-        case fragmentIds(ids: [T.ID])
-        case fragment(items: [T])
+    indirect enum State<Entity: EntityModel>: Hashable {
+        case ids(ids: [Entity.ID])
+        case included(items: [Entity])
+        case fragmentIds(ids: [Entity.ID])
+        case fragment(items: [Entity])
         case none(explicitNil: Bool)
         
-        var ids: [T.ID] {
+        var ids: [Entity.ID] {
             switch self {
             case .ids(let ids), .fragmentIds(let ids):
                 return ids
@@ -184,7 +184,7 @@ private extension Relation {
             }
         }
         
-        var entities: [T] {
+        var entities: [Entity] {
             switch self {
             case .ids, .fragmentIds:
                 return []
