@@ -9,17 +9,50 @@ import Foundation
 
 struct Query<Entity: EntityModel> {
     let repository: Repository
-    let id: Entity.ID
-    private let resolved: Entity?
+    private let state: State
     
-    init(repository: Repository, id: Entity.ID, resolved: Entity? = nil) {
+    init(repository: Repository, id: Entity.ID) {
         self.repository = repository
-        self.id = id
-        self.resolved = resolved
+        self.state = .initial(id)
+    }
+    
+    init(repository: Repository, resolved: Entity) {
+        self.repository = repository
+        self.state = .resolved(resolved)
+    }
+    
+    var id: Entity.ID {
+        state.id
     }
     
     func resolve() -> Entity? {
-        resolved ?? repository.find(id)
+        state.resolved ?? repository.find(id)
+    }
+}
+
+private extension Query {
+    
+    enum State {
+        case initial(Entity.ID)
+        case resolved(Entity)
+        
+        var id: Entity.ID {
+            switch self {
+            case .initial(let id):
+                return id
+            case .resolved(let entity):
+                return entity.id
+            }
+        }
+        
+        var resolved: Entity? {
+            switch self {
+            case .initial:
+                return nil
+            case .resolved(let entity):
+                return entity
+            }
+        }
     }
 }
 
@@ -102,7 +135,7 @@ extension Query {
             .flatMap { $0.resolve() }
             .map { .relation($0) } ?? .none
         
-        return Query(repository: repository, id: id, resolved: entity)
+        return Query(repository: repository, resolved: entity)
     }
     
     func with<Child, Directionality, Constraints>(
@@ -119,6 +152,6 @@ extension Query {
                 .compactMap { $0.resolve() }
         )
         
-        return Query(repository: repository, id: id, resolved: entity)
+        return Query(repository: repository, resolved: entity)
     }
 }
