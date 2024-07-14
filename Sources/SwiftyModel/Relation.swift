@@ -164,10 +164,10 @@ public extension Relation where Cardinality == Relations.ToMany,
 extension Relation {
     var directLinkSaveOption: Option {
         switch state {
-        case .entity:
+        case .entity, .id, .entities, .ids:
             return .replace
-        case .entities(_, _, let fragment):
-            return fragment ? .append : .replace
+        case .entitiesFragment, .idsFragment:
+            return .append
         case .none:
             return .append
         }
@@ -181,32 +181,40 @@ extension Relation {
 private extension Relation {
     
     indirect enum State<Entity: EntityModel>: Hashable {
-        case entity(id: Entity.ID?, entity: Entity?)
-        case entities(ids: [Entity.ID], items: [Entity]?, fragment: Bool)
+        case id(id: Entity.ID?)
+        case entity(entity: Entity?)
+        case ids(ids: [Entity.ID])
+        case entities(entities: [Entity])
+        case idsFragment(ids: [Entity.ID])
+        case entitiesFragment(entities: [Entity])
         case none
         
         init(_ items: [Entity], fragment: Bool) {
-            self = .entities(ids: items.map { $0.id} , items: items, fragment: fragment)
+            self = fragment ? .entitiesFragment(entities: items) : .entities(entities: items)
         }
         
         init(ids: [Entity.ID], fragment: Bool) {
-            self = .entities(ids: ids , items: nil, fragment: fragment)
+            self = fragment ? .idsFragment(ids: ids) : .ids(ids: ids)
         }
         
         init(id: Entity.ID?) {
-            self = .entity(id: id, entity: nil)
+            self = .id(id: id)
         }
         
         init(_ entity: Entity?) {
-            self = .entity(id: entity?.id, entity: entity)
+            self = .entity(entity: entity)
         }
         
         var ids: [Entity.ID] {
             switch self {
-            case .entity(let ids, _):
-                return [ids].compactMap { $0 }
-            case .entities(let ids, _, _):
+            case .id(let id):
+                return [id].compactMap { $0 }
+            case .entity(let entity):
+                return [entity].compactMap { $0?.id }
+            case .ids(let ids), .idsFragment(let ids):
                 return ids
+            case .entities(let entities), .entitiesFragment(let entities):
+                return entities.map { $0.id }
             case .none:
                 return []
             }
@@ -214,10 +222,12 @@ private extension Relation {
         
         var entities: [Entity] {
             switch self {
-            case .entity(_, let entity):
+            case .id, .ids, .idsFragment:
+                return []
+            case .entity(let entity):
                 return [entity].compactMap { $0 }
-            case .entities(_, let entities, _):
-                return entities ?? []
+            case .entities(let entities), .entitiesFragment(let entities):
+                return entities
             case .none:
                 return []
             }
