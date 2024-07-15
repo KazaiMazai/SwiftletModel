@@ -46,23 +46,6 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
     }
 }
 
-extension Relation: Codable where T: Codable {
-    
-    public init(from decoder: Decoder) throws where T: Codable {
-        let topLevelContainer = try decoder.singleValueContainer()
-        state = try topLevelContainer.decode(State.self)
-    }
-
-    public func encode(to encoder: Encoder) throws where T: Codable {
-       try state.encode(to: encoder)
-//        var topLevelContainer = encoder.singleValueContainer()
-//        if state == .none {
-//            try topLevelContainer.encodeNil()
-//            return
-//        }
-//        try topLevelContainer.encode(state)
-    }
-}
 
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
@@ -161,6 +144,70 @@ public extension Relation where Cardinality == Relations.ToMany,
     }
 }
 
+extension Relation: Codable where T: Codable, Constraints: NonThrowingConstraintsProtocol {
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case entity = "object"
+        case ids = "ids"
+        case entities = "objects"
+        case idsFragment = "fragment_ids"
+        case entitiesFragment = "fragment"
+        case none
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        switch state {
+        case .id(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .id)
+        case .entity(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .entity)
+        case .ids(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .ids)
+        case .entities(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .entities)
+        case .idsFragment(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .idsFragment)
+        case .entitiesFragment(let value):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .entitiesFragment)
+        case .none:
+            var container = encoder.singleValueContainer()
+            try container.encodeNil()
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        guard let container = try? decoder.container(keyedBy: CodingKeys.self),
+              let key = container.allKeys.first else {
+            self = .none
+            return
+        }
+        
+        switch key {
+        case .ids:
+            state = .ids(ids: try container.decode([T.ID].self, forKey: .ids))
+        case .entities:
+            state = .entities(entities: try container.decode([T].self, forKey: .entities))
+        case .idsFragment:
+            state = .idsFragment(ids: try container.decode([T.ID].self, forKey: .idsFragment))
+        case .entitiesFragment:
+            state = .entitiesFragment(entities: try container.decode([T].self, forKey: .entitiesFragment))
+        case .none:
+            state = .none
+        case .id:
+            state = .id(id: try? container.decode(T.ID.self, forKey: .id))
+        case .entity:
+            state = .entity(entity: try? container.decode(T.self, forKey: .entity))
+        }
+    }
+}
+
 extension Relation {
     var directLinkSaveOption: Option {
         switch state {
@@ -188,40 +235,6 @@ private extension Relation {
         case idsFragment(ids: [Entity.ID])
         case entitiesFragment(entities: [Entity])
         case none
-        
-        enum CodingKeys: String, CodingKey {
-            case id
-            case entity = "relation"
-            case ids
-            case entities = "relations"
-            case idsFragment = "fragment_ids"
-            case entitiesFragment = "fragment"
-            case none
-        }
-
-        enum IdCodingKeys: String, CodingKey {
-            case id = "relation"
-        }
-        
-        enum IdsCodingKeys: String, CodingKey {
-            case ids = "relation"
-        }
-        
-        enum EntityCodingKeys: String, CodingKey {
-            case entity = "relation"
-        }
-        
-        enum EntitiesCodingKeys: String, CodingKey {
-            case entities = "relation"
-        }
-        
-        enum IdsFragmentCodingKeys: String, CodingKey {
-            case ids = "relation"
-        }
-        
-        enum EntitiesFragmentCodingKeys: String, CodingKey {
-            case entities = "relation"
-        }
         
         init(_ items: [Entity], fragment: Bool) {
             self = fragment ? .entitiesFragment(entities: items) : .entities(entities: items)
@@ -281,75 +294,6 @@ private extension Relation {
     }
 }
 
-extension Relation.State: Codable where Entity: Codable {
-   
-
-//    init(from decoder: Decoder) throws where T: Codable {
-//        var topLevelContainer = try decoder.singleValueContainer()
-//        self = try topLevelContainer.decode(RelationState.self)
-//    }
-//
-//    func encode(to encoder: Encoder) throws where T: Codable {
-//        var topLevelContainer = encoder.singleValueContainer()
-//        try topLevelContainer.encode(self)
-//    }
-    
-//    
-    
-    
-    func encode(to encoder: Encoder) throws {
-        switch self {
-        case .id(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .id)
-        case .entity(let value):
-//            var container = encoder.singleValueContainer()
-//            try container.encode(value)
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entity)
-        case .ids(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .ids)
-        case .entities(let value):
-//            var container = encoder.singleValueContainer()
-//            try container.encode(value)
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entities)
-        case .idsFragment(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .idsFragment)
-        case .entitiesFragment(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entitiesFragment)
-        case .none:
-            var container = encoder.singleValueContainer()
-            try container.encodeNil()
-        }
-    }
-//
-//    init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        guard let key = container.allKeys.first else {
-//            self = .none
-//            return
-//        }
-//        
-//        switch key {
-//        case .ids:
-//            self = .ids(ids: try container.decode([Entity.ID].self, forKey: .ids))
-//        case .included:
-//            self = .included(items: try container.decode([Entity].self, forKey: .included))
-//        case .fragmentIds:
-//            self = .fragmentIds(ids: try container.decode([Entity.ID].self, forKey: .fragmentIds))
-//        case .fragment:
-//            self = .fragment(items: try container.decode([Entity].self, forKey: .fragment))
-//        case .none:
-//            self = .none
-//        }
-//    }
-}
-
-
 extension Relation where Cardinality == Relations.ToOne {
     
     static func relation(_ entity: T) -> Self {
@@ -378,45 +322,4 @@ extension Relation where Cardinality == Relations.ToMany {
         Relation(state: State(ids: ids, fragment: true))
     }
      
-}
-
-struct SomeDetails: Codable {
-    let count: Int
-    let name: String
-    let type: String
-}
-
-
-struct SomeObject: Codable {
-    let id: Int
-    let details: SomeDetails
-
-    enum CodingKeys: String, CodingKey {
-        case id
-    }
-
-    enum DetailKeys: String, CodingKey {
-        case count, name, type
-    }
-
-    init(from decoder: Decoder) throws {
-        let topLevelContainer = try decoder.container(keyedBy: CodingKeys.self)
-        let detailContainer = try decoder.container(keyedBy: DetailKeys.self)
-
-        id = try topLevelContainer.decode(Int.self, forKey: .id)
-        details = SomeDetails(
-            count: try detailContainer.decode(Int.self, forKey: .count),
-            name: try detailContainer.decode(String.self, forKey: .name),
-            type: try detailContainer.decode(String.self, forKey: .type))
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var topLevelContainer = encoder.container(keyedBy: CodingKeys.self)
-        try topLevelContainer.encode(id, forKey: .id)
-
-        var detailContainer = encoder.container(keyedBy: DetailKeys.self)
-        try detailContainer.encode(details.count, forKey: .count)
-        try detailContainer.encode(details.name, forKey: .name)
-        try detailContainer.encode(details.type, forKey: .type)
-    }
 }
