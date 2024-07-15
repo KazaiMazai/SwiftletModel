@@ -1,10 +1,8 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Logo.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="Logo-SwifletData-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Logo-SwifletData.svg">
   <img src="Logo.svg">
 </picture>
-
-# SwiftyModel
 
 Domain Model implementation as a plain struct in Swift. 
 - Entities Repository
@@ -13,7 +11,7 @@ Domain Model implementation as a plain struct in Swift.
 - Migrations (in development)
 - CoreData/SwiftData sync (in development)
 
-SwiftyModel is like an ORM but without a database.
+SwifletData is like an ORM but without a database.
 
 
 **Notice:** the package is in early development stage.
