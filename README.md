@@ -4,8 +4,6 @@
   <img src="Logo.svg">
 </picture>
 
-# SwifletData
-
 Domain Model implementation as a plain struct in Swift. 
 - Entities Repository
 - Typed Relations of all kinds
