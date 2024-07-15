@@ -4,7 +4,7 @@
   <img src="Logo.svg">
 </picture>
 
-# SwiftyModel
+# SwifletData
 
 Domain Model implementation as a plain struct in Swift. 
 - Entities Repository
@@ -13,7 +13,7 @@ Domain Model implementation as a plain struct in Swift.
 - Migrations (in development)
 - CoreData/SwiftData sync (in development)
 
-SwiftyModel is like an ORM but without a database.
+SwifletData is like an ORM but without a database.
 
 
 **Notice:** the package is in early development stage.

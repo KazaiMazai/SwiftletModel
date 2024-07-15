@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftyModel
+@testable import SwifletData
 
 final class ManyToManyTests: XCTestCase {
     var repository = Repository()
