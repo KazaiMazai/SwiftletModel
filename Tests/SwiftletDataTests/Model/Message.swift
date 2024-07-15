@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 03/03/2024.
 //
 
-@testable import SwifletData
+@testable import SwiftletData
 import Foundation
 
 struct Message: EntityModel, Codable {

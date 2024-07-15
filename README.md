@@ -11,7 +11,7 @@ Domain Model implementation as a plain struct in Swift.
 - Migrations (in development)
 - CoreData/SwiftData sync (in development)
 
-SwifletData is like an ORM but without a database.
+SwiftletData is like an ORM but without a database.
 
 
 **Notice:** the package is in early development stage.
