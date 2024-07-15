@@ -98,9 +98,17 @@ final class ManyToManyTests: XCTestCase {
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]//, .sortedKeys]
-       
-        let string = String(data: try! encoder.encode(chat), encoding: .utf8) ?? ""
-        print(string)
+        let data = try! encoder.encode(chat)
+        let chatString = String(data: data, encoding: .utf8) ?? ""
+        print(chatString)
+        let decoder = JSONDecoder()
+        let decodedChat = try! decoder.decode(Chat.self, from: data)
+        
+        let string = String(data: data, encoding: .utf8) ?? ""
+        
+        print("---")
+        print(String(data: try! encoder.encode(decodedChat), encoding: .utf8) ?? "")
+        
     }
 }
    
