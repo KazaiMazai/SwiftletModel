@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import SwifletData
+@testable import SwiftletData
 
 final class ToOneTests: XCTestCase {
     var repository = Repository()
