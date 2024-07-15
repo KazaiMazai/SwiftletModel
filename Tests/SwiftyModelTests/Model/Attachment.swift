@@ -10,9 +10,9 @@ import Foundation
 
 extension Attachment {
     enum Kind: Codable {
-        case image(URL)
-        case video(URL)
-        case file(URL)
+        case image(url: URL)
+        case video(url:URL)
+        case file(url: URL)
     }
 }
 

@@ -16,8 +16,8 @@ extension User {
 }
 
 extension Attachment {
-    static let imageOne = Attachment(id: "1", kind: .file(URL(string: "http://google.com/image-1.jpg")!))
-    static let imageTwo = Attachment(id: "2", kind: .file(URL(string: "http://google.com/image-2.jpg")!))
+    static let imageOne = Attachment(id: "1", kind: .file(url: URL(string: "http://google.com/image-1.jpg")!))
+    static let imageTwo = Attachment(id: "2", kind: .file(url: URL(string: "http://google.com/image-2.jpg")!))
 }
 
 extension Chat {

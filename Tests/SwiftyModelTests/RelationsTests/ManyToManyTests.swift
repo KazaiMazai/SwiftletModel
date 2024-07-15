@@ -71,25 +71,35 @@ final class ManyToManyTests: XCTestCase {
             Message(id: "1",
                     text: "hello",
                     author: .relation(.alice),
-                    attachment: .relation(.imageOne))
+                    attachment: .null)
         ])
         chat.users = .fragment([.john, .michael])
         chat.save(&repository)
         
         let bob = User
             .query(User.bob.id, in: repository)
-            .with(\.chats) {
-                $0.with(\.users)
-                    .with(\.messages) {
-                        $0.with(\.attachment)
+            .with(\.chats) { $0
+                .ids(\.users)
+                .with(\.messages) {
+                    $0.with(\.attachment) {
+                        $0.id(\.message)
                     }
+                    .id(\.author)
+                }
             }
+        
+//            .with(\.chats) {
+//                $0.with(\.users)
+//                    .with(\.messages) {
+//                        $0.with(ids: \.attachment)
+//                    }
+//            }
             .resolve()
         
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]//, .sortedKeys]
        
-        let string = String(data: try! encoder.encode(bob), encoding: .utf8) ?? ""
+        let string = String(data: try! encoder.encode(chat), encoding: .utf8) ?? ""
         print(string)
     }
 }

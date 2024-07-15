@@ -122,9 +122,13 @@ extension Collection {
 extension Query {
     typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
     
+    static var identity: QueryModifier<Entity> {
+        { $0 }
+    }
+     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: QueryModifier<Child> = { $0 }) -> Query {
+        nested: QueryModifier<Child> = Query.identity) -> Query {
             
         guard var entity = resolve() else {
             return self
@@ -140,18 +144,46 @@ extension Query {
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: QueryModifier<Child> = { $0 }) -> Query {
+        fragment: Bool = false,
+        nested: QueryModifier<Child> = Query.identity) -> Query {
         
         guard var entity = resolve() else {
             return self
         }
-          
-        entity[keyPath: keyPath] = .relation(
-            related(keyPath)
+            
+        let resolved = related(keyPath)
                 .map { nested($0) }
                 .compactMap { $0.resolve() }
-        )
+            
+        entity[keyPath: keyPath] = fragment ? .fragment(resolved) :.relation(resolved)
         
+        return Query(repository: repository, resolved: entity)
+    }
+    
+    func id<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
+            
+        guard var entity = resolve() else {
+            return self
+        }
+        
+        entity[keyPath: keyPath] = related(keyPath)
+            .map { .relation(id: $0.id) } ?? .none
+        
+        return Query(repository: repository, resolved: entity)
+    }
+    
+    func ids<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        fragment: Bool = false) -> Query {
+        
+        guard var entity = resolve() else {
+            return self
+        }
+            
+        let ids = related(keyPath).map { $0.id }
+        entity[keyPath: keyPath] = fragment ? .fragment(ids: ids) : .relation(ids: ids)
+         
         return Query(repository: repository, resolved: entity)
     }
 }
