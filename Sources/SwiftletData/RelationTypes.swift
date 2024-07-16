@@ -62,9 +62,9 @@ public extension Relations {
 }
 
 public extension Relations {
-    enum Required: ConstraintsProtocol, RequiredRelation { }
+    enum Required: RequiredRelation { }
     
-    enum Optional: ConstraintsProtocol, OptionalRelation {
+    enum Optional: OptionalRelation {
     }
 }
 
