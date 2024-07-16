@@ -14,7 +14,7 @@ struct Chat: EntityModel, Codable {
     var messages: HasMany<Message> = .none
     
     @_HasMany(inverse: \.adminInChats)
-    var admin: User?
+    var admin: [User]?
     
     mutating func normalize() {
         users.normalize()

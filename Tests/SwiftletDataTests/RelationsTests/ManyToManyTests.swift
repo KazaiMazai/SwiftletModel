@@ -184,7 +184,7 @@ final class ManyToManyTests: XCTestCase {
         ])
         chat.users = .fragment([.john, .michael])
        
-        chat.$admin = .relation(.john)
+        chat.$admin = .relation([.john])
         chat.save(&repository)
         
         
