@@ -8,7 +8,7 @@
 import Foundation
 
 @propertyWrapper
-struct _HasOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
+struct HasOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                Directionality: DirectionalityProtocol,
                                                                Constraints: ConstraintsProtocol {
     
@@ -25,7 +25,7 @@ struct _HasOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
     }
 }
 
-extension _HasOne where Directionality == Relations.Mutual, Constraints == Relations.Optional   {
+extension HasOne where Directionality == Relations.Mutual, Constraints == Relations.Optional   {
     init<Parent>(
         inverse: KeyPath<T, Parent>
     ) {
@@ -33,30 +33,30 @@ extension _HasOne where Directionality == Relations.Mutual, Constraints == Relat
     }
     
     static func relation(id: T.ID) -> Self {
-        _HasOne(relation: .relation(id: id))
+        HasOne(relation: .relation(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        _HasOne(relation: .relation(entity))
+        HasOne(relation: .relation(entity))
     }
     
     static var null: Self {
-        _HasOne(relation: .null)
+        HasOne(relation: .null)
     }
 }
 
-extension _HasOne where Directionality == Relations.OneWay, Constraints == Relations.Optional   {
+extension HasOne where Directionality == Relations.OneWay, Constraints == Relations.Optional   {
     init(wrappedValue: ToOneRelation<T, Directionality, Constraints>?) {
         relation = wrappedValue ?? .none
     }
 }
 
-extension _HasOne: Codable where T: Codable {
+extension HasOne: Codable where T: Codable {
     
 }
 
 @propertyWrapper
-struct _BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel,
+struct BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                      Directionality: DirectionalityProtocol,
                                                                      Constraints: ConstraintsProtocol {
     
@@ -72,7 +72,7 @@ struct _BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel
     }
 }
 
-extension _BelongsTo where Directionality == Relations.Mutual, Constraints == Relations.Required   {
+extension BelongsTo where Directionality == Relations.Mutual, Constraints == Relations.Required   {
     init<Parent>(
         inverse: KeyPath<T, Parent>
     ) {
@@ -80,26 +80,26 @@ extension _BelongsTo where Directionality == Relations.Mutual, Constraints == Re
     }
     
     static func relation(id: T.ID) -> Self {
-        _BelongsTo(relation: .relation(id: id))
+        BelongsTo(relation: .relation(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        _BelongsTo(relation: .relation(entity))
+        BelongsTo(relation: .relation(entity))
     }
 }
 
-extension _BelongsTo where Directionality == Relations.OneWay, Constraints == Relations.Required   {
+extension BelongsTo where Directionality == Relations.OneWay, Constraints == Relations.Required   {
     init(wrappedValue: ToOneRelation<T, Directionality, Constraints>?) {
         relation = wrappedValue ?? .none
     }
 }
 
-extension _BelongsTo: Codable where T: Codable {
+extension BelongsTo: Codable where T: Codable {
     
 }
 
 @propertyWrapper
-struct _HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
+struct HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                 Directionality: DirectionalityProtocol,
                                                                 Constraints: ConstraintsProtocol {
     
@@ -113,10 +113,9 @@ struct _HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
         get { return relation }
         set { relation = newValue }
     }
-    
 }
 
-extension _HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
+extension HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
     init<Parent>(
         inverse: KeyPath<T, Parent>
     ) {
@@ -124,29 +123,29 @@ extension _HasMany where Directionality == Relations.Mutual, Constraints == Rela
     }
     
     static func relation(ids: [T.ID]) -> Self {
-        _HasMany(relation: .relation(ids: ids))
+        HasMany(relation: .relation(ids: ids))
     }
     
     static func relation(_ entities: [T]) -> Self {
-        _HasMany(relation: .relation(entities))
+        HasMany(relation: .relation(entities))
     }
     
     static func fragment(ids: [T.ID]) -> Self {
-        _HasMany(relation: .fragment(ids: ids))
+        HasMany(relation: .fragment(ids: ids))
     }
     
     static func fragment(_ entities: [T]) -> Self {
-        _HasMany(relation: .fragment(entities))
+        HasMany(relation: .fragment(entities))
     }
 }
 
-extension _HasMany where Directionality == Relations.OneWay, Constraints == Relations.Required   {
+extension HasMany where Directionality == Relations.OneWay, Constraints == Relations.Required   {
     init(wrappedValue: ToManyRelation<T, Directionality, Constraints>?) {
         relation = wrappedValue ?? .none
     }
 }
 
-extension _HasMany: Codable where T: Codable {
+extension HasMany: Codable where T: Codable {
     
 }
 

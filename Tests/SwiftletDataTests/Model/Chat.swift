@@ -11,13 +11,13 @@ import Foundation
 struct Chat: EntityModel, Codable {
     let id: String
     
-    @_HasMany(inverse: \.chats)
+    @HasMany(inverse: \.chats)
     var users: [User]?
     
-    @_HasMany(inverse: \.chat)
+    @HasMany(inverse: \.chat)
     var messages: [Message]?
     
-    @_HasMany(inverse: \.adminInChats)
+    @HasMany(inverse: \.adminInChats)
     var admins: [User]?
     
     mutating func normalize() {

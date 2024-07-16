@@ -12,22 +12,22 @@ struct Message: EntityModel, Codable {
     let id: String
     let text: String
     
-    @_HasOne
+    @HasOne
     var author: User? = nil
     
-    @_BelongsTo(inverse: \.messages)
+    @BelongsTo(inverse: \.messages)
     var chat: Chat?
     
-    @_HasOne(inverse: \.message)
+    @HasOne(inverse: \.message)
     var attachment: Attachment?
     
-    @_HasMany(inverse: \.replyTo)
+    @HasMany(inverse: \.replyTo)
     var replies: [Message]?
     
-    @_HasMany(inverse: \.replies)
+    @HasMany(inverse: \.replies)
     var replyTo: [Message]?
     
-    @_HasMany
+    @HasMany
     var viewedBy: [User]? = nil
 }
 

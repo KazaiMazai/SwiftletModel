@@ -13,7 +13,7 @@ struct CurrentUser: EntityModel, Codable {
     
     private(set) var id: String = CurrentUser.id
     
-    @_HasOne
+    @HasOne
     var user: User? = nil
     
     mutating func normalize() {
@@ -45,10 +45,10 @@ struct User: EntityModel, Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
     
-    @_HasMany(inverse: \.users)
+    @HasMany(inverse: \.users)
     var chats: [Chat]?
     
-    @_HasMany(inverse: \.admins)
+    @HasMany(inverse: \.admins)
     var adminInChats: [Chat]?
     
     mutating func normalize() {
