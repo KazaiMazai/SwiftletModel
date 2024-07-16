@@ -12,7 +12,7 @@ struct Message: EntityModel, Codable {
     let id: String
     let text: String
     
-    @HasOne
+    @BelongsTo
     var author: User? = nil
     
     @BelongsTo(inverse: \.messages)
