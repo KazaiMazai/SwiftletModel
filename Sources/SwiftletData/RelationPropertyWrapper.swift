@@ -152,3 +152,37 @@ extension _HasMany: Codable where T: Codable {
     
 }
 
+
+@propertyWrapper
+struct Relationship<Value, T, Directionality, Cardinality, Constraints> where T: EntityModel,
+                                                                              Directionality: DirectionalityProtocol,
+                                                                              Cardinality: CardinalityProtocol,
+                                                                              Constraints: ConstraintsProtocol {
+    
+    private var relation: Relation<T, Directionality, Cardinality, Constraints>
+    private let getWrappedValue: (Relation<T, Directionality, Cardinality, Constraints>) -> Value?
+    
+    var projectedValue: Relation<T, Directionality, Cardinality, Constraints> {
+        get { return relation }
+        set { relation = newValue }
+    }
+
+    var wrappedValue: Value? {
+        get { getWrappedValue(relation) }
+    }
+}
+
+extension Relationship where Value == Array<T> {
+
+    init(wrappedValue: Value) where Value == Array<T> {
+        relation = .none
+        getWrappedValue = { $0.entities }
+    }
+}
+
+extension Relationship where Value == T, Cardinality == Relations.ToOne {
+    init(wrappedValue: Value) where Value == T, Cardinality == Relations.ToOne {
+        relation = .none
+        getWrappedValue = { $0.entities.first }
+    }
+}
