@@ -7,33 +7,9 @@
 
 import Foundation
 
-public typealias HasOne = Relations.MutualToOneOptional
+public typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
 
-public typealias BelongsTo = Relations.MutualToOneRequired
-
-public typealias HasMany = Relations.MutualToManyRequired
-
-public typealias HasManyNonEmpty = Relations.MutualToManyNonEmpty
-
-public typealias ToOne = Relations.OneWayToOneOptional
-
-public typealias FromOne = Relations.OneWayToOneRequired
-
-public typealias ToMany = Relations.OneWayToManyRequired
-
-public typealias ToManyNonEmpty = Relations.OneWayToManyNonEmpty
-
-public typealias MutualRelation = Relations.MutualRelation
-
-public typealias OneWayRelation = Relations.OneWayRelation
-
-public typealias MutualToOne = Relations.MutualToOne
-
-public typealias MutualToMany = Relations.MutualToMany
-
-public typealias OneWayToOne = Relations.OneWayToOne
-
-public typealias OneWayToMany = Relations.OneWayToMany
+public typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
 
 public typealias ManyToOneRelation<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
@@ -134,33 +110,3 @@ typealias ToOneRelation<T: EntityModel, Directionality: DirectionalityProtocol, 
 
 typealias ToManyRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>
 
-public extension Relations {
-    
-    typealias MutualToOneOptional<T: EntityModel> = Relation<T, Mutual, ToOne, Optional>
-
-    typealias MutualToOneRequired<T: EntityModel> = Relation<T, Mutual, ToOne, Required>
-
-    typealias MutualToManyRequired<T: EntityModel> = Relation<T, Mutual, ToMany, Required>
-
-    typealias MutualToManyNonEmpty<T: EntityModel> = Relation<T, Mutual, ToMany, NonEmpty>
-
-    typealias OneWayToOneOptional<T: EntityModel> = Relation<T, OneWay, ToOne, Optional>
-
-    typealias OneWayToOneRequired<T: EntityModel> = Relation<T, OneWay, ToOne, Required>
-
-    typealias OneWayToManyRequired<T: EntityModel> = Relation<T, OneWay, ToMany, Required>
-
-    typealias OneWayToManyNonEmpty<T: EntityModel> = Relation<T, OneWay, ToMany, NonEmpty>
-
-    typealias MutualToOne<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Mutual, ToOne, Constraint>
-
-    typealias MutualToMany<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, Mutual, ToMany, Constraint>
-
-    typealias OneWayToOne<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, OneWay, ToOne, Constraint>
-
-    typealias OneWayToMany<T: EntityModel, Constraint: ConstraintsProtocol> = Relation<T, OneWay, ToMany, Constraint>
-    
-    typealias MutualRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Mutual, Cardinality, Constraint>
-
-    typealias OneWayRelation<T: EntityModel, Cardinality: CardinalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, OneWay, Cardinality, Constraint>
-}

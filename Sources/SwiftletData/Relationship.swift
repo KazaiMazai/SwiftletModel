@@ -220,7 +220,7 @@ extension Relationship where Value == T,
                              Directionality == Relations.Mutual,
                              Cardinality == Relations.ToOne   {
     init<Parent, InverseCardinality, InverseConstraint>(
-        inverse: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+        inverse: KeyPath<T, MutualRelation<Parent, InverseCardinality, InverseConstraint>>
     ) {
         self.init(relation: .none)
     }
@@ -240,7 +240,7 @@ extension Relationship where Value == T,
                             Constraints == Relations.Required   {
     
     init<Parent, InverseCardinality, InverseConstraint>(
-        belongsTo: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+        belongsTo: KeyPath<T, MutualRelation<Parent, InverseCardinality, InverseConstraint>>
     ) {
         self.init(relation: .none)
     }
@@ -252,7 +252,7 @@ extension Relationship where Value == Array<T>,
                              Cardinality == Relations.ToMany   {
     
     init<Parent, InverseCardinality, InverseConstraint>(
-        inverse: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+        inverse: KeyPath<T, MutualRelation<Parent, InverseCardinality, InverseConstraint>>
     ) {
         self.init(relation: .none)
     }
