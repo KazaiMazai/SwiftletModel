@@ -44,10 +44,8 @@ struct User: EntityModel, Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
     var chats: HasMany<Chat> = .none
+    var adminInChats: HasMany<Chat> = .none
     
-    @_HasMany(Relations.OneWay.self, constraints: Relations.Required.self)
-    var followers: Relation<User>
-     
     mutating func normalize() {
         chats.normalize()
     }
@@ -55,7 +53,6 @@ struct User: EntityModel, Codable {
     func save(_ repository: inout Repository) {
         repository.save(self)
         save(\User.chats, inverse: \Chat.users, to: &repository)
-        save(\User.$followers.relation, to: &repository)
         
     }
     

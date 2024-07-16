@@ -47,16 +47,20 @@ struct One<T, Directionality, Constraints>: Hashable where T: EntityModel,
         
     }
     
-    private var relation: ToOneRelation<T, Directionality, Constraints> = .none
+    var relation: ToOneRelation<T, Directionality, Constraints> = .none
     
     var wrappedValue: T? {
         get { relation.entities.first }
-        set { relation = newValue.map { .relation($0) } ?? .none }
+//        set { relation = newValue.map { .relation($0) } ?? .none }
     }
     
-    var projectedValue: One<T, Directionality, Constraints> {
-        self
+    var projectedValue: ToOneRelation<T, Directionality, Constraints> {
+        get { return relation }
+        set { relation = newValue }
     }
+
 }
 
-
+extension One: Codable where T: Codable {
+    
+}

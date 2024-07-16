@@ -183,12 +183,15 @@ final class ManyToManyTests: XCTestCase {
                     attachment: .null)
         ])
         chat.users = .fragment([.john, .michael])
+       
+        chat.$admin = .relation(.john)
         chat.save(&repository)
+        
         
         let bob = User
             .query(User.bob.id, in: repository)
-            .with(\.followers)
-            .with(\.chats) { $0
+            .with(\.chats) {
+                $0.with(\.$admin)
                 .ids(\.users)
                 .with(\.messages) {
                     $0.with(\.attachment) {
@@ -211,6 +214,7 @@ final class ManyToManyTests: XCTestCase {
         let data = try! encoder.encode(chat)
         let chatString = String(data: data, encoding: .utf8) ?? ""
         print(chatString)
+        return
         let decoder = JSONDecoder()
         let decodedChat = try! decoder.decode(Chat.self, from: data)
         

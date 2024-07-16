@@ -13,9 +13,13 @@ struct Chat: EntityModel, Codable {
     var users: HasMany<User> = .none
     var messages: HasMany<Message> = .none
     
+    @One(Relations.OneWay.self, constraints: Relations.Optional.self)
+    var admin: User?
+    
     mutating func normalize() {
         users.normalize()
         messages.normalize()
+        $admin.normalize()
     }
     
     func save(_ repository: inout Repository) {
@@ -23,6 +27,8 @@ struct Chat: EntityModel, Codable {
         
         save(\.users, inverse: \.chats, to: &repository)
         save(\.messages, inverse: \.chat, to: &repository)
+        save(\.$admin, to: &repository)
+        
     }
 }
 
