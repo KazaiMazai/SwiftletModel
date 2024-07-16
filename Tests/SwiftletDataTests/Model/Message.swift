@@ -33,7 +33,7 @@ extension Message {
         repository.save(self)
        
         save(\.author, to: &repository)
-        save(\.chat, inverse: \.messages, to: &repository)
+        save(\.chat, inverse: \.$messages, to: &repository)
         save(\.attachment, inverse: \.message, to: &repository)
         save(\.replies, inverse: \.replyTo, to: &repository)
         save(\.replyTo, inverse: \.replies, to: &repository)

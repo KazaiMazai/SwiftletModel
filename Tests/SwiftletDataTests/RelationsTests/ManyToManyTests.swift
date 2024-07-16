@@ -14,11 +14,11 @@ final class ManyToManyTests: XCTestCase {
     
     func test_WhenDirectAdded_InverseIsAdded() {
         var chatOne = Chat.one
-        chatOne.users = .relation([.bob])
+        chatOne.$users = .relation([.bob])
         chatOne.save(&repository)
         
         var chatTwo = Chat.two
-        chatTwo.users = .relation([.bob])
+        chatTwo.$users = .relation([.bob])
         chatTwo.save(&repository)
         
         let bobChats = User
@@ -31,15 +31,15 @@ final class ManyToManyTests: XCTestCase {
     
     func test_WhenRelationUpdatedWithInsert_NewRelationsInserted() {
         var chat = Chat.one
-        chat.users = .relation([.bob, .alice, .tom])
+        chat.$users = .relation([.bob, .alice, .tom])
         chat.save(&repository)
         
-        chat.users = .fragment([.john, .michael])
+        chat.$users = .fragment([.john, .michael])
         chat.save(&repository)
          
         let chatUsers = Chat
             .query(Chat.one.id, in: repository)
-            .related(\.users)
+            .related(\.$users)
             .resolve()
         
         let expectedChatUsers = [User.bob.id, User.alice.id, User.tom.id, User.john.id, User.michael.id]
@@ -50,10 +50,10 @@ final class ManyToManyTests: XCTestCase {
     
     func test_WhenDirectReplaced_InverseIsUpdated() {
         var chat = Chat.one
-        chat.users = .relation([.bob, .alice, .tom])
+        chat.$users = .relation([.bob, .alice, .tom])
         chat.save(&repository)
         
-        chat.users = .relation([.john, .michael])
+        chat.$users = .relation([.john, .michael])
         chat.save(&repository)
         
         let bobsChats = User
@@ -119,22 +119,22 @@ final class ManyToManyTests: XCTestCase {
     
     func test_Encoding() {
         var chat = Chat.one
-        chat.users = .relation([.bob, .alice, .tom])
+        chat.$users = .relation([.bob, .alice, .tom])
         chat.save(&repository)
-        chat.messages = .relation([
+        chat.$messages = .relation([
             Message(id: "1",
                     text: "hello",
                     author: .relation(.alice),
                     attachment: .null)
         ])
-        chat.users = .fragment([.john, .michael])
+        chat.$users = .fragment([.john, .michael])
         chat.save(&repository)
         
         let bob = User
             .query(User.bob.id, in: repository)
             .with(\.chats) { $0
-                .ids(\.users)
-                .with(\.messages) {
+                .ids(\.$users)
+                .with(\.$messages) {
                     $0.with(\.attachment) {
                         $0.id(\.message)
                     }
@@ -174,26 +174,26 @@ final class ManyToManyTests: XCTestCase {
         var user = User.bob
         
         
-        chat.users = .relation([user, .alice, .tom])
+        chat.$users = .relation([user, .alice, .tom])
         chat.save(&repository)
-        chat.messages = .relation([
+        chat.$messages = .relation([
             Message(id: "1",
                     text: "hello",
                     author: .relation(.alice),
                     attachment: .null)
         ])
-        chat.users = .fragment([.john, .michael])
+        chat.$users = .fragment([.john, .michael])
        
-        chat.$admin = .relation([.john])
+        chat.$admins = .relation([.john])
         chat.save(&repository)
         
         
         let bob = User
             .query(User.bob.id, in: repository)
             .with(\.chats) {
-                $0.with(\.$admin)
-                .ids(\.users)
-                .with(\.messages) {
+                $0.with(\.$admins)
+                .ids(\.$users)
+                .with(\.$messages) {
                     $0.with(\.attachment) {
                         $0.id(\.message)
                     }

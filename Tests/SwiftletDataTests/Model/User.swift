@@ -52,7 +52,7 @@ struct User: EntityModel, Codable {
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\User.chats, inverse: \Chat.users, to: &repository)
+        save(\User.chats, inverse: \Chat.$users, to: &repository)
         
     }
     
