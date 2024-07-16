@@ -160,6 +160,25 @@ extension Query {
         return Query(repository: repository, resolved: entity)
     }
     
+    func with<Child, Directionality, Constraints>(
+        _ relation: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        _ keyPath: WritableKeyPath<Entity, [Child]>,
+        fragment: Bool = false,
+        nested: QueryModifier<Child> = Query.identity) -> Query {
+        
+        guard var entity = resolve() else {
+            return self
+        }
+            
+        let resolved = related(relation)
+                .map { nested($0) }
+                .compactMap { $0.resolve() }
+            
+        entity[keyPath: keyPath] = resolved
+        
+        return Query(repository: repository, resolved: entity)
+    }
+    
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
             

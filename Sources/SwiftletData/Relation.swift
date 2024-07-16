@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
                                                                                     Cardinality: CardinalityProtocol,
