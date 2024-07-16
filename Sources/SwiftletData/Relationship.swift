@@ -155,12 +155,13 @@ extension _HasMany: Codable where T: Codable {
 
 @propertyWrapper
 struct Relationship<Value, T, Directionality, Cardinality, Constraints> where T: EntityModel,
+                                                                              Value: WrappedEntityValue,
+                                                                              Value.Related == T,
                                                                               Directionality: DirectionalityProtocol,
                                                                               Cardinality: CardinalityProtocol,
                                                                               Constraints: ConstraintsProtocol {
     
     private var relation: Relation<T, Directionality, Cardinality, Constraints>
-    private let getWrappedValue: (Relation<T, Directionality, Cardinality, Constraints>) -> Value?
     
     var projectedValue: Relation<T, Directionality, Cardinality, Constraints> {
         get { return relation }
@@ -168,21 +169,134 @@ struct Relationship<Value, T, Directionality, Cardinality, Constraints> where T:
     }
 
     var wrappedValue: Value? {
-        get { getWrappedValue(relation) }
+        get { Value(related: relation.entities) }
     }
 }
 
-extension Relationship where Value == Array<T> {
+protocol WrappedEntityValue {
+    associatedtype Related: EntityModel
+    
+    init?(related: [Related])
+}
 
-    init(wrappedValue: Value) where Value == Array<T> {
-        relation = .none
-        getWrappedValue = { $0.entities }
+extension Array: WrappedEntityValue where Element: EntityModel {
+    init?(related: [Element]) {
+        self.init(related)
+    }
+}
+
+extension WrappedEntityValue where Related == Self {
+    init?(related: [Related]) {
+        guard let first = related.first else {
+            return nil
+        }
+        self = first
+    }
+}
+ 
+
+
+extension Relationship where Value == Array<T>, Cardinality == Relations.ToMany {
+    init(relation: ToManyRelation<T, Directionality, Constraints>) where Value == Array<T>, Cardinality == Relations.ToMany {
+        self.relation = relation
     }
 }
 
 extension Relationship where Value == T, Cardinality == Relations.ToOne {
-    init(wrappedValue: Value) where Value == T, Cardinality == Relations.ToOne {
-        relation = .none
-        getWrappedValue = { $0.entities.first }
+    init(relation: ToOneRelation<T, Directionality, Constraints>) where Value == T, Cardinality == Relations.ToOne {
+        self.relation = relation
     }
+}
+
+extension Relationship where Value == T,
+                             Directionality == Relations.Mutual,
+                             Constraints == Relations.Optional,
+                             Cardinality == Relations.ToOne   {
+     
+    static var null: Self {
+        Relationship(relation: .null)
+    }
+}
+
+extension Relationship where Value == T,
+                             Directionality == Relations.Mutual,
+                             Cardinality == Relations.ToOne   {
+    init<Parent, InverseCardinality, InverseConstraint>(
+        inverse: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+    ) {
+        self.init(relation: .none)
+    }
+    
+    static func relation(id: T.ID) -> Self {
+        Relationship(relation: .relation(id: id))
+    }
+    
+    static func relation(_ entity: T) -> Self {
+        Relationship(relation: .relation(entity))
+    }
+}
+
+extension Relationship where Value == T,
+                             Directionality == Relations.Mutual,
+                             Cardinality == Relations.ToOne,
+                            Constraints == Relations.Required   {
+    
+    init<Parent, InverseCardinality, InverseConstraint>(
+        belongsTo: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+    ) {
+        self.init(relation: .none)
+    }
+}
+
+extension Relationship where Value == Array<T>,
+                             Directionality == Relations.Mutual,
+                             Constraints == Relations.Required,
+                             Cardinality == Relations.ToMany   {
+    
+    init<Parent, InverseCardinality, InverseConstraint>(
+        inverse: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+    ) {
+        self.init(relation: .none)
+    }
+    
+    static func relation(ids: [T.ID]) -> Self {
+        Relationship(relation: .relation(ids: ids))
+    }
+    
+    static func relation(_ entities: [T]) -> Self {
+        Relationship(relation: .relation(entities))
+    }
+    
+    static func fragment(ids: [T.ID]) -> Self {
+        Relationship(relation: .fragment(ids: ids))
+    }
+    
+    static func fragment(_ entities: [T]) -> Self {
+        Relationship(relation: .fragment(entities))
+    }
+}
+
+
+extension Relationship where Value == Array<T>,
+                             Directionality == Relations.OneWay,
+                             Constraints == Relations.Required,
+                             Cardinality == Relations.ToMany   {
+    
+    init(wrappedValue: ToManyRelation<T, Directionality, Constraints>?) {
+        self.init(relation: wrappedValue ?? .none)
+    }
+}
+
+extension Relationship where Value == T,
+                             Directionality == Relations.OneWay,
+                             Constraints == Relations.Required,
+                             Cardinality == Relations.ToOne   {
+    
+    init(wrappedValue: ToOneRelation<T, Directionality, Constraints>?) {
+        self.init(relation: wrappedValue ?? .none)
+    }
+}
+
+extension Relationship: Codable where T: Codable, Value: Codable {
+    
 }

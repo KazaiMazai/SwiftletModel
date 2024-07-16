@@ -116,6 +116,7 @@ public protocol CardinalityProtocol {
     static var isToMany: Bool { get }
     
     static func validate(toMany: Bool) throws
+    
 }
 
 public extension CardinalityProtocol {
