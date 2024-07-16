@@ -19,14 +19,16 @@ extension Attachment {
 struct Attachment: EntityModel, Codable {
     let id: String 
     var kind: Kind
-    var message: BelongsTo<Message> = .none
+    
+    @_BelongsToOne(inverse: \.attachment)
+    var message: Message?
     
     mutating func normalize() {
-        message.normalize()
+        $message.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\.message, inverse: \.attachment, to: &repository)
+        save(\.$message, inverse: \Message.$attachment, to: &repository)
     }
 }

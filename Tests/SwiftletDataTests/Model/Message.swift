@@ -13,7 +13,10 @@ struct Message: EntityModel, Codable {
     let text: String
     var author: ToOne<User> = .none
     var chat: BelongsTo<Chat> = .none
-    var attachment: HasOne<Attachment> = .none
+    
+    @_HasOne(inverse: \Attachment.message)
+    var attachment: Attachment?
+    
     var replies: HasMany<Message> = .none
     var replyTo: HasOne<Message> = .none
     var viewedBy: ToMany<User> = .none
@@ -23,7 +26,7 @@ extension Message {
     mutating func normalize() {
         author.normalize()
         chat.normalize()
-        attachment.normalize()
+        $attachment.normalize()
         replies.normalize()
         replyTo.normalize()
         viewedBy.normalize()
@@ -34,7 +37,7 @@ extension Message {
        
         save(\.author, to: &repository)
         save(\.chat, inverse: \.$messages, to: &repository)
-        save(\.attachment, inverse: \.message, to: &repository)
+        save(\Message.$attachment, inverse: \Attachment.$message, to: &repository)
         save(\.replies, inverse: \.replyTo, to: &repository)
         save(\.replyTo, inverse: \.replies, to: &repository)
         save(\.viewedBy, to: &repository)

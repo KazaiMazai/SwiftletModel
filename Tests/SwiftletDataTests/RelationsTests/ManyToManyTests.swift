@@ -135,8 +135,8 @@ final class ManyToManyTests: XCTestCase {
             .with(\.chats) { $0
                 .ids(\.$users)
                 .with(\.$messages) {
-                    $0.with(\.attachment) {
-                        $0.id(\.message)
+                    $0.with(\.$attachment) {
+                        $0.id(\.$message)
                     }
                     .id(\.author)
                 }
@@ -194,8 +194,8 @@ final class ManyToManyTests: XCTestCase {
                 $0.with(\.$admins)
                 .ids(\.$users)
                 .with(\.$messages) {
-                    $0.with(\.attachment) {
-                        $0.id(\.message)
+                    $0.with(\.$attachment) {
+                        $0.id(\.$message)
                     }
                     .id(\.author)
                 }
