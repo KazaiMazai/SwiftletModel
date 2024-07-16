@@ -86,15 +86,15 @@ public extension Relation where Cardinality == Relations.ToOne,
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: ToOneValidation,
-                                Constraints.Entity == T {
+                                Constraints: ThrowingConstraint {
     
-    static func relation(id: T.ID) -> Self {
-        Relation(state: State(id: id))
+    static func relation(id: T.ID) throws -> Self {
+        try Constraints.validate([id])
+        return Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) throws -> Self {
-        try Constraints.validate(model: entity)
+        try Constraints.validate([entity])
         return Relation(state: State(entity))
     }
 }
@@ -120,31 +120,30 @@ public extension Relation where Cardinality == Relations.ToMany,
 }
 
 public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: ToManyValidation,
-                                Constraints.Entity == T {
+                                Constraints: ThrowingConstraint {
     
     static func relation(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids: ids)
+        try Constraints.validate(ids)
         return Relation(state: State(ids: ids, fragment: false))
     }
     
     static func relation(_ entities: [T]) throws -> Self {
-        try Constraints.validate(models: entities)
+        try Constraints.validate(entities)
         return Relation(state: State(entities, fragment: false))
     }
     
     static func fragment(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids: ids)
+        try Constraints.validate(ids)
         return Relation(state: State(ids: ids, fragment: true))
     }
     
     static func fragment(_ entities: [T]) throws -> Self {
-        try Constraints.validate(models: entities)
+        try Constraints.validate(entities)
         return Relation(state: State(entities, fragment: true))
     }
 }
 
-extension Relation: Codable where T: Codable, Constraints: NonThrowingConstraintsProtocol {
+extension Relation: Codable where T: Codable {
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -190,20 +189,32 @@ extension Relation: Codable where T: Codable, Constraints: NonThrowingConstraint
         }
         
         switch key {
+        case .id:
+           let value = try? container.decode(T.ID?.self, forKey: .id)
+           try Cardinality.validate(toMany: false)
+           try Constraints.validate(value.map { [$0] })
+           state = .id(id: value)
+        case .entity:
+           let value = try? container.decode(T?.self, forKey: .entity)
+           try Cardinality.validate(toMany: false)
+           try Constraints.validate(value.map { [$0] })
+           state = .entity(entity: value)
         case .ids:
-            state = .ids(ids: try container.decode([T.ID].self, forKey: .ids))
+            let value = try container.decode([T.ID].self, forKey: .ids)
+            try Constraints.validate(value)
+            state = .ids(ids: value)
         case .entities:
-            state = .entities(entities: try container.decode([T].self, forKey: .entities))
+            let value = try container.decode([T].self, forKey: .entities)
+            try Constraints.validate(value)
+            state = .entities(entities: value)
         case .idsFragment:
-            state = .idsFragment(ids: try container.decode([T.ID].self, forKey: .idsFragment))
+            let value = try container.decode([T.ID].self, forKey: .idsFragment)
+            state = .idsFragment(ids: value)
         case .entitiesFragment:
-            state = .entitiesFragment(entities: try container.decode([T].self, forKey: .entitiesFragment))
+            let value =  try container.decode([T].self, forKey: .entitiesFragment)
+            state = .entitiesFragment(entities: value)
         case .none:
             state = .none
-        case .id:
-            state = .id(id: try? container.decode(T.ID.self, forKey: .id))
-        case .entity:
-            state = .entity(entity: try? container.decode(T.self, forKey: .entity))
         }
     }
 }

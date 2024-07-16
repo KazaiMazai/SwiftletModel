@@ -63,6 +63,60 @@ final class ManyToManyTests: XCTestCase {
         XCTAssertTrue(bobsChats.isEmpty)
     }
     
+    func test_Dencoding() {
+        let json = """
+        {
+          "id" : "1",
+          "messages" : {
+            "objects" : [
+              {
+                "attachment" : {
+                  "object" : null
+                },
+                "author" : {
+                  "object" : {
+                    "chats" : null,
+                    "id" : "2",
+                    "name" : "Alice"
+                  }
+                },
+                "chat" : null,
+                "id" : "1",
+                "replies" : null,
+                "replyTo" : null,
+                "text" : "hello",
+                "viewedBy" : null
+              }
+            ]
+          },
+          "users" : {
+            "fragment" : [
+              {
+                "chats" : null,
+                "id" : "3",
+                "name" : "John"
+              },
+              {
+                "chats" : null,
+                "id" : "4",
+                "name" : "Michael"
+              }
+            ]
+          }
+        }
+        """
+        
+        let data = json.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decodedChat = try! decoder.decode(Chat.self, from: data)
+        
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]//, .sortedKeys]
+        
+        print(String(data: try! encoder.encode(decodedChat), encoding: .utf8) ?? "")
+        
+    }
+    
     func test_Encoding() {
         var chat = Chat.one
         chat.users = .relation([.bob, .alice, .tom])
@@ -108,6 +162,10 @@ final class ManyToManyTests: XCTestCase {
         
         print("---")
         print(String(data: try! encoder.encode(decodedChat), encoding: .utf8) ?? "")
+        
+        
+        
+        
         
     }
 }
