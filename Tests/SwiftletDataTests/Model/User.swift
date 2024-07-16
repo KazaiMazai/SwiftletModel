@@ -13,15 +13,16 @@ struct CurrentUser: EntityModel, Codable {
     
     private(set) var id: String = CurrentUser.id
     
-    var user: ToOne<User> = .none
+    @_HasOne
+    var user: User? = nil
     
     mutating func normalize() {
-        user.normalize()
+        $user.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\.user, to: &repository)
+        save(\.$user, to: &repository)
     }
 }
 
@@ -59,7 +60,6 @@ struct User: EntityModel, Codable {
         repository.save(self)
         save(\.$chats, inverse: \.$users, to: &repository)
         save(\.$adminInChats, inverse: \.$admins, to: &repository)
-        
     }
     
     static func mergeStraregy() -> MergeStrategy<User> {
@@ -75,6 +75,6 @@ extension Query where Entity == User {
     var isMe: Bool {
         repository
             .query(CurrentUser.self, id: CurrentUser.id)
-            .related(\.user)?.id == id
+            .related(\.$user)?.id == id
     }
 }
