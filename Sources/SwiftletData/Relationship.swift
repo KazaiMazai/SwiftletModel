@@ -12,7 +12,6 @@ struct _HasOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                Directionality: DirectionalityProtocol,
                                                                Constraints: ConstraintsProtocol {
     
-    @Indirect
     private var relation: ToOneRelation<T, Directionality, Constraints>
     
     var wrappedValue: T? {
@@ -57,7 +56,7 @@ extension _HasOne: Codable where T: Codable {
 }
 
 @propertyWrapper
-struct _BelongsToOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
+struct _BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                      Directionality: DirectionalityProtocol,
                                                                      Constraints: ConstraintsProtocol {
     
@@ -73,7 +72,7 @@ struct _BelongsToOne<T, Directionality, Constraints>: Hashable where T: EntityMo
     }
 }
 
-extension _BelongsToOne where Directionality == Relations.Mutual, Constraints == Relations.Required   {
+extension _BelongsTo where Directionality == Relations.Mutual, Constraints == Relations.Required   {
     init<Parent>(
         inverse: KeyPath<T, Parent>
     ) {
@@ -81,21 +80,21 @@ extension _BelongsToOne where Directionality == Relations.Mutual, Constraints ==
     }
     
     static func relation(id: T.ID) -> Self {
-        _BelongsToOne(relation: .relation(id: id))
+        _BelongsTo(relation: .relation(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        _BelongsToOne(relation: .relation(entity))
+        _BelongsTo(relation: .relation(entity))
     }
 }
 
-extension _BelongsToOne where Directionality == Relations.OneWay, Constraints == Relations.Required   {
+extension _BelongsTo where Directionality == Relations.OneWay, Constraints == Relations.Required   {
     init(wrappedValue: ToOneRelation<T, Directionality, Constraints>?) {
         relation = wrappedValue ?? .none
     }
 }
 
-extension _BelongsToOne: Codable where T: Codable {
+extension _BelongsTo: Codable where T: Codable {
     
 }
 
@@ -104,8 +103,6 @@ struct _HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
                                                                 Directionality: DirectionalityProtocol,
                                                                 Constraints: ConstraintsProtocol {
     
-    
-    @Indirect
     private var relation: ToManyRelation<T, Directionality, Constraints>
     
     var wrappedValue: [T]? {
@@ -120,8 +117,8 @@ struct _HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
 }
 
 extension _HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
-    init<Parent, InverseCardinality, InverseConstraint>(
-        inverse: KeyPath<T, Relations.MutualRelation<Parent, InverseCardinality, InverseConstraint>>
+    init<Parent>(
+        inverse: KeyPath<T, Parent>
     ) {
         relation = .none
     }
@@ -162,7 +159,6 @@ struct Relationship<Value, T, Directionality, Cardinality, Constraints> where T:
                                                                               Cardinality: CardinalityProtocol,
                                                                               Constraints: ConstraintsProtocol {
     
-    @Indirect
     private var relation: Relation<T, Directionality, Cardinality, Constraints>
     
     var projectedValue: Relation<T, Directionality, Cardinality, Constraints> {
@@ -301,49 +297,4 @@ extension Relationship where Value == T,
 
 extension Relationship: Codable where T: Codable, Value: Codable {
     
-}
-
-
-@propertyWrapper
-enum Indirect<T> {
-  indirect case wrapped(T)
-
-  init(wrappedValue initialValue: T) {
-    self = .wrapped(initialValue)
-  }
-
-  var wrappedValue: T {
-    get { switch self { case .wrapped(let x): return x } }
-    set { self = .wrapped(newValue) }
-  }
-}
-
-extension Indirect: Hashable where T: Hashable {
-    
-}
-
-extension Indirect: Equatable where T: Equatable {
-    
-}
-
-extension Indirect: Decodable where T: Decodable {
-    init(from decoder: Decoder) throws {
-        try self.init(wrappedValue: T(from: decoder))
-    }
-}
-
-extension Indirect: Encodable where T: Encodable {
-    func encode(to encoder: Encoder) throws {
-        try wrappedValue.encode(to: encoder)
-    }
-}
-
-extension KeyedDecodingContainer {
-    func decode<T: Decodable>(_: Indirect<T>.Type, forKey key: Key) throws -> Indirect<T> {
-        return try Indirect(wrappedValue: decode(T.self, forKey: key))
-    }
-
-    func decode<T: Decodable>(_: Indirect<Optional<T>>.Type, forKey key: Key) throws -> Indirect<Optional<T>> {
-        return try Indirect(wrappedValue: decodeIfPresent(T.self, forKey: key))
-    }
 }

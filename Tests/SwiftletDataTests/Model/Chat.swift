@@ -11,13 +11,13 @@ import Foundation
 struct Chat: EntityModel, Codable {
     let id: String
     
-    @Relationship(inverse: \.chats)
+    @_HasMany(inverse: \.chats)
     var users: [User]?
     
-    @Relationship(inverse: \.chat)
+    @_HasMany(inverse: \.chat)
     var messages: [Message]?
     
-    @Relationship(inverse: \.adminInChats)
+    @_HasMany(inverse: \.adminInChats)
     var admins: [User]?
     
     mutating func normalize() {
@@ -29,9 +29,9 @@ struct Chat: EntityModel, Codable {
     func save(_ repository: inout Repository) {
         repository.save(self)
         
-        save(\.$users, inverse: \.chats, to: &repository)
-        save(\.$messages, inverse: \.chat, to: &repository)
-        save(\.$admins, inverse: \.adminInChats, to: &repository)
+        save(\.$users, inverse: \.$chats, to: &repository)
+        save(\.$messages, inverse: \.$chat, to: &repository)
+        save(\.$admins, inverse: \.$adminInChats, to: &repository)
     }
 }
 

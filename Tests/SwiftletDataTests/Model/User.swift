@@ -43,16 +43,22 @@ struct User: EntityModel, Codable {
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    var chats: HasMany<Chat> = .none
-    var adminInChats: HasMany<Chat> = .none
+    
+    @_HasMany(inverse: \.users)
+    var chats: [Chat]?
+    
+    @_HasMany(inverse: \.admins)
+    var adminInChats: [Chat]?
     
     mutating func normalize() {
-        chats.normalize()
+        $chats.normalize()
+        $adminInChats.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\User.chats, inverse: \Chat.$users, to: &repository)
+        save(\.$chats, inverse: \.$users, to: &repository)
+        save(\.$adminInChats, inverse: \.$admins, to: &repository)
         
     }
     

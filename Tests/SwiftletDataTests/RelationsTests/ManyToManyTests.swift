@@ -23,7 +23,7 @@ final class ManyToManyTests: XCTestCase {
         
         let bobChats = User
             .query(User.bob.id, in: repository)
-            .related(\.chats)
+            .related(\.$chats)
             .resolve() 
         
         XCTAssertEqual(bobChats.compactMap { $0.id }, [Chat.one.id, Chat.two.id])
@@ -58,7 +58,7 @@ final class ManyToManyTests: XCTestCase {
         
         let bobsChats = User
             .query(User.bob.id, in: repository)
-            .related(\.chats)
+            .related(\.$chats)
         
         XCTAssertTrue(bobsChats.isEmpty)
     }
@@ -132,17 +132,17 @@ final class ManyToManyTests: XCTestCase {
         
         let bob = User
             .query(User.bob.id, in: repository)
-            .with(\.chats) { $0
+            .with(\.$chats) { $0
                 .ids(\.$users)
                 .with(\.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
-                    .id(\.author)
+                    .id(\.$author)
                 }
             }
         
-//            .with(\.chats) {
+//            .with(\.$chats) {
 //                $0.with(\.users)
 //                    .with(\.messages) {
 //                        $0.with(ids: \.attachment)
@@ -190,18 +190,18 @@ final class ManyToManyTests: XCTestCase {
         
         let bob = User
             .query(User.bob.id, in: repository)
-            .with(\.chats) {
+            .with(\.$chats) {
                 $0.with(\.$admins)
                 .ids(\.$users)
                 .with(\.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
-                    .id(\.author)
+                    .id(\.$author)
                 }
             }
         
-//            .with(\.chats) {
+//            .with(\.$chats) {
 //                $0.with(\.users)
 //                    .with(\.messages) {
 //                        $0.with(ids: \.attachment)
