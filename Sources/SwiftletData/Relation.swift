@@ -25,35 +25,32 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
                                                                                     Constraints: ConstraintsProtocol {
     
     private var state: State<T>
+   
+    fileprivate init(state: State<T>) {
+        self.state = state
+    }
+}
+
+public extension Relation {
     
-    public mutating func normalize() {
+    mutating func normalize() {
         state.normalize()
     }
     
-    public func normalized() -> Self {
+    func normalized() -> Self {
         var copy = self
         copy.normalize()
         return copy
     }
+}
     
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+public extension Relation {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.state == rhs.state
     }
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(state)
-    }
-    
-    var ids: [T.ID] {
-        state.ids
-    }
-    
-    var entities: [T] {
-        state.entities
-    }
-    
-    fileprivate init(state: State<T>) {
-        self.state = state
     }
 }
 
@@ -110,6 +107,16 @@ extension Relation: Codable where T: Codable { }
 extension Relation.State: Codable where Entity: Codable { }
 
 extension Relation {
+     var ids: [T.ID] {
+         state.ids
+     }
+     
+     var entities: [T] {
+         state.entities
+     }
+}
+
+extension Relation {
     var directLinkSaveOption: Option {
         switch state {
         case .entity, .id, .entities, .ids:
@@ -152,47 +159,51 @@ private extension Relation {
         init(_ entity: Entity?) {
             self = .entity(entity: entity)
         }
-        
-        var ids: [Entity.ID] {
-            switch self {
-            case .id(let id):
-                return [id].compactMap { $0 }
-            case .entity(let entity):
-                return [entity].compactMap { $0?.id }
-            case .ids(let ids), .idsFragment(let ids):
-                return ids
-            case .entities(let entities), .entitiesFragment(let entities):
-                return entities.map { $0.id }
-            case .none:
-                return []
-            }
+    }
+}
+
+private extension Relation.State {
+    var ids: [Entity.ID] {
+        switch self {
+        case .id(let id):
+            return [id].compactMap { $0 }
+        case .entity(let entity):
+            return [entity].compactMap { $0?.id }
+        case .ids(let ids), .idsFragment(let ids):
+            return ids
+        case .entities(let entities), .entitiesFragment(let entities):
+            return entities.map { $0.id }
+        case .none:
+            return []
         }
-        
-        var entities: [Entity] {
-            switch self {
-            case .id, .ids, .idsFragment:
-                return []
-            case .entity(let entity):
-                return [entity].compactMap { $0 }
-            case .entities(let entities), .entitiesFragment(let entities):
-                return entities
-            case .none:
-                return []
-            }
-        }
-        
-        mutating func normalize() {
-            self = .none
-        }
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.ids == rhs.ids
-        }
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(ids)
+    }
+    
+    var entities: [Entity] {
+        switch self {
+        case .id, .ids, .idsFragment:
+            return []
+        case .entity(let entity):
+            return [entity].compactMap { $0 }
+        case .entities(let entities), .entitiesFragment(let entities):
+            return entities
+        case .none:
+            return []
         }
     }
 }
 
- 
+private extension Relation.State {
+    mutating func normalize() {
+        self = .none
+    }
+}
+
+private extension Relation.State {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.ids == rhs.ids
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ids)
+    }
+}
