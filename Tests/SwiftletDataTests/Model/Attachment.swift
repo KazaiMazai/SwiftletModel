@@ -20,7 +20,7 @@ struct Attachment: EntityModel, Codable {
     let id: String 
     var kind: Kind
     
-    @BelongsTo(inverse: \.attachment, to: Attachment.self)
+    @BelongsTo(\.message, inverse: \.attachment)
     var message: Message?
     
     mutating func normalize() {

@@ -45,10 +45,10 @@ struct User: EntityModel, Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
     
-    @HasMany(inverse: \.users, to: User.self)
+    @HasMany(\.chats, inverse: \.users)
     var chats: [Chat]?
     
-    @HasMany(inverse: \.admins, to: User.self)
+    @HasMany(\.adminInChats, inverse: \.admins)
     var adminInChats: [Chat]?
     
     mutating func normalize() {
@@ -73,8 +73,8 @@ struct User: EntityModel, Codable {
 
 extension Query where Entity == User {
     var isMe: Bool {
-        repository
-            .query(CurrentUser.self, id: CurrentUser.id)
+        CurrentUser
+            .query(CurrentUser.id, in: repository)
             .related(\.$user)?.id == id
     }
 }

@@ -15,16 +15,16 @@ struct Message: EntityModel, Codable {
     @BelongsTo
     var author: User? = nil
     
-    @BelongsTo(inverse: \.messages, to: Message.self)
+    @BelongsTo(\.chat, inverse: \.messages)
     var chat: Chat?
     
-    @HasOne(inverse: \.message, to: Message.self)
+    @HasOne(\.attachment, inverse: \.message)
     var attachment: Attachment?
     
-    @HasMany(inverse: \.replyTo, to: Message.self)
+    @HasMany(\.replies, inverse: \.replyTo)
     var replies: [Message]?
     
-    @HasMany(inverse: \.replies, to: Message.self)
+    @HasMany(\.replyTo, inverse: \.replies)
     var replyTo: [Message]?
     
     @HasMany
