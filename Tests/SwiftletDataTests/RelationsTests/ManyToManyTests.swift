@@ -192,13 +192,13 @@ final class ManyToManyTests: XCTestCase {
             .query(User.bob.id, in: repository)
             .with(\.$chats) {
                 $0.with(\.$admins)
-                .ids(\.$users)
-                .with(\.$messages) {
-                    $0.with(\.$attachment) {
-                        $0.id(\.$message)
+                    .ids(\.$users)
+                    .with(\.$messages) {
+                        $0.with(\.$attachment) {
+                            $0.id(\.$message)
+                        }
+                        .id(\.$author)
                     }
-                    .id(\.$author)
-                }
             }
         
 //            .with(\.$chats) {
