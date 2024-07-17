@@ -45,10 +45,10 @@ struct User: EntityModel, Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
     
-    @HasMany(inverse: \.users)
+    @HasMany(inverse: \.users, to: User.self)
     var chats: [Chat]?
     
-    @HasMany(inverse: \.admins)
+    @HasMany(inverse: \.admins, to: User.self)
     var adminInChats: [Chat]?
     
     mutating func normalize() {
