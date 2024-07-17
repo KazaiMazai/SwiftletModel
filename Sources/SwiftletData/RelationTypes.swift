@@ -40,72 +40,9 @@ public extension Relations {
 public extension Relations {
     enum Required: RequiredRelation { }
     
-    enum Optional: OptionalRelation {
-    }
+    enum Optional: OptionalRelation { }
 }
-
-public extension Relations {
-    enum Errors: Error {
-        case empty
-        case null
-        case wrongCardinality
-    }
-    
-    struct NonEmpty: ConstraintsProtocol, ThrowingConstraint {
-        public static func validate(_ relations: (any Collection)?) throws {
-            guard let relations else {
-                throw Errors.null
-            }
-            
-            guard !relations.isEmpty else {
-                throw Errors.empty
-            }
-        }
-    }
-}
-
-public protocol DirectionalityProtocol { }
-
-public protocol ConstraintsProtocol {
-    static func validate(_ relations: (any Collection)?) throws
-}
-
-public protocol RequiredRelation: ConstraintsProtocol {
-    
-}
-
-extension RequiredRelation {
-    public static func validate(_ relations: (any Collection)?) throws {
-         
-    }
-}
-
-public protocol OptionalRelation: ConstraintsProtocol {
-     
-}
-
-public extension OptionalRelation {
-    static func validate(_ relations: (any Collection)?) throws { }
-}
-
-public protocol CardinalityProtocol {
-    static var isToMany: Bool { get }
-    
-    static func validate(toMany: Bool) throws
-    
-}
-
-public extension CardinalityProtocol {
-    static func validate(toMany: Bool) throws {
-        guard isToMany == toMany else {
-            throw Relations.Errors.wrongCardinality
-        }
-    }
-}
-public protocol ThrowingConstraint: ConstraintsProtocol {
-   
-}
-
+  
 typealias ToOneRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToOne, Constraint>
 
 typealias ToManyRelation<T: EntityModel, Directionality: DirectionalityProtocol, Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>

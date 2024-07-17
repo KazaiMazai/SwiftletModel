@@ -7,6 +7,18 @@
 
 import Foundation
 
+public protocol DirectionalityProtocol { }
+
+public protocol ConstraintsProtocol { }
+
+public protocol RequiredRelation: ConstraintsProtocol { }
+ 
+public protocol OptionalRelation: ConstraintsProtocol { }
+ 
+public protocol CardinalityProtocol {
+    static var isToMany: Bool { get }
+}
+
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
                                                                                     Cardinality: CardinalityProtocol,
@@ -45,7 +57,6 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
     }
 }
 
-
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
         entities.forEach { entity in entity.save(&repository) }
@@ -60,21 +71,13 @@ public extension Relation {
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: OptionalRelation {
-    static func relation(id: T.ID) -> Self {
-        Relation(state: State(id: id))
-    }
-    
-    static func relation(_ entity: T) -> Self {
-        Relation(state: State(entity))
-    }
     
     static var null: Self {
         Relation(state: State(nil))
     }
 }
 
-public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: RequiredRelation {
+public extension Relation where Cardinality == Relations.ToOne {
     static func relation(id: T.ID) -> Self {
         Relation(state: State(id: id))
     }
@@ -83,72 +86,28 @@ public extension Relation where Cardinality == Relations.ToOne,
         Relation(state: State(entity))
     }
 }
-
-public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: ThrowingConstraint {
-    
-    static func relation(id: T.ID) throws -> Self {
-        try Constraints.validate([id])
-        return Relation(state: State(id: id))
+ 
+public extension Relation where Cardinality == Relations.ToMany {
+    static func relation(_ entities: [T]) -> Self {
+        Relation(state: State(entities, fragment: false))
     }
-    
-    static func relation(_ entity: T) throws -> Self {
-        try Constraints.validate([entity])
-        return Relation(state: State(entity))
-    }
-}
-
-public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: RequiredRelation {
     
     static func relation(ids: [T.ID]) -> Self {
         Relation(state: State(ids: ids, fragment: false))
     }
     
-    static func relation(_ entities: [T]) -> Self {
-        Relation(state: State(entities, fragment: false))
+    static func fragment(_ entities: [T]) -> Self {
+        Relation(state: State(entities, fragment: true))
     }
     
     static func fragment(ids: [T.ID]) -> Self {
         Relation(state: State(ids: ids, fragment: true))
     }
-    
-    static func fragment(_ entities: [T]) -> Self {
-        Relation(state: State(entities, fragment: true))
-    }
 }
 
-public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: ThrowingConstraint {
-    
-    static func relation(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids)
-        return Relation(state: State(ids: ids, fragment: false))
-    }
-    
-    static func relation(_ entities: [T]) throws -> Self {
-        try Constraints.validate(entities)
-        return Relation(state: State(entities, fragment: false))
-    }
-    
-    static func fragment(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids)
-        return Relation(state: State(ids: ids, fragment: true))
-    }
-    
-    static func fragment(_ entities: [T]) throws -> Self {
-        try Constraints.validate(entities)
-        return Relation(state: State(entities, fragment: true))
-    }
-}
+extension Relation: Codable where T: Codable { }
 
-extension Relation: Codable where T: Codable {
-    
-}
-
-extension Relation.State: Codable where Entity: Codable {
-    
-}
+extension Relation.State: Codable where Entity: Codable { }
 
 extension Relation {
     var directLinkSaveOption: Option {
@@ -236,32 +195,4 @@ private extension Relation {
     }
 }
 
-extension Relation where Cardinality == Relations.ToOne {
-    
-    static func relation(_ entity: T) -> Self {
-        Relation(state: State(entity))
-    }
-    
-    static func relation(id: T.ID) -> Self {
-        Relation(state: State(id: id))
-    }
-}
-
-extension Relation where Cardinality == Relations.ToMany {
-    static func relation(_ entities: [T]) -> Self {
-        Relation(state: State(entities, fragment: false))
-    }
-    
-    static func relation(ids: [T.ID]) -> Self {
-        Relation(state: State(ids: ids, fragment: false))
-    }
-    
-    static func fragment(_ entities: [T]) -> Self {
-        Relation(state: State(entities, fragment: true))
-    }
-    
-    static func fragment(ids: [T.ID]) -> Self {
-        Relation(state: State(ids: ids, fragment: true))
-    }
-     
-}
+ 
