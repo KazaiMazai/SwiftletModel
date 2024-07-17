@@ -1,18 +1,16 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Logo-SwifletData-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Logo-SwifletData.svg">
-  <img src="Logo.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="Docs/Resources/Logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Docs/Resources/Logo.svg">
+  <img src="Docs/Resources/Logo.svg">
 </picture>
 
 Domain Model implementation as a plain struct in Swift. 
 - Entities Repository
 - Typed Relations of all kinds
-- Persistance (in development)
-- Migrations (in development)
-- CoreData/SwiftData sync (in development)
+- Persistance  
 
 SwiftletData is like an ORM but without a database.
 
 
-**Notice:** the package is in early development stage.
+**Notice:** the package is in development stage.
  
