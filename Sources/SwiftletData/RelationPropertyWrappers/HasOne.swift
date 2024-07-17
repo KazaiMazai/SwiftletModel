@@ -26,11 +26,11 @@ struct HasOne<T, Directionality, Constraints>: Hashable where T: EntityModel,
 }
 
 extension HasOne where Directionality == Relations.Mutual, Constraints == Relations.Optional   {
-    init<EnclosingType>(inverse: KeyPath<T, EnclosingType?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
     
-    init<EnclosingType>(inverse: KeyPath<T, [EnclosingType]?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
     

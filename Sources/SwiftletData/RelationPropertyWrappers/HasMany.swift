@@ -25,11 +25,11 @@ struct HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
 }
 
 extension HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
-    init<EnclosingType>(inverse: KeyPath<T, EnclosingType?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
     
-    init<EnclosingType>(inverse: KeyPath<T, [EnclosingType]?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
     

@@ -22,14 +22,15 @@ struct BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel,
         get { relation }
         set { relation = newValue }
     }
+   
 }
 
 extension BelongsTo where Directionality == Relations.Mutual, Constraints == Relations.Required   {
-    init<EnclosingType>(inverse: KeyPath<T, EnclosingType?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
     
-    init<EnclosingType>(inverse: KeyPath<T, [EnclosingType]?>, to: EnclosingType.Type) {
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
     
