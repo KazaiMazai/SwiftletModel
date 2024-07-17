@@ -133,6 +133,8 @@ extension Relation {
     }
 }
 
+//MARK: -  Private
+
 private extension Relation {
     
     indirect enum State<T: EntityModel>: Hashable {
