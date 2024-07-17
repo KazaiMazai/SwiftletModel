@@ -25,7 +25,11 @@ struct HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
 }
 
 extension HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
-    init<Parent>(inverse: KeyPath<T, Parent>) {
+    init<EnclosingType>(inverse: KeyPath<T, EnclosingType?>, to: EnclosingType.Type) {
+        self.init(relation: .none)
+    }
+    
+    init<EnclosingType>(inverse: KeyPath<T, [EnclosingType]?>, to: EnclosingType.Type) {
         self.init(relation: .none)
     }
     
@@ -50,7 +54,7 @@ extension HasMany where Directionality == Relations.Mutual, Constraints == Relat
 extension HasMany where Directionality == Relations.OneWay, Constraints == Relations.Required   {
     /**
      This initializer is used by the Swift compiler to autogenerate a convenient initializer
-     for the parent struct that utilizes this property wrapper. It is specifically designed
+     for the enclosing type that utilizes this property wrapper. It is specifically designed
      for one-way relations.
      
      This is particularly useful when the property
