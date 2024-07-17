@@ -12,21 +12,21 @@ public protocol DirectionalityProtocol { }
 public protocol ConstraintsProtocol { }
 
 public protocol RequiredRelation: ConstraintsProtocol { }
- 
+
 public protocol OptionalRelation: ConstraintsProtocol { }
- 
+
 public protocol CardinalityProtocol {
     static var isToMany: Bool { get }
 }
 
-public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
-                                                                                    Directionality: DirectionalityProtocol,
-                                                                                    Cardinality: CardinalityProtocol,
-                                                                                    Constraints: ConstraintsProtocol {
+public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashable where Entity: EntityModel,
+                                                                                         Directionality: DirectionalityProtocol,
+                                                                                         Cardinality: CardinalityProtocol,
+                                                                                         Constraints: ConstraintsProtocol {
     
-    private var state: State<T>
-   
-    fileprivate init(state: State<T>) {
+    private var state: State<Entity>
+    
+    fileprivate init(state: State<Entity>) {
         self.state = state
     }
 }
@@ -43,7 +43,7 @@ public extension Relation {
         return copy
     }
 }
-    
+
 public extension Relation {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.state == rhs.state
@@ -75,45 +75,45 @@ public extension Relation where Cardinality == Relations.ToOne,
 }
 
 public extension Relation where Cardinality == Relations.ToOne {
-    static func relation(id: T.ID) -> Self {
+    static func relation(id: Entity.ID) -> Self {
         Relation(state: State(id: id))
     }
     
-    static func relation(_ entity: T) -> Self {
+    static func relation(_ entity: Entity) -> Self {
         Relation(state: State(entity))
     }
 }
- 
+
 public extension Relation where Cardinality == Relations.ToMany {
-    static func relation(_ entities: [T]) -> Self {
+    static func relation(_ entities: [Entity]) -> Self {
         Relation(state: State(entities, fragment: false))
     }
     
-    static func relation(ids: [T.ID]) -> Self {
+    static func relation(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, fragment: false))
     }
     
-    static func fragment(_ entities: [T]) -> Self {
+    static func fragment(_ entities: [Entity]) -> Self {
         Relation(state: State(entities, fragment: true))
     }
     
-    static func fragment(ids: [T.ID]) -> Self {
+    static func fragment(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, fragment: true))
     }
 }
 
-extension Relation: Codable where T: Codable { }
+extension Relation: Codable where Entity: Codable { }
 
-extension Relation.State: Codable where Entity: Codable { }
+extension Relation.State: Codable where T: Codable { }
 
 extension Relation {
-     var ids: [T.ID] {
-         state.ids
-     }
-     
-     var entities: [T] {
-         state.entities
-     }
+    var ids: [Entity.ID] {
+        state.ids
+    }
+    
+    var entities: [Entity] {
+        state.entities
+    }
 }
 
 extension Relation {
@@ -135,35 +135,35 @@ extension Relation {
 
 private extension Relation {
     
-    indirect enum State<Entity: EntityModel>: Hashable {
-        case id(id: Entity.ID?)
-        case entity(entity: Entity?)
-        case ids(ids: [Entity.ID])
-        case entities(entities: [Entity])
-        case idsFragment(ids: [Entity.ID])
-        case entitiesFragment(entities: [Entity])
+    indirect enum State<T: EntityModel>: Hashable {
+        case id(id: T.ID?)
+        case entity(entity: T?)
+        case ids(ids: [T.ID])
+        case entities(entities: [T])
+        case idsFragment(ids: [T.ID])
+        case entitiesFragment(entities: [T])
         case none
         
-        init(_ items: [Entity], fragment: Bool) {
+        init(_ items: [T], fragment: Bool) {
             self = fragment ? .entitiesFragment(entities: items) : .entities(entities: items)
         }
         
-        init(ids: [Entity.ID], fragment: Bool) {
+        init(ids: [T.ID], fragment: Bool) {
             self = fragment ? .idsFragment(ids: ids) : .ids(ids: ids)
         }
         
-        init(id: Entity.ID?) {
+        init(id: T.ID?) {
             self = .id(id: id)
         }
         
-        init(_ entity: Entity?) {
+        init(_ entity: T?) {
             self = .entity(entity: entity)
         }
     }
 }
 
 private extension Relation.State {
-    var ids: [Entity.ID] {
+    var ids: [T.ID] {
         switch self {
         case .id(let id):
             return [id].compactMap { $0 }
@@ -178,7 +178,7 @@ private extension Relation.State {
         }
     }
     
-    var entities: [Entity] {
+    var entities: [T] {
         switch self {
         case .id, .ids, .idsFragment:
             return []
