@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Logo.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="Logo-SwifletData-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Logo-SwifletData.svg">
   <img src="Logo.svg">
 </picture>
 

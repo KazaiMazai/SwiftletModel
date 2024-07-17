@@ -13,15 +13,16 @@ struct CurrentUser: EntityModel, Codable {
     
     private(set) var id: String = CurrentUser.id
     
-    var user: ToOne<User> = .none
+    @HasOne
+    var user: User? = nil
     
     mutating func normalize() {
-        user.normalize()
+        $user.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\.user, to: &repository)
+        save(\.$user, to: &repository)
     }
 }
 
@@ -43,15 +44,22 @@ struct User: EntityModel, Codable {
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    var chats: HasMany<Chat> = .none
-     
+    
+    @HasMany(\.chats, inverse: \.users)
+    var chats: [Chat]?
+    
+    @HasMany(\.adminInChats, inverse: \.admins)
+    var adminInChats: [Chat]?
+    
     mutating func normalize() {
-        chats.normalize()
+        $chats.normalize()
+        $adminInChats.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
-        save(\User.chats, inverse: \Chat.users, to: &repository)
+        save(\.$chats, inverse: \.$users, to: &repository)
+        save(\.$adminInChats, inverse: \.$admins, to: &repository)
     }
     
     static func mergeStraregy() -> MergeStrategy<User> {
@@ -65,8 +73,8 @@ struct User: EntityModel, Codable {
 
 extension Query where Entity == User {
     var isMe: Bool {
-        repository
-            .query(CurrentUser.self, id: CurrentUser.id)
-            .related(\.user)?.id == id
+        CurrentUser
+            .query(CurrentUser.id, in: repository)
+            .related(\.$user)?.id == id
     }
 }

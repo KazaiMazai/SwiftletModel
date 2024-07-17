@@ -10,19 +10,28 @@ import Foundation
 
 struct Chat: EntityModel, Codable {
     let id: String
-    var users: HasMany<User> = .none
-    var messages: HasMany<Message> = .none
+    
+    @HasMany(\.users, inverse: \.chats)
+    var users: [User]?
+    
+    @HasMany(\.messages, inverse: \.chat)
+    var messages: [Message]?
+    
+    @HasMany(\.admins, inverse: \.adminInChats)
+    var admins: [User]?
     
     mutating func normalize() {
-        users.normalize()
-        messages.normalize()
+        $users.normalize()
+        $messages.normalize()
+        $admins.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
         
-        save(\.users, inverse: \.chats, to: &repository)
-        save(\.messages, inverse: \.chat, to: &repository)
+        save(\.$users, inverse: \.$chats, to: &repository)
+        save(\.$messages, inverse: \.$chat, to: &repository)
+        save(\.$admins, inverse: \.$adminInChats, to: &repository)
     }
 }
 

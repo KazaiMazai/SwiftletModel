@@ -23,7 +23,7 @@ final class ToOneTests: XCTestCase {
     func test_WhenDirectAdded_InverseIsAdded() {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: repository)
-            .related(\.message)?
+            .related(\.$message)?
             .resolve()
         
         XCTAssertEqual(messageForAttachment?.id, Attachment.imageOne.id)
@@ -31,36 +31,36 @@ final class ToOneTests: XCTestCase {
     
     func test_WhenDirectReplaced_InverseIsUpdated() {
         var message = initialMessage
-        message.attachment = .relation(Attachment.imageTwo)
+        message.$attachment = .relation(Attachment.imageTwo)
         message.save(&repository)
         
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: repository)
-            .related(\.message)
+            .related(\.$message)
         
         XCTAssertNil(messageForAttachment)
     }
     
     func test_WhenNullify_InverseIsRemoved() {
         var message = initialMessage
-        message.attachment = .nullify
+        message.$attachment = .null
         message.save(&repository)
         
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: repository)
-            .related(\.message)
+            .related(\.$message)
         
         XCTAssertNil(messageForAttachment)
     }
     
     func test_WhenNullify_RelationIsRemoved() {
         var message = initialMessage
-        message.attachment = .nullify
+        message.$attachment = .null
         message.save(&repository)
         
         let attachment = message
             .query(in: repository)
-            .related(\.attachment)
+            .related(\.$attachment)
         
         XCTAssertNil(attachment)
     }

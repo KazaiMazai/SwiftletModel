@@ -11,38 +11,50 @@ import Foundation
 struct Message: EntityModel, Codable {
     let id: String
     let text: String
-    var author: ToOne<User> = .none
-    var chat: BelongsTo<Chat> = .none
-    var attachment: HasOne<Attachment> = .none
-    var replies: HasMany<Message> = .none
-    var replyTo: HasOne<Message> = .none
-    var viewedBy: ToMany<User> = .none
+    
+    @BelongsTo
+    var author: User? = nil
+    
+    @BelongsTo(\.chat, inverse: \.messages)
+    var chat: Chat?
+    
+    @HasOne(\.attachment, inverse: \.message)
+    var attachment: Attachment?
+    
+    @HasMany(\.replies, inverse: \.replyTo)
+    var replies: [Message]?
+    
+    @HasMany(\.replyTo, inverse: \.replies)
+    var replyTo: [Message]?
+    
+    @HasMany
+    var viewedBy: [User]? = nil
 }
 
 extension Message {
     mutating func normalize() {
-        author.normalize()
-        chat.normalize()
-        attachment.normalize()
-        replies.normalize()
-        replyTo.normalize()
-        viewedBy.normalize()
+        $author.normalize()
+        $chat.normalize()
+        $attachment.normalize()
+        $replies.normalize()
+        $replyTo.normalize()
+        $viewedBy.normalize()
     }
     
     func save(_ repository: inout Repository) {
         repository.save(self)
        
-        save(\.author, to: &repository)
-        save(\.chat, inverse: \.messages, to: &repository)
-        save(\.attachment, inverse: \.message, to: &repository)
-        save(\.replies, inverse: \.replyTo, to: &repository)
-        save(\.replyTo, inverse: \.replies, to: &repository)
-        save(\.viewedBy, to: &repository)
+        save(\.$author, to: &repository)
+        save(\.$chat, inverse: \.$messages, to: &repository)
+        save(\.$attachment, inverse: \.$message, to: &repository)
+        save(\.$replies, inverse: \.$replyTo, to: &repository)
+        save(\.$replyTo, inverse: \.$replies, to: &repository)
+        save(\.$viewedBy, to: &repository)
     }
 }
 
 extension Query where Entity == Message {
     var isMyMessage: Bool? {
-        related(\.author)?.isMe
+        related(\.$author)?.isMe
     }
 }

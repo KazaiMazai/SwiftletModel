@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable where T: EntityModel,
                                                                                     Directionality: DirectionalityProtocol,
                                                                                     Cardinality: CardinalityProtocol,
@@ -37,60 +36,65 @@ public struct Relation<T, Directionality, Cardinality, Constraints>: Hashable wh
         state.ids
     }
     
-    var entity: [T] {
-        state.entity
+    var entities: [T] {
+        state.entities
+    }
+    
+    fileprivate init(state: State<T>) {
+        self.state = state
     }
 }
 
+
 extension Relation: Storable {
     public func save(_ repository: inout Repository) {
-        entity.forEach { entity in entity.save(&repository) }
+        entities.forEach { entity in entity.save(&repository) }
     }
 }
 
 public extension Relation {
     static var none: Self {
-        Relation(state: .none(explicitNil: false))
+        Relation(state: .none)
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: OptionalRelation {
     static func relation(id: T.ID) -> Self {
-        Relation(state: .faulted([id], replace: true))
+        Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .entity([entity], replace: true))
+        Relation(state: State(entity))
     }
     
-    static var nullify: Self {
-        Relation(state: .none(explicitNil: true))
+    static var null: Self {
+        Relation(state: State(nil))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: RequiredRelation {
     static func relation(id: T.ID) -> Self {
-        Relation(state: .faulted([id], replace: true))
+        Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .entity([entity], replace: true))
+        Relation(state: State(entity))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: ToOneValidation,
-                                Constraints.Entity == T {
+                                Constraints: ThrowingConstraint {
     
-    static func relation(id: T.ID) -> Self {
-        Relation(state: .faulted([id], replace: true))
+    static func relation(id: T.ID) throws -> Self {
+        try Constraints.validate([id])
+        return Relation(state: State(id: id))
     }
     
     static func relation(_ entity: T) throws -> Self {
-        try Constraints.validate(model: entity)
-        return Relation(state: .entity([entity], replace: true))
+        try Constraints.validate([entity])
+        return Relation(state: State(entity))
     }
 }
 
@@ -98,44 +102,43 @@ public extension Relation where Cardinality == Relations.ToMany,
                                 Constraints: RequiredRelation {
     
     static func relation(ids: [T.ID]) -> Self {
-        Relation(state: .faulted(ids, replace: true))
+        Relation(state: State(ids: ids, fragment: false))
     }
     
     static func relation(_ entities: [T]) -> Self {
-        Relation(state: .entity(entities, replace: true))
+        Relation(state: State(entities, fragment: false))
     }
     
-    static func insert(ids: [T.ID]) -> Self {
-        Relation(state: .faulted(ids, replace: false))
+    static func fragment(ids: [T.ID]) -> Self {
+        Relation(state: State(ids: ids, fragment: true))
     }
     
-    static func insert(_ entities: [T]) -> Self {
-        Relation(state: .entity(entities, replace: false))
+    static func fragment(_ entities: [T]) -> Self {
+        Relation(state: State(entities, fragment: true))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToMany,
-                                Constraints: ToManyValidation,
-                                Constraints.Entity == T {
+                                Constraints: ThrowingConstraint {
     
     static func relation(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids: ids)
-        return Relation(state: .faulted(ids, replace: true))
+        try Constraints.validate(ids)
+        return Relation(state: State(ids: ids, fragment: false))
     }
     
     static func relation(_ entities: [T]) throws -> Self {
-        try Constraints.validate(models: entities)
-        return Relation(state: .entity(entities, replace: true))
+        try Constraints.validate(entities)
+        return Relation(state: State(entities, fragment: false))
     }
     
-    static func insert(ids: [T.ID]) throws -> Self {
-        try Constraints.validate(ids: ids)
-        return Relation(state: .faulted(ids, replace: false))
+    static func fragment(ids: [T.ID]) throws -> Self {
+        try Constraints.validate(ids)
+        return Relation(state: State(ids: ids, fragment: true))
     }
     
-    static func insert(_ entities: [T]) throws -> Self {
-        try Constraints.validate(models: entities)
-        return Relation(state: .entity(entities, replace: false))
+    static func fragment(_ entities: [T]) throws -> Self {
+        try Constraints.validate(entities)
+        return Relation(state: State(entities, fragment: true))
     }
 }
 
@@ -143,17 +146,19 @@ extension Relation: Codable where T: Codable {
     
 }
 
-extension Relation.State: Codable where T: Codable {
+extension Relation.State: Codable where Entity: Codable {
     
 }
 
 extension Relation {
     var directLinkSaveOption: Option {
         switch state {
-        case .faulted(_, let replace), .entity(_, let replace):
-            return replace ? .replace : .append
-        case .none(let explicitNil):
-            return explicitNil ? .remove : .append
+        case .entity, .id, .entities, .ids:
+            return .replace
+        case .entitiesFragment, .idsFragment:
+            return .append
+        case .none:
+            return .append
         }
     }
     
@@ -164,35 +169,61 @@ extension Relation {
 
 private extension Relation {
     
-    indirect enum State<T: EntityModel>: Hashable {
-        case faulted([T.ID], replace: Bool)
-        case entity([T], replace: Bool)
-        case none(explicitNil: Bool)
+    indirect enum State<Entity: EntityModel>: Hashable {
+        case id(id: Entity.ID?)
+        case entity(entity: Entity?)
+        case ids(ids: [Entity.ID])
+        case entities(entities: [Entity])
+        case idsFragment(ids: [Entity.ID])
+        case entitiesFragment(entities: [Entity])
+        case none
         
-        var ids: [T.ID] {
+        init(_ items: [Entity], fragment: Bool) {
+            self = fragment ? .entitiesFragment(entities: items) : .entities(entities: items)
+        }
+        
+        init(ids: [Entity.ID], fragment: Bool) {
+            self = fragment ? .idsFragment(ids: ids) : .ids(ids: ids)
+        }
+        
+        init(id: Entity.ID?) {
+            self = .id(id: id)
+        }
+        
+        init(_ entity: Entity?) {
+            self = .entity(entity: entity)
+        }
+        
+        var ids: [Entity.ID] {
             switch self {
-            case .faulted(let ids, _):
+            case .id(let id):
+                return [id].compactMap { $0 }
+            case .entity(let entity):
+                return [entity].compactMap { $0?.id }
+            case .ids(let ids), .idsFragment(let ids):
                 return ids
-            case .entity(let entity, _):
-                return entity.map { $0.id }
+            case .entities(let entities), .entitiesFragment(let entities):
+                return entities.map { $0.id }
             case .none:
                 return []
             }
         }
         
-        var entity: [T] {
+        var entities: [Entity] {
             switch self {
-            case .faulted:
+            case .id, .ids, .idsFragment:
                 return []
-            case .entity(let entity, _):
-                return entity
+            case .entity(let entity):
+                return [entity].compactMap { $0 }
+            case .entities(let entities), .entitiesFragment(let entities):
+                return entities
             case .none:
                 return []
             }
         }
         
         mutating func normalize() {
-            self = .none(explicitNil: false)
+            self = .none
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
@@ -208,13 +239,29 @@ private extension Relation {
 extension Relation where Cardinality == Relations.ToOne {
     
     static func relation(_ entity: T) -> Self {
-        Relation(state: .entity([entity], replace: true))
+        Relation(state: State(entity))
+    }
+    
+    static func relation(id: T.ID) -> Self {
+        Relation(state: State(id: id))
     }
 }
 
 extension Relation where Cardinality == Relations.ToMany {
-    
     static func relation(_ entities: [T]) -> Self {
-        Relation(state: .entity(entities, replace: true))
+        Relation(state: State(entities, fragment: false))
     }
+    
+    static func relation(ids: [T.ID]) -> Self {
+        Relation(state: State(ids: ids, fragment: false))
+    }
+    
+    static func fragment(_ entities: [T]) -> Self {
+        Relation(state: State(entities, fragment: true))
+    }
+    
+    static func fragment(ids: [T.ID]) -> Self {
+        Relation(state: State(ids: ids, fragment: true))
+    }
+     
 }
