@@ -144,78 +144,10 @@ public extension Relation where Cardinality == Relations.ToMany,
 
 extension Relation: Codable where T: Codable {
     
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case entity = "object"
-        case ids = "ids"
-        case entities = "objects"
-        case idsFragment = "fragment_ids"
-        case entitiesFragment = "fragment"
-        case none
-    }
+}
+
+extension Relation.State: Codable where Entity: Codable {
     
-    public func encode(to encoder: Encoder) throws {
-        switch state {
-        case .id(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .id)
-        case .entity(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entity)
-        case .ids(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .ids)
-        case .entities(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entities)
-        case .idsFragment(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .idsFragment)
-        case .entitiesFragment(let value):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(value, forKey: .entitiesFragment)
-        case .none:
-            var container = encoder.singleValueContainer()
-            try container.encodeNil()
-        }
-    }
-    
-    public init(from decoder: Decoder) throws {
-        guard let container = try? decoder.container(keyedBy: CodingKeys.self),
-              let key = container.allKeys.first else {
-            self = .none
-            return
-        }
-        
-        switch key {
-        case .id:
-           let value = try? container.decode(T.ID?.self, forKey: .id)
-           try Cardinality.validate(toMany: false)
-           try Constraints.validate(value.map { [$0] })
-           state = .id(id: value)
-        case .entity:
-           let value = try? container.decode(T?.self, forKey: .entity)
-           try Cardinality.validate(toMany: false)
-           try Constraints.validate(value.map { [$0] })
-           state = .entity(entity: value)
-        case .ids:
-            let value = try container.decode([T.ID].self, forKey: .ids)
-            try Constraints.validate(value)
-            state = .ids(ids: value)
-        case .entities:
-            let value = try container.decode([T].self, forKey: .entities)
-            try Constraints.validate(value)
-            state = .entities(entities: value)
-        case .idsFragment:
-            let value = try container.decode([T.ID].self, forKey: .idsFragment)
-            state = .idsFragment(ids: value)
-        case .entitiesFragment:
-            let value =  try container.decode([T].self, forKey: .entitiesFragment)
-            state = .entitiesFragment(entities: value)
-        case .none:
-            state = .none
-        }
-    }
 }
 
 extension Relation {
