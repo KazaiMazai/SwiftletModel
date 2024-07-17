@@ -8,24 +8,23 @@
 import Foundation
 
 @propertyWrapper
-struct BelongsTo<T, Directionality, Constraints>: Hashable where T: EntityModel,
-                                                                 Directionality: DirectionalityProtocol,
-                                                                 Constraints: ConstraintsProtocol {
+struct BelongsTo<T, Directionality>: Hashable where T: EntityModel,
+                                                    Directionality: DirectionalityProtocol {
     
-    private var relation: ToOneRelation<T, Directionality, Constraints>
+    private var relation: ToOneRelation<T, Directionality, Relations.Required>
     
     var wrappedValue: T? {
         get { relation.entities.first }
     }
     
-    var projectedValue: ToOneRelation<T, Directionality, Constraints> {
+    var projectedValue: ToOneRelation<T, Directionality,  Relations.Required> {
         get { relation }
         set { relation = newValue }
     }
    
 }
 
-extension BelongsTo where Directionality == Relations.Mutual, Constraints == Relations.Required   {
+extension BelongsTo where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -33,6 +32,9 @@ extension BelongsTo where Directionality == Relations.Mutual, Constraints == Rel
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
+}
+
+extension BelongsTo {
     
     static func relation(id: T.ID) -> Self {
         BelongsTo(relation: .relation(id: id))
@@ -44,7 +46,7 @@ extension BelongsTo where Directionality == Relations.Mutual, Constraints == Rel
 }
 
 
-extension BelongsTo where Directionality == Relations.OneWay, Constraints == Relations.Required   {
+extension BelongsTo where Directionality == Relations.OneWay {
     /**
      This initializer is used by the Swift compiler to autogenerate a convenient initializer
      for the enclosing type that utilizes this property wrapper. It is specifically designed
@@ -59,7 +61,7 @@ extension BelongsTo where Directionality == Relations.OneWay, Constraints == Rel
      
      - Parameter wrappedValue: An optional `ToOneRelation` instance that represents the one-way relation.
     */
-    init(wrappedValue: ToOneRelation<T, Directionality, Constraints>?) {
+    init(wrappedValue: ToOneRelation<T, Directionality, Relations.Required>?) {
         self.init(relation: wrappedValue ?? .none)
     }
 }

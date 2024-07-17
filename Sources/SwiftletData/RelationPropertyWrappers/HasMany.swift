@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 17/07/2024.
 //
@@ -8,23 +8,22 @@
 import Foundation
 
 @propertyWrapper
-struct HasMany<T, Directionality, Constraints>: Hashable where T: EntityModel,
-                                                               Directionality: DirectionalityProtocol,
-                                                               Constraints: ConstraintsProtocol {
+struct HasMany<T, Directionality>: Hashable where T: EntityModel,
+                                                  Directionality: DirectionalityProtocol {
     
-    private var relation: ToManyRelation<T, Directionality, Constraints>
+    private var relation: ToManyRelation<T, Directionality,  Relations.Required>
     
     var wrappedValue: [T]? {
         get { relation.entities }
     }
     
-    var projectedValue: ToManyRelation<T, Directionality, Constraints> {
+    var projectedValue: ToManyRelation<T, Directionality, Relations.Required> {
         get { relation }
         set { relation = newValue }
     }
 }
 
-extension HasMany where Directionality == Relations.Mutual, Constraints == Relations.Required   {
+extension HasMany where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -32,6 +31,9 @@ extension HasMany where Directionality == Relations.Mutual, Constraints == Relat
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
+}
+
+extension HasMany {
     
     static func relation(ids: [T.ID]) -> Self {
         HasMany(relation: .relation(ids: ids))
@@ -50,8 +52,7 @@ extension HasMany where Directionality == Relations.Mutual, Constraints == Relat
     }
 }
 
-
-extension HasMany where Directionality == Relations.OneWay, Constraints == Relations.Required   {
+extension HasMany where Directionality == Relations.OneWay {
     /**
      This initializer is used by the Swift compiler to autogenerate a convenient initializer
      for the enclosing type that utilizes this property wrapper. It is specifically designed
@@ -65,8 +66,8 @@ extension HasMany where Directionality == Relations.OneWay, Constraints == Relat
      ensuring that the relation is always properly initialized.
      
      - Parameter wrappedValue: An optional `ToManyRelation` instance that represents the one-way relation.
-    */
-    init(wrappedValue: ToManyRelation<T, Directionality, Constraints>?) {
+     */
+    init(wrappedValue: ToManyRelation<T, Directionality, Relations.Required>?) {
         self.init(relation: wrappedValue ?? .none)
     }
 }
