@@ -15,7 +15,6 @@ struct HasOne<T, Directionality>: Hashable where T: EntityModel,
     
     var wrappedValue: T? {
         get { relation.entities.first }
-        set { relation = newValue.map { .relation($0) } ?? .none }
     }
     
     var projectedValue: ToOneRelation<T, Directionality, Relations.Optional> {
