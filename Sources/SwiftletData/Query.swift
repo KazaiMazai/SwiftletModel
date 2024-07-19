@@ -122,10 +122,6 @@ extension Collection {
 extension Query {
     typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
     
-    static var identity: QueryModifier<Entity> {
-        { $0 }
-    }
-   
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: QueryModifier<Child> = { $0 }) -> Query {
@@ -159,7 +155,6 @@ extension Query {
         
         return Query(repository: repository, resolved: entity)
     }
-    
     
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
