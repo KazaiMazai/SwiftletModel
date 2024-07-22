@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 22/07/2024.
 //
@@ -11,7 +11,7 @@ import XCTest
 
 final class RelationDecodingTests: XCTestCase {
     func test_WhenDefaultDecoding_EqualExpectedJSON() {
-        let inputJSON = """
+        let userInputJSON = """
         {
           "adminInChats" : null,
           "chats" : [
@@ -78,15 +78,15 @@ final class RelationDecodingTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .plain
         
-        let data = inputJSON.data(using: .utf8)!
+        let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
         let userJSON = user.prettyDescription(with: encoder)!
-        XCTAssertEqual(userJSON, inputJSON)
+        XCTAssertEqual(userJSON, userInputJSON)
     }
     
     func test_WhenExplicitDecoding_EqualExpectedJSON() {
-        let inputJSON = """
+        let userInputJSON = """
         {
           "adminInChats" : null,
           "chats" : {
@@ -151,15 +151,15 @@ final class RelationDecodingTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .keyedContainer
         
-        let data = inputJSON.data(using: .utf8)!
+        let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
         let userJSON = user.prettyDescription(with: encoder)!
-        XCTAssertEqual(userJSON, inputJSON)
+        XCTAssertEqual(userJSON, userInputJSON)
     }
     
     func test_WhenExactDecoding_EqualExpectedJSON() {
-        let inputJSON = """
+        let userInputJSON = """
         {
           "adminInChats" : null,
           "chats" : {
@@ -224,15 +224,15 @@ final class RelationDecodingTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .explicitKeyedContainer
         
-        let data = inputJSON.data(using: .utf8)!
+        let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
         let userJSON = user.prettyDescription(with: encoder)!
-        XCTAssertEqual(userJSON, inputJSON)
+        XCTAssertEqual(userJSON, userInputJSON)
     }
- 
+    
     func test_WhenExactDecodingFragment_EqualExpectedJSON() {
-        let inputJSON = """
+        let userInputJSON = """
         {
           "adminInChats" : null,
           "chats" : {
@@ -297,10 +297,10 @@ final class RelationDecodingTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .explicitKeyedContainer
         
-        let data = inputJSON.data(using: .utf8)!
+        let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
         let userJSON = user.prettyDescription(with: encoder)!
-        XCTAssertEqual(userJSON, inputJSON)
+        XCTAssertEqual(userJSON, userInputJSON)
     }
 }
