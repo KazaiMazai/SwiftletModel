@@ -81,7 +81,7 @@ final class RelationDecodingTests: XCTestCase {
         let data = inputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
-        let userJSON = user.prettyDescription(with: encoder) ?? ""
+        let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, inputJSON)
     }
     
@@ -154,7 +154,7 @@ final class RelationDecodingTests: XCTestCase {
         let data = inputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
-        let userJSON = user.prettyDescription(with: encoder) ?? ""
+        let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, inputJSON)
     }
     
@@ -227,7 +227,7 @@ final class RelationDecodingTests: XCTestCase {
         let data = inputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
-        let userJSON = user.prettyDescription(with: encoder) ?? ""
+        let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, inputJSON)
     }
  
@@ -300,7 +300,7 @@ final class RelationDecodingTests: XCTestCase {
         let data = inputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
         
-        let userJSON = user.prettyDescription(with: encoder) ?? ""
+        let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, inputJSON)
     }
 }
