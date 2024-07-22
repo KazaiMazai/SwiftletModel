@@ -24,8 +24,8 @@ struct Message: EntityModel, Codable {
     @HasMany(\.replies, inverse: \.replyTo)
     var replies: [Message]?
     
-    @HasMany(\.replyTo, inverse: \.replies)
-    var replyTo: [Message]?
+    @HasOne(\.replyTo, inverse: \.replies)
+    var replyTo: Message?
     
     @HasMany
     var viewedBy: [User]? = nil
