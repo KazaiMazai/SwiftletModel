@@ -117,7 +117,7 @@ final class RelationEncodingTests: XCTestCase {
     
     func test_WhenExplicitEncoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
-        encoder.relationEncodingStrategy = .explicit
+        encoder.relationEncodingStrategy = .keyedContainer
         
         let user = User
             .query(User.bob.id, in: repository)
@@ -199,7 +199,7 @@ final class RelationEncodingTests: XCTestCase {
     
     func test_WhenExactEncoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
-        encoder.relationEncodingStrategy = .exact
+        encoder.relationEncodingStrategy = .explicitKeyedContainer
         
         let user = User
             .query(User.bob.id, in: repository)
@@ -281,7 +281,7 @@ final class RelationEncodingTests: XCTestCase {
  
     func test_WhenExactEncodingFragment_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
-        encoder.relationEncodingStrategy = .exact
+        encoder.relationEncodingStrategy = .explicitKeyedContainer
         
         let user = User
             .query(User.bob.id, in: repository)
@@ -364,7 +364,7 @@ final class RelationEncodingTests: XCTestCase {
     func test_WhenExplicitEncodingFragment_EqualExpectedJSON() {
        
         let encoder = JSONEncoder.prettyPrinting
-        encoder.relationEncodingStrategy = .explicit
+        encoder.relationEncodingStrategy = .keyedContainer
         
         let user = User
             .query(User.bob.id, in: repository)
