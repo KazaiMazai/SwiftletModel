@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Sergey Kazakov on 02/03/2024.
 //
@@ -8,50 +8,38 @@
 import Foundation
 
 struct Query<Entity: EntityModel> {
+    typealias Resolver = () -> Entity?
+    
     let repository: Repository
-    private let state: State
+    let id: Entity.ID
+    let resolver: Resolver
     
     init(repository: Repository, id: Entity.ID) {
         self.repository = repository
-        self.state = .initial(id)
-    }
-    
-    init(repository: Repository, resolved: Entity) {
-        self.repository = repository
-        self.state = .resolved(resolved)
-    }
-    
-    var id: Entity.ID {
-        state.id
+        self.id = id
+        self.resolver = { repository.find(id) }
     }
     
     func resolve() -> Entity? {
-        state.resolved ?? repository.find(id)
+        resolver()
     }
 }
 
 private extension Query {
     
-    enum State {
-        case initial(Entity.ID)
-        case resolved(Entity)
-        
-        var id: Entity.ID {
-            switch self {
-            case .initial(let id):
-                return id
-            case .resolved(let entity):
-                return entity.id
-            }
-        }
-        
-        var resolved: Entity? {
-            switch self {
-            case .initial:
+    init(repository: Repository, id: Entity.ID, resolver: @escaping () -> Entity?) {
+        self.repository = repository
+        self.id = id
+        self.resolver = resolver
+    }
+    
+    func then(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
+        Query(repository: repository, id: id) {
+            guard let entity = resolve() else {
                 return nil
-            case .resolved(let entity):
-                return entity
             }
+            
+            return perform(entity)
         }
     }
 }
@@ -80,7 +68,7 @@ extension Query {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
-    
+        
     ) -> Query<Child>? {
         repository
             .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
@@ -91,7 +79,7 @@ extension Query {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
-    
+        
     ) -> [Query<Child>] {
         repository
             .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
@@ -124,62 +112,55 @@ extension Query {
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        guard var entity = resolve() else {
-            return self
+        then {
+            var entity = $0
+            entity[keyPath: keyPath] = related(keyPath)
+                .map { nested($0) }
+                .flatMap { $0.resolve() }
+                .map { .relation($0) } ?? .none
+            
+            return entity
         }
-        
-        entity[keyPath: keyPath] = related(keyPath)
-            .map { nested($0) }
-            .flatMap { $0.resolve() }
-            .map { .relation($0) } ?? .none
-        
-        return Query(repository: repository, resolved: entity)
     }
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         fragment: Bool = false,
-        nested: QueryModifier<Child> = { $0 }) -> Query {
-        
-        guard var entity = resolve() else {
-            return self
-        }
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        let resolved = related(keyPath)
+        then {
+            var entity = $0
+            let relatedEntities = related(keyPath)
                 .map { nested($0) }
                 .compactMap { $0.resolve() }
             
-        entity[keyPath: keyPath] = fragment ? .fragment(resolved) :.relation(resolved)
-        
-        return Query(repository: repository, resolved: entity)
+            entity[keyPath: keyPath] = fragment ? .fragment(relatedEntities) : .relation(relatedEntities)
+            return entity
+        }
     }
     
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
-            
-        guard var entity = resolve() else {
-            return self
+        
+        then {
+            var entity = $0
+            entity[keyPath: keyPath] = related(keyPath)
+                .map { .relation(id: $0.id) } ?? .none
+            return entity
         }
-        
-        entity[keyPath: keyPath] = related(keyPath)
-            .map { .relation(id: $0.id) } ?? .none
-        
-        return Query(repository: repository, resolved: entity)
     }
     
     func ids<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         fragment: Bool = false) -> Query {
         
-        guard var entity = resolve() else {
-            return self
+        then {
+            var entity = $0
+            let ids = related(keyPath).map { $0.id }
+            entity[keyPath: keyPath] = fragment ? .fragment(ids: ids) : .relation(ids: ids)
+            return entity
         }
-            
-        let ids = related(keyPath).map { $0.id }
-        entity[keyPath: keyPath] = fragment ? .fragment(ids: ids) : .relation(ids: ids)
-         
-        return Query(repository: repository, resolved: entity)
     }
 }
