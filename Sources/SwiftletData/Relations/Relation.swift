@@ -215,37 +215,37 @@ extension Relation: Codable where Entity: Codable {
     public func encode(to encoder: any Encoder) throws {
         switch encoder.relationEncodingStrategy {
         case .plain:
-            try encodeFlattened(to: encoder)
-        case .explicit:
-            try encodeExplicit(to: encoder)
-        case .exact:
-            try encodeExact(to: encoder)
+            try encodePlainContainer(to: encoder)
+        case .keyedContainer:
+            try encodeKeyedContainer(to: encoder)
+        case .explicitKeyedContainer:
+            try encodeExplicitKeyedContainer(to: encoder)
         }
     }
     
     public init(from decoder: any Decoder) throws {
-        if decoder.relationDecodingStrategy.contains(.exact) {
-            if let relation = try? Self.decodeExact(from: decoder) {
-                self = relation
-                return
-            }
+        if decoder.relationDecodingStrategy.contains(.explicitKeyedContainer),
+           let relation = try? Self.decodeExplicitKeyedContainer(from: decoder) {
+            
+            self = relation
+            return
         }
         
-        if decoder.relationDecodingStrategy.contains(.explicit) {
-            if let relation = try? Self.decodeExplicit(from: decoder) {
-                self = relation
-                return
-            }
+        if decoder.relationDecodingStrategy.contains(.keyedContainer),
+           let relation = try? Self.decodeKeyedContainer(from: decoder) {
+           
+            self = relation
+            return
         }
         
-        self = try Self.decodeFlattened(from: decoder)
+        self = try Self.decodePlainContainer(from: decoder)
     }
 }
    
 //MARK: - Codable Explicitly
 
 extension Relation where Entity: Codable {
-    enum ExplicitCodingKeys: String, CodingKey {
+    enum RelationCodingKeys: String, CodingKey {
         case id = "id"
         case entity = "object"
         case ids = "ids"
@@ -253,25 +253,25 @@ extension Relation where Entity: Codable {
         case none
     }
     
-    func encodeExplicit(to encoder: Encoder) throws {
+    func encodeKeyedContainer(to encoder: Encoder) throws {
         switch state {
         case .id(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .id)
         case .entity(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .entity)
         case .ids(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .ids)
         case .entities(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .entities)
         case .idsFragment(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .ids)
         case .entitiesFragment(let value):
-            var container = encoder.container(keyedBy: ExplicitCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
@@ -279,8 +279,8 @@ extension Relation where Entity: Codable {
         }
     }
     
-    static func decodeExplicit(from decoder: any Decoder) throws -> Relation {
-        guard let container = try? decoder.container(keyedBy: ExplicitCodingKeys.self),
+    static func decodeKeyedContainer(from decoder: any Decoder) throws -> Relation {
+        guard let container = try? decoder.container(keyedBy: RelationCodingKeys.self),
               let key = container.allKeys.first
         else {
             return .none
@@ -308,7 +308,7 @@ extension Relation where Entity: Codable {
 //MARK: - Codable Exactly
     
 extension Relation where Entity: Codable {
-    enum ExactCodingKeys: String, CodingKey {
+    enum RelationExplicitCodingKeys: String, CodingKey {
         case id = "id"
         case entity = "object"
         case ids = "ids"
@@ -318,25 +318,25 @@ extension Relation where Entity: Codable {
         case none
     }
     
-    func encodeExact(to encoder: Encoder) throws {
+    func encodeExplicitKeyedContainer(to encoder: Encoder) throws {
         switch state {
         case .id(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .id)
         case .entity(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entity)
         case .ids(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .ids)
         case .entities(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entities)
         case .idsFragment(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .idsFragment)
         case .entitiesFragment(let value):
-            var container = encoder.container(keyedBy: ExactCodingKeys.self)
+            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entitiesFragment)
         case .none:
             var container = encoder.singleValueContainer()
@@ -344,8 +344,8 @@ extension Relation where Entity: Codable {
         }
     }
     
-    static func decodeExact(from decoder: any Decoder) throws -> Relation {
-        guard let container = try? decoder.container(keyedBy: ExactCodingKeys.self),
+    static func decodeExplicitKeyedContainer(from decoder: any Decoder) throws -> Relation {
+        guard let container = try? decoder.container(keyedBy: RelationExplicitCodingKeys.self),
               let key = container.allKeys.first
         else {
             return .none
@@ -383,7 +383,7 @@ extension Relation where Entity: Codable {
         let id: T.ID
     }
     
-    func encodeFlattened(to encoder: Encoder) throws {
+    func encodePlainContainer(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch state {
         case .id(let value):
@@ -403,7 +403,7 @@ extension Relation where Entity: Codable {
         }
     }
     
-    static func decodeFlattened(from decoder: any Decoder) throws -> Relation {
+    static func decodePlainContainer(from decoder: any Decoder) throws -> Relation {
         guard let container = try? decoder.singleValueContainer() else {
             return .none
         }

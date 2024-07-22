@@ -15,8 +15,8 @@ enum RelationEncodingStrategy {
     static let userInfoKey = CodingUserInfoKey(rawValue: "RelationEncodingStrategy.userInfoKey")!
  
     case plain
-    case explicit
-    case exact
+    case keyedContainer
+    case explicitKeyedContainer
 }
 
 
@@ -27,11 +27,8 @@ struct RelationDecodingStrategy: OptionSet {
     let rawValue: UInt
     
     static let plain = RelationDecodingStrategy(rawValue: 1 << 0)
-    static let explicit = RelationDecodingStrategy(rawValue: 1 << 1)
-    static let exact = RelationDecodingStrategy(rawValue: 1 << 2)
-    
-    static let lossy = RelationDecodingStrategy(rawValue: 1 << 3)
- 
+    static let keyedContainer = RelationDecodingStrategy(rawValue: 1 << 1)
+    static let explicitKeyedContainer = RelationDecodingStrategy(rawValue: 1 << 2) 
 }
 
 extension Decoder {
