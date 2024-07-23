@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol Storable {
-    func save(_ repository: inout Repository)
+    func save(_ repository: inout Repository) throws
 }
 
 public protocol EntityModel: Storable {
