@@ -57,12 +57,12 @@ struct User: EntityModel, Codable {
     }
     
     func save(_ repository: inout Repository) throws {
-        repository.save(self)
+        repository.save(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &repository)
         try save(\.$adminInChats, inverse: \.$admins, to: &repository)
     }
     
-    static func mergeStraregy() -> MergeStrategy<User> {
+    static func patch() -> MergeStrategy<User> {
         MergeStrategy(
             .patch(\.name),
             .patch(\.profile),
