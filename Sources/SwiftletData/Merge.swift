@@ -24,8 +24,8 @@ public extension MergeStrategy {
 public extension MergeStrategy {
     init(_ strategies: MergeStrategy<T>...) {
         merge = { old, new in
-            strategies.reduce(new, { partialResult, strategy in
-                strategy.merge(old, partialResult)
+            strategies.reduce(new, { result, strategy in
+                strategy.merge(old, result)
             })
         }
     }
