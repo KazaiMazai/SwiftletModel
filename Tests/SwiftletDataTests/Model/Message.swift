@@ -41,15 +41,15 @@ extension Message {
         $viewedBy.normalize()
     }
     
-    func save(_ repository: inout Repository) {
+    func save(_ repository: inout Repository) throws {
         repository.save(self)
        
-        save(\.$author, to: &repository)
-        save(\.$chat, inverse: \.$messages, to: &repository)
-        save(\.$attachment, inverse: \.$message, to: &repository)
-        save(\.$replies, inverse: \.$replyTo, to: &repository)
-        save(\.$replyTo, inverse: \.$replies, to: &repository)
-        save(\.$viewedBy, to: &repository)
+        try save(\.$author, to: &repository)
+        try save(\.$chat, inverse: \.$messages, to: &repository)
+        try save(\.$attachment, inverse: \.$message, to: &repository)
+        try save(\.$replies, inverse: \.$replyTo, to: &repository)
+        try save(\.$replyTo, inverse: \.$replies, to: &repository)
+        try save(\.$viewedBy, to: &repository)
     }
 }
 

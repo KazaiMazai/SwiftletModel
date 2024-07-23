@@ -27,8 +27,8 @@ struct Attachment: EntityModel, Codable {
         $message.normalize()
     }
     
-    func save(_ repository: inout Repository) {
+    func save(_ repository: inout Repository) throws {
         repository.save(self)
-        save(\.$message, inverse: \.$attachment, to: &repository)
+        try save(\.$message, inverse: \.$attachment, to: &repository)
     }
 }
