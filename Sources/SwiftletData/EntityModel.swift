@@ -17,14 +17,6 @@ public protocol EntityModel: Storable {
     var id: ID { get }
     
     mutating func normalize()
-    
-    static func mergeStraregy() -> MergeStrategy<Self>
-}
-
-public extension EntityModel {
-    static func mergeStraregy() -> MergeStrategy<Self> {
-        MergeStrategy.replace
-    }
 }
 
 extension EntityModel {

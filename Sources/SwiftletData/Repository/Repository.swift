@@ -55,19 +55,19 @@ extension Repository {
     }
     
     mutating func save<T: EntityModel>(_ entity: T,
-                                       options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entity: T?,
-                                       options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entity, options: options)
     }
     
     mutating func save<T: EntityModel>(_ entities: [T],
-                                       options: MergeStrategy<T> = T.mergeStraregy()) {
+                                       options: MergeStrategy<T> = .replace) {
         
         entitiesRepository.save(entities, options: options)
     }
