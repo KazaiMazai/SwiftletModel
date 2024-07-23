@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol Storable {
-    func save(_ repository: inout Repository)
+    func save(_ repository: inout Repository) throws
 }
 
 public protocol EntityModel: Storable {
@@ -17,14 +17,6 @@ public protocol EntityModel: Storable {
     var id: ID { get }
     
     mutating func normalize()
-    
-    static func mergeStraregy() -> MergeStrategy<Self>
-}
-
-public extension EntityModel {
-    static func mergeStraregy() -> MergeStrategy<Self> {
-        MergeStrategy.replace
-    }
 }
 
 extension EntityModel {

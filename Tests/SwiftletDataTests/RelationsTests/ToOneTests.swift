@@ -17,7 +17,7 @@ final class ToOneTests: XCTestCase {
     )
     
     override func setUp() async throws {
-        initialMessage.save(&repository)
+        try! initialMessage.save(&repository)
     }
     
     func test_WhenDirectAdded_InverseIsAdded() {
@@ -32,7 +32,7 @@ final class ToOneTests: XCTestCase {
     func test_WhenDirectReplaced_InverseIsUpdated() {
         var message = initialMessage
         message.$attachment = .relation(Attachment.imageTwo)
-        message.save(&repository)
+        try! message.save(&repository)
         
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: repository)
@@ -44,7 +44,7 @@ final class ToOneTests: XCTestCase {
     func test_WhenNullify_InverseIsRemoved() {
         var message = initialMessage
         message.$attachment = .null
-        message.save(&repository)
+        try! message.save(&repository)
         
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: repository)
@@ -56,7 +56,7 @@ final class ToOneTests: XCTestCase {
     func test_WhenNullify_RelationIsRemoved() {
         var message = initialMessage
         message.$attachment = .null
-        message.save(&repository)
+        try! message.save(&repository)
         
         let attachment = message
             .query(in: repository)

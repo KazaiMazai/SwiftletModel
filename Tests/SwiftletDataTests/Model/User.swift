@@ -20,9 +20,9 @@ struct CurrentUser: EntityModel, Codable {
         $user.normalize()
     }
     
-    func save(_ repository: inout Repository) {
+    func save(_ repository: inout Repository) throws {
         repository.save(self)
-        save(\.$user, to: &repository)
+        try save(\.$user, to: &repository)
     }
 }
 
@@ -56,13 +56,13 @@ struct User: EntityModel, Codable {
         $adminInChats.normalize()
     }
     
-    func save(_ repository: inout Repository) {
-        repository.save(self)
-        save(\.$chats, inverse: \.$users, to: &repository)
-        save(\.$adminInChats, inverse: \.$admins, to: &repository)
+    func save(_ repository: inout Repository) throws {
+        repository.save(self, options: User.patch())
+        try save(\.$chats, inverse: \.$users, to: &repository)
+        try save(\.$adminInChats, inverse: \.$admins, to: &repository)
     }
     
-    static func mergeStraregy() -> MergeStrategy<User> {
+    static func patch() -> MergeStrategy<User> {
         MergeStrategy(
             .patch(\.name),
             .patch(\.profile),

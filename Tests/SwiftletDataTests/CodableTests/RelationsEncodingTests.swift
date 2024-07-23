@@ -27,7 +27,7 @@ final class RelationEncodingTests: XCTestCase {
             admins: .relation([.bob])
         )
         
-        chat.save(&repository)
+        try chat.save(&repository)
     }
     
     func test_WhenDefaultEncoding_EqualExpectedJSON() {

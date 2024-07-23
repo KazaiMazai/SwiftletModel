@@ -26,12 +26,12 @@ struct Chat: EntityModel, Codable {
         $admins.normalize()
     }
     
-    func save(_ repository: inout Repository) {
+    func save(_ repository: inout Repository) throws {
         repository.save(self)
         
-        save(\.$users, inverse: \.$chats, to: &repository)
-        save(\.$messages, inverse: \.$chat, to: &repository)
-        save(\.$admins, inverse: \.$adminInChats, to: &repository)
+        try save(\.$users, inverse: \.$chats, to: &repository)
+        try save(\.$messages, inverse: \.$chat, to: &repository)
+        try save(\.$admins, inverse: \.$adminInChats, to: &repository)
     }
 }
 

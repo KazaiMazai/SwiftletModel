@@ -12,9 +12,9 @@ import Foundation
 public extension EntityModel {
     func save<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        to repository: inout Repository) {
+        to repository: inout Repository) throws {
             
-        saveEntity(at: keyPath, in: &repository)
+        try saveEntity(at: keyPath, in: &repository)
         saveRelation(at: keyPath, in: &repository)
     }
 }
@@ -24,36 +24,36 @@ public extension EntityModel {
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) {
+        to repository: inout Repository) throws {
             
-        saveEntity(at: keyPath, in: &repository)
+        try saveEntity(at: keyPath, in: &repository)
         saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) {
+        to repository: inout Repository) throws {
             
-        saveEntity(at: keyPath, in: &repository)
+        try saveEntity(at: keyPath, in: &repository)
         saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, ManyToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) {
+        to repository: inout Repository) throws {
             
-        saveEntity(at: keyPath, in: &repository)
+        try saveEntity(at: keyPath, in: &repository)
         saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) {
+        to repository: inout Repository) throws {
             
-        saveEntity(at: keyPath, in: &repository)
+        try saveEntity(at: keyPath, in: &repository)
         saveRelation(at: keyPath, inverse: inverse, in: &repository)
     }
 }
@@ -94,9 +94,9 @@ private extension EntityModel {
 private extension EntityModel {
     func saveEntity<Child, Directionality, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
-        in repository: inout Repository) {
+        in repository: inout Repository) throws {
             
-        relation(keyPath).save(&repository)
+        try relation(keyPath).save(&repository)
     }
 }
  
