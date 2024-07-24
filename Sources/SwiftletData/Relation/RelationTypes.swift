@@ -25,9 +25,7 @@ public extension Relations {
     enum OneWay: DirectionalityProtocol { }
     
     enum Mutual: DirectionalityProtocol { }
-}
-
-public extension Relations {
+ 
     enum ToMany: CardinalityProtocol {
         public static var isToMany: Bool { true }
     }
@@ -35,9 +33,7 @@ public extension Relations {
     enum ToOne: CardinalityProtocol {
         public static var isToMany: Bool { false }
     }
-}
-
-public extension Relations {
+ 
     enum Required: RequiredRelation { }
     
     enum Optional: OptionalRelation { }

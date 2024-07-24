@@ -12,10 +12,10 @@ import Foundation
 public extension EntityModel {
     func save<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        to repository: inout Repository) throws {
+        to context: inout Context) throws {
             
-        try saveEntity(at: keyPath, in: &repository)
-        saveRelation(at: keyPath, in: &repository)
+        try saveEntities(at: keyPath, in: &context)
+        saveRelation(at: keyPath, in: &context)
     }
 }
 
@@ -24,37 +24,37 @@ public extension EntityModel {
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToOneRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) throws {
+        to context: inout Context) throws {
             
-        try saveEntity(at: keyPath, in: &repository)
-        saveRelation(at: keyPath, inverse: inverse, in: &repository)
+        try saveEntities(at: keyPath, in: &context)
+        saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, ManyToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToManyRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) throws {
+        to context: inout Context) throws {
             
-        try saveEntity(at: keyPath, in: &repository)
-        saveRelation(at: keyPath, inverse: inverse, in: &repository)
+        try saveEntities(at: keyPath, in: &context)
+        saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, ManyToManyRelation<Child, Constaint>>,
         inverse: KeyPath<Child, ManyToManyRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) throws {
+        to context: inout Context) throws {
             
-        try saveEntity(at: keyPath, in: &repository)
-        saveRelation(at: keyPath, inverse: inverse, in: &repository)
+        try saveEntities(at: keyPath, in: &context)
+        saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
     
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToOneRelation<Child, Constaint>>,
         inverse: KeyPath<Child, OneToOneRelation<Self, InverseConstraint>>,
-        to repository: inout Repository) throws {
+        to context: inout Context) throws {
             
-        try saveEntity(at: keyPath, in: &repository)
-        saveRelation(at: keyPath, inverse: inverse, in: &repository)
+        try saveEntities(at: keyPath, in: &context)
+        saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
 }
 
@@ -64,44 +64,44 @@ private extension EntityModel {
 
     func saveRelation<Child, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) {
+        in context: inout Context) {
             
-        repository.save(links(relationIds(keyPath), keyPath))
+        context.updateLinks(link(relationIds(keyPath), keyPath))
     }
     
     func saveRelation<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         at keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository) {
+        in context: inout Context) {
             
         let children = relationIds(keyPath)
-        switch relation(keyPath).directLinkSaveOption {
+        switch relation(keyPath).directLinkUpdateOption {
         case .append:
-            repository.save(links(children, keyPath, inverse: inverse))
+            context.updateLinks(link(children, keyPath, inverse: inverse))
         case .replace, .remove:
             let enititesToKeep = Set(children)
-            let oddExisingChildren = repository
+            let oddExisingChildren = context
                 .findChildren(for: Self.self, relationName: keyPath.name, id: id)
                 .compactMap { Child.ID($0) }
                 .filter { !enititesToKeep.contains($0) }
             
-            repository.save(removeLinks(oddExisingChildren, keyPath, inverse: inverse))
-            repository.save(links(children, keyPath, inverse: inverse))
+            context.updateLinks(unlink(oddExisingChildren, keyPath, inverse: inverse))
+            context.updateLinks(link(children, keyPath, inverse: inverse))
         }
     }
 }
 
 private extension EntityModel {
-    func saveEntity<Child, Directionality, Cardinality, Constraint>(
+    func saveEntities<Child, Directionality, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
-        in repository: inout Repository) throws {
+        in context: inout Context) throws {
             
-        try relation(keyPath).save(&repository)
+        try relation(keyPath).save(&context)
     }
 }
  
 private extension EntityModel {
-    func links<Child, Cardinality, Constraint>(
+    func link<Child, Cardinality, Constraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
@@ -113,14 +113,14 @@ private extension EntityModel {
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkSaveOption
+                    updateOption: relation(keyPath).directLinkUpdateOption
                 )
             )],
             inverse: []
         )
     }
 
-    func links<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+    func link<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
@@ -133,7 +133,7 @@ private extension EntityModel {
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkSaveOption
+                    updateOption: relation(keyPath).directLinkUpdateOption
                 )
             )],
             inverse: children.map { child in
@@ -142,7 +142,7 @@ private extension EntityModel {
                     children: [id],
                     attribute: LinkAttribute(
                         name: inverse.name,
-                        updateOption: relation(keyPath).inverseLinkSaveOption
+                        updateOption: relation(keyPath).inverseLinkUpdateOption
                     )
                 )
             }

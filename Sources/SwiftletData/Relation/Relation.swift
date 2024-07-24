@@ -32,19 +32,6 @@ public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashab
 }
 
 public extension Relation {
-    
-    mutating func normalize() {
-        state.normalize()
-    }
-    
-    func normalized() -> Self {
-        var copy = self
-        copy.normalize()
-        return copy
-    }
-}
-
-public extension Relation {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.state == rhs.state
     }
@@ -55,8 +42,8 @@ public extension Relation {
 }
 
 extension Relation {
-    public func save(_ repository: inout Repository) throws {
-        try entities.forEach { entity in try entity.save(&repository) }
+    public func save(_ context: inout Context) throws {
+        try entities.forEach { entity in try entity.save(to: &context) }
     }
 }
 
@@ -103,6 +90,19 @@ public extension Relation where Cardinality == Relations.ToMany {
 }
 
 extension Relation {
+    
+    public mutating func normalize() {
+        state.normalize()
+    }
+ 
+    func normalized() -> Self {
+        var copy = self
+        copy.normalize()
+        return copy
+    }
+}
+
+extension Relation {
     var ids: [Entity.ID] {
         state.ids
     }
@@ -113,7 +113,7 @@ extension Relation {
 }
 
 extension Relation {
-    var directLinkSaveOption: Option {
+    var directLinkUpdateOption: Option {
         switch state {
         case .entity, .id, .entities, .ids:
             return .replace
@@ -124,7 +124,7 @@ extension Relation {
         }
     }
     
-    var inverseLinkSaveOption: Option {
+    var inverseLinkUpdateOption: Option {
         Cardinality.isToMany ? .append : .replace
     }
 }
@@ -206,7 +206,7 @@ private extension Relation.State {
     }
 }
 
- 
+
 //MARK: - Codable
 
 extension Relation.State: Codable where T: Codable { }
@@ -233,7 +233,7 @@ extension Relation: Codable where Entity: Codable {
         
         if decoder.relationDecodingStrategy.contains(.keyedContainer),
            let relation = try? Self.decodeKeyedContainer(from: decoder) {
-           
+            
             self = relation
             return
         }
@@ -241,7 +241,7 @@ extension Relation: Codable where Entity: Codable {
         self = try Self.decodePlainContainer(from: decoder)
     }
 }
-   
+
 //MARK: - Codable Explicitly
 
 extension Relation where Entity: Codable {
@@ -306,7 +306,7 @@ extension Relation where Entity: Codable {
 }
 
 //MARK: - Codable Exactly
-    
+
 extension Relation where Entity: Codable {
     enum RelationExplicitCodingKeys: String, CodingKey {
         case id = "id"
@@ -377,7 +377,7 @@ extension Relation where Entity: Codable {
 }
 
 //MARK: - Codable Flattaned
-    
+
 extension Relation where Entity: Codable {
     struct ID<T: EntityModel>: Codable {
         let id: T.ID

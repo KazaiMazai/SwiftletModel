@@ -24,9 +24,9 @@ public extension MergeStrategy {
 public extension MergeStrategy {
     init(_ strategies: MergeStrategy<T>...) {
         merge = { old, new in
-            strategies.reduce(new, { result, strategy in
+            strategies.reduce(new) { result, strategy in
                 strategy.merge(old, result)
-            })
+            }
         }
     }
 }
@@ -68,4 +68,3 @@ public extension MergeStrategy {
         }
     }
 }
-

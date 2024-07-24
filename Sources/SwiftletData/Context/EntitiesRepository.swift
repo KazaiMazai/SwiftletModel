@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct EntitiesRepository {
     typealias EntityID = String
     typealias EntityName = String
@@ -18,13 +17,13 @@ struct EntitiesRepository {
 
 extension EntitiesRepository {
     func all<T>() -> [T] {
-        let key = String(reflecting: T.self)
-        return storages[key]?.compactMap { $0.value as? T } ?? []
+        let entityName = String(reflecting: T.self)
+        return storages[entityName]?.compactMap { $0.value as? T } ?? []
     }
     
     func find<T: EntityModel>(_ id: T.ID) -> T? {
-        let key = EntityName(reflecting: T.self)
-        let storage = storages[key] ?? [:]
+        let entityName = EntityName(reflecting: T.self)
+        let storage = storages[entityName] ?? [:]
         return storage[id.description] as? T
     }
     
@@ -38,11 +37,9 @@ extension EntitiesRepository {
 }
 
 extension EntitiesRepository {
-     
     mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         let key = EntityName(reflecting: T.self)
         var storage = storages[key] ?? [:]
-        let value = storage[id.description] as? T
         storage.removeValue(forKey: id.description)
         storages[key] = storage
     }
@@ -51,7 +48,7 @@ extension EntitiesRepository {
         ids.forEach { remove(T.self, id: $0) }
     }
     
-    mutating func save<T: EntityModel>(_ entity: T, options: MergeStrategy<T>) {
+    mutating func insert<T: EntityModel>(_ entity: T, options: MergeStrategy<T>) {
         let key = String(reflecting: T.self)
         var storage = storages[key] ?? [:]
         
@@ -68,18 +65,18 @@ extension EntitiesRepository {
         storages[key] = storage
     }
     
-    mutating func save<T: EntityModel>(_ entity: T?,
+    mutating func insert<T: EntityModel>(_ entity: T?,
                                        options: MergeStrategy<T>) {
         guard let entity else {
             return
         }
         
-        save(entity, options: options)
+        insert(entity, options: options)
     }
     
-    mutating func save<T: EntityModel>(_ entities: [T],
+    mutating func insert<T: EntityModel>(_ entities: [T],
                                        options: MergeStrategy<T>) {
         
-        entities.forEach { save($0, options: options) }
+        entities.forEach { insert($0, options: options) }
     }
 }

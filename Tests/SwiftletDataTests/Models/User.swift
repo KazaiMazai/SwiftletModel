@@ -20,13 +20,13 @@ struct CurrentUser: EntityModel, Codable {
         $user.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
-        repository.save(self)
-        try save(\.$user, to: &repository)
+    func save(to context: inout Context) throws {
+        context.insert(self)
+        try save(\.$user, to: &context)
     }
     
-    func delete(_ repository: inout Repository) throws {
-        detach(\.$user, in: &repository)
+    func delete(from context: inout Context) throws {
+        detach(\.$user, in: &context)
     }
 }
 
@@ -52,25 +52,24 @@ struct User: EntityModel, Codable {
     @HasMany(\.chats, inverse: \.users)
     var chats: [Chat]?
     
-    @HasMany(\.adminInChats, inverse: \.admins)
-    var adminInChats: [Chat]?
+    @HasMany(\.adminOf, inverse: \.admins)
+    var adminOf: [Chat]?
     
     mutating func normalize() {
         $chats.normalize()
-        $adminInChats.normalize()
+        $adminOf.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
-        repository.save(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &repository)
-        try save(\.$adminInChats, inverse: \.$admins, to: &repository)
+    func save(to context: inout Context) throws {
+        context.insert(self, options: User.patch())
+        try save(\.$chats, inverse: \.$users, to: &context)
+        try save(\.$adminOf, inverse: \.$admins, to: &context)
     }
     
-    func delete(_ repository: inout Repository) throws {
-        repository.remove(User.self, id: id)
-        
-        detach(\.$chats, inverse: \.$users, in: &repository)
-        detach(\.$adminInChats, inverse: \.$admins, in: &repository)
+    func delete(from context: inout Context) throws {
+        context.remove(User.self, id: id)
+        detach(\.$chats, inverse: \.$users, in: &context)
+        detach(\.$adminOf, inverse: \.$admins, in: &context)
     }
     
     static func patch() -> MergeStrategy<User> {
@@ -85,7 +84,7 @@ struct User: EntityModel, Codable {
 extension Query where Entity == User {
     var isMe: Bool {
         CurrentUser
-            .query(CurrentUser.id, in: repository)
+            .query(CurrentUser.id, in: context)
             .related(\.$user)?.id == id
     }
 }
