@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 03/03/2024.
 //
 
-@testable import SwiftletData
+@testable import SwiftletModel
 import Foundation
 
 extension Attachment {

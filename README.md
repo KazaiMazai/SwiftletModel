@@ -9,7 +9,7 @@ Domain Model implementation as a plain struct in Swift.
 - Typed Relations of all kinds
 - Persistance  
 
-SwiftletData is like an ORM but without a database.
+SwiftletModel is like an ORM but without a database.
 
 
 **Notice:** the package is in development stage.
