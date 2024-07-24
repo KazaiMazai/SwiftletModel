@@ -54,7 +54,7 @@ public extension Relation {
     }
 }
 
-extension Relation: Storable {
+extension Relation {
     public func save(_ repository: inout Repository) throws {
         try entities.forEach { entity in try entity.save(&repository) }
     }

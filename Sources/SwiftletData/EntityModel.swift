@@ -6,17 +6,25 @@
 //
 
 import Foundation
-
-public protocol Storable {
-    func save(_ repository: inout Repository) throws
-}
-
-public protocol EntityModel: Storable {
+ 
+public protocol EntityModel {
     associatedtype ID: Hashable & Codable & LosslessStringConvertible
     
     var id: ID { get }
     
     mutating func normalize()
+    
+    func delete(_ repository: inout Repository) throws
+    
+    func save(_ repository: inout Repository) throws
+}
+
+extension EntityModel {
+    static func delete(id: ID, from repository: inout Repository) throws {
+        try Self.query(id, in: repository)
+            .resolve()?
+            .delete(&repository)
+    }
 }
 
 extension EntityModel {
