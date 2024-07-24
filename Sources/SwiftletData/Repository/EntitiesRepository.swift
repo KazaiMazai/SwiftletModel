@@ -38,20 +38,17 @@ extension EntitiesRepository {
 }
 
 extension EntitiesRepository {
-    
-    @discardableResult
-    mutating func remove<T: EntityModel>(_ id: T.ID) -> T? {
+     
+    mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         let key = EntityName(reflecting: T.self)
         var storage = storages[key] ?? [:]
         let value = storage[id.description] as? T
         storage.removeValue(forKey: id.description)
         storages[key] = storage
-        return value
     }
     
-    @discardableResult
-    mutating func removeAll<T: EntityModel>(_ ids: [T.ID]) -> [T?] {
-        ids.map { remove($0) }
+    mutating func removeAll<T: EntityModel>(_ entityType: T.Type, ids: [T.ID]) {
+        ids.forEach { remove(T.self, id: $0) }
     }
     
     mutating func save<T: EntityModel>(_ entity: T, options: MergeStrategy<T>) {

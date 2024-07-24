@@ -24,6 +24,10 @@ struct CurrentUser: EntityModel, Codable {
         repository.save(self)
         try save(\.$user, to: &repository)
     }
+    
+    func delete(_ repository: inout Repository) throws {
+        detach(\.$user, in: &repository)
+    }
 }
 
 extension User {
@@ -60,6 +64,13 @@ struct User: EntityModel, Codable {
         repository.save(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &repository)
         try save(\.$adminInChats, inverse: \.$admins, to: &repository)
+    }
+    
+    func delete(_ repository: inout Repository) throws {
+        repository.remove(User.self, id: id)
+        
+        detach(\.$chats, inverse: \.$users, in: &repository)
+        detach(\.$adminInChats, inverse: \.$admins, in: &repository)
     }
     
     static func patch() -> MergeStrategy<User> {
