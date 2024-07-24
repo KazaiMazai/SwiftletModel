@@ -96,7 +96,7 @@ public extension Query {
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        then {
+        resolveThen {
             var entity = $0
             entity[keyPath: keyPath] = related(keyPath)
                 .map { nested($0) }
@@ -112,7 +112,7 @@ public extension Query {
         fragment: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        then {
+        resolveThen {
             var entity = $0
             let relatedEntities = related(keyPath)
                 .map { nested($0) }
@@ -126,7 +126,7 @@ public extension Query {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
         
-        then {
+        resolveThen {
             var entity = $0
             entity[keyPath: keyPath] = related(keyPath)
                 .map { .relation(id: $0.id) } ?? .none
@@ -138,7 +138,7 @@ public extension Query {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         fragment: Bool = false) -> Query {
         
-        then {
+        resolveThen {
             var entity = $0
             let ids = related(keyPath).map { $0.id }
             entity[keyPath: keyPath] = fragment ? .fragment(ids: ids) : .relation(ids: ids)
@@ -155,7 +155,7 @@ private extension Query {
         self.resolver = resolver
     }
     
-    func then(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
+    func resolveThen(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
         Query(context: context, id: id) {
             guard let entity = resolve() else {
                 return nil
