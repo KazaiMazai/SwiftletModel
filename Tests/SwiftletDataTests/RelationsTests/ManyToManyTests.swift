@@ -10,7 +10,7 @@ import XCTest
 @testable import SwiftletData
 
 final class ManyToManyTests: XCTestCase {
-    var repository = Repository()
+    var repository = Context()
     
     func test_WhenDirectAdded_InverseIsAdded() {
         var chatOne = Chat.one

@@ -10,7 +10,7 @@ import XCTest
 @testable import SwiftletData
 
 final class ToOneTests: XCTestCase {
-    var repository = Repository()
+    var repository = Context()
     let initialMessage: Message = Message(
         id: "1", text: "hello",
         attachment: .relation(Attachment.imageOne)

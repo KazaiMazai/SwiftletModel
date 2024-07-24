@@ -20,12 +20,12 @@ struct CurrentUser: EntityModel, Codable {
         $user.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
+    func save(_ repository: inout Context) throws {
         repository.save(self)
         try save(\.$user, to: &repository)
     }
     
-    func delete(_ repository: inout Repository) throws {
+    func delete(_ repository: inout Context) throws {
         detach(\.$user, in: &repository)
     }
 }
@@ -60,13 +60,13 @@ struct User: EntityModel, Codable {
         $adminInChats.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
+    func save(_ repository: inout Context) throws {
         repository.save(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &repository)
         try save(\.$adminInChats, inverse: \.$admins, to: &repository)
     }
     
-    func delete(_ repository: inout Repository) throws {
+    func delete(_ repository: inout Context) throws {
         repository.remove(User.self, id: id)
         
         detach(\.$chats, inverse: \.$users, in: &repository)

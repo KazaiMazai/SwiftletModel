@@ -41,7 +41,7 @@ extension Message {
         $viewedBy.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
+    func save(_ repository: inout Context) throws {
         repository.save(self)
        
         try save(\.$author, to: &repository)
@@ -52,7 +52,7 @@ extension Message {
         try save(\.$viewedBy, to: &repository)
     }
     
-    func delete(_ repository: inout SwiftletData.Repository) throws {
+    func delete(_ repository: inout SwiftletData.Context) throws {
         repository.remove(Message.self, id: id)
         
         detach(\.$author, in: &repository)

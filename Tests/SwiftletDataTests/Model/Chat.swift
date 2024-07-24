@@ -26,7 +26,7 @@ struct Chat: EntityModel, Codable {
         $admins.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
+    func save(_ repository: inout Context) throws {
         repository.save(self)
         
         try save(\.$users, inverse: \.$chats, to: &repository)
@@ -34,7 +34,7 @@ struct Chat: EntityModel, Codable {
         try save(\.$admins, inverse: \.$adminInChats, to: &repository)
     }
     
-    func delete(_ repository: inout Repository) throws {
+    func delete(_ repository: inout Context) throws {
         repository.remove(Chat.self, id: id)
         
         try delete(\.$messages, inverse: \.$chat, in: &repository)

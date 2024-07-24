@@ -10,7 +10,7 @@ import XCTest
 @testable import SwiftletData
 
 final class DeleteTests: XCTestCase {
-    var repository = Repository()
+    var repository = Context()
     
     override func setUpWithError() throws {
         let chat = Chat(

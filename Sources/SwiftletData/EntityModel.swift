@@ -14,13 +14,13 @@ public protocol EntityModel {
     
     mutating func normalize()
     
-    func delete(_ repository: inout Repository) throws
+    func delete(_ repository: inout Context) throws
     
-    func save(_ repository: inout Repository) throws
+    func save(_ repository: inout Context) throws
 }
 
 extension EntityModel {
-    static func delete(id: ID, from repository: inout Repository) throws {
+    static func delete(id: ID, from repository: inout Context) throws {
         try Self.query(id, in: repository)
             .resolve()?
             .delete(&repository)
@@ -28,15 +28,15 @@ extension EntityModel {
 }
 
 extension EntityModel {
-    func query(in repository: Repository) -> Query<Self> {
+    func query(in repository: Context) -> Query<Self> {
         Query(repository: repository, id: id)
     }
     
-    static func query(_ id: ID, in repository: Repository) -> Query<Self> {
+    static func query(_ id: ID, in repository: Context) -> Query<Self> {
         repository.query(id)
     }
     
-    static func query(_ ids: [ID], in repository: Repository) -> [Query<Self>] {
+    static func query(_ ids: [ID], in repository: Context) -> [Query<Self>] {
         repository.query(ids)
     }
 }

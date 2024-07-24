@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public struct Repository {
+public struct Context {
     private var entitiesRepository = EntitiesRepository()
     private var relationsRepository = RelationsRepository()
     
@@ -17,7 +17,7 @@ public struct Repository {
     }
 }
 
-extension Repository {
+extension Context {
     
     func all<T>() -> [T] {
         entitiesRepository.all()
@@ -36,13 +36,13 @@ extension Repository {
     }
 }
 
-extension Repository {
+extension Context {
     func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
         relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
 
-extension Repository {
+extension Context {
     
     mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         entitiesRepository.remove(T.self, id: id)
@@ -71,7 +71,7 @@ extension Repository {
     }
 }
 
-extension Repository {
+extension Context {
     mutating func save<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
         relationsRepository.saveLinks(links)
     }

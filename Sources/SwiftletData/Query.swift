@@ -10,11 +10,11 @@ import Foundation
 struct Query<Entity: EntityModel> {
     typealias Resolver = () -> Entity?
     
-    let repository: Repository
+    let repository: Context
     let id: Entity.ID
     let resolver: Resolver
     
-    init(repository: Repository, id: Entity.ID) {
+    init(repository: Context, id: Entity.ID) {
         self.repository = repository
         self.id = id
         self.resolver = { repository.find(id) }
@@ -27,7 +27,7 @@ struct Query<Entity: EntityModel> {
 
 private extension Query {
     
-    init(repository: Repository, id: Entity.ID, resolver: @escaping () -> Entity?) {
+    init(repository: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
         self.repository = repository
         self.id = id
         self.resolver = resolver
@@ -50,7 +50,7 @@ extension Collection {
     }
 }
 
-extension Repository {
+extension Context {
     func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
         query(Entity.self, id: id)
     }

@@ -13,7 +13,7 @@ import Foundation
 public extension EntityModel {
     func delete<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
             
         let children = repository
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
@@ -25,7 +25,7 @@ public extension EntityModel {
     func delete<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
             
         let children = repository
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
@@ -37,7 +37,7 @@ public extension EntityModel {
     func delete<Child, Cardinality, Constraint>(
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
             
         try delete(entities, relation: keyPath, in: &repository)
     }
@@ -46,7 +46,7 @@ public extension EntityModel {
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
        
         try delete(entities, relation: keyPath, inverse: inverse, in: &repository)
     }
@@ -54,7 +54,7 @@ public extension EntityModel {
     func delete<Child, Cardinality, Constraint>(
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
             
         try entities.forEach { try Child.delete(id: $0, from: &repository) }
         detach(entities, relation: keyPath, in: &repository)
@@ -64,7 +64,7 @@ public extension EntityModel {
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository) throws {
+        in repository: inout Context) throws {
             
         try entities.forEach { try Child.delete(id: $0, from: &repository) }
         detach(entities, relation: keyPath, inverse: inverse, in: &repository)
@@ -76,7 +76,7 @@ public extension EntityModel {
 public extension EntityModel {
     func detach<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) {
+        in repository: inout Context) {
             
         let children = repository
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
@@ -88,7 +88,7 @@ public extension EntityModel {
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository)  {
+        in repository: inout Context)  {
             
         let children = repository
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
@@ -100,7 +100,7 @@ public extension EntityModel {
     func detach<Child, Cardinality, Constraint>(
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) {
+        in repository: inout Context) {
             
         detach(entities, relation: keyPath, in: &repository)
     }
@@ -109,7 +109,7 @@ public extension EntityModel {
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository)  {
+        in repository: inout Context)  {
             
         detach(entities, relation: keyPath, inverse: inverse, in: &repository)
     }
@@ -117,7 +117,7 @@ public extension EntityModel {
     func detach<Child, Cardinality, Constraint>(
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in repository: inout Repository) {
+        in repository: inout Context) {
             
         repository.save(removeLinks(entities, keyPath))
     }
@@ -126,7 +126,7 @@ public extension EntityModel {
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in repository: inout Repository)  {
+        in repository: inout Context)  {
             
         repository.save(removeLinks(entities, keyPath, inverse: inverse))
     }

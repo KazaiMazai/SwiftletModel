@@ -27,12 +27,12 @@ struct Attachment: EntityModel, Codable {
         $message.normalize()
     }
     
-    func save(_ repository: inout Repository) throws {
+    func save(_ repository: inout Context) throws {
         repository.save(self)
         try save(\.$message, inverse: \.$attachment, to: &repository)
     }
     
-    func delete(_ repository: inout Repository) throws {
+    func delete(_ repository: inout Context) throws {
         repository.remove(Attachment.self, id: id)
         detach(\.$message, inverse: \.$attachment, in: &repository)
     }
