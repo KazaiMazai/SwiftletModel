@@ -33,5 +33,14 @@ struct Chat: EntityModel, Codable {
         try save(\.$messages, inverse: \.$chat, to: &repository)
         try save(\.$admins, inverse: \.$adminInChats, to: &repository)
     }
+    
+    func delete(_ repository: inout Repository) throws {
+        repository.remove(Chat.self, id: id)
+        
+        try delete(\.$messages, inverse: \.$chat, in: &repository)
+        detach(\.$users, inverse: \.$chats, in: &repository)
+        detach(\.$admins, inverse: \.$adminInChats, in: &repository)
+    }
+    
 }
 

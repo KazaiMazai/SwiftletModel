@@ -51,6 +51,17 @@ extension Message {
         try save(\.$replyTo, inverse: \.$replies, to: &repository)
         try save(\.$viewedBy, to: &repository)
     }
+    
+    func delete(_ repository: inout SwiftletData.Repository) throws {
+        repository.remove(Message.self, id: id)
+        
+        detach(\.$author, in: &repository)
+        detach(\.$chat, inverse: \.$messages, in: &repository)
+        detach(\.$replies, inverse: \.$replyTo, in: &repository)
+        detach(\.$replyTo, inverse: \.$replies, in: &repository)
+        detach(\.$viewedBy, in: &repository)
+        try delete(\.$attachment, inverse: \.$message, in: &repository)
+    }
 }
 
 extension Query where Entity == Message {
