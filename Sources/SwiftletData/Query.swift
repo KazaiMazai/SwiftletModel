@@ -10,14 +10,14 @@ import Foundation
 struct Query<Entity: EntityModel> {
     typealias Resolver = () -> Entity?
     
-    let repository: Context
+    let context: Context
     let id: Entity.ID
     let resolver: Resolver
     
-    init(repository: Context, id: Entity.ID) {
-        self.repository = repository
+    init(context: Context, id: Entity.ID) {
+        self.context = context
         self.id = id
-        self.resolver = { repository.find(id) }
+        self.resolver = { context.find(id) }
     }
     
     func resolve() -> Entity? {
@@ -27,14 +27,14 @@ struct Query<Entity: EntityModel> {
 
 private extension Query {
     
-    init(repository: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
-        self.repository = repository
+    init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
+        self.context = context
         self.id = id
         self.resolver = resolver
     }
     
     func then(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
-        Query(repository: repository, id: id) {
+        Query(context: context, id: id) {
             guard let entity = resolve() else {
                 return nil
             }
@@ -56,7 +56,7 @@ extension Context {
     }
     
     func query<Entity: EntityModel>(_ type: Entity.Type, id: Entity.ID) -> Query<Entity> {
-        Query(repository: self, id: id)
+        Query(context: self, id: id)
     }
     
     func query<Entity: EntityModel>(_ ids: [Entity.ID]) -> [Query<Entity>] {
@@ -70,21 +70,21 @@ extension Query {
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         
     ) -> Query<Child>? {
-        repository
+        context
             .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .first
             .flatMap { Child.ID($0) }
-            .map { Query<Child>(repository: repository, id:  $0) }
+            .map { Query<Child>(context: context, id:  $0) }
     }
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
     ) -> [Query<Child>] {
-        repository
+        context
             .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
-            .map { Query<Child>(repository: repository, id:  $0) }
+            .map { Query<Child>(context: context, id:  $0) }
     }
 }
 

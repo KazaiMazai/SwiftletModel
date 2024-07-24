@@ -26,20 +26,20 @@ struct Chat: EntityModel, Codable {
         $admins.normalize()
     }
     
-    func save(_ repository: inout Context) throws {
-        repository.save(self)
+    func save(_ context: inout Context) throws {
+        context.save(self)
         
-        try save(\.$users, inverse: \.$chats, to: &repository)
-        try save(\.$messages, inverse: \.$chat, to: &repository)
-        try save(\.$admins, inverse: \.$adminInChats, to: &repository)
+        try save(\.$users, inverse: \.$chats, to: &context)
+        try save(\.$messages, inverse: \.$chat, to: &context)
+        try save(\.$admins, inverse: \.$adminInChats, to: &context)
     }
     
-    func delete(_ repository: inout Context) throws {
-        repository.remove(Chat.self, id: id)
+    func delete(_ context: inout Context) throws {
+        context.remove(Chat.self, id: id)
         
-        try delete(\.$messages, inverse: \.$chat, in: &repository)
-        detach(\.$users, inverse: \.$chats, in: &repository)
-        detach(\.$admins, inverse: \.$adminInChats, in: &repository)
+        try delete(\.$messages, inverse: \.$chat, in: &context)
+        detach(\.$users, inverse: \.$chats, in: &context)
+        detach(\.$admins, inverse: \.$adminInChats, in: &context)
     }
     
 }

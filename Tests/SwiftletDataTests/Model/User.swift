@@ -20,13 +20,13 @@ struct CurrentUser: EntityModel, Codable {
         $user.normalize()
     }
     
-    func save(_ repository: inout Context) throws {
-        repository.save(self)
-        try save(\.$user, to: &repository)
+    func save(_ context: inout Context) throws {
+        context.save(self)
+        try save(\.$user, to: &context)
     }
     
-    func delete(_ repository: inout Context) throws {
-        detach(\.$user, in: &repository)
+    func delete(_ context: inout Context) throws {
+        detach(\.$user, in: &context)
     }
 }
 
@@ -60,17 +60,17 @@ struct User: EntityModel, Codable {
         $adminInChats.normalize()
     }
     
-    func save(_ repository: inout Context) throws {
-        repository.save(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &repository)
-        try save(\.$adminInChats, inverse: \.$admins, to: &repository)
+    func save(_ context: inout Context) throws {
+        context.save(self, options: User.patch())
+        try save(\.$chats, inverse: \.$users, to: &context)
+        try save(\.$adminInChats, inverse: \.$admins, to: &context)
     }
     
-    func delete(_ repository: inout Context) throws {
-        repository.remove(User.self, id: id)
+    func delete(_ context: inout Context) throws {
+        context.remove(User.self, id: id)
         
-        detach(\.$chats, inverse: \.$users, in: &repository)
-        detach(\.$adminInChats, inverse: \.$admins, in: &repository)
+        detach(\.$chats, inverse: \.$users, in: &context)
+        detach(\.$adminInChats, inverse: \.$admins, in: &context)
     }
     
     static func patch() -> MergeStrategy<User> {
@@ -85,7 +85,7 @@ struct User: EntityModel, Codable {
 extension Query where Entity == User {
     var isMe: Bool {
         CurrentUser
-            .query(CurrentUser.id, in: repository)
+            .query(CurrentUser.id, in: context)
             .related(\.$user)?.id == id
     }
 }

@@ -10,7 +10,7 @@ import XCTest
 @testable import SwiftletData
 
 final class RelationEncodingTests: XCTestCase {
-    var repository = Context()
+    var context = Context()
     
     override func setUpWithError() throws {
         let chat = Chat(
@@ -27,7 +27,7 @@ final class RelationEncodingTests: XCTestCase {
             admins: .relation([.bob])
         )
         
-        try chat.save(&repository)
+        try chat.save(&context)
     }
     
     func test_WhenDefaultEncoding_EqualExpectedJSON() {
@@ -35,7 +35,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .plain
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -120,7 +120,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .keyedContainer
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -202,7 +202,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -284,7 +284,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages, fragment: true) {
                     $0.with(\.$attachment) {
@@ -367,7 +367,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .keyedContainer
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages, fragment: true) {
                     $0.with(\.$attachment) {
@@ -449,7 +449,7 @@ final class RelationEncodingTests: XCTestCase {
         encoder.relationEncodingStrategy = .plain
         
         let user = User
-            .query(User.bob.id, in: repository)
+            .query(User.bob.id, in: context)
             .with(\.$chats) {
                 $0.with(\.$messages, fragment: true) {
                     $0.with(\.$attachment) {

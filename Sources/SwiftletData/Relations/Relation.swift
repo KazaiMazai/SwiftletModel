@@ -55,8 +55,8 @@ public extension Relation {
 }
 
 extension Relation {
-    public func save(_ repository: inout Context) throws {
-        try entities.forEach { entity in try entity.save(&repository) }
+    public func save(_ context: inout Context) throws {
+        try entities.forEach { entity in try entity.save(&context) }
     }
 }
 

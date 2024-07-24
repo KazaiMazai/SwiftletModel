@@ -10,19 +10,19 @@ import XCTest
 @testable import SwiftletData
 
 final class ToOneTests: XCTestCase {
-    var repository = Context()
+    var context = Context()
     let initialMessage: Message = Message(
         id: "1", text: "hello",
         attachment: .relation(Attachment.imageOne)
     )
     
     override func setUp() async throws {
-        try! initialMessage.save(&repository)
+        try! initialMessage.save(&context)
     }
     
     func test_WhenDirectAdded_InverseIsAdded() {
         let messageForAttachment = Attachment
-            .query(Attachment.imageOne.id, in: repository)
+            .query(Attachment.imageOne.id, in: context)
             .related(\.$message)?
             .resolve()
         
@@ -32,10 +32,10 @@ final class ToOneTests: XCTestCase {
     func test_WhenDirectReplaced_InverseIsUpdated() {
         var message = initialMessage
         message.$attachment = .relation(Attachment.imageTwo)
-        try! message.save(&repository)
+        try! message.save(&context)
         
         let messageForAttachment = Attachment
-            .query(Attachment.imageOne.id, in: repository)
+            .query(Attachment.imageOne.id, in: context)
             .related(\.$message)
         
         XCTAssertNil(messageForAttachment)
@@ -44,10 +44,10 @@ final class ToOneTests: XCTestCase {
     func test_WhenNullify_InverseIsRemoved() {
         var message = initialMessage
         message.$attachment = .null
-        try! message.save(&repository)
+        try! message.save(&context)
         
         let messageForAttachment = Attachment
-            .query(Attachment.imageOne.id, in: repository)
+            .query(Attachment.imageOne.id, in: context)
             .related(\.$message)
         
         XCTAssertNil(messageForAttachment)
@@ -56,10 +56,10 @@ final class ToOneTests: XCTestCase {
     func test_WhenNullify_RelationIsRemoved() {
         var message = initialMessage
         message.$attachment = .null
-        try! message.save(&repository)
+        try! message.save(&context)
         
         let attachment = message
-            .query(in: repository)
+            .query(in: context)
             .related(\.$attachment)
         
         XCTAssertNil(attachment)

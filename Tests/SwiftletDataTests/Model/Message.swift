@@ -41,26 +41,26 @@ extension Message {
         $viewedBy.normalize()
     }
     
-    func save(_ repository: inout Context) throws {
-        repository.save(self)
+    func save(_ context: inout Context) throws {
+        context.save(self)
        
-        try save(\.$author, to: &repository)
-        try save(\.$chat, inverse: \.$messages, to: &repository)
-        try save(\.$attachment, inverse: \.$message, to: &repository)
-        try save(\.$replies, inverse: \.$replyTo, to: &repository)
-        try save(\.$replyTo, inverse: \.$replies, to: &repository)
-        try save(\.$viewedBy, to: &repository)
+        try save(\.$author, to: &context)
+        try save(\.$chat, inverse: \.$messages, to: &context)
+        try save(\.$attachment, inverse: \.$message, to: &context)
+        try save(\.$replies, inverse: \.$replyTo, to: &context)
+        try save(\.$replyTo, inverse: \.$replies, to: &context)
+        try save(\.$viewedBy, to: &context)
     }
     
-    func delete(_ repository: inout SwiftletData.Context) throws {
-        repository.remove(Message.self, id: id)
+    func delete(_ context: inout SwiftletData.Context) throws {
+        context.remove(Message.self, id: id)
         
-        detach(\.$author, in: &repository)
-        detach(\.$chat, inverse: \.$messages, in: &repository)
-        detach(\.$replies, inverse: \.$replyTo, in: &repository)
-        detach(\.$replyTo, inverse: \.$replies, in: &repository)
-        detach(\.$viewedBy, in: &repository)
-        try delete(\.$attachment, inverse: \.$message, in: &repository)
+        detach(\.$author, in: &context)
+        detach(\.$chat, inverse: \.$messages, in: &context)
+        detach(\.$replies, inverse: \.$replyTo, in: &context)
+        detach(\.$replyTo, inverse: \.$replies, in: &context)
+        detach(\.$viewedBy, in: &context)
+        try delete(\.$attachment, inverse: \.$message, in: &context)
     }
 }
 
