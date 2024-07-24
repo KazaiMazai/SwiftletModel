@@ -206,7 +206,7 @@ private extension Relation.State {
     }
 }
 
- 
+
 //MARK: - Codable
 
 extension Relation.State: Codable where T: Codable { }
@@ -233,7 +233,7 @@ extension Relation: Codable where Entity: Codable {
         
         if decoder.relationDecodingStrategy.contains(.keyedContainer),
            let relation = try? Self.decodeKeyedContainer(from: decoder) {
-           
+            
             self = relation
             return
         }
@@ -241,7 +241,7 @@ extension Relation: Codable where Entity: Codable {
         self = try Self.decodePlainContainer(from: decoder)
     }
 }
-   
+
 //MARK: - Codable Explicitly
 
 extension Relation where Entity: Codable {
@@ -306,7 +306,7 @@ extension Relation where Entity: Codable {
 }
 
 //MARK: - Codable Exactly
-    
+
 extension Relation where Entity: Codable {
     enum RelationExplicitCodingKeys: String, CodingKey {
         case id = "id"
@@ -377,7 +377,7 @@ extension Relation where Entity: Codable {
 }
 
 //MARK: - Codable Flattaned
-    
+
 extension Relation where Entity: Codable {
     struct ID<T: EntityModel>: Codable {
         let id: T.ID
