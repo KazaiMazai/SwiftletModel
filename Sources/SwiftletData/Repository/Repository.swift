@@ -44,14 +44,12 @@ extension Repository {
 
 extension Repository {
     
-    @discardableResult
-    mutating func remove<T: EntityModel>(_ id: T.ID) -> T? {
-        entitiesRepository.remove(id)
+    mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
+        entitiesRepository.remove(T.self, id: id)
     }
     
-    @discardableResult
-    mutating func removeAll<T: EntityModel>(_ ids: [T.ID]) -> [T?] {
-        entitiesRepository.removeAll(ids)
+    mutating func removeAll<T: EntityModel>(_ entityType: T.Type, ids: [T.ID]) {
+        entitiesRepository.removeAll(T.self, ids: ids)
     }
     
     mutating func save<T: EntityModel>(_ entity: T,
