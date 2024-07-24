@@ -52,7 +52,7 @@ final class RelationEncodingTests: XCTestCase {
         
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : [
             {
               "admins" : [
@@ -137,7 +137,7 @@ final class RelationEncodingTests: XCTestCase {
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -219,7 +219,7 @@ final class RelationEncodingTests: XCTestCase {
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -301,7 +301,7 @@ final class RelationEncodingTests: XCTestCase {
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -384,7 +384,7 @@ final class RelationEncodingTests: XCTestCase {
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -466,7 +466,7 @@ final class RelationEncodingTests: XCTestCase {
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : [
             {
               "admins" : [

@@ -13,7 +13,7 @@ final class RelationDecodingTests: XCTestCase {
     func test_WhenDefaultDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : [
             {
               "admins" : [
@@ -88,7 +88,7 @@ final class RelationDecodingTests: XCTestCase {
     func test_WhenExplicitDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -161,7 +161,7 @@ final class RelationDecodingTests: XCTestCase {
     func test_WhenExactDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {
@@ -234,7 +234,7 @@ final class RelationDecodingTests: XCTestCase {
     func test_WhenExactDecodingFragment_EqualExpectedJSON() {
         let userInputJSON = """
         {
-          "adminInChats" : null,
+          "adminOf" : null,
           "chats" : {
             "objects" : [
               {

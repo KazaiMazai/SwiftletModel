@@ -17,7 +17,7 @@ struct Chat: EntityModel, Codable {
     @HasMany(\.messages, inverse: \.chat)
     var messages: [Message]?
     
-    @HasMany(\.admins, inverse: \.adminInChats)
+    @HasMany(\.admins, inverse: \.adminOf)
     var admins: [User]?
     
     mutating func normalize() {
@@ -30,13 +30,13 @@ struct Chat: EntityModel, Codable {
         context.insert(self)
         try save(\.$users, inverse: \.$chats, to: &context)
         try save(\.$messages, inverse: \.$chat, to: &context)
-        try save(\.$admins, inverse: \.$adminInChats, to: &context)
+        try save(\.$admins, inverse: \.$adminOf, to: &context)
     }
     
     func delete(_ context: inout Context) throws {
         context.remove(Chat.self, id: id)
         detach(\.$users, inverse: \.$chats, in: &context)
-        detach(\.$admins, inverse: \.$adminInChats, in: &context)
+        detach(\.$admins, inverse: \.$adminOf, in: &context)
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }
     
