@@ -7,18 +7,21 @@
 
 import Foundation
 
-
-enum RelationEncodingStrategy {
-    static let `default`: Self = .plain
-    
-    static let userInfoKey = CodingUserInfoKey(rawValue: "RelationEncodingStrategy.userInfoKey")!
- 
+public enum RelationEncodingStrategy {
     case plain
     case keyedContainer
     case explicitKeyedContainer
 }
 
-extension Encoder {
+public extension RelationEncodingStrategy {
+    static let `default`: Self = .plain
+}
+
+public extension RelationEncodingStrategy {
+    static let userInfoKey = CodingUserInfoKey(rawValue: "RelationEncodingStrategy.userInfoKey")!
+}
+
+public extension Encoder {
     var relationEncodingStrategy: RelationEncodingStrategy {
         get {
             (userInfo[RelationEncodingStrategy.userInfoKey] as? RelationEncodingStrategy) ?? .default
@@ -26,7 +29,7 @@ extension Encoder {
     }
 }
 
-extension JSONEncoder {
+public extension JSONEncoder {
    var relationEncodingStrategy: RelationEncodingStrategy {
        get {
            (userInfo[RelationEncodingStrategy.userInfoKey] as? RelationEncodingStrategy) ?? .default

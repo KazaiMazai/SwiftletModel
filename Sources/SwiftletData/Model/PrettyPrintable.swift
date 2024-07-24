@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Encodable  {
+public extension Encodable  {
     func prettyDescription(with encoder: JSONEncoder) -> String? {
         guard let data = try? encoder.encode(self) else {
             return nil
@@ -16,7 +16,7 @@ extension Encodable  {
     }
 }
 
-extension JSONEncoder {
+public extension JSONEncoder {
     static var prettyPrinting: JSONEncoder {
         let encoder = JSONEncoder()
         if #available(macOS 10.15, *) {
