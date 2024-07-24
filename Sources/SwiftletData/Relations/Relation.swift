@@ -43,7 +43,7 @@ public extension Relation {
 
 extension Relation {
     public func save(_ context: inout Context) throws {
-        try entities.forEach { entity in try entity.save(&context) }
+        try entities.forEach { entity in try entity.save(to: &context) }
     }
 }
 

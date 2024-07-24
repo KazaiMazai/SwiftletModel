@@ -15,11 +15,11 @@ final class ManyToManyTests: XCTestCase {
     func test_WhenDirectAdded_InverseIsAdded() {
         var chatOne = Chat.one
         chatOne.$users = .relation([.bob])
-        try! chatOne.save(&context)
+        try! chatOne.save(to: &context)
         
         var chatTwo = Chat.two
         chatTwo.$users = .relation([.bob])
-        try! chatTwo.save(&context)
+        try! chatTwo.save(to: &context)
         
         let bobChats = User
             .query(User.bob.id, in: context)
@@ -32,10 +32,10 @@ final class ManyToManyTests: XCTestCase {
     func test_WhenRelationUpdatedWithInsert_NewRelationsInserted() {
         var chat = Chat.one
         chat.$users = .relation([.bob, .alice, .tom])
-        try! chat.save(&context)
+        try! chat.save(to: &context)
         
         chat.$users = .fragment([.john, .michael])
-        try! chat.save(&context)
+        try! chat.save(to: &context)
          
         let chatUsers = Chat
             .query(Chat.one.id, in: context)
@@ -51,10 +51,10 @@ final class ManyToManyTests: XCTestCase {
     func test_WhenDirectReplaced_InverseIsUpdated() {
         var chat = Chat.one
         chat.$users = .relation([.bob, .alice, .tom])
-        try! chat.save(&context)
+        try! chat.save(to: &context)
         
         chat.$users = .relation([.john, .michael])
-        try! chat.save(&context)
+        try! chat.save(to: &context)
         
         let bobsChats = User
             .query(User.bob.id, in: context)

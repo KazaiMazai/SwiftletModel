@@ -27,7 +27,7 @@ final class DeleteTests: XCTestCase {
             admins: .relation([.bob])
         )
         
-        try chat.save(&context)
+        try chat.save(to: &context)
     }
     
     func test_WhenEntityIsDeleted_EntityIsRemovedFromRepository() {

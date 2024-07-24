@@ -27,12 +27,12 @@ struct Attachment: EntityModel, Codable {
         $message.normalize()
     }
     
-    func save(_ context: inout Context) throws {
+    func save(to context: inout Context) throws {
         context.insert(self)
         try save(\.$message, inverse: \.$attachment, to: &context)
     }
     
-    func delete(_ context: inout Context) throws {
+    func delete(from context: inout Context) throws {
         context.remove(Attachment.self, id: id)
         detach(\.$message, inverse: \.$attachment, in: &context)
     }

@@ -14,16 +14,16 @@ public protocol EntityModel {
     
     mutating func normalize()
     
-    func delete(_ context: inout Context) throws
+    func delete(from context: inout Context) throws
     
-    func save(_ context: inout Context) throws
+    func save(to context: inout Context) throws
 }
 
 extension EntityModel {
     static func delete(id: ID, from context: inout Context) throws {
         try Self.query(id, in: context)
             .resolve()?
-            .delete(&context)
+            .delete(from: &context)
     }
 }
 

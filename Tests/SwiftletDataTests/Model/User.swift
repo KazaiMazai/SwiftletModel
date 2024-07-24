@@ -20,12 +20,12 @@ struct CurrentUser: EntityModel, Codable {
         $user.normalize()
     }
     
-    func save(_ context: inout Context) throws {
+    func save(to context: inout Context) throws {
         context.insert(self)
         try save(\.$user, to: &context)
     }
     
-    func delete(_ context: inout Context) throws {
+    func delete(from context: inout Context) throws {
         detach(\.$user, in: &context)
     }
 }
@@ -60,13 +60,13 @@ struct User: EntityModel, Codable {
         $adminOf.normalize()
     }
     
-    func save(_ context: inout Context) throws {
+    func save(to context: inout Context) throws {
         context.insert(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &context)
         try save(\.$adminOf, inverse: \.$admins, to: &context)
     }
     
-    func delete(_ context: inout Context) throws {
+    func delete(from context: inout Context) throws {
         context.remove(User.self, id: id)
         detach(\.$chats, inverse: \.$users, in: &context)
         detach(\.$adminOf, inverse: \.$admins, in: &context)
