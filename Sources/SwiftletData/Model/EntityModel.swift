@@ -19,7 +19,7 @@ public protocol EntityModel {
     mutating func normalize()
 }
 
-extension EntityModel {
+public extension EntityModel {
     static func delete(id: ID, from context: inout Context) throws {
         try Self.query(id, in: context)
             .resolve()?
@@ -27,7 +27,7 @@ extension EntityModel {
     }
 }
 
-extension EntityModel {
+public extension EntityModel {
     func query(in context: Context) -> Query<Self> {
         Query(context: context, id: id)
     }

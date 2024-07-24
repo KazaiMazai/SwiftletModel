@@ -15,7 +15,7 @@ public struct Context {
     public init() { }
 }
 
-extension Context {
+public extension Context {
     
     func all<T>() -> [T] {
         entitiesRepository.all()
@@ -34,7 +34,7 @@ extension Context {
     }
 }
 
-extension Context {
+public extension Context {
     
     mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         entitiesRepository.remove(T.self, id: id)
@@ -70,7 +70,7 @@ extension Context {
 }
 
 extension Context {
-    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
+    func getChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
         relationsRepository.getChildren(for: type, relationName: relationName, id: id)
     }
 }

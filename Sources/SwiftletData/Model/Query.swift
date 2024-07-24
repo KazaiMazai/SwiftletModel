@@ -7,50 +7,31 @@
 
 import Foundation
 
-struct Query<Entity: EntityModel> {
+public struct Query<Entity: EntityModel> {
     typealias Resolver = () -> Entity?
     
+    public let id: Entity.ID
     let context: Context
-    let id: Entity.ID
     let resolver: Resolver
     
-    init(context: Context, id: Entity.ID) {
+    public init(context: Context, id: Entity.ID) {
         self.context = context
         self.id = id
         self.resolver = { context.find(id) }
     }
     
-    func resolve() -> Entity? {
+    public func resolve() -> Entity? {
         resolver()
     }
 }
 
-private extension Query {
-    
-    init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
-        self.context = context
-        self.id = id
-        self.resolver = resolver
-    }
-    
-    func then(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
-        Query(context: context, id: id) {
-            guard let entity = resolve() else {
-                return nil
-            }
-            
-            return perform(entity)
-        }
-    }
-}
-
-extension Collection {
+public extension Collection {
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
         compactMap { $0.resolve() }
     }
 }
 
-extension Context {
+public extension Context {
     func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
         query(Entity.self, id: id)
     }
@@ -64,14 +45,14 @@ extension Context {
     }
 }
 
-extension Query {
+public extension Query {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         
     ) -> Query<Child>? {
         context
-            .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .first
             .flatMap { Child.ID($0) }
             .map { Query<Child>(context: context, id:  $0) }
@@ -82,13 +63,13 @@ extension Query {
         
     ) -> [Query<Child>] {
         context
-            .findChildren(for: Entity.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             .map { Query<Child>(context: context, id:  $0) }
     }
 }
 
-extension Collection {
+public extension Collection {
     
     func related<Entity, Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
@@ -107,15 +88,15 @@ extension Collection {
     }
 }
 
-typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
+public typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
 
-extension Query {
+public extension Query {
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        then {
+        resolveThen {
             var entity = $0
             entity[keyPath: keyPath] = related(keyPath)
                 .map { nested($0) }
@@ -131,7 +112,7 @@ extension Query {
         fragment: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        then {
+        resolveThen {
             var entity = $0
             let relatedEntities = related(keyPath)
                 .map { nested($0) }
@@ -145,7 +126,7 @@ extension Query {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
         
-        then {
+        resolveThen {
             var entity = $0
             entity[keyPath: keyPath] = related(keyPath)
                 .map { .relation(id: $0.id) } ?? .none
@@ -157,11 +138,30 @@ extension Query {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         fragment: Bool = false) -> Query {
         
-        then {
+        resolveThen {
             var entity = $0
             let ids = related(keyPath).map { $0.id }
             entity[keyPath: keyPath] = fragment ? .fragment(ids: ids) : .relation(ids: ids)
             return entity
+        }
+    }
+}
+
+private extension Query {
+    
+    init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
+        self.context = context
+        self.id = id
+        self.resolver = resolver
+    }
+    
+    func resolveThen(_ perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
+        Query(context: context, id: id) {
+            guard let entity = resolve() else {
+                return nil
+            }
+            
+            return perform(entity)
         }
     }
 }

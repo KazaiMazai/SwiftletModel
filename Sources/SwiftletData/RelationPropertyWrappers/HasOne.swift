@@ -8,22 +8,22 @@
 import Foundation
 
 @propertyWrapper
-struct HasOne<T, Directionality>: Hashable where T: EntityModel,
+public struct HasOne<T, Directionality>: Hashable where T: EntityModel,
                                                  Directionality: DirectionalityProtocol {
     
     private var relation: ToOneRelation<T, Directionality, Relations.Optional>
     
-    var wrappedValue: T? {
+    public var wrappedValue: T? {
         get { relation.entities.first }
     }
     
-    var projectedValue: ToOneRelation<T, Directionality, Relations.Optional> {
+    public var projectedValue: ToOneRelation<T, Directionality, Relations.Optional> {
         get { relation }
         set { relation = newValue }
     }
 }
 
-extension HasOne where Directionality == Relations.Mutual {
+public extension HasOne where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -33,7 +33,7 @@ extension HasOne where Directionality == Relations.Mutual {
     }
 }
 
-extension HasOne {
+public extension HasOne {
     
     static func relation(id: T.ID) -> Self {
         HasOne(relation: .relation(id: id))
@@ -44,13 +44,13 @@ extension HasOne {
     }
 }
 
-extension HasOne {
+public extension HasOne {
     static var null: Self {
         HasOne(relation: .null)
     }
 }
 
-extension HasOne where Directionality == Relations.OneWay {
+public extension HasOne where Directionality == Relations.OneWay {
     /**
      This initializer is used by the Swift compiler to autogenerate a convenient initializer
      for the enclosing type that utilizes this property wrapper. It is specifically designed
@@ -72,11 +72,11 @@ extension HasOne where Directionality == Relations.OneWay {
 
 extension HasOne: Codable where T: Codable {
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         try relation.encode(to: encoder)
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         try relation = .init(from: decoder)
     }
 }

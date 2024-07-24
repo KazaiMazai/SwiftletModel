@@ -81,7 +81,7 @@ private extension EntityModel {
         case .replace, .remove:
             let enititesToKeep = Set(children)
             let oddExisingChildren = context
-                .findChildren(for: Self.self, relationName: keyPath.name, id: id)
+                .getChildren(for: Self.self, relationName: keyPath.name, id: id)
                 .compactMap { Child.ID($0) }
                 .filter { !enititesToKeep.contains($0) }
             

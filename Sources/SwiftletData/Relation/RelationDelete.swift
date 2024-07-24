@@ -16,7 +16,7 @@ public extension EntityModel {
         from context: inout Context) throws {
             
         let children = context
-            .findChildren(for: Self.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
         try delete(children, relation: keyPath, from: &context)
@@ -28,7 +28,7 @@ public extension EntityModel {
         from context: inout Context) throws {
             
         let children = context
-            .findChildren(for: Self.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
         try delete(children, relation: keyPath, inverse: inverse, from: &context)
@@ -79,7 +79,7 @@ public extension EntityModel {
         in context: inout Context) {
             
         let children = context
-            .findChildren(for: Self.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
         detach(children, relation: keyPath, in: &context)
@@ -91,7 +91,7 @@ public extension EntityModel {
         in context: inout Context)  {
             
         let children = context
-            .findChildren(for: Self.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
         detach(children, relation: keyPath, inverse: inverse, in: &context)

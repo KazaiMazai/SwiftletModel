@@ -41,12 +41,6 @@ public extension Relation {
     }
 }
 
-extension Relation {
-    public func save(_ context: inout Context) throws {
-        try entities.forEach { entity in try entity.save(to: &context) }
-    }
-}
-
 public extension Relation {
     static var none: Self {
         Relation(state: .none)
@@ -128,6 +122,13 @@ extension Relation {
         Cardinality.isToMany ? .append : .replace
     }
 }
+
+extension Relation {
+    public func save(_ context: inout Context) throws {
+        try entities.forEach { entity in try entity.save(to: &context) }
+    }
+}
+
 
 //MARK: -  Private State
 

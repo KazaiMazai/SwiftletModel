@@ -8,22 +8,22 @@
 import Foundation
 
 @propertyWrapper
-struct HasMany<T, Directionality>: Hashable where T: EntityModel,
+public struct HasMany<T, Directionality>: Hashable where T: EntityModel,
                                                   Directionality: DirectionalityProtocol {
     
     private var relation: ToManyRelation<T, Directionality,  Relations.Required>
     
-    var wrappedValue: [T]? {
+    public var wrappedValue: [T]? {
         get { relation.entities }
     }
     
-    var projectedValue: ToManyRelation<T, Directionality, Relations.Required> {
+    public var projectedValue: ToManyRelation<T, Directionality, Relations.Required> {
         get { relation }
         set { relation = newValue }
     }
 }
 
-extension HasMany where Directionality == Relations.Mutual {
+public extension HasMany where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -33,7 +33,7 @@ extension HasMany where Directionality == Relations.Mutual {
     }
 }
 
-extension HasMany {
+public extension HasMany {
     
     static func relation(ids: [T.ID]) -> Self {
         HasMany(relation: .relation(ids: ids))
@@ -52,7 +52,7 @@ extension HasMany {
     }
 }
 
-extension HasMany where Directionality == Relations.OneWay {
+public extension HasMany where Directionality == Relations.OneWay {
     /**
      This initializer is used by the Swift compiler to autogenerate a convenient initializer
      for the enclosing type that utilizes this property wrapper. It is specifically designed
@@ -74,11 +74,11 @@ extension HasMany where Directionality == Relations.OneWay {
 
 extension HasMany: Codable where T: Codable {
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         try relation.encode(to: encoder)
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         try relation = .init(from: decoder)
     }
 }

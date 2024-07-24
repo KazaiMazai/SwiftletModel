@@ -7,18 +7,27 @@
 
 import Foundation
 
-struct RelationDecodingStrategy: OptionSet {
-    static let `default`: Self = [.plain]
-    static let userInfoKey = CodingUserInfoKey(rawValue: "RelationDecodingStrategy.userInfoKey")!
+public struct RelationDecodingStrategy: OptionSet {
+    public let rawValue: UInt
     
-    let rawValue: UInt
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+}
+
+public extension RelationDecodingStrategy {
+    static let `default`: Self = [.plain]
     
     static let plain = RelationDecodingStrategy(rawValue: 1 << 0)
     static let keyedContainer = RelationDecodingStrategy(rawValue: 1 << 1)
-    static let explicitKeyedContainer = RelationDecodingStrategy(rawValue: 1 << 2) 
+    static let explicitKeyedContainer = RelationDecodingStrategy(rawValue: 1 << 2)
 }
 
-extension Decoder {
+public extension RelationDecodingStrategy {
+    static let userInfoKey = CodingUserInfoKey(rawValue: "RelationDecodingStrategy.userInfoKey")!
+}
+
+public extension Decoder {
     var relationDecodingStrategy: RelationDecodingStrategy {
         get {
             (userInfo[RelationDecodingStrategy.userInfoKey] as? RelationDecodingStrategy) ?? .default
@@ -26,7 +35,7 @@ extension Decoder {
     }
 }
  
-extension JSONDecoder {
+public extension JSONDecoder {
     var relationDecodingStrategy: RelationDecodingStrategy {
         get {
             (userInfo[RelationDecodingStrategy.userInfoKey] as? RelationDecodingStrategy) ?? .default
