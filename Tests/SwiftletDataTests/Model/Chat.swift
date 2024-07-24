@@ -28,7 +28,6 @@ struct Chat: EntityModel, Codable {
     
     func save(_ context: inout Context) throws {
         context.save(self)
-        
         try save(\.$users, inverse: \.$chats, to: &context)
         try save(\.$messages, inverse: \.$chat, to: &context)
         try save(\.$admins, inverse: \.$adminInChats, to: &context)
@@ -36,10 +35,9 @@ struct Chat: EntityModel, Codable {
     
     func delete(_ context: inout Context) throws {
         context.remove(Chat.self, id: id)
-        
-        try delete(\.$messages, inverse: \.$chat, in: &context)
         detach(\.$users, inverse: \.$chats, in: &context)
         detach(\.$admins, inverse: \.$adminInChats, in: &context)
+        try delete(\.$messages, inverse: \.$chat, from: &context)
     }
     
 }

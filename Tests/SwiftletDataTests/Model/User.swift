@@ -68,7 +68,6 @@ struct User: EntityModel, Codable {
     
     func delete(_ context: inout Context) throws {
         context.remove(User.self, id: id)
-        
         detach(\.$chats, inverse: \.$users, in: &context)
         detach(\.$adminInChats, inverse: \.$admins, in: &context)
     }

@@ -43,7 +43,6 @@ extension Message {
     
     func save(_ context: inout Context) throws {
         context.save(self)
-       
         try save(\.$author, to: &context)
         try save(\.$chat, inverse: \.$messages, to: &context)
         try save(\.$attachment, inverse: \.$message, to: &context)
@@ -54,13 +53,12 @@ extension Message {
     
     func delete(_ context: inout SwiftletData.Context) throws {
         context.remove(Message.self, id: id)
-        
         detach(\.$author, in: &context)
         detach(\.$chat, inverse: \.$messages, in: &context)
         detach(\.$replies, inverse: \.$replyTo, in: &context)
         detach(\.$replyTo, inverse: \.$replies, in: &context)
         detach(\.$viewedBy, in: &context)
-        try delete(\.$attachment, inverse: \.$message, in: &context)
+        try delete(\.$attachment, inverse: \.$message, from: &context)
     }
 }
 

@@ -13,48 +13,48 @@ import Foundation
 public extension EntityModel {
     func delete<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
             
         let children = context
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
-        try delete(children, relation: keyPath, in: &context)
+        try delete(children, relation: keyPath, from: &context)
     }
     
     func delete<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
             
         let children = context
             .findChildren(for: Self.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             
-        try delete(children, relation: keyPath, inverse: inverse, in: &context)
+        try delete(children, relation: keyPath, inverse: inverse, from: &context)
     }
     
     func delete<Child, Cardinality, Constraint>(
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
             
-        try delete(entities, relation: keyPath, in: &context)
+        try delete(entities, relation: keyPath, from: &context)
     }
     
     func delete<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ entities: Child.ID...,
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
        
-        try delete(entities, relation: keyPath, inverse: inverse, in: &context)
+        try delete(entities, relation: keyPath, inverse: inverse, from: &context)
     }
     
     func delete<Child, Cardinality, Constraint>(
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
             
         try entities.forEach { try Child.delete(id: $0, from: &context) }
         detach(entities, relation: keyPath, in: &context)
@@ -64,7 +64,7 @@ public extension EntityModel {
         _ entities: [Child.ID],
         relation keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in context: inout Context) throws {
+        from context: inout Context) throws {
             
         try entities.forEach { try Child.delete(id: $0, from: &context) }
         detach(entities, relation: keyPath, inverse: inverse, in: &context)
