@@ -42,7 +42,7 @@ extension Message {
     }
     
     func save(_ context: inout Context) throws {
-        context.save(self)
+        context.insert(self)
         try save(\.$author, to: &context)
         try save(\.$chat, inverse: \.$messages, to: &context)
         try save(\.$attachment, inverse: \.$message, to: &context)

@@ -107,8 +107,9 @@ extension Collection {
     }
 }
 
+typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
+
 extension Query {
-    typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,

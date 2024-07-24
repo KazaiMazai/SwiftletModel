@@ -119,7 +119,7 @@ public extension EntityModel {
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) {
             
-        context.save(removeLinks(entities, keyPath))
+        context.updateLinks(unlink(entities, keyPath))
     }
     
     func detach<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -128,12 +128,12 @@ public extension EntityModel {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context)  {
             
-        context.save(removeLinks(entities, keyPath, inverse: inverse))
+        context.updateLinks(unlink(entities, keyPath, inverse: inverse))
     }
 }
 
 extension EntityModel {
-    func removeLinks<Child, Cardinality, Constraint>(
+    func unlink<Child, Cardinality, Constraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
         
@@ -152,7 +152,7 @@ extension EntityModel {
         )
     }
     
-    func removeLinks<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+    func unlink<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>

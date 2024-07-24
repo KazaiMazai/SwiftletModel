@@ -28,7 +28,7 @@ struct Attachment: EntityModel, Codable {
     }
     
     func save(_ context: inout Context) throws {
-        context.save(self)
+        context.insert(self)
         try save(\.$message, inverse: \.$attachment, to: &context)
     }
     

@@ -17,7 +17,7 @@ struct RelationsRepository: Codable {
 }
 
 extension RelationsRepository {
-    mutating func saveLinks<Parent, Child>(_ links: Links<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
+    mutating func updateLinks<Parent, Child>(_ links: Links<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
         
         links.direct.forEach { link in
             saveLink(link)

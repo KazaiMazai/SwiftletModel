@@ -32,19 +32,6 @@ public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashab
 }
 
 public extension Relation {
-    
-    mutating func normalize() {
-        state.normalize()
-    }
-    
-    func normalized() -> Self {
-        var copy = self
-        copy.normalize()
-        return copy
-    }
-}
-
-public extension Relation {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.state == rhs.state
     }
@@ -99,6 +86,19 @@ public extension Relation where Cardinality == Relations.ToMany {
     
     static func fragment(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, fragment: true))
+    }
+}
+
+extension Relation {
+    
+    public mutating func normalize() {
+        state.normalize()
+    }
+ 
+    func normalized() -> Self {
+        var copy = self
+        copy.normalize()
+        return copy
     }
 }
 

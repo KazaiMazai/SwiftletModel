@@ -27,7 +27,7 @@ struct Chat: EntityModel, Codable {
     }
     
     func save(_ context: inout Context) throws {
-        context.save(self)
+        context.insert(self)
         try save(\.$users, inverse: \.$chats, to: &context)
         try save(\.$messages, inverse: \.$chat, to: &context)
         try save(\.$admins, inverse: \.$adminInChats, to: &context)

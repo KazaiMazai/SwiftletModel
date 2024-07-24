@@ -21,7 +21,7 @@ struct CurrentUser: EntityModel, Codable {
     }
     
     func save(_ context: inout Context) throws {
-        context.save(self)
+        context.insert(self)
         try save(\.$user, to: &context)
     }
     
@@ -61,7 +61,7 @@ struct User: EntityModel, Codable {
     }
     
     func save(_ context: inout Context) throws {
-        context.save(self, options: User.patch())
+        context.insert(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &context)
         try save(\.$adminInChats, inverse: \.$admins, to: &context)
     }

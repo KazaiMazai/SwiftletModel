@@ -12,9 +12,7 @@ public struct Context {
     private var entitiesRepository = EntitiesRepository()
     private var relationsRepository = RelationsRepository()
     
-    public init() {
-        
-    }
+    public init() { }
 }
 
 extension Context {
@@ -37,12 +35,6 @@ extension Context {
 }
 
 extension Context {
-    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
-        relationsRepository.findChildren(for: type, relationName: relationName, id: id)
-    }
-}
-
-extension Context {
     
     mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         entitiesRepository.remove(T.self, id: id)
@@ -52,27 +44,33 @@ extension Context {
         entitiesRepository.removeAll(T.self, ids: ids)
     }
     
-    mutating func save<T: EntityModel>(_ entity: T,
-                                       options: MergeStrategy<T> = .replace) {
+    mutating func insert<T: EntityModel>(_ entity: T,
+                                         options: MergeStrategy<T> = .replace) {
         
-        entitiesRepository.save(entity, options: options)
+        entitiesRepository.insert(entity, options: options)
     }
     
-    mutating func save<T: EntityModel>(_ entity: T?,
-                                       options: MergeStrategy<T> = .replace) {
+    mutating func insert<T: EntityModel>(_ entity: T?,
+                                         options: MergeStrategy<T> = .replace) {
         
-        entitiesRepository.save(entity, options: options)
+        entitiesRepository.insert(entity, options: options)
     }
     
-    mutating func save<T: EntityModel>(_ entities: [T],
-                                       options: MergeStrategy<T> = .replace) {
+    mutating func insert<T: EntityModel>(_ entities: [T],
+                                         options: MergeStrategy<T> = .replace) {
         
-        entitiesRepository.save(entities, options: options)
+        entitiesRepository.insert(entities, options: options)
     }
 }
 
 extension Context {
-    mutating func save<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
-        relationsRepository.saveLinks(links)
+    mutating func updateLinks<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
+        relationsRepository.updateLinks(links)
+    }
+}
+
+extension Context {
+    func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
+        relationsRepository.findChildren(for: type, relationName: relationName, id: id)
     }
 }
