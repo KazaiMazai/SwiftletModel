@@ -18,13 +18,13 @@ struct EntitiesRepository {
 
 extension EntitiesRepository {
     func all<T>() -> [T] {
-        let key = String(reflecting: T.self)
-        return storages[key]?.compactMap { $0.value as? T } ?? []
+        let entityName = String(reflecting: T.self)
+        return storages[entityName]?.compactMap { $0.value as? T } ?? []
     }
     
     func find<T: EntityModel>(_ id: T.ID) -> T? {
-        let key = EntityName(reflecting: T.self)
-        let storage = storages[key] ?? [:]
+        let entityName = EntityName(reflecting: T.self)
+        let storage = storages[entityName] ?? [:]
         return storage[id.description] as? T
     }
     
@@ -38,7 +38,6 @@ extension EntitiesRepository {
 }
 
 extension EntitiesRepository {
-     
     mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
         let key = EntityName(reflecting: T.self)
         var storage = storages[key] ?? [:]

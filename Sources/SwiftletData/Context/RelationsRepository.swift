@@ -13,55 +13,57 @@ struct RelationsRepository: Codable {
     typealias EntityName = String
     typealias RelationName = String
     
-    fileprivate var relations: [EntityName: [EntityID: [RelationName: OrderedSet<EntityID>]]] = [:]
+    private var relations: [EntityName: [EntityID: [RelationName: OrderedSet<EntityID>]]] = [:]
 }
 
 extension RelationsRepository {
-    mutating func updateLinks<Parent, Child>(_ links: Links<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
+    mutating func updateLinks<Parent, Child>(_ links: Links<Parent, Child>) {
         
         links.direct.forEach { link in
-            saveLink(link)
+            updateLink(link)
         }
         
         links.inverse.forEach { link in
-            saveLink(link)
+            updateLink(link)
         }
     }
-    
-    func findChildren<Parent: EntityModel>(
+}
+
+extension RelationsRepository {
+    func getChildren<Parent: EntityModel>(
         for: Parent.Type,
         relationName: String,
         id: Parent.ID) -> OrderedSet<String> {
             
-            let key = String(reflecting: Parent.self)
+            let entityName = String(reflecting: Parent.self)
             
-            let entitiesRelations = relations[key] ?? [:]
+            let entitiesRelations = relations[entityName] ?? [:]
             let entityRelation = entitiesRelations[id.description] ?? [:]
             let relationsForName = entityRelation[relationName] ?? []
             return relationsForName
-        }
+    }
+    
+    private mutating func setChildren<Parent: EntityModel>(
+        for: Parent.Type,
+        relationName: String,
+        id: Parent.ID,
+        relations: OrderedSet<String>) {
+            
+            let entityName = String(reflecting: Parent.self)
+            
+            var entitiesRelations = self.relations[entityName] ?? [:]
+            var entityRelation = entitiesRelations[id.description] ?? [:]
+            
+            entityRelation[relationName] = relations
+            entitiesRelations[id.description] = entityRelation
+            self.relations[entityName] = entitiesRelations
+    }
 }
 
 private extension RelationsRepository {
-    
-    mutating func setChildren<Parent: EntityModel>(for: Parent.Type,
-                                                   relationName: String,
-                                                   id: Parent.ID,
-                                                   relations: OrderedSet<String>) {
+    mutating func updateLink<Parent, Child>(_ link: Link<Parent, Child>) {
         
-        let key = String(reflecting: Parent.self)
-        
-        var entitiesRelations = self.relations[key] ?? [:]
-        var entityRelation = entitiesRelations[id.description] ?? [:]
-        
-        entityRelation[relationName] = relations
-        entitiesRelations[id.description] = entityRelation
-        self.relations[key] = entitiesRelations
-    }
-    
-    mutating func saveLink<Parent, Child>(_ link: Link<Parent, Child>) where Parent: EntityModel, Child: EntityModel {
-        
-        var existingRelations = findChildren(
+        var existingRelations = getChildren(
             for: Parent.self,
             relationName: link.attribute.name,
             id: link.parent

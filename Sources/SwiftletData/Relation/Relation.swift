@@ -113,7 +113,7 @@ extension Relation {
 }
 
 extension Relation {
-    var directLinkSaveOption: Option {
+    var directLinkUpdateOption: Option {
         switch state {
         case .entity, .id, .entities, .ids:
             return .replace
@@ -124,7 +124,7 @@ extension Relation {
         }
     }
     
-    var inverseLinkSaveOption: Option {
+    var inverseLinkUpdateOption: Option {
         Cardinality.isToMany ? .append : .replace
     }
 }

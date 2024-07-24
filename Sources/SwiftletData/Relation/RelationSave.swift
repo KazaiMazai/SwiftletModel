@@ -75,7 +75,7 @@ private extension EntityModel {
         in context: inout Context) {
             
         let children = relationIds(keyPath)
-        switch relation(keyPath).directLinkSaveOption {
+        switch relation(keyPath).directLinkUpdateOption {
         case .append:
             context.updateLinks(link(children, keyPath, inverse: inverse))
         case .replace, .remove:
@@ -113,7 +113,7 @@ private extension EntityModel {
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkSaveOption
+                    updateOption: relation(keyPath).directLinkUpdateOption
                 )
             )],
             inverse: []
@@ -133,7 +133,7 @@ private extension EntityModel {
                 children: children,
                 attribute: LinkAttribute(
                     name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkSaveOption
+                    updateOption: relation(keyPath).directLinkUpdateOption
                 )
             )],
             inverse: children.map { child in
@@ -142,7 +142,7 @@ private extension EntityModel {
                     children: [id],
                     attribute: LinkAttribute(
                         name: inverse.name,
-                        updateOption: relation(keyPath).inverseLinkSaveOption
+                        updateOption: relation(keyPath).inverseLinkUpdateOption
                     )
                 )
             }

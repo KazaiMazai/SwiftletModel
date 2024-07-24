@@ -19,7 +19,6 @@ enum RelationEncodingStrategy {
     case explicitKeyedContainer
 }
 
-
 struct RelationDecodingStrategy: OptionSet {
     static let `default`: Self = [.plain]
     static let userInfoKey = CodingUserInfoKey(rawValue: "RelationDecodingStrategy.userInfoKey")!

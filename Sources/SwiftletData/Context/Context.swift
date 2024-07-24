@@ -71,6 +71,6 @@ extension Context {
 
 extension Context {
     func findChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
-        relationsRepository.findChildren(for: type, relationName: relationName, id: id)
+        relationsRepository.getChildren(for: type, relationName: relationName, id: id)
     }
 }
