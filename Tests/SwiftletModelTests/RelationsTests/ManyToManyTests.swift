@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftletData
+@testable import SwiftletModel
 
 final class ManyToManyTests: XCTestCase {
     var context = Context()

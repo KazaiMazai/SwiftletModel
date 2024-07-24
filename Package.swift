@@ -4,11 +4,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftletData",
+    name: "SwiftletModel",
     products: [
         .library(
-            name: "SwiftletData",
-            targets: ["SwiftletData"]),
+            name: "SwiftletModel",
+            targets: ["SwiftletModel"]),
     ],
     dependencies: [
         .package(
@@ -18,12 +18,12 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SwiftletData",
+            name: "SwiftletModel",
             dependencies: [
                 .product(name: "Collections", package: "swift-collections")
             ]),
         .testTarget(
-            name: "SwiftletDataTests",
-            dependencies: ["SwiftletData"]),
+            name: "SwiftletModelTests",
+            dependencies: ["SwiftletModel"]),
     ]
 )
