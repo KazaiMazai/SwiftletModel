@@ -12,11 +12,11 @@ public protocol EntityModel {
     
     var id: ID { get }
     
-    mutating func normalize()
-    
     func delete(from context: inout Context) throws
     
     func save(to context: inout Context) throws
+    
+    mutating func normalize()
 }
 
 extension EntityModel {

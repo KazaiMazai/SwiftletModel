@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct EntitiesRepository {
     typealias EntityID = String
     typealias EntityName = String
