@@ -83,16 +83,10 @@ public extension Relation where Cardinality == Relations.ToMany {
     }
 }
 
-extension Relation {
+public extension Relation {
     
-    public mutating func normalize() {
+    mutating func normalize() {
         state.normalize()
-    }
- 
-    func normalized() -> Self {
-        var copy = self
-        copy.normalize()
-        return copy
     }
 }
 
