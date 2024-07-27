@@ -109,18 +109,16 @@ public extension Query {
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        fragment: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-        resolveThen {
-            var entity = $0
-            let relatedEntities = related(keyPath)
-                .map { nested($0) }
-                .compactMap { $0.resolve() }
+        with(keyPath, fragment: false, nested: nested)
+    }
+    
+    func with<Child, Directionality, Constraints>(
+        fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
-            entity[keyPath: keyPath] = fragment ? .fragment(relatedEntities) : .relation(relatedEntities)
-            return entity
-        }
+        with(keyPath, fragment: true, nested: nested)
     }
     
     func id<Child, Directionality, Constraints>(
@@ -135,8 +133,39 @@ public extension Query {
     }
     
     func ids<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
+        
+       ids(keyPath, fragment: false)
+    }
+    
+    func ids<Child, Directionality, Constraints>(
+        fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
+        
+       ids(keyPath, fragment: true)
+    }
+}
+
+private extension Query {
+    
+    func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        fragment: Bool = false) -> Query {
+        fragment: Bool = false,
+        nested: @escaping QueryModifier<Child>) -> Query {
+            
+        resolveThen {
+            var entity = $0
+            let relatedEntities = related(keyPath)
+                .map { nested($0) }
+                .compactMap { $0.resolve() }
+            
+            entity[keyPath: keyPath] = fragment ? .fragment(relatedEntities) : .relation(relatedEntities)
+            return entity
+        }
+    }
+    
+    func ids<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        fragment: Bool) -> Query {
         
         resolveThen {
             var entity = $0
