@@ -16,8 +16,11 @@ public struct Context {
 }
 
 public extension Context {
+    func ids<T: EntityModel>(_ entityType: T.Type) -> [T.ID] {
+        entitiesRepository.ids(T.self)
+    }
     
-    func all<T>() -> [T] {
+    func all<T: EntityModel>() -> [T] {
         entitiesRepository.all()
     }
     
