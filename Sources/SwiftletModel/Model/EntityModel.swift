@@ -29,7 +29,7 @@ public extension EntityModel {
 
 public extension EntityModel {
     func query(in context: Context) -> Query<Self> {
-        Query(context: context, id: id)
+        Self.query(id, in: context)
     }
     
     static func query(_ id: ID, in context: Context) -> Query<Self> {
@@ -38,6 +38,10 @@ public extension EntityModel {
     
     static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
         context.query(ids)
+    }
+    
+    static func query(in context: Context) -> [Query<Self>] {
+        context.query()
     }
 }
 
