@@ -821,6 +821,31 @@ try message.save(to: &context)
 
 ```
 
+## Type Safety
+
+Relations rely heavily on principles of Type-Driven design under the hood.
+They are implemented so that there is very little chance of misuse. 
+
+```swift
+struct Relation<Entity, Directionality, Cardinality, Constraints> { ... }
+```
+
+All you can do with relation is defined by its Directionality, Cardinality, and Constraint types.
+
+Any mistake will be spotted at compile time:
+
+- You cannot accidentally set an explicit nil to the required relation
+- You cannot establish a wrong relation by making it mutual on one side and one-way on another
+- You can't save relation in a wrong way
+- You cannot ever confuse to-one and to-many relations 
+
+
+This also means that you cannot accidentally break it.
+
+If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
+is a wonderful series of articles about it.
+ 
+
 ##  Installation
 
 You can add SwiftletModel to an Xcode project as an SPM package:
