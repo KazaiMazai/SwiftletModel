@@ -22,13 +22,14 @@ The ideal SwiftletModel use case is when: 
 - You have reasons to avoid using heavy-duty local storage like CoreData/SwiftData/Realm/SQLite
   
 ## Table of Contents
+
 - [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
   * [Related models query](#related-models-query)
 - [Codable Conformance](#codable-conformance)
-- [Kinds of Relations](#kinds-of-relations)
+- [Relation Types](#relation-types)
   * [HasOne](#hasone)
   * [BelongsTo](#belongsto)
   * [HasMany](#hasmany)
@@ -42,9 +43,8 @@ The ideal SwiftletModel use case is when: 
     + [Advanced Merge Strategies](#advanced-merge-strategies)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
+- [Installation](#installation)
+- [Licensing](#licensing)
 
 ## Model Definitions
 
@@ -356,7 +356,7 @@ print(userJSON)
 </details>
 
 
-## Kinds of Relations
+## Relation Types
 
 
 SwiftletModel supports the following types of relations:
@@ -777,7 +777,6 @@ It allows to implement a patching update policy for relations by default: when e
 This allows to safely update models and merge it with the exising data:
 
 
-
 ```swift
 
 /**
@@ -813,3 +812,15 @@ let message = Message(
 try message.save(to: &context)
 
 ```
+
+##  Installation
+
+You can add SwiftletModel to an Xcode project by adding it as a package dependency.
+
+- From the File menu, select Add Package Dependencies...
+- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
+- Profit
+
+## Licensing
+
+SwiftletModel is licensed under MIT license.
