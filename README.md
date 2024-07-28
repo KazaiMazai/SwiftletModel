@@ -345,23 +345,27 @@ try message.save(to: &context)
 
 ### BelongsTo
 
-`BelongsTo` is a required to-one relation. 
+`@BelongsTo` is a required to-one relation. 
 
 
 ```swift
-//It can be either one way:
+/**
+It can be either one way: 
+*/
 
 @BelongsTo
 var author: User? = nil
     
 
-//Or mutual: 
+//or mutual: 
 
 @BelongsTo(\.chat, inverse: \.messages)
 var chat: Chat?
 
-//Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
-
+/**
+Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
+Inverse relation can be either to-one or to-many and must be mutual.
+*/
 ```
 
 
@@ -373,6 +377,7 @@ Required relation means that it cannot be explicitly nullified.
 
 ### HasMany
 
+`@HasMany` is a required to-many relation. 
 
 ```swift
 //Like other relations it can be either one way:
@@ -381,7 +386,7 @@ Required relation means that it cannot be explicitly nullified.
 var viewedBy: [User]? = nil
 
  
-//Or mutual
+//or mutual
 
 @HasMany(\.replies, inverse: \.replyTo)
 var replies: [Message]?
@@ -390,6 +395,7 @@ var replies: [Message]?
 
 ```
  
+Basically, it's required because there is no reason for to-many relation to have an explicit nil. 
 
 
 ## How incomplete data is handled
