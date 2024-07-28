@@ -97,17 +97,16 @@ extension Message: EntityModel {
 
 Let's create a chat instance and put some messages into it. 
 
-In order to do it we first need to create a context:
 
 ```swift
+
+//In order to do it we first need to create a context:
+
 var context = Context()
+ 
 
-```
+//Now lets create a chat with some messages
 
-Now lets create a chat with some messages and save it.
-
-
-```swift
 
 var context = Context()
 
@@ -133,6 +132,9 @@ let chat = Chat(
     admins: .relation(ids: ["1"])
 )
 
+//And save it:
+
+
 try chat.save(to: &context)
 
 
@@ -150,11 +152,12 @@ At this point our chat and the related entities will be saved to the context.
 ## Query Entities
 
 
-Now let's query a user his chat, messages and replies.
+Now let's query a user his chats, messages and replies with authors and ids of the replied messages...
 
-Wait but we've just saved a chat with users and messages
+Wait but we've just saved a chat with users and messages, WTF?
 
-Exactly. That's the point of bidirectional links.
+Exactly. That's the point of bidirectional links:
+
 
 ```
 let user = User
@@ -301,64 +304,65 @@ They are represented by the following propery wrappers:
 
 HasOne is an optional to-one relation. 
 
-It can be either one way:
-
 ```swift
+//It can be either one way:
+
 @HasOne
 var user: User? = nil
     
-```
-One-way relation requires to provide a default value which is always nil. 
+//One-way relation requires to provide a default value which is always nil. 
 
 
-Or mutual: 
+//Or it can be mutual: 
 
-```
 @HasOne(\.attachment, inverse: \.message)
 var attachment: Attachment?
 
+//Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
+
 ```
-Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
 
 
 
 The optionality of the Relation means that it can be explicitly nullified:
 
 ```swift
-Message(
+
+let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
     author: .relation(id: "1"),
     attachment: .null
-),
+)
+
+//When this message is saved, it will nullify the existing message-attachment relation in the context.
+
+try message.save(to: &context)
+
 ```
 
-When this message is saved, it will nillify the existing relation in the context.
 
 
 ### BelongsTo
 
 `BelongsTo` is a required to-one relation. 
 
-It can be either one way:
 
 ```swift
+//It can be either one way:
+
 @BelongsTo
 var author: User? = nil
     
-```
 
+//Or mutual: 
 
-Or mutual: 
-
-```swift
 @BelongsTo(\.chat, inverse: \.messages)
 var chat: Chat?
 
+//Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
+
 ```
-
-Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
-
 
 
 If `BelongsTo` is a required relation, why is the property still optional? 
@@ -369,24 +373,23 @@ Required relation means that it cannot be explicitly nullified.
 
 ### HasMany
 
-Like other relations it can be either one way:
 
 ```swift
+//Like other relations it can be either one way:
+
 @HasMany
 var viewedBy: [User]? = nil
 
-```
+ 
+//Or mutual
 
-Or mutual. 
-
-```swift
 @HasMany(\.replies, inverse: \.replyTo)
 var replies: [Message]?
-  
+
+//Mutual relation requires to provide a witness to ensure that it is really mutual: direct and inverse key paths.
+
 ```
-
-Mutual relation requires to provide a witness to ensure that it is really mutual: direct and inverse key paths.
-
+ 
 
 
 ## How incomplete data is handled
@@ -405,54 +408,49 @@ To-one relation can be either optional: `@HasOne` or required: `@BelongsTo`
 
 Basically, data can be missing for at least 3 reasons:
 
-1. The business logic of the app implies that the relation can be missing.
+1. The business logic of the app implies that the relation can be missing. For example: message may not have an attachment.
 
-For example: message may not have an attachment.
+2. Data is missing because we haven't loaded it yet. The source can be a backend or even a local storage, it doesn't matter. There is almost certainly a state when app haven't received the data for technical reasons yet.
 
-2. Data is missing because we haven't loaded it yet. 
-
-The source can be a backend or even a local storage, it doesn't matter. There is almost certainly a state when app haven't received the
-data for technical reasons yet.
+3. The logic of obtaining the data implies that some of the data will be missing. For example: a tipical app flow implies that we obtain a list of chats from the backend. Then we get a list messages for the chat. Even though message cannot do without chat, message model will hardly ever contain a chat model because it will make the shape of the data weird.
 
 
-3. The logic of obtaining the data implies that some of the data will be missing.
-
-For example.
-
-A tipical app flow implies that we obtain a list of chats from the backend. 
-Then we get a list messages for the chat. 
-Even though message cannot do without chat, message model will hardly ever contain a chat model because it will make the shape of the data weird.
-
-
-When we deal with missing data it's hard to figure out wether its missing for reason and it is an explicit nil. Or it's missing because we haven't obtainer it yet.
+When we deal with missing data it's hard to figure out its missing reason. 
+It can always be an explicit nil or maybe not.
 
 That's why SwiftletModel's relations properties are always optional. 
-It allows to implement PATCH relations policy: when enitites with missing data about relations are saved to the storage they don't overwrite or nullify existing relations.
+It allows to implement patching update relations policy by default: when enitites with missing relations data are saved to the storage they don't overwrite or nullify existing relations.
 
 
 This allows to safely update models and merge it with the exising data:
 
-When this message is saved it **will NOT overwrite** existing relations to attachments if there are any:
+When this message is saved it **WILL NOT OVERWRITE** existing relations to attachments if there are any:
+
 ```swift
-Message(
+let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
     author: .relation(id: "1"),
 )
 
-```
+try message.save(to: &context)
 
+```
 
 HasOne allows to set the relation as an explicit nil:  
 
 ```swift
-Message(
+
+let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
     author: .relation(id: "1"),
     attachment: .null
 )
+
+try message.save(to: &context)
+
 ```
 
-This IS a destructive operation becuase when this message is saved it **will overwrite**  existing relations to the attachment by nullifing them
+When message with an explicit nil is saved it **WILL OVERWRITE**  existing relations to the attachment by nullifing them:
  
