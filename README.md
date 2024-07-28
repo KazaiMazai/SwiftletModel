@@ -64,23 +64,11 @@ They define how you model will be normalized, saved and deleted:
 extension Message: EntityModel {
 
     /**
-    We need to `normalize()` all relations. 
-    This method is be called when entity is saved to context.
-    */
+    There are a few things to be done in save(...)
+      - Current instance should ne inserted into context
+      - Related entities should be saved. 
     
-    mutating func normalize() {
-        $author.normalize()
-        $chat.normalize()
-        $attachment.normalize()
-        $replies.normalize()
-        $replyTo.normalize()
-        $viewedBy.normalize()
-    }
-    
-    /**
-    Related entities should be saved. 
-    Depending on the relation type 
-    inverse relation kaypath may be reqiured.
+    Depending on the relation type inverse relation kaypath may be reqiured.
     */
     
     func save(to context: inout Context) throws {
@@ -95,22 +83,39 @@ extension Message: EntityModel {
     
     /**
     Delete method defines the detele strategy for the current entity 
+    - Current instance should be removed from context
     - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
-    - If we need to just nullify relation, `detach(...)` is an equivalent of it.
+    - We need to nullify relation with a `detach(...)` method
     
     Depending on the relation type 
     inverse relation kaypath may be reqiured.
     */
     
     func delete(from context: inout Context) throws {
-        try delete(\.$attachment, inverse: \.$message, from: &context)
         context.remove(Message.self, id: id)
+        try delete(\.$attachment, inverse: \.$message, from: &context)
         detach(\.$author, in: &context)
         detach(\.$chat, inverse: \.$messages, in: &context)
         detach(\.$replies, inverse: \.$replyTo, in: &context)
         detach(\.$replyTo, inverse: \.$replies, in: &context)
         detach(\.$viewedBy, in: &context)
     }
+    
+    
+    /**
+    All relations should be normalized explicitly.
+    This method will be called when entity is saved to context.
+    */
+    
+    mutating func normalize() {
+        $author.normalize()
+        $chat.normalize()
+        $attachment.normalize()
+        $replies.normalize()
+        $replyTo.normalize()
+        $viewedBy.normalize()
+    }
+    
 }
 ```
 
