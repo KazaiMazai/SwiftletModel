@@ -12,15 +12,15 @@ SwiftletModel provides a way to implement the rich domain model of your app hass
 - Denormalize to any shape on the fly
 - Incomplete data handling
 
-Almost like an ORM but without a database. 
+Almost like an ORM but without a database. 
 
 ## Why
 
-The ideal SwiftletModel use case is when: 
-- The domain model of the app is complicated, 
-- All the data comes from the backend, 
-- You have reasons to avoid using a heavy duty local storage like CoreData/SwiftData/Realm/SQLite
-  
+The ideal SwiftletModel use case is when: 
+- The domain model of the app is complicated, 
+- All the data comes from the backend, 
+- You have reasons to avoid using heavy-duty local storage like CoreData/SwiftData/Realm/SQLite
+  
 
 
 ## Model Definitions
@@ -30,124 +30,124 @@ First, we define the model with all kinds of relations:
 ```swift
 
 struct Message: EntityModel, Codable {
-    let id: String
-    let text: String
-    
-    @BelongsTo
-    var author: User? = nil
-    
-    @BelongsTo(\.chat, inverse: \.messages)
-    var chat: Chat?
-    
-    @HasOne(\.attachment, inverse: \.message)
-    var attachment: Attachment?
-    
-    @HasMany(\.replies, inverse: \.replyTo)
-    var replies: [Message]?
-    
-    @HasOne(\.replyTo, inverse: \.replies)
-    var replyTo: Message?
-    
-    @HasMany
-    var viewedBy: [User]? = nil
+    let id: String
+    let text: String
+    
+    @BelongsTo
+    var author: User? = nil
+    
+    @BelongsTo(\.chat, inverse: \.messages)
+    var chat: Chat?
+    
+    @HasOne(\.attachment, inverse: \.message)
+    var attachment: Attachment?
+    
+    @HasMany(\.replies, inverse: \.replyTo)
+    var replies: [Message]?
+    
+    @HasOne(\.replyTo, inverse: \.replies)
+    var replyTo: Message?
+    
+    @HasMany
+    var viewedBy: [User]? = nil
 }
 
 ```
 
-Then we implement EntityModel protocol requirements. 
+Then we implement EntityModel protocol requirements. 
 
-Save method defines how the model will be saved: 
-  - Current instance should ne inserted into context
-  - Related entities should be saved with their relations Depending on the relation inverse 
-  relation kaypath may be reqiured.
-  
+The save method defines how the model will be saved: 
+  - Current instance should be inserted into context
+  - Related entities should be saved with their relations Depending on the relation inverse 
+  relation keypath may be required.
+  
 The method is throwing to have some room for validations in case of need:
 
 ```swift
 
 func save(to context: inout Context) throws {
-    context.insert(self)
-    try save(\.$author, to: &context)
-    try save(\.$chat, inverse: \.$messages, to: &context)
-    try save(\.$attachment, inverse: \.$message, to: &context)
-    try save(\.$replies, inverse: \.$replyTo, to: &context)
-    try save(\.$replyTo, inverse: \.$replies, to: &context)
-    try save(\.$viewedBy, to: &context)
+    context.insert(self)
+    try save(\.$author, to: &context)
+    try save(\.$chat, inverse: \.$messages, to: &context)
+    try save(\.$attachment, inverse: \.$message, to: &context)
+    try save(\.$replies, inverse: \.$replyTo, to: &context)
+    try save(\.$replyTo, inverse: \.$replies, to: &context)
+    try save(\.$viewedBy, to: &context)
 }
 ```
 
-Delete method defines the delete strategy for the entity 
-- Current instance should be removed from context
-- We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
+The delete method defines the delete strategy for the entity 
+- Current instance should be removed from the context
+- We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
 - We can nullify relations with a `detach(...)` method
 
-The method is also throwing to be able to perfom some additional checks before deletion 
+The method is also throwing to be able to perform some additional checks before deletion 
 and throw an error if something has gone wrong.
- 
+ 
 
-```swift    
+```swift    
 func delete(from context: inout Context) throws {
-    context.remove(Message.self, id: id)
-    detach(\.$author, in: &context)
-    detach(\.$chat, inverse: \.$messages, in: &context)
-    detach(\.$replies, inverse: \.$replyTo, in: &context)
-    detach(\.$replyTo, inverse: \.$replies, in: &context)
-    detach(\.$viewedBy, in: &context)
-    try delete(\.$attachment, inverse: \.$message, from: &context)
+    context.remove(Message.self, id: id)
+    detach(\.$author, in: &context)
+    detach(\.$chat, inverse: \.$messages, in: &context)
+    detach(\.$replies, inverse: \.$replyTo, in: &context)
+    detach(\.$replyTo, inverse: \.$replies, in: &context)
+    detach(\.$viewedBy, in: &context)
+    try delete(\.$attachment, inverse: \.$message, from: &context)
 }
 ```
 
-All relations should be normalized in `normalize()`. The method will be called when entity is saved to context.
+All relations should be normalized in `normalize()`. The method will be called when the entity is saved to context.
 
 ```swift
 mutating func normalize() {
-    $author.normalize()
-    $chat.normalize()
-    $attachment.normalize()
-    $replies.normalize()
-    $replyTo.normalize()
-    $viewedBy.normalize()
+    $author.normalize()
+    $chat.normalize()
+    $attachment.normalize()
+    $replies.normalize()
+    $replyTo.normalize()
+    $viewedBy.normalize()
 }
 ```
 
 
 ## How to Save Entities
 
-Now let's create a chat instance and put some messages into it. 
-In order to do it we need to create a context first:
+Now let's create a chat instance and put some messages into it. 
+To do it we need to create a context first:
 
 
 ```swift
 var context = Context()
 ```
 
-Now lets create a chat with some messages
+Now let's create a chat with some messages.
 
 ```swift
 let chat = Chat(
-    id: "1",
-    users: .relation([
-        User(id: "1", name: "Bob"),
-        User(id: "2", name: "Alice")
-    ]),
-    messages: .relation([
-        Message(
-            id: "1",
-            text: "Any thoughts on SwiftletModel?",
-            author: .relation(id: "1")
-        ),
-        
-        Message(
-            id: "1",
-            text: "Yes.",
-            author: .relation(id: "2")
-        )
-    ]),
-    admins: .relation(ids: ["1"])
+    id: "1",
+    users: .relation([
+        User(id: "1", name: "Bob"),
+        User(id: "2", name: "Alice")
+    ]),
+    messages: .relation([
+        Message(
+            id: "1",
+            text: "Any thoughts on SwiftletModel?",
+            author: .relation(id: "1")
+        ),
+        
+        Message(
+            id: "1",
+            text: "Yes.",
+            author: .relation(id: "2")
+        )
+    ]),
+    admins: .relation(ids: ["1"])
 )
 ```
 
-Now let's save chat to the context
+Now let's save chat to the context.
 
 
 ```swift
@@ -157,9 +157,9 @@ try chat.save(to: &context)
 ```
 
 Just look at this. Instead of providing the full entities everywhere...We need to provide them at least somewhere!
-In other cases we can just put ids and it will be enough to establish proper relations.
+In other cases, we can just put ids and it will be enough to establish proper relations.
 
-At this point our chat and the related entities will be saved to the context.
+At this point, our chat and the related entities will be saved to the context.
 
 - All entities will be normalized so we don't have to care about duplication.
 - Bidirectional links will be managed.
@@ -172,17 +172,17 @@ At this point our chat and the related entities will be saved to the context.
 Let's query something. For example, a User with the following nested models:
 
 ```yaml
-User 
-- chats 
-  - messages 
-    - replies 
-        - authorUser 
-        - replyToMessageId
-    - authorId
-    - chatId
-  - users
-  - adminIds
-  
+User 
+- chats 
+  - messages 
+    - replies 
+        - authorUser 
+        - replyToMessageId
+    - authorId
+    - chatId
+  - users
+  - adminIds
+  
 ```
 
 It can be done with the following syntax:
@@ -191,29 +191,29 @@ It can be done with the following syntax:
 ```swift
 
 let user = User
-    .query("1", in: context)
-    .with(\.$chats) {
-        $0.with(\.$messages) {
-            $0.with(\.$replies) {
-                $0.with(\.$author)
-                  .id(\.$replyTo)
-            }
-            .id(\.$author)
-            .id(\.$chat)
-        }
-        .with(\.$users)
-        .ids(\.$admins)
-    }
-    .resolve()
+    .query("1", in: context)
+    .with(\.$chats) {
+        $0.with(\.$messages) {
+            $0.with(\.$replies) {
+                $0.with(\.$author)
+                  .id(\.$replyTo)
+            }
+            .id(\.$author)
+            .id(\.$chat)
+        }
+        .with(\.$users)
+        .ids(\.$admins)
+    }
+    .resolve()
 ```
 
 *Wait but we've just saved a chat with users and messages.
 Now we are querying things from another end, WTF?*
 
-*Exactly. That's the point of bidirectional links and normalizaion.*
+*Exactly. That's the point of bidirectional links and normalization.*
 
-When `resolve()` is called all entities are pulled from the context storage 
-and put in its place according the nested shape in denormalized form.
+When `resolve()` is called all entities are pulled from the context storage 
+and put in its place according to the nested shape in denormalized form.
 
 ### Related models query
 
@@ -222,15 +222,15 @@ We can also query related items directly:
 ```swift
 
 let userChats: [Chat] = User
-    .query("1", in: context)
-    .related(\.$chats)
-    .resolve()
-    
+    .query("1", in: context)
+    .related(\.$chats)
+    .resolve()
+    
 ```
 
 ## Codable Conformance
 
-Since models implemented as plain structs we get codable out of the box.
+Since models are implemented as plain structs we get codable out of the box.
 
 
 ```swift
@@ -248,83 +248,83 @@ print(userJSON)
 
 ```
 {
-  "adminOf" : null,
-  "chats" : [
-    {
-      "admins" : [
-        {
-          "id" : "1"
-        }
-      ],
-      "id" : "1",
-      "messages" : [
-        {
-          "attachment" : null,
-          "author" : {
-            "id" : "1"
-          },
-          "chat" : {
-            "id" : "1"
-          },
-          "id" : "1",
-          "replies" : [
-            {
-              "attachment" : null,
-              "author" : {
-                "adminOf" : null,
-                "chats" : null,
-                "id" : "2",
-                "name" : "Alice"
-              },
-              "chat" : null,
-              "id" : "2",
-              "replies" : null,
-              "replyTo" : {
-                "id" : "1"
-              },
-              "text" : "Yes.",
-              "viewedBy" : null
-            }
-          ],
-          "replyTo" : null,
-          "text" : "Any thoughts on SwiftletModel?",
-          "viewedBy" : null
-        },
-        {
-          "attachment" : null,
-          "author" : {
-            "id" : "2"
-          },
-          "chat" : {
-            "id" : "1"
-          },
-          "id" : "2",
-          "replies" : [
+  "adminOf" : null,
+  "chats" : [
+    {
+      "admins" : [
+        {
+          "id" : "1"
+        }
+      ],
+      "id" : "1",
+      "messages" : [
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "1"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "1",
+          "replies" : [
+            {
+              "attachment" : null,
+              "author" : {
+                "adminOf" : null,
+                "chats" : null,
+                "id" : "2",
+                "name" : "Alice"
+              },
+              "chat" : null,
+              "id" : "2",
+              "replies" : null,
+              "replyTo" : {
+                "id" : "1"
+              },
+              "text" : "Yes.",
+              "viewedBy" : null
+            }
+          ],
+          "replyTo" : null,
+          "text" : "Any thoughts on SwiftletModel?",
+          "viewedBy" : null
+        },
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "2"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "2",
+          "replies" : [
 
-          ],
-          "replyTo" : null,
-          "text" : "Yes.",
-          "viewedBy" : null
-        }
-      ],
-      "users" : [
-        {
-          "adminOf" : null,
-          "chats" : null,
-          "id" : "1",
-          "name" : "Bob"
-        },
-        {
-          "adminOf" : null,
-          "chats" : null,
-          "id" : "2",
-          "name" : "Alice"
-        }
-      ]
-    }
-  ],
-  "id" : "1",
-  "name" : "Bob"
+          ],
+          "replyTo" : null,
+          "text" : "Yes.",
+          "viewedBy" : null
+        }
+      ],
+      "users" : [
+        {
+          "adminOf" : null,
+          "chats" : null,
+          "id" : "1",
+          "name" : "Bob"
+        },
+        {
+          "adminOf" : null,
+          "chats" : null,
+          "id" : "2",
+          "name" : "Alice"
+        }
+      ]
+    }
+  ],
+  "id" : "1",
+  "name" : "Bob"
 }
 ```
 
@@ -341,7 +341,7 @@ SwiftletModel supports the following types of relations:
 - To One & To Many
 - Optional & Required
 
-They are represented by the following propery wrappers:
+They are represented by the following property wrappers:
 - `@BelongsTo`
 - `@HasOne`
 - `@HasMany`
@@ -349,12 +349,12 @@ They are represented by the following propery wrappers:
 
 ### HasOne
 
-`@HasOne` is an optional to-one relation. 
+`@HasOne` is an optional to-one relation. 
 
 ```swift
 /**
-It can be either one way. One-way relation requires to provide a default value. 
-Actually, the default value will be always nil. 
+It can be either one way. One-way relation requires providing a default value. 
+Actually, the default value will be always nil. 
 */
 
 @HasOne
@@ -362,7 +362,7 @@ var user: User? = nil
 
 
 /**
-It can be mutual. Mutual relation requires to provide a witness to ensure 
+It can be mutual. Mutual relation requires providing a witness to ensure 
 that it is indeed mutual: direct and inverse key paths.
 */
 
@@ -373,7 +373,7 @@ var attachment: Attachment?
 
 
 
-The optionality of the Relation means that it can be explicitly nullified. 
+The optionality of the Relation means that it can be explicitly nullified. 
 (See: [Handling missing Data for to-one Relations](#handling-missing-data-for-to-one-relations))
 
 ```swift
@@ -383,10 +383,10 @@ the existing message-attachment relation in the context.
 */
 
 let message = Message(
-    id: "1",
-    text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
-    attachment: .null
+    id: "1",
+    text: "Any thoughts on SwiftletModel?",
+    author: .relation(id: "1"),
+    attachment: .null
 )
 
 
@@ -396,21 +396,21 @@ try message.save(to: &context)
 
 ### BelongsTo
 
-`@BelongsTo` is a required to-one relation. 
+`@BelongsTo` is a required-to-one relation. 
 
 
 ```swift
 /**
-It can be either one way: 
+It can be either one way: 
 */
 
 @BelongsTo
 var author: User? = nil
-    
+    
 
 /**
-It can be mutual. Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
-Inverse relation can be either to-one or to-many and must be mutual.
+It can be mutual. Mutual relation requires providing a witness to ensure that it is indeed mutual: direct and inverse key paths.
+Inverse relations can be either to-one or to-many and must be mutual.
 */
 
 @BelongsTo(\.chat, inverse: \.messages)
@@ -419,15 +419,15 @@ var chat: Chat?
 ```
 
 
-If `BelongsTo` is a required relation, why is the property still optional? 
-Relation properties are always optional becuase it's the way how SwiftletModel handles incomplete data. 
+If `BelongsTo` is a required relation, why is the property still optional? 
+Relation properties are always optional because it's the way how SwiftletModel handles incomplete data. 
 
 Required relation means that it cannot be explicitly nullified.
 
 
 ### HasMany
 
-`@HasMany` is a required to-many relation. 
+`@HasMany` is a required to-many relation. 
 
 ```swift
 /**
@@ -437,9 +437,9 @@ Like other relations it can be either one way:
 @HasMany
 var viewedBy: [User]? = nil
 
- 
+ 
 /**
-It can be mutual. Mutual relation requires to provide a witness 
+It can be mutual. Mutual relation requires to provide a witness 
 to ensure that it is really mutual: direct and inverse key paths.
 */
 
@@ -447,53 +447,53 @@ to ensure that it is really mutual: direct and inverse key paths.
 var replies: [Message]?
 
 ```
- 
-Basically, it's required because there is no reason for to-many relation to have an explicit nil. 
+ 
+Basically, it's required because there is no reason for to-many relations to have an explicit nil. 
 
 ## Establishing Relations
 
-Properies themselves are read-only. 
-However, relations can be set up through property wrapper's projected values.
+The properties themselves are read-only. 
+However, relations can be set up through the property wrapper's projected values.
 
 ### Setting to-one relations
 
 ```swift
 
 var message = Message(
-    id: "1",
-    text: "Howdy!"
+    id: "1",
+    text: "Howdy!"
 )
 
 /**
-Fot to-one relations, we can attach by directly setting relation:
+For to-one relations, we can attach by directly setting the relation:
 */
 message.$author = .relation(user)
 try message.save(to: &context)
 
 /**
-We can also attach by id. In that case 
+We can also attach by id. In that case 
 we need to make sure that both entities exist in the context
 */
- 
+ 
 message.$author = .relation(id: user.id)
 try message.save(to: &context)
 try user.save(to: &context)
 
 /**
-In relation is optional we can nullify it by setting it to explicit nil. 
-In that case existing relation will be destroyed on save. 
-However, if there was some related entity it will not be deleted. 
+If the relation is optional we can nullify it by setting it to explicit nil. 
+In that case, the existing relation will be destroyed on save. 
+However, if there was some related entity it will not be deleted. 
 */
- 
+ 
 message.$attachment = .null
 try message.save(to: &context)
 
 
 /**
-Setting relation to `none` will not have any affect on the stored data. 
+Setting the relation to `none` will not have any effect on the stored data. 
 This happens automatically during normalization when you save an entity:
 */
- 
+ 
 message.$attachment = .none
 try message.save(to: &context)
 
@@ -507,76 +507,75 @@ To-many relations can be set up exactly the same way:
 ```swift
 
 /**
-To-many relations can be set directly by providing an array of entities
+To-many relations can be set directly by providing an array of entities.
 */
 chat.$messages = .relation([message])
 try chat.save(to: &context)
 
 /**
-Array of ids will also work, but all entities should be additionaly saved to the context. 
+An array of ids will also work, but all entities should be additionally saved to the context. 
 */
 chat.$messages = .relation(ids: [message.id])
 try chat.save(to: &context)
-try message.save(to: &context)       
+try message.save(to: &context)       
 ```
 
-To-many relations support not only setting up new relations, 
+To-many relations support not only setting up new relations, 
 but also appending new relations to the existing ones. It can be done via `fragment(...)`
 
 (See: [Handling incomplete data for to-many Relations](#Handling-incomplete-data-for-to-many-relations))
- 
- 
+ 
+ 
 ```swift
 
 /**
-New to-many relations can be appended to the existing ones when set them as a fragment:
+New to-many relations can be appended to the existing ones when set as a fragment:
 */
 chat.$messages = .fragment([message])
 try chat.save(to: &context)
 
 /**
-Array of ids will also work, but all entities should be additionaly saved to the context. 
+An array of ids will also work, but all entities should be additionally saved to the context. 
 
 */
 chat.$messages = .fragment(ids: [message.id])
 try chat.save(to: &context)
-try message.save(to: &context)    
+try message.save(to: &context)    
 
 ```
 
 ### Saving Relations
 
-Saving entity with all related ones is possible thanks to the Entity save method:
+Saving an entity with all related ones is possible thanks to the Entity save method:
 
 ```swift
 
 extension User {
-    /**
-    Save with relation KeyPaths will save both related enitities and relations to them.
-    */
-    func save(to context: inout Context) throws {
-        context.insert(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &context)
-        try save(\.$adminOf, inverse: \.$admins, to: &context)
-    }
+    /**
+    Save with relation KeyPaths will save both related entities and relations to them.
+    */
+    func save(to context: inout Context) throws {
+        context.insert(self, options: User.patch())
+        try save(\.$chats, inverse: \.$users, to: &context)
+        try save(\.$adminOf, inverse: \.$admins, to: &context)
+    }
 }
 
 ```
 
 ### Removing Relations
 
-There several options to remove relations.
+There are several options to remove relations.
 
 ```swift
 /**
-We can detach entities. This will only destroy the relation between them while keeping enitites in the storage.
+We can detach entities. This will only destroy the relation between them while keeping entities in storage.
 */
 detach(\.$chats, inverse: \.$users, in: &context)
 
 
 /**
-We can delete related enitites. It only destroy the relation between. 
-The related entities will be also removed from storage with their `delete(...)` method.
+We can delete related entities. It only destroys the relationship between them.  The related entities will be also removed from storage with their `delete(...)` method.
 */
 
 try delete(\.$attachment, inverse: \.$message, from: &context)
@@ -606,33 +605,33 @@ SwiftletModel provides a few strategies to handle incomplete data for the cases:
 ### Handling incomplete Entity data
 
 When the service gets more mature, models often become bulky.
-We sometimes have to fetch them from different sources or deal with partial models data. 
+We sometimes have to fetch them from different sources or deal with partial model data. 
 
 SwiftletModel provides a reliable way to deal with incomplete model data via `MergeStrategy`.
-MergeStrategy defines how new enitites are merged with existing ones that we already have in the Context.
+MergeStrategy defines how new entities are merged with existing ones that we already have in the Context.
 
-Let's define a user model with an optional Profile. 
+Let's define a user model with an optional Profile. 
 
 ```swift
 
 extension User {
-    /**
-    Something heavy here that the backend does not serve for all requests.
-    */
-    struct Profile: Codable { ... }
+    /**
+    Something heavy here is that the backend does not serve for all requests.
+    */
+    struct Profile: Codable { ... }
 }
- 
+ 
 struct User: EntityModel, Codable {
-    let id: String
-    private(set) var name: String
-    private(set) var avatar: Avatar
-    private(set) var profile: Profile?
-    
-    @HasMany(\.chats, inverse: \.users)
-    var chats: [Chat]?
-    
-    @HasMany(\.adminOf, inverse: \.admins)
-    var adminOf: [Chat]?
+    let id: String
+    private(set) var name: String
+    private(set) var avatar: Avatar
+    private(set) var profile: Profile?
+    
+    @HasMany(\.chats, inverse: \.users)
+    var chats: [Chat]?
+    
+    @HasMany(\.adminOf, inverse: \.admins)
+    var adminOf: [Chat]?
 }
 ```
 
@@ -640,55 +639,55 @@ Let's define a patch `MergeStrategy`:
 
 ```swift
 extension User {
-    /**
-    This `MergeStrategy` will overwrite the exising users' profiles 
-    only if the new users' profiles are not nil.
-    */
-    static func patch() -> MergeStrategy<User> {
-        MergeStrategy(
-            .patch(\.profile)
-        )
-    }
+    /**
+    This `MergeStrategy` will overwrite the existing users' profiles 
+    only if the new users' profiles are not nil.
+    */
+    static func patch() -> MergeStrategy<User> {
+        MergeStrategy(
+            .patch(\.profile)
+        )
+    }
 }
 
 ```
 
-Now we can use the merge strategy in User's save method:
+Now we can use the merge strategy in the User's save method:
 
 ```swift
 extension User {
-    /**
-    The Default `MergeStrategy` for inserting enities into the Context is replace.
-    Here we provide patch strategy that will be patching users profile.
-    */
-    func save(to context: inout Context) throws {
-        context.insert(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &context)
-        try save(\.$adminOf, inverse: \.$admins, to: &context)
-    }
+    /**
+    The Default `MergeStrategy` for inserting entities into the Context is replaced.
+    Here we provide a patch strategy that will be patching users' profiles.
+    */
+    func save(to context: inout Context) throws {
+        context.insert(self, options: User.patch())
+        try save(\.$chats, inverse: \.$users, to: &context)
+        try save(\.$adminOf, inverse: \.$admins, to: &context)
+    }
 }
 
 ```
 
 #### Advanced Merge Strategies
 
-Merge strategy may include several properties
+Merge strategy may include several properties.
 
 ```swift
 
 MergeStrategy(
-    .patch(\.name),
-    .patch(\.profile),
-    .patch(\.avatar)
+    .patch(\.name),
+    .patch(\.profile),
+    .patch(\.avatar)
 )
 
 ```
-Merge strategy can be applied to arrays. 
+Merge strategy can be applied to arrays. 
 
 ```swift
 
 MergeStrategy(
-    .append(\.arrayOfSomething)
+    .append(\.arrayOfSomething)
 )
 ```
 
@@ -696,39 +695,39 @@ You can write your own merge strategy for any type:
 
 ```swift
 extension MergeStrategy {
-    /**
-    This is how property patch MergeStrategy looks like.
-    */
-    static func patch<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Optional<Value>>) -> MergeStrategy<Entity>   {
-        MergeStrategy<Entity> { old, new in
-            var new = new
-            new[keyPath: keyPath] = new[keyPath: keyPath] ?? old[keyPath: keyPath]
-            return new
-        }
-    }
+    /**
+    This is what the property patch MergeStrategy looks like.
+    */
+    static func patch<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Optional<Value>>) -> MergeStrategy<Entity>   {
+        MergeStrategy<Entity> { old, new in
+            var new = new
+            new[keyPath: keyPath] = new[keyPath: keyPath] ?? old[keyPath: keyPath]
+            return new
+        }
+    }
 }
 
 ```
 
 ### Handling incomplete data for to-many Relations
 
-We often have to deal with portional data. 
-If we have a collection of anything on the backend it will almost certanly be paginated.
+We often have to deal with proportional data. 
+If we have a collection of anything on the backend it will almost certainly be paginated.
 
 SwiftletModel provides a convenient way to deal with incomplete collections for to-many relations.
 
-When setting to-many relation it's possible to mark the collection as a fragment. 
-In that case all the related entities will be appended to the existing.
- 
+When setting to-many relation it's possible to mark the collection as a fragment. 
+In that case, all the related entities will be appended to the existing.
+ 
 ```swift
 
 /**
-New to-many relations can be appended 
+New to-many relations can be appended 
 to the existing ones when we set them as a fragment:
 */
 chat.$messages = .fragment([message])
 try chat.save(to: &context)
- 
+ 
 
 ```
 
@@ -739,18 +738,18 @@ To-one relation can be either optional: `@HasOne` or required: `@BelongsTo`
 
 Basically, data can be missing for at least 3 reasons:
 
-1. The business logic of the app allows the related enitity to be missing. For example: message may not have an attachment.
+1. The business logic of the app allows the related entity to be missing. For example: a message may not have an attachment.
 
-2. Data is missing because we haven't loaded it yet. If the source is a backend or even a local storage there is almost certainly a case when app haven't received the data yet. 
+2. Data is missing because we haven't loaded it yet. If the source is a backend or even a local storage there is almost certainly a case when the app haven't received the data yet. 
 
-3. The logic of obtaining the data implies that some of the data will be missing. For example: a tipical app flow where we obtain a list of chats from the backend. Then we get a list messages for the chat. Even though a message cannot exist without a chat, message model coming from the backend will hardly ever contain a chat model because it will make the shape of the data weird with a lot of duplication.
+3. The logic of obtaining the data implies that some of the data will be missing. For example: a typical app flow where we obtain a list of chats from the backend. Then we get a list of messages for the chat. Even though a message cannot exist without a chat, a message model coming from the backend will hardly ever contain a chat model because it will make the shape of the data weird with a lot of duplication.
 
 
-When we deal with missing data it's hard to figure out the reason why it's missing 
+When we deal with missing data it's hard to figure out the reason why it's missing. 
 It can always be an explicit nil or maybe not.
 
-That's why SwiftletModel's relations properties are always optional. 
-It allows to implement patching update relations policy by default: when enitites with missing relations are saved to the storage they don't overwrite or nullify existing relations.
+That's why SwiftletModel's relations properties are always optional. 
+It allows to implement a patching update policy for relations by default: when entities with missing relations are saved to the storage they don't overwrite or nullify existing relations.
 
 
 This allows to safely update models and merge it with the exising data:
@@ -760,36 +759,35 @@ This allows to safely update models and merge it with the exising data:
 ```swift
 
 /**
-When this message is saved it **WILL NOT OVERWRITE** 
+When this message is saved it **WILL NOT OVERWRITE** 
 existing relations to attachments if there are any:
 */
 let message = Message(
-    id: "1",
-    text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
+    id: "1",
+    text: "Any thoughts on SwiftletModel?",
+    author: .relation(id: "1"),
 )
 
 try message.save(to: &context)
 
 ```
 
-HasOne allows to set the relation as an explicit nil:  
+HasOne allows to set the relation as an explicit nil:  
 
 ```swift
 
 /**
-When message with an explicit nil 
-is saved it **WILL OVERWRITE** existing relations to the attachment by nullifing them:
+When a message with an explicit nil 
+is saved it **WILL OVERWRITE** existing relations to the attachment by nullifying them:
 */
 let message = Message(
-    id: "1",
-    text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
-    attachment: .null
+    id: "1",
+    text: "Any thoughts on SwiftletModel?",
+    author: .relation(id: "1"),
+    attachment: .null
 )
 
 
 try message.save(to: &context)
 
 ```
-
