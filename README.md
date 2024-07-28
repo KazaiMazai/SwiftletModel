@@ -535,8 +535,8 @@ chat.$messages = .fragment([message])
 try chat.save(to: &context)
 
 /**
-An array of ids will also work, but all entities should be additionally saved to the context. 
-
+An array of ids will also work, 
+but all entities should be additionally saved to the context. 
 */
 chat.$messages = .fragment(ids: [message.id])
 try chat.save(to: &context)
@@ -577,17 +577,16 @@ detach(\.$chats, inverse: \.$users, in: &context)
 /**
 We can delete related entities. It only destroys the relationship between them.  The related entities will be also removed from storage with their `delete(...)` method.
 */
-
 try delete(\.$attachment, inverse: \.$message, from: &context)
 
 
 /**
 We can explicitly nullify the relation. This is an equivalent of `detach(...)`
-
+*/
 message.$attachment = .null
 try message.save(to: &context)
 
-*/
+
 
 ```
 
