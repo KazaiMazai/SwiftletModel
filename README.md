@@ -17,8 +17,8 @@ Almost like an ORM but without a database. 
 ## Why
 
 The ideal SwiftletModel use case is when: 
-- The domain model of the app is complicated, 
-- All the data comes from the backend, 
+- The domain model of the app is complicated 
+- Backend is the source of truth
 - You have reasons to avoid using heavy-duty local storage like CoreData/SwiftData/Realm/SQLite
   
 ## Table of Contents
