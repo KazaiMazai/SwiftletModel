@@ -96,22 +96,16 @@ extension Message: EntityModel {
 ## Save Entities
 
 Let's create a chat instance and put some messages into it. 
+In order to do it we first need to create a context first:
 
 
 ```swift
+ar context = Context()
+```
 
-/**
-In order to do it we first need to create a context first:
-*/
-
-var context = Context()
- 
-
-/**
 Now lets create a chat with some messages
-*/
- 
 
+```swift
 let chat = Chat(
     id: "1",
     users: .relation([
@@ -133,13 +127,14 @@ let chat = Chat(
     ]),
     admins: .relation(ids: ["1"])
 )
+```
 
-/**
-And save it to the context
-*/
+Now let's save it to the context
+
+
+```swift
 
 try chat.save(to: &context)
-
 
 ```
 
@@ -155,15 +150,11 @@ At this point our chat and the related entities will be saved to the context.
 ## Query Entities
 
 
-Let's query something.
+Let's query something. For eg, User with the following nested models:
 
-
-```swift
-
-/**
-Let's query User with the following nested models:
- 
-- chats, 
+```yaml
+User 
+- chats 
   - messages 
     - replies 
         - authors 
@@ -172,8 +163,13 @@ Let's query User with the following nested models:
     - chatId
   - users
   - adminIds
-*/
+  
+```
 
+It can be done with the following syntax:
+
+
+```swift
 
 let user = User
     .query("1", in: context)
@@ -192,8 +188,9 @@ let user = User
     .resolve()
 ```
 
-*Wait but we've just saved a chat with users and messages, WTF?
-Exactly. That's the point of bidirectional links and normalizaion.*
+*Wait but we've just saved a chat with users and messages, WTF?*
+
+- Exactly. That's the point of bidirectional links and normalizaion.
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according the nested shape in denormalized form.
@@ -348,6 +345,10 @@ var attachment: Attachment?
 The optionality of the Relation means that it can be explicitly nullified:
 
 ```swift
+/**
+When this message is saved, it **will nullify**
+the existing message-attachment relation in the context.
+*/
 
 let message = Message(
     id: "1",
@@ -356,7 +357,6 @@ let message = Message(
     attachment: .null
 )
 
-//When this message is saved, it will nullify the existing message-attachment relation in the context.
 
 try message.save(to: &context)
 
