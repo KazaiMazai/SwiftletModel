@@ -188,9 +188,8 @@ let user = User
     .resolve()
 ```
 
-*Wait but we've just saved a chat with users and messages, WTF?*
-
-*Exactly. That's the point of bidirectional links and normalizaion.*
+*Wait but we've just saved a chat with users and messages, WTF?
+Exactly. That's the point of bidirectional links and normalizaion.*
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according the nested shape in denormalized form.
@@ -343,7 +342,7 @@ var attachment: Attachment?
 
 
 The optionality of the Relation means that it can be explicitly nullified. 
-(See: [Handling missing Data for to-one Relations](###Handling-missing Data-for-to-one-Relations))
+(See: [Handling missing Data for to-one Relations](#handling-missing-data-for-to-one-relations))
 
 ```swift
 /**
