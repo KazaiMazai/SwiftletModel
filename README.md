@@ -11,8 +11,9 @@ SwiftletModel provides a hassle-free way to implement the rich domain model of y
 - Normalized storage
 - Denormalize to any shape on the fly
 - Incomplete data handling
+- Codable out of the box
 
-It's almost like an ORM but without a database.
+It's almost like an ORM but without a database, and you can still store it easily.
 
 ## Why
 
