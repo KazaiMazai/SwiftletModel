@@ -66,11 +66,11 @@ extension Message: EntityModel {
     /**
     There are a few things to be done in save(...)
       - Current instance should ne inserted into context
-      - Related entities should be saved. 
-    
-    Depending on the relation type inverse relation kaypath may be reqiured.
+      - Related entities should be saved. Depending on the relation type inverse 
+      relation kaypath may be reqiured.
+      
+    The method is throwing to allow some room for validations in case of need.
     */
-    
     func save(to context: inout Context) throws {
         context.insert(self)
         try save(\.$author, to: &context)
@@ -87,26 +87,23 @@ extension Message: EntityModel {
     - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
     - We need to nullify relation with a `detach(...)` method
     
-    Depending on the relation type 
-    inverse relation kaypath may be reqiured.
+    The method is throwing to allow to perfom some additional checks before deletion 
+    and throw an error if something has gone wrong.
     */
-    
     func delete(from context: inout Context) throws {
         context.remove(Message.self, id: id)
-        try delete(\.$attachment, inverse: \.$message, from: &context)
         detach(\.$author, in: &context)
         detach(\.$chat, inverse: \.$messages, in: &context)
         detach(\.$replies, inverse: \.$replyTo, in: &context)
         detach(\.$replyTo, inverse: \.$replies, in: &context)
         detach(\.$viewedBy, in: &context)
+        try delete(\.$attachment, inverse: \.$message, from: &context)
     }
-    
     
     /**
     All relations should be normalized explicitly.
     This method will be called when entity is saved to context.
     */
-    
     mutating func normalize() {
         $author.normalize()
         $chat.normalize()
@@ -115,12 +112,11 @@ extension Message: EntityModel {
         $replyTo.normalize()
         $viewedBy.normalize()
     }
-    
 }
 ```
 
 
-## Save Entities
+## How to Save Entities
 
 Let's create a chat instance and put some messages into it. 
 In order to do it we need to create a context first:
@@ -222,7 +218,7 @@ When `resolve()` is called all entities are pulled from the context storage
 and put in its place according the nested shape in denormalized form.
 
 
-## Codable
+## Codable Conformance
 
 Since models implemented as plain structs we get codable out of the box.
 
@@ -327,7 +323,7 @@ print(userJSON)
 </details>
 
 
-## Relations
+## Relation Types
 
 
 SwiftletModel supports the following types of relations:
@@ -464,18 +460,18 @@ To-one relation can be either optional: `@HasOne` or required: `@BelongsTo`
 
 Basically, data can be missing for at least 3 reasons:
 
-1. The business logic of the app implies that the relation can be missing. For example: message may not have an attachment.
+1. The business logic of the app allows the related enitity to be missing. For example: message may not have an attachment.
 
-2. Data is missing because we haven't loaded it yet. The source can be a backend or even a local storage, it doesn't matter. There is almost certainly a state when app haven't received the data for technical reasons yet.
+2. Data is missing because we haven't loaded it yet. If the source is a backend or even a local storage there is almost certainly a case when app haven't received the data yet. 
 
-3. The logic of obtaining the data implies that some of the data will be missing. For example: a tipical app flow implies that we obtain a list of chats from the backend. Then we get a list messages for the chat. Even though message cannot do without chat, message model will hardly ever contain a chat model because it will make the shape of the data weird.
+3. The logic of obtaining the data implies that some of the data will be missing. For example: a tipical app flow where we obtain a list of chats from the backend. Then we get a list messages for the chat. Even though a message cannot exist without a chat, message model coming from the backend will hardly ever contain a chat model because it will make the shape of the data weird with a lot of duplication.
 
 
-When we deal with missing data it's hard to figure out its missing reason. 
+When we deal with missing data it's hard to figure out the reason why it's missing 
 It can always be an explicit nil or maybe not.
 
 That's why SwiftletModel's relations properties are always optional. 
-It allows to implement patching update relations policy by default: when enitites with missing relations data are saved to the storage they don't overwrite or nullify existing relations.
+It allows to implement patching update relations policy by default: when enitites with missing relations are saved to the storage they don't overwrite or nullify existing relations.
 
 
 This allows to safely update models and merge it with the exising data:

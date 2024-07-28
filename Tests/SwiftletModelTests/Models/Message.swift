@@ -52,13 +52,13 @@ extension Message {
     }
     
     func delete(from context: inout Context) throws {
-        try delete(\.$attachment, inverse: \.$message, from: &context)
         context.remove(Message.self, id: id)
         detach(\.$author, in: &context)
         detach(\.$chat, inverse: \.$messages, in: &context)
         detach(\.$replies, inverse: \.$replyTo, in: &context)
         detach(\.$replyTo, inverse: \.$replies, in: &context)
         detach(\.$viewedBy, in: &context)
+        try delete(\.$attachment, inverse: \.$message, from: &context)
     }
 }
 

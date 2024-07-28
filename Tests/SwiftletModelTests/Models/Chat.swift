@@ -34,10 +34,10 @@ struct Chat: EntityModel, Codable {
     }
     
     func delete(from context: inout Context) throws {
-        try delete(\.$messages, inverse: \.$chat, from: &context)
         context.remove(Chat.self, id: id)
         detach(\.$users, inverse: \.$chats, in: &context)
         detach(\.$admins, inverse: \.$adminOf, in: &context)
+        try delete(\.$messages, inverse: \.$chat, from: &context)
     }
 }
 
