@@ -14,7 +14,7 @@
 SwiftletModel provides a hassle-free way to implement the rich domain model of your iOS app.
 
 - Entities as plain structs
-- Bidirectional relations of all kinds
+- Type-Driven Bidirectional Relations
 - Normalized storage
 - Denormalize to any shape on the fly
 - Incomplete data handling
@@ -51,6 +51,7 @@ The ideal SwiftletModel use case is when: 
     + [Advanced Merge Strategies](#advanced-merge-strategies)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+- [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Licensing](#licensing)
 
