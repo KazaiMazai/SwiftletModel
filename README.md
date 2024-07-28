@@ -100,7 +100,7 @@ In order to do it we first need to create a context first:
 
 
 ```swift
-ar context = Context()
+var context = Context()
 ```
 
 Now lets create a chat with some messages
@@ -190,7 +190,7 @@ let user = User
 
 *Wait but we've just saved a chat with users and messages, WTF?*
 
-- Exactly. That's the point of bidirectional links and normalizaion.
+*Exactly. That's the point of bidirectional links and normalizaion.*
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according the nested shape in denormalized form.
@@ -342,7 +342,8 @@ var attachment: Attachment?
 
 
 
-The optionality of the Relation means that it can be explicitly nullified:
+The optionality of the Relation means that it can be explicitly nullified. 
+(See: [Handling missing Data for to-one Relations](###Handling-missing Data-for-to-one-Relations))
 
 ```swift
 /**
