@@ -12,19 +12,20 @@ SwiftletModel provides a way to implement the rich domain model of your app in S
 - Denormalize to any shape on the fly
 - Incomplete data handling
 
-It's kind of ORM but without a database. 
+It's almost like an ORM but without a database. 
 
 ## Why
 
 
 Need a consistent domain model which is more complex than just a couple of entities?
+
 Get all data from the backend anyway and have reasons to avoid a heavy duty local storage like CoreData/SwiftData/Realm/SQLite? 
  
 
 SwiftletModel.
 
 
-## Models Definition
+## Model Definitions
 
 Define your model with all kinds of relations:
 
@@ -61,6 +62,12 @@ They define how you model will be normalized, saved and deleted:
 ```swift
 
 extension Message: EntityModel {
+
+    /**
+    We need to `normalize()` all relations. 
+    This method is be called when entity is saved to context.
+    */
+    
     mutating func normalize() {
         $author.normalize()
         $chat.normalize()
@@ -69,6 +76,12 @@ extension Message: EntityModel {
         $replyTo.normalize()
         $viewedBy.normalize()
     }
+    
+    /**
+    Related entities should be saved. 
+    Depending on the relation type 
+    inverse relation kaypath may be reqiured.
+    */
     
     func save(to context: inout Context) throws {
         context.insert(self)
@@ -79,6 +92,15 @@ extension Message: EntityModel {
         try save(\.$replyTo, inverse: \.$replies, to: &context)
         try save(\.$viewedBy, to: &context)
     }
+    
+    /**
+    Delete method defines the detele strategy for the current entity 
+    - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
+    - If we need to just nullify relation, `detach(...)` is an equivalent of it.
+    
+    Depending on the relation type 
+    inverse relation kaypath may be reqiured.
+    */
     
     func delete(from context: inout Context) throws {
         try delete(\.$attachment, inverse: \.$message, from: &context)
@@ -96,7 +118,7 @@ extension Message: EntityModel {
 ## Save Entities
 
 Let's create a chat instance and put some messages into it. 
-In order to do it we first need to create a context first:
+In order to do it we need to create a context first:
 
 
 ```swift
@@ -129,7 +151,7 @@ let chat = Chat(
 )
 ```
 
-Now let's save it to the context
+Now let's save chat to the context
 
 
 ```swift
@@ -138,8 +160,8 @@ try chat.save(to: &context)
 
 ```
 
-Instead of providing the full entities everywhere we need to do it at least once. 
-In other cases we can just put ids and it will be enough.
+Just look at this. Instead of providing the full entities everywhere...We need to provide them at least somewhere!
+In other cases we can just put ids and it will be enough to establish proper relations.
 
 At this point our chat and the related entities will be saved to the context.
 
@@ -147,7 +169,7 @@ At this point our chat and the related entities will be saved to the context.
 - Bidirectional links will be managed.
 
 
-## Query Entities
+## How to Query Entities
 
 
 Let's query something. For eg, User with the following nested models:
@@ -316,7 +338,7 @@ They are represented by the following propery wrappers:
 
 ### HasOne
 
-HasOne is an optional to-one relation. 
+`@HasOne` is an optional to-one relation. 
 
 ```swift
 /**
@@ -421,17 +443,17 @@ var replies: [Message]?
 Basically, it's required because there is no reason for to-many relation to have an explicit nil. 
 
 
-## How incomplete data is handled
+## Incomplete Date Handling
 
 
-SwiftletModel provides a few strategies to handle incomplete data cases:
+SwiftletModel provides a few strategies to handle incomplete data for the cases:
 
 - Incomplete Entity Models
 - Incomplete collections of to-many Relations
 - Missing Data for to-one Relations
 
 
-## Handling missing Data for to-one Relations
+### Handling missing Data for to-one Relations
 
 To-one relation can be either optional: `@HasOne` or required: `@BelongsTo`
 
