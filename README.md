@@ -14,7 +14,7 @@
 SwiftletModel provides a hassle-free way to implement the rich domain model of your iOS app.
 
 - Entities as plain structs
-- Bidirectional relations of all kinds
+- Type-Driven Bidirectional Relations
 - Normalized storage
 - Denormalize to any shape on the fly
 - Incomplete data handling
@@ -51,6 +51,7 @@ The ideal SwiftletModel use case is when: 
     + [Advanced Merge Strategies](#advanced-merge-strategies)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+- [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Licensing](#licensing)
 
@@ -820,6 +821,31 @@ let message = Message(
 try message.save(to: &context)
 
 ```
+
+## Type Safety
+
+Relations rely heavily on principles of Type-Driven design under the hood.
+They are implemented so that there is very little chance of misuse. 
+
+```swift
+struct Relation<Entity, Directionality, Cardinality, Constraints> { ... }
+```
+
+All you can do with relation is defined by its Directionality, Cardinality, and Constraint types.
+
+Any mistake will be spotted at compile time:
+
+- You cannot accidentally set an explicit nil to the required relation
+- You cannot establish a wrong relation by making it mutual on one side and one-way on another
+- You can't save relation in a wrong way
+- You cannot ever confuse to-one and to-many relations 
+
+
+This also means that you cannot accidentally break it.
+
+If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
+is a wonderful series of articles about it.
+ 
 
 ##  Installation
 
