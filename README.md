@@ -27,11 +27,11 @@ SwiftletModel.
 
 ## Model Definitions
 
-Define your model with all kinds of relations:
+First, we define the model with all kinds of relations:
 
 ```swift
 
-struct Message: Codable {
+struct Message: EntityModel, Codable {
     let id: String
     let text: String
     
@@ -56,49 +56,59 @@ struct Message: Codable {
 
 ```
 
-Implement EntityModel protocol requirements.
-They define how you model will be normalized, saved and deleted:
+Then we implement EntityModel protocol requirements. 
+
+They define how the model will be saved: 
 
 ```swift
 
-extension Message: EntityModel {
+/**
+There are a few things to be done in save(...)
+  - Current instance should ne inserted into context
+  - Related entities should be saved. Depending on the relation type inverse 
+  relation kaypath may be reqiured.
+  
+The method is throwing to allow some room for validations in case of need.
+*/
 
-    /**
-    There are a few things to be done in save(...)
-      - Current instance should ne inserted into context
-      - Related entities should be saved. Depending on the relation type inverse 
-      relation kaypath may be reqiured.
-      
-    The method is throwing to allow some room for validations in case of need.
-    */
-    func save(to context: inout Context) throws {
-        context.insert(self)
-        try save(\.$author, to: &context)
-        try save(\.$chat, inverse: \.$messages, to: &context)
-        try save(\.$attachment, inverse: \.$message, to: &context)
-        try save(\.$replies, inverse: \.$replyTo, to: &context)
-        try save(\.$replyTo, inverse: \.$replies, to: &context)
-        try save(\.$viewedBy, to: &context)
-    }
-    
-    /**
-    Delete method defines the detele strategy for the current entity 
-    - Current instance should be removed from context
-    - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
-    - We need to nullify relation with a `detach(...)` method
-    
-    The method is throwing to allow to perfom some additional checks before deletion 
-    and throw an error if something has gone wrong.
-    */
-    func delete(from context: inout Context) throws {
-        context.remove(Message.self, id: id)
-        detach(\.$author, in: &context)
-        detach(\.$chat, inverse: \.$messages, in: &context)
-        detach(\.$replies, inverse: \.$replyTo, in: &context)
-        detach(\.$replyTo, inverse: \.$replies, in: &context)
-        detach(\.$viewedBy, in: &context)
-        try delete(\.$attachment, inverse: \.$message, from: &context)
-    }
+func save(to context: inout Context) throws {
+    context.insert(self)
+    try save(\.$author, to: &context)
+    try save(\.$chat, inverse: \.$messages, to: &context)
+    try save(\.$attachment, inverse: \.$message, to: &context)
+    try save(\.$replies, inverse: \.$replyTo, to: &context)
+    try save(\.$replyTo, inverse: \.$replies, to: &context)
+    try save(\.$viewedBy, to: &context)
+}
+```
+
+deleted:
+ 
+
+```swift    
+/**
+Delete method defines the detele strategy for the current entity 
+- Current instance should be removed from context
+- We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
+- We need to nullify relation with a `detach(...)` method
+
+The method is throwing to allow to perfom some additional checks before deletion 
+and throw an error if something has gone wrong.
+*/
+func delete(from context: inout Context) throws {
+    context.remove(Message.self, id: id)
+    detach(\.$author, in: &context)
+    detach(\.$chat, inverse: \.$messages, in: &context)
+    detach(\.$replies, inverse: \.$replyTo, in: &context)
+    detach(\.$replyTo, inverse: \.$replies, in: &context)
+    detach(\.$viewedBy, in: &context)
+    try delete(\.$attachment, inverse: \.$message, from: &context)
+}
+```
+
+and normalized:
+
+```swift
     
     /**
     All relations should be normalized explicitly.
