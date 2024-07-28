@@ -4,15 +4,16 @@
   <img src="Docs/Resources/Logo.svg">
 </picture>
 
-SwiftletModel provides a way to implement the rich domain model of your app hassle-free way.
+SwiftletModel provides a hassle-free way to implement the rich domain model of your iOS app.
 
 - Entities as plain structs
-- Bidirectional relations
-- Normalized Storage
+- Bidirectional relations of all kinds
+- Normalized storage
 - Denormalize to any shape on the fly
 - Incomplete data handling
+- Codable out of the box
 
-Almost like an ORM but without a database. 
+It's almost like an ORM but without a database, and you can still store it easily.
 
 ## Why
 
