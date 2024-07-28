@@ -21,6 +21,29 @@ The ideal SwiftletModel use case is when: 
 - All the data comes from the backend, 
 - You have reasons to avoid using heavy-duty local storage like CoreData/SwiftData/Realm/SQLite
   
+## Table of Contents
+- [Model Definitions](#model-definitions)
+- [How to Save Entities](#how-to-save-entities)
+- [How to Query Entities](#how-to-query-entities)
+  * [Query with nested models](#query-with-nested-models)
+  * [Related models query](#related-models-query)
+- [Codable Conformance](#codable-conformance)
+- [Kinds of Relations](#kinds-of-relations)
+  * [HasOne](#hasone)
+  * [BelongsTo](#belongsto)
+  * [HasMany](#hasmany)
+- [Establishing Relations](#establishing-relations)
+  * [Setting to-one relations](#setting-to-one-relations)
+  * [Setting to-many relations](#setting-to-many-relations)
+  * [Saving Relations](#saving-relations)
+  * [Removing Relations](#removing-relations)
+- [Incomplete Data Handling](#incomplete-data-handling)
+  * [Handling incomplete Entity data](#handling-incomplete-entity-data)
+    + [Advanced Merge Strategies](#advanced-merge-strategies)
+  * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
+  * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 ## Model Definitions
