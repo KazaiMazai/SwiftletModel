@@ -208,8 +208,9 @@ let user = User
 ```
 
 *Wait but we've just saved a chat with users and messages.
-Now we are querying things from another end, WTF?
-Exactly. That's the point of bidirectional links and normalizaion.*
+Now we are querying things from another end, WTF?*
+
+*Exactly. That's the point of bidirectional links and normalizaion.*
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according the nested shape in denormalized form.
@@ -615,11 +616,10 @@ Let's define a user model with an optional Profile.
 ```swift
 
 extension User {
-    struct Profile: Codable {
-     /**
-     Something heavy here that the backend does not serves for every request.
-     */
-    }
+    /**
+    Something heavy here that the backend does not serve for all requests.
+    */
+    struct Profile: Codable { ... }
 }
  
 struct User: EntityModel, Codable {
@@ -661,7 +661,6 @@ extension User {
     The Default `MergeStrategy` for inserting enities into the Context is replace.
     Here we provide patch strategy that will be patching users profile.
     */
-    
     func save(to context: inout Context) throws {
         context.insert(self, options: User.patch())
         try save(\.$chats, inverse: \.$users, to: &context)
@@ -700,7 +699,6 @@ extension MergeStrategy {
     /**
     This is how property patch MergeStrategy looks like.
     */
-
     static func patch<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Optional<Value>>) -> MergeStrategy<Entity>   {
         MergeStrategy<Entity> { old, new in
             var new = new
@@ -725,7 +723,8 @@ In that case all the related entities will be appended to the existing.
 ```swift
 
 /**
-New to-many relations can be appended to the existing ones when we set them as a fragment:
+New to-many relations can be appended 
+to the existing ones when we set them as a fragment:
 */
 chat.$messages = .fragment([message])
 try chat.save(to: &context)
@@ -764,7 +763,6 @@ This allows to safely update models and merge it with the exising data:
 When this message is saved it **WILL NOT OVERWRITE** 
 existing relations to attachments if there are any:
 */
-
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
@@ -783,7 +781,6 @@ HasOne allows to set the relation as an explicit nil:
 When message with an explicit nil 
 is saved it **WILL OVERWRITE** existing relations to the attachment by nullifing them:
 */
-
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
