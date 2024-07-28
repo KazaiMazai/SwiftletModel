@@ -100,15 +100,17 @@ Let's create a chat instance and put some messages into it.
 
 ```swift
 
-//In order to do it we first need to create a context:
+/**
+In order to do it we first need to create a context first:
+*/
 
 var context = Context()
  
 
-//Now lets create a chat with some messages
-
-
-var context = Context()
+/**
+Now lets create a chat with some messages
+*/
+ 
 
 let chat = Chat(
     id: "1",
@@ -132,8 +134,9 @@ let chat = Chat(
     admins: .relation(ids: ["1"])
 )
 
-//And save it:
-
+/**
+And save it to the context
+*/
 
 try chat.save(to: &context)
 
@@ -152,14 +155,26 @@ At this point our chat and the related entities will be saved to the context.
 ## Query Entities
 
 
-Now let's query a user his chats, messages and replies with authors and ids of the replied messages...
-
-Wait but we've just saved a chat with users and messages, WTF?
-
-Exactly. That's the point of bidirectional links:
+Let's query something.
 
 
-```
+```swift
+
+/**
+Let's query User with the following nested models:
+ 
+- chats, 
+  - messages 
+    - replies 
+        - authors 
+        - ids of the replied message
+    - authorId
+    - chatId
+  - users
+  - adminIds
+*/
+
+
 let user = User
     .query("1", in: context)
     .with(\.$chats) {
@@ -176,6 +191,9 @@ let user = User
     }
     .resolve()
 ```
+
+*Wait but we've just saved a chat with users and messages, WTF?
+Exactly. That's the point of bidirectional links and normalizaion.*
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according the nested shape in denormalized form.
@@ -295,9 +313,9 @@ SwiftletModel supports the following types of relations:
 - Optional & Required
 
 They are represented by the following propery wrappers:
-- @BelongsTo
-- @HasOne
-- @HasMany
+- `@BelongsTo`
+- `@HasOne`
+- `@HasMany`
 
 
 ### HasOne
@@ -305,20 +323,23 @@ They are represented by the following propery wrappers:
 HasOne is an optional to-one relation. 
 
 ```swift
-//It can be either one way:
+/**
+It can be either one way. One-way relation requires to provide a default value. 
+Actually, the default value will be always nil. 
+*/
 
 @HasOne
 var user: User? = nil
-    
-//One-way relation requires to provide a default value which is always nil. 
 
 
-//Or it can be mutual: 
+/**
+It can be mutual. Mutual relation requires to provide a witness to ensure 
+that it is indeed mutual: direct and inverse key paths.
+*/
 
 @HasOne(\.attachment, inverse: \.message)
 var attachment: Attachment?
 
-//Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
 
 ```
 
@@ -357,15 +378,14 @@ It can be either one way:
 var author: User? = nil
     
 
-//or mutual: 
+/**
+It can be mutual. Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
+Inverse relation can be either to-one or to-many and must be mutual.
+*/
 
 @BelongsTo(\.chat, inverse: \.messages)
 var chat: Chat?
 
-/**
-Mutual relation requires to provide a witness to ensure that it is indeed mutual: direct and inverse key paths.
-Inverse relation can be either to-one or to-many and must be mutual.
-*/
 ```
 
 
@@ -380,18 +400,21 @@ Required relation means that it cannot be explicitly nullified.
 `@HasMany` is a required to-many relation. 
 
 ```swift
-//Like other relations it can be either one way:
+/**
+Like other relations it can be either one way:
+*/
 
 @HasMany
 var viewedBy: [User]? = nil
 
  
-//or mutual
+/**
+It can be mutual. Mutual relation requires to provide a witness 
+to ensure that it is really mutual: direct and inverse key paths.
+*/
 
 @HasMany(\.replies, inverse: \.replyTo)
 var replies: [Message]?
-
-//Mutual relation requires to provide a witness to ensure that it is really mutual: direct and inverse key paths.
 
 ```
  
@@ -430,9 +453,15 @@ It allows to implement patching update relations policy by default: when enitite
 
 This allows to safely update models and merge it with the exising data:
 
-When this message is saved it **WILL NOT OVERWRITE** existing relations to attachments if there are any:
+
 
 ```swift
+
+/**
+When this message is saved it **WILL NOT OVERWRITE** 
+existing relations to attachments if there are any:
+*/
+
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
@@ -447,6 +476,11 @@ HasOne allows to set the relation as an explicit nil:
 
 ```swift
 
+/**
+When message with an explicit nil 
+is saved it **WILL OVERWRITE** existing relations to the attachment by nullifing them:
+*/
+
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
@@ -454,9 +488,8 @@ let message = Message(
     attachment: .null
 )
 
+
 try message.save(to: &context)
 
 ```
 
-When message with an explicit nil is saved it **WILL OVERWRITE**  existing relations to the attachment by nullifing them:
- 
