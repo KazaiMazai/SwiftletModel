@@ -4,6 +4,13 @@
   <img src="Docs/Resources/Logo.svg">
 </picture>
 
+<p align="left">
+    <a href="https://github.com/KazaiMazai/SwiftletModel/actions">
+        <img src="https://github.com/KazaiMazai/SwiftletModel/workflows/Tests/badge.svg" alt="Continuous Integration">
+    </a>
+</p>
+
+
 SwiftletModel provides a hassle-free way to implement the rich domain model of your iOS app.
 
 - Entities as plain structs
