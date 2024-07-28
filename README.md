@@ -59,17 +59,13 @@ struct Message: EntityModel, Codable {
 Then we implement EntityModel protocol requirements. 
 
 They define how the model will be saved: 
-
-```swift
-
-/**
-There are a few things to be done in save(...)
   - Current instance should ne inserted into context
-  - Related entities should be saved. Depending on the relation type inverse 
+  - Related entities should be saved. Depending on the relation inverse 
   relation kaypath may be reqiured.
   
 The method is throwing to allow some room for validations in case of need.
-*/
+
+```swift
 
 func save(to context: inout Context) throws {
     context.insert(self)
@@ -82,19 +78,16 @@ func save(to context: inout Context) throws {
 }
 ```
 
-deleted:
- 
-
-```swift    
-/**
-Delete method defines the detele strategy for the current entity 
+Delete method defines the delete strategy for the entity 
 - Current instance should be removed from context
 - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
-- We need to nullify relation with a `detach(...)` method
+- We can nullify relations with a `detach(...)` method
 
 The method is throwing to allow to perfom some additional checks before deletion 
 and throw an error if something has gone wrong.
-*/
+ 
+
+```swift    
 func delete(from context: inout Context) throws {
     context.remove(Message.self, id: id)
     detach(\.$author, in: &context)
@@ -106,29 +99,24 @@ func delete(from context: inout Context) throws {
 }
 ```
 
-and normalized:
+All relations should be normalized. The method will be called when entity is saved to context.
 
 ```swift
-    
-    /**
-    All relations should be normalized explicitly.
-    This method will be called when entity is saved to context.
-    */
-    mutating func normalize() {
-        $author.normalize()
-        $chat.normalize()
-        $attachment.normalize()
-        $replies.normalize()
-        $replyTo.normalize()
-        $viewedBy.normalize()
-    }
+mutating func normalize() {
+    $author.normalize()
+    $chat.normalize()
+    $attachment.normalize()
+    $replies.normalize()
+    $replyTo.normalize()
+    $viewedBy.normalize()
+}
 }
 ```
 
 
 ## How to Save Entities
 
-Let's create a chat instance and put some messages into it. 
+Now let's create a chat instance and put some messages into it. 
 In order to do it we need to create a context first:
 
 
