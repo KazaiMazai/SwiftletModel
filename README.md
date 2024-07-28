@@ -815,7 +815,7 @@ try message.save(to: &context)
 
 ##  Installation
 
-You can add SwiftletModel to an Xcode project by adding it as a package dependency.
+You can add SwiftletModel to an Xcode project as an SPM package:
 
 - From the File menu, select Add Package Dependencies...
 - Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
