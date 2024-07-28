@@ -4,7 +4,7 @@
   <img src="Docs/Resources/Logo.svg">
 </picture>
 
-SwiftletModel provides a way to implement the rich domain model of your app in Swifty way.
+SwiftletModel provides a way to implement the rich domain model of your app hassle-free way.
 
 - Entities as plain structs
 - Bidirectional relations
@@ -12,14 +12,14 @@ SwiftletModel provides a way to implement the rich domain model of your app in S
 - Denormalize to any shape on the fly
 - Incomplete data handling
 
-It's almost like an ORM but without a database. 
+Almost like an ORM but without a database. 
 
 ## Why
 
-The ideal SwiftletModel use case is when 
-- the domain model of the app is complicated, 
-- all the data comes from the backend, 
-- you have reasons to avoid using a heavy duty local storage like CoreData/SwiftData/Realm/SQLite
+The ideal SwiftletModel use case is when: 
+- The domain model of the app is complicated, 
+- All the data comes from the backend, 
+- You have reasons to avoid using a heavy duty local storage like CoreData/SwiftData/Realm/SQLite
   
 
 
