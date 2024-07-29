@@ -11,23 +11,26 @@
 </p>
 
 
-SwiftletModel provides a hassle-free way to implement the rich domain model of your iOS app.
+SwiftletModel offers an easy and efficient way to implement complex domain models in your iOS applications. Key features include:
 
-- Entities as plain structs
-- Type-Driven Bidirectional Relations
-- Normalized storage
-- Denormalize to any shape on the fly
-- Incomplete data handling
-- Codable out of the box
+- **Entities as Plain Structs**: Define your entities using simple Swift structs.
+- **Type-Driven Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
+- **Normalized Storage**: Store your data in a normalized form to maintain consistency and efficiency.
+- **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
+- **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
+- **Codable Out of the Box**: Easily encode and decode your entities with built-in Codable support.
 
-It's almost like an ORM but without a database, and you can still store it easily.
 
-## Why
+SwiftletModel is akin to an ORM but operates without a traditional database, allowing for easy storage and management.
 
-The ideal SwiftletModel use case is when: 
-- The domain model of the app is complicated 
-- Backend is the source of truth
-- You have reasons to avoid using heavy-duty local storage like CoreData/SwiftData/Realm/SQLite
+## When and Why
+
+SwiftletModel excels in the following scenarios:
+
+- **Complex Domain Model**s: Ideal for apps with intricate domain models that require a robust and flexible solution.
+- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management.
+- **Lightweight Local Storage**: Suitable when you want to avoid using heavy-duty local storage options like CoreData, SwiftData, Realm, or SQLite.
+
   
 ## Table of Contents
 
