@@ -11,25 +11,26 @@
 </p>
 
 
-SwiftletModel offers an easy and efficient way to implement complex domain models in your iOS applications. Key features include:
+SwiftletModel offers an easy and efficient way to implement complex domain models in your iOS applications.
 
 - **Entities as Plain Structs**: Define your entities using simple Swift structs.
-- **Type-Driven Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
-- **Normalized Storage**: Store your data in a normalized form to maintain consistency and efficiency.
+- **Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
+- **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
-- **Codable Out of the Box**: Easily encode and decode your entities with built-in Codable support.
-
-
-SwiftletModel is akin to an ORM but operates without a traditional database, allowing for easy storage and management.
-
+- **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
+ 
 ## When and Why
 
 SwiftletModel excels in the following scenarios:
 
 - **Complex Domain Model**s: Ideal for apps with intricate domain models that require a robust and flexible solution.
 - **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management.
-- **Lightweight Local Storage**: Suitable when you want to avoid using heavy-duty local storage options like CoreData, SwiftData, Realm, or SQLite.
+- **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
+
+SwiftletModel offers a streamlined, in-memory alternative to CoreData and SwiftData. It is designed for applications that need a straightforward local data management system without the complexity of a full-fledged database.
+
+Although primarily in-memory, SwiftletModel’s data model is Codable, allowing for straightforward data persistence if required.
 
 ## Table of Contents
 
