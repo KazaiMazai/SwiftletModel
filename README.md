@@ -34,7 +34,11 @@ SwiftletModel excels in the following scenarios:
   
 ## Table of Contents
 
-- [Model Definitions](#model-definitions)
+- [Getting Started](#getting-started)
+  * [Model Definitions](#model-definitions)
+  * [Save to context](#save-to-context)
+  * [Delete from context](#delete-from-context)
+  * [Normalization](#normalization)
 - [How to Save Entities](#how-to-save-entities)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
@@ -58,7 +62,9 @@ SwiftletModel excels in the following scenarios:
 - [Installation](#installation)
 - [Licensing](#licensing)
 
-## Model Definitions
+## Getting Started
+
+### Model Definitions
 
 First, we define the model with all kinds of relations:
 
@@ -89,11 +95,13 @@ struct Message: EntityModel, Codable {
 
 ```
 
-Then we implement EntityModel protocol requirements. 
+Now we need to implement EntityModel protocol requirements. 
+
+### Save to context
 
 The save method defines how the model will be saved: 
-  - Current instance should be inserted into context
-  - Related entities should be saved with their relations Depending on the relation inverse 
+- Current instance should be inserted into context
+- Related entities should be saved with their relations Depending on the relation inverse 
   relation keypath may be required.
   
 The method is throwing to have some room for validations in case of need:
@@ -110,6 +118,7 @@ func save(to context: inout Context) throws {
     try save(\.$viewedBy, to: &context)
 }
 ```
+### Delete from context
 
 The delete method defines the delete strategy for the entity 
 - Current instance should be removed from the context
@@ -131,6 +140,7 @@ func delete(from context: inout Context) throws {
     try delete(\.$attachment, inverse: \.$message, from: &context)
 }
 ```
+### Normalization
 
 All relations should be normalized in `normalize()`. The method will be called when the entity is saved to context.
 
@@ -431,7 +441,7 @@ try message.save(to: &context)
 
 ### BelongsTo
 
-`@BelongsTo` is a required-to-one relation. 
+`@BelongsTo` is a required to-one relation. 
 
 
 ```swift
