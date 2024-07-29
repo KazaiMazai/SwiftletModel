@@ -31,7 +31,6 @@ SwiftletModel excels in the following scenarios:
 - **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management.
 - **Lightweight Local Storage**: Suitable when you want to avoid using heavy-duty local storage options like CoreData, SwiftData, Realm, or SQLite.
 
-  
 ## Table of Contents
 
 - [Getting Started](#getting-started)
