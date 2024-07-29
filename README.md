@@ -101,10 +101,7 @@ Now we need to implement EntityModel protocol requirements. 
 
 The save method defines how the model will be saved: 
 - Current instance should be inserted into context
-- Related entities should be saved with their relations Depending on the relation inverse 
-  relation keypath may be required.
-  
-The method is throwing to have some room for validations in case of need:
+- Related entities should be saved with their relations.
 
 ```swift
 
@@ -118,16 +115,14 @@ func save(to context: inout Context) throws {
     try save(\.$viewedBy, to: &context)
 }
 ```
+The method is throwing to have some room for validations in case of need.
+
 ### Delete from context
 
 The delete method defines the delete strategy for the entity 
 - Current instance should be removed from the context
 - We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
 - We can nullify relations with a `detach(...)` method
-
-The method is also throwing to be able to perform some additional checks before deletion 
-and throw an error if something has gone wrong.
- 
 
 ```swift    
 func delete(from context: inout Context) throws {
@@ -140,6 +135,10 @@ func delete(from context: inout Context) throws {
     try delete(\.$attachment, inverse: \.$message, from: &context)
 }
 ```
+
+The method is throwing to be able to perform some additional checks before deletion 
+and throw an error if something has gone wrong.
+
 ### Normalization
 
 All relations should be normalized in `normalize()`. The method will be called when the entity is saved to context.
@@ -154,7 +153,6 @@ mutating func normalize() {
     $viewedBy.normalize()
 }
 ```
-
 
 ## How to Save Entities
 
