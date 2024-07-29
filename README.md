@@ -441,7 +441,7 @@ try message.save(to: &context)
 
 ### BelongsTo
 
-`@BelongsTo` is a required-to-one relation. 
+`@BelongsTo` is a required to-one relation. 
 
 
 ```swift
