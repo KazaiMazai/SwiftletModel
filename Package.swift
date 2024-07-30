@@ -5,6 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftletModel",
+    platforms: [
+       .iOS(.v12),
+       .macOS(.v10_15),
+       .tvOS(.v12),
+       .watchOS(.v7)
+    ],
     products: [
         .library(
             name: "SwiftletModel",

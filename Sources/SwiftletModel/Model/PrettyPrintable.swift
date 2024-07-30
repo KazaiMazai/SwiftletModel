@@ -19,7 +19,7 @@ public extension Encodable  {
 public extension JSONEncoder {
     static var prettyPrinting: JSONEncoder {
         let encoder = JSONEncoder()
-        if #available(macOS 10.15, *) {
+        if #available(iOS 13.0, *) {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         } else {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
