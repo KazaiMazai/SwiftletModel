@@ -4,11 +4,11 @@
   <img src="Docs/Resources/Logo.svg">
 </picture>
 
-<p align="left">
-    <a href="https://github.com/KazaiMazai/SwiftletModel/actions">
-        <img src="https://github.com/KazaiMazai/SwiftletModel/workflows/Tests/badge.svg" alt="Continuous Integration">
-    </a>
-</p>
+# SwiftletModel
+
+[![CI](https://github.com/KazaiMazai/SwiftletModel/workflows/Tests/badge.svg)](https://github.com/KazaiMazai/SwiftletModel/actions?query=workflow%3ATests)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 
 
 SwiftletModel offers an easy and efficient way to implement complex domain models in your iOS applications.
