@@ -18,7 +18,7 @@ struct EntitiesRepository {
 extension EntitiesRepository {
     func ids<T: EntityModel>(_ entityType: T.Type) -> [T.ID] {
         let entityName = String(reflecting: T.self)
-        return storages[entityName]?.keys.compactMap { T.ID($0)} ?? []
+        return storages[entityName]?.keys.compactMap { T.ID($0) } ?? []
     }
 
     func all<T: EntityModel>() -> [T] {

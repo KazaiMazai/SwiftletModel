@@ -34,13 +34,11 @@ extension RelationsRepository {
         for: Parent.Type,
         relationName: String,
         id: Parent.ID) -> OrderedSet<String> {
-
+            
             let entityName = String(reflecting: Parent.self)
-
             let entitiesRelations = relations[entityName] ?? [:]
             let entityRelation = entitiesRelations[id.description] ?? [:]
-            let relationsForName = entityRelation[relationName] ?? []
-            return relationsForName
+            return entityRelation[relationName] ?? []
     }
 
     private mutating func setChildren<Parent: EntityModel>(
