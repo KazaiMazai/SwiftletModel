@@ -7,6 +7,7 @@
 
 import Foundation
 
+// swiftlint:disable line_length
 public typealias MutualRelation<T: EntityModel,
                                 Cardinality: CardinalityProtocol,
                                 Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
@@ -34,6 +35,20 @@ public typealias ToOneRelation<T: EntityModel,
 public typealias ToManyRelation<T: EntityModel,
                                 Directionality: DirectionalityProtocol,
                                 Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>
+
+// swiftlint:enable line_length
+
+public protocol DirectionalityProtocol { }
+
+public protocol ConstraintsProtocol { }
+
+public protocol RequiredRelation: ConstraintsProtocol { }
+
+public protocol OptionalRelation: ConstraintsProtocol { }
+
+public protocol CardinalityProtocol {
+    static var isToMany: Bool { get }
+}
 
 public enum Relations { }
 

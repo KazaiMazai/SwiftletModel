@@ -70,8 +70,7 @@ extension EntitiesRepository {
         storages[key] = storage
     }
 
-    mutating func insert<T: EntityModel>(_ entity: T?,
-                                       options: MergeStrategy<T>) {
+    mutating func insert<T: EntityModel>(_ entity: T?, options: MergeStrategy<T>) {
         guard let entity else {
             return
         }
@@ -79,9 +78,7 @@ extension EntitiesRepository {
         insert(entity, options: options)
     }
 
-    mutating func insert<T: EntityModel>(_ entities: [T],
-                                       options: MergeStrategy<T>) {
-
+    mutating func insert<T: EntityModel>(_ entities: [T], options: MergeStrategy<T>) {
         entities.forEach { insert($0, options: options) }
     }
 }
