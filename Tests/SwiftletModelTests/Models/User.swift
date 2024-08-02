@@ -14,7 +14,7 @@ struct CurrentUser: EntityModel, Codable {
     private(set) var id: String = CurrentUser.id
 
     @HasOne
-    var user: User?
+    var user: User? = nil
 
     mutating func normalize() {
         $user.normalize()

@@ -13,7 +13,7 @@ struct Message: EntityModel, Codable {
     let text: String
 
     @BelongsTo
-    var author: User?
+    var author: User? = nil
 
     @BelongsTo(\.chat, inverse: \.messages)
     var chat: Chat?
@@ -28,7 +28,7 @@ struct Message: EntityModel, Codable {
     var replyTo: Message?
 
     @HasMany
-    var viewedBy: [User]?
+    var viewedBy: [User]? = nil
 }
 
 extension Message {
