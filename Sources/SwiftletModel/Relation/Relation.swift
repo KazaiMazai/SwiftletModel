@@ -112,7 +112,7 @@ extension Relation {
         }
     }
     
-    var inverseLinkUpdateOption: Option {
+    static var inverseLinkUpdateOption: Option {
         Cardinality.isToMany ? .append : .replace
     }
 }

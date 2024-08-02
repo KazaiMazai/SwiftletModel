@@ -142,7 +142,7 @@ private extension EntityModel {
                     children: [id],
                     attribute: LinkAttribute(
                         name: inverse.name,
-                        updateOption: relation(keyPath).inverseLinkUpdateOption
+                        updateOption: MutualRelation<Self, InverseRelation, InverseConstraint>.inverseLinkUpdateOption
                     )
                 )
             }
