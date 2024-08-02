@@ -10,13 +10,13 @@ import Foundation
 @propertyWrapper
 public struct HasMany<T, Directionality>: Hashable where T: EntityModel,
                                                   Directionality: DirectionalityProtocol {
-    
-    private var relation: ToManyRelation<T, Directionality,  Relations.Required>
-    
+
+    private var relation: ToManyRelation<T, Directionality, Relations.Required>
+
     public var wrappedValue: [T]? {
-        get { relation.entities }
+        relation.entities
     }
-    
+
     public var projectedValue: ToManyRelation<T, Directionality, Relations.Required> {
         get { relation }
         set { relation = newValue }
@@ -27,26 +27,26 @@ public extension HasMany where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
-    
+
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [T]?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
 }
 
 public extension HasMany {
-    
+
     static func relation(ids: [T.ID]) -> Self {
         HasMany(relation: .relation(ids: ids))
     }
-    
+
     static func relation(_ entities: [T]) -> Self {
         HasMany(relation: .relation(entities))
     }
-    
+
     static func fragment(ids: [T.ID]) -> Self {
         HasMany(relation: .fragment(ids: ids))
     }
-    
+
     static func fragment(_ entities: [T]) -> Self {
         HasMany(relation: .fragment(entities))
     }
@@ -73,11 +73,11 @@ public extension HasMany where Directionality == Relations.OneWay {
 }
 
 extension HasMany: Codable where T: Codable {
-    
+
     public func encode(to encoder: Encoder) throws {
         try relation.encode(to: encoder)
     }
-    
+
     public init(from decoder: Decoder) throws {
         try relation = .init(from: decoder)
     }

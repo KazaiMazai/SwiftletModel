@@ -25,4 +25,3 @@ struct LinkAttribute {
     let name: String
     let updateOption: Option
 }
-

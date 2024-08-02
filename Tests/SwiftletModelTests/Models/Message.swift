@@ -11,24 +11,24 @@ import Foundation
 struct Message: EntityModel, Codable {
     let id: String
     let text: String
-    
+
     @BelongsTo
-    var author: User? = nil
-    
+    var author: User?
+
     @BelongsTo(\.chat, inverse: \.messages)
     var chat: Chat?
-    
+
     @HasOne(\.attachment, inverse: \.message)
     var attachment: Attachment?
-    
+
     @HasMany(\.replies, inverse: \.replyTo)
     var replies: [Message]?
-    
+
     @HasOne(\.replyTo, inverse: \.replies)
     var replyTo: Message?
-    
+
     @HasMany
-    var viewedBy: [User]? = nil
+    var viewedBy: [User]?
 }
 
 extension Message {
@@ -40,7 +40,7 @@ extension Message {
         $replyTo.normalize()
         $viewedBy.normalize()
     }
-    
+
     func save(to context: inout Context) throws {
         context.insert(self)
         try save(\.$author, to: &context)
@@ -50,7 +50,7 @@ extension Message {
         try save(\.$replyTo, inverse: \.$replies, to: &context)
         try save(\.$viewedBy, to: &context)
     }
-    
+
     func delete(from context: inout Context) throws {
         context.remove(Message.self, id: id)
         detach(\.$author, in: &context)

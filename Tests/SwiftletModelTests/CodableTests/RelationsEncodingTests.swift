@@ -11,7 +11,7 @@ import XCTest
 
 final class RelationEncodingTests: XCTestCase {
     var context = Context()
-    
+
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",
@@ -26,14 +26,14 @@ final class RelationEncodingTests: XCTestCase {
             ]),
             admins: .relation([.bob])
         )
-        
+
         try chat.save(to: &context)
     }
-    
+
     func test_WhenDefaultEncoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -48,8 +48,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
-        
+
         let expectedJSON = """
         {
           "adminOf" : null,
@@ -110,15 +109,15 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         XCTAssertEqual(userJSON, expectedJSON)
     }
-    
+
     func test_WhenExplicitEncoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -133,7 +132,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
@@ -193,14 +192,14 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         XCTAssertEqual(userJSON, expectedJSON)
     }
-    
+
     func test_WhenExactEncoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -215,7 +214,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
@@ -275,14 +274,14 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         XCTAssertEqual(userJSON, expectedJSON)
     }
- 
+
     func test_WhenExactEncodingFragment_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -297,7 +296,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
@@ -357,15 +356,15 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         XCTAssertEqual(userJSON, expectedJSON)
     }
-    
+
     func test_WhenExplicitEncodingFragment_EqualExpectedJSON() {
-       
+
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -380,7 +379,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
@@ -440,14 +439,14 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         XCTAssertEqual(userJSON, expectedJSON)
     }
-    
+
     func test_WhenDefaultEncodingFragment_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
@@ -462,7 +461,7 @@ final class RelationEncodingTests: XCTestCase {
                 .ids(\.$admins)
             }
             .resolve()
-        
+
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
         {
@@ -524,8 +523,7 @@ final class RelationEncodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         XCTAssertEqual(userJSON, expectedJSON)
     }
 }
-
