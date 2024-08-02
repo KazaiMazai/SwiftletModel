@@ -11,7 +11,7 @@ import XCTest
 
 final class NestedModelsQueryTest: XCTestCase {
     var context = Context()
-    
+
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",
@@ -22,28 +22,28 @@ final class NestedModelsQueryTest: XCTestCase {
                     text: "hello, ya'll",
                     author: .relation(.michael)
                 ),
-                
+
                 Message(
                     id: "1",
                     text: "hello",
                     author: .relation(.alice),
                     replyTo: .relation(id: "0")
                 ),
-                
+
                 Message(
                     id: "2",
                     text: "howdy",
                     author: .relation(.bob),
                     replyTo: .relation(id: "0")
                 ),
-                
+
                 Message(
                     id: "3",
                     text: "yo!",
                     author: .relation(.tom),
                     replyTo: .relation(id: "0")
                 ),
-                
+
                 Message(
                     id: "4",
                     text: "wassap!",
@@ -53,20 +53,20 @@ final class NestedModelsQueryTest: XCTestCase {
             ]),
             admins: .relation([.bob])
         )
-        
+
         try chat.save(to: &context)
     }
-    
+
     func test_WhenQueryWithNestedModel_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let messages = Message
             .query(in: context)
             .with(\.$author)
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -146,21 +146,21 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
-     
+
     func test_WhenQueryWithNestedModelId_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let messages = Message
             .query(in: context)
             .id(\.$author)
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -225,21 +225,21 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
-    
+
     func test_WhenQueryWithNestedModelIds_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let messages = Message
             .query(in: context)
             .ids(\.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -315,15 +315,15 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
-    
+
     func test_WhenQueryWithNestedModels_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let messages = Message
             .query(in: context)
             .with(\.$replies) {
@@ -331,7 +331,7 @@ final class NestedModelsQueryTest: XCTestCase {
             }
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -443,15 +443,15 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
-    
+
     func test_WhenQueryWithNestedModelsFragment_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let messages = Message
             .query(in: context)
             .with(fragment: \.$replies) {
@@ -459,7 +459,7 @@ final class NestedModelsQueryTest: XCTestCase {
             }
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -581,21 +581,21 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
-    
+
     func test_WhenQueryWithNestedIdsFragment_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let messages = Message
             .query(in: context)
             .ids(fragment: \.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
-        
+
         let expectedJSON = """
         [
           {
@@ -673,9 +673,8 @@ final class NestedModelsQueryTest: XCTestCase {
           }
         ]
         """
-        
+
         let json = messages.prettyDescription(with: encoder)!
         XCTAssertEqual(json, expectedJSON)
     }
 }
-    

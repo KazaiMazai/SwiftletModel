@@ -23,9 +23,7 @@ public extension RelationEncodingStrategy {
 
 public extension Encoder {
     var relationEncodingStrategy: RelationEncodingStrategy {
-        get {
-            (userInfo[RelationEncodingStrategy.userInfoKey] as? RelationEncodingStrategy) ?? .default
-        }
+        (userInfo[RelationEncodingStrategy.userInfoKey] as? RelationEncodingStrategy) ?? .default
     }
 }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Encodable  {
+public extension Encodable {
     func prettyDescription(with encoder: JSONEncoder) -> String? {
         guard let data = try? encoder.encode(self) else {
             return nil
@@ -24,7 +24,7 @@ public extension JSONEncoder {
         } else {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         }
-        
+
         return encoder
     }
 }

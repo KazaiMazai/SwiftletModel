@@ -71,20 +71,20 @@ final class RelationDecodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .plain
-        
+
         let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
-        
+
         let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, userInputJSON)
     }
-    
+
     func test_WhenExplicitDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
@@ -144,20 +144,20 @@ final class RelationDecodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
-        
+
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .keyedContainer
-        
+
         let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
-        
+
         let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, userInputJSON)
     }
-    
+
     func test_WhenExactDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
@@ -217,20 +217,20 @@ final class RelationDecodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .explicitKeyedContainer
-        
+
         let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
-        
+
         let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, userInputJSON)
     }
-    
+
     func test_WhenExactDecodingFragment_EqualExpectedJSON() {
         let userInputJSON = """
         {
@@ -290,16 +290,16 @@ final class RelationDecodingTests: XCTestCase {
           "name" : "Bob"
         }
         """
-        
+
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .explicitKeyedContainer
-        
+
         let data = userInputJSON.data(using: .utf8)!
         let user = try! decoder.decode(User.self, from: data)
-        
+
         let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, userInputJSON)
     }

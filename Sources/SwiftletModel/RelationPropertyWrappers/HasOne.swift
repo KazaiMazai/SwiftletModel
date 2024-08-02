@@ -10,13 +10,13 @@ import Foundation
 @propertyWrapper
 public struct HasOne<T, Directionality>: Hashable where T: EntityModel,
                                                  Directionality: DirectionalityProtocol {
-    
+
     private var relation: ToOneRelation<T, Directionality, Relations.Optional>
-    
+
     public var wrappedValue: T? {
-        get { relation.entities.first }
+        relation.entities.first
     }
-    
+
     public var projectedValue: ToOneRelation<T, Directionality, Relations.Optional> {
         get { relation }
         set { relation = newValue }
@@ -27,18 +27,18 @@ public extension HasOne where Directionality == Relations.Mutual {
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, EnclosingType?>) {
         self.init(relation: .none)
     }
-    
+
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, T?>, inverse: KeyPath<T, [EnclosingType]?>) {
         self.init(relation: .none)
     }
 }
 
 public extension HasOne {
-    
+
     static func relation(id: T.ID) -> Self {
         HasOne(relation: .relation(id: id))
     }
-    
+
     static func relation(_ entity: T) -> Self {
         HasOne(relation: .relation(entity))
     }
@@ -71,13 +71,12 @@ public extension HasOne where Directionality == Relations.OneWay {
 }
 
 extension HasOne: Codable where T: Codable {
-    
+
     public func encode(to encoder: Encoder) throws {
         try relation.encode(to: encoder)
     }
-    
+
     public init(from decoder: Decoder) throws {
         try relation = .init(from: decoder)
     }
 }
-
