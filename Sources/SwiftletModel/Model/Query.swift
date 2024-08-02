@@ -132,6 +132,57 @@ public extension Query {
     }
 }
 
+public extension Collection {
+    func with<Entity, Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> [Query<Entity>] where Element == Query<Entity> {
+            
+        map { $0.with(keyPath, nested: nested) }
+    }
+    
+    func with<Entity, Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+    
+    ) -> [Query<Entity>] where Element == Query<Entity> {
+            
+        map { $0.with(keyPath, nested: nested) }
+    }
+    
+    func with<Entity, Child, Directionality, Constraints>(
+        fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+    
+    ) -> [Query<Entity>] where Element == Query<Entity> {
+            
+        map { $0.with(fragment: keyPath, nested: nested) }
+    }
+    
+    func id<Entity, Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
+    
+    ) -> [Query<Entity>] where Element == Query<Entity> {
+        
+        map { $0.id(keyPath) }
+    }
+    
+    func ids<Entity, Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    
+    ) -> [Query<Entity>] where Element == Query<Entity> {
+        
+        map { $0.ids(keyPath) }
+    }
+    
+    func ids<Entity, Child, Directionality, Constraints>(
+        fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    
+    ) -> [Query<Entity>] where Element == Query<Entity> {
+
+        map { $0.ids(fragment: keyPath) }
+    }
+}
+
 extension Context {
     func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
         Query(context: self, id: id)
