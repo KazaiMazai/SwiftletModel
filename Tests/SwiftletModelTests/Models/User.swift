@@ -43,6 +43,7 @@ extension User {
     }
 }
 
+@StorableEntity
 struct User: EntityModel, Codable {
     let id: String
     private(set) var name: String?

@@ -8,6 +8,7 @@
 @testable import SwiftletModel
 import Foundation
 
+@StorableEntity
 struct Message: EntityModel, Codable {
     let id: String
     let text: String
