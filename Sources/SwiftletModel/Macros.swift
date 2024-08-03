@@ -7,8 +7,8 @@
 
 import Foundation
 
-@attached(extension, conformances: ListablePropertiesProtocol, names: arbitrary)
-public macro StorableEntity() =
+@attached(extension, conformances: EntityModelProtocol, names: arbitrary)
+public macro EntityModel() =
   #externalMacro(
-    module: "SwiftletModelMacros", type: "StorableEntityMacro"
+    module: "SwiftletModelMacros", type: "EntityModelMacro"
   )

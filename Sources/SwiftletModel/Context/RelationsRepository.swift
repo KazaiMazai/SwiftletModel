@@ -30,7 +30,7 @@ extension RelationsRepository {
 }
 
 extension RelationsRepository {
-    func getChildren<Parent: EntityModel>(
+    func getChildren<Parent: EntityModelProtocol>(
         for: Parent.Type,
         relationName: String,
         id: Parent.ID) -> OrderedSet<String> {
@@ -41,7 +41,7 @@ extension RelationsRepository {
             return entityRelation[relationName] ?? []
     }
 
-    private mutating func setChildren<Parent: EntityModel>(
+    private mutating func setChildren<Parent: EntityModelProtocol>(
         for: Parent.Type,
         relationName: String,
         id: Parent.ID,

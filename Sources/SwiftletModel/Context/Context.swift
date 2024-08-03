@@ -16,50 +16,50 @@ public struct Context {
 }
 
 public extension Context {
-    func ids<T: EntityModel>(_ entityType: T.Type) -> [T.ID] {
+    func ids<T: EntityModelProtocol>(_ entityType: T.Type) -> [T.ID] {
         entitiesRepository.ids(T.self)
     }
 
-    func all<T: EntityModel>() -> [T] {
+    func all<T: EntityModelProtocol>() -> [T] {
         entitiesRepository.all()
     }
 
-    func find<T: EntityModel>(_ id: T.ID) -> T? {
+    func find<T: EntityModelProtocol>(_ id: T.ID) -> T? {
         entitiesRepository.find(id)
     }
 
-    func findAll<T: EntityModel>(_ ids: [T.ID]) -> [T?] {
+    func findAll<T: EntityModelProtocol>(_ ids: [T.ID]) -> [T?] {
         entitiesRepository.findAll(ids)
     }
 
-    func findAllExisting<T: EntityModel>(_ ids: [T.ID]) -> [T] {
+    func findAllExisting<T: EntityModelProtocol>(_ ids: [T.ID]) -> [T] {
         entitiesRepository.findAllExisting(ids)
     }
 }
 
 public extension Context {
 
-    mutating func remove<T: EntityModel>(_ entityType: T.Type, id: T.ID) {
+    mutating func remove<T: EntityModelProtocol>(_ entityType: T.Type, id: T.ID) {
         entitiesRepository.remove(T.self, id: id)
     }
 
-    mutating func removeAll<T: EntityModel>(_ entityType: T.Type, ids: [T.ID]) {
+    mutating func removeAll<T: EntityModelProtocol>(_ entityType: T.Type, ids: [T.ID]) {
         entitiesRepository.removeAll(T.self, ids: ids)
     }
 
-    mutating func insert<T: EntityModel>(_ entity: T,
+    mutating func insert<T: EntityModelProtocol>(_ entity: T,
                                          options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entity, options: options)
     }
 
-    mutating func insert<T: EntityModel>(_ entity: T?,
+    mutating func insert<T: EntityModelProtocol>(_ entity: T?,
                                          options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entity, options: options)
     }
 
-    mutating func insert<T: EntityModel>(_ entities: [T],
+    mutating func insert<T: EntityModelProtocol>(_ entities: [T],
                                          options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entities, options: options)
@@ -67,13 +67,13 @@ public extension Context {
 }
 
 extension Context {
-    mutating func updateLinks<Parent: EntityModel, Child: EntityModel>(_ links: Links<Parent, Child>) {
+    mutating func updateLinks<Parent: EntityModelProtocol, Child: EntityModelProtocol>(_ links: Links<Parent, Child>) {
         relationsRepository.updateLinks(links)
     }
 }
 
 extension Context {
-    func getChildren<T: EntityModel>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
+    func getChildren<T: EntityModelProtocol>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
         relationsRepository.getChildren(for: type, relationName: relationName, id: id)
     }
 }

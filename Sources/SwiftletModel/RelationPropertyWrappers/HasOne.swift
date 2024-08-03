@@ -8,7 +8,7 @@
 import Foundation
 
 @propertyWrapper
-public struct HasOne<T, Directionality>: Hashable where T: EntityModel,
+public struct HasOne<T, Directionality>: Hashable where T: EntityModelProtocol,
                                                  Directionality: DirectionalityProtocol {
 
     private var relation: ToOneRelation<T, Directionality, Relations.Optional>

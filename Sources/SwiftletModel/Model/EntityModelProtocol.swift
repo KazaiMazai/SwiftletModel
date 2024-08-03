@@ -7,22 +7,38 @@
 
 import Foundation
 
-public protocol EntityModel: Storable {
+public protocol EntityModelProtocol {
     // swiftlint:disable:next type_name
     associatedtype ID: Hashable, Codable, LosslessStringConvertible
-
+  
+    static var mergeStrategy: MergeStrategy<Self> { get }
+    
     var id: ID { get }
-}
-
-public protocol Storable {
+    
     func delete(from context: inout Context) throws
-
+    
     func save(to context: inout Context) throws
-
+    
+    func willDelete(from context: inout Context) throws
+    
+    func willSave(to context: inout Context) throws
+     
     mutating func normalize()
 }
 
-public extension EntityModel {
+public extension EntityModelProtocol {
+    static var mergeStrategy: MergeStrategy<Self> { .replace }
+    
+    func willDelete(from context: inout Context) throws {
+        
+    }
+    
+    func willSave(to context: inout Context) throws {
+        
+    }
+}
+ 
+public extension EntityModelProtocol {
     static func delete(id: ID, from context: inout Context) throws {
         try Self.query(id, in: context)
             .resolve()?
@@ -30,7 +46,7 @@ public extension EntityModel {
     }
 }
 
-public extension EntityModel {
+public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
         Self.query(id, in: context)
     }
@@ -48,7 +64,7 @@ public extension EntityModel {
     }
 }
 
-extension EntityModel {
+extension EntityModelProtocol {
     func normalized() -> Self {
         var copy = self
         copy.normalize()
@@ -62,7 +78,7 @@ extension KeyPath {
     }
 }
 
-extension EntityModel {
+extension EntityModelProtocol {
     func relationIds<Child, Direction, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>
     ) -> [Child.ID] {

@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Delete Relations & Attached Entities
 
-public extension EntityModel {
+public extension EntityModelProtocol {
     func delete<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         from context: inout Context) throws {
@@ -72,7 +72,7 @@ public extension EntityModel {
 
 // MARK: - Detach Relations
 
-public extension EntityModel {
+public extension EntityModelProtocol {
     func detach<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) {
@@ -131,7 +131,7 @@ public extension EntityModel {
     }
 }
 
-extension EntityModel {
+extension EntityModelProtocol {
     func unlink<Child, Cardinality, Constraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>

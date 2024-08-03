@@ -8,31 +8,31 @@
 import Foundation
 
 // swiftlint:disable line_length
-public typealias MutualRelation<T: EntityModel,
+public typealias MutualRelation<T: EntityModelProtocol,
                                 Cardinality: CardinalityProtocol,
                                 Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Cardinality, Constraint>
 
-public typealias OneWayRelation<T: EntityModel,
+public typealias OneWayRelation<T: EntityModelProtocol,
                                 Cardinality: CardinalityProtocol,
                                 Constraint: ConstraintsProtocol> = Relation<T, Relations.OneWay, Cardinality, Constraint>
 
-public typealias ManyToOneRelation<T: EntityModel,
+public typealias ManyToOneRelation<T: EntityModelProtocol,
                                    Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-public typealias OneToOneRelation<T: EntityModel,
+public typealias OneToOneRelation<T: EntityModelProtocol,
                                   Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToOne, Constraint>
 
-public typealias OneToManyRelation<T: EntityModel,
+public typealias OneToManyRelation<T: EntityModelProtocol,
                                    Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
 
-public typealias ManyToManyRelation<T: EntityModel,
+public typealias ManyToManyRelation<T: EntityModelProtocol,
                                     Constraint: ConstraintsProtocol> = Relation<T, Relations.Mutual, Relations.ToMany, Constraint>
 
-public typealias ToOneRelation<T: EntityModel,
+public typealias ToOneRelation<T: EntityModelProtocol,
                                Directionality: DirectionalityProtocol,
                                Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToOne, Constraint>
 
-public typealias ToManyRelation<T: EntityModel,
+public typealias ToManyRelation<T: EntityModelProtocol,
                                 Directionality: DirectionalityProtocol,
                                 Constraint: ConstraintsProtocol> = Relation<T, Directionality, Relations.ToMany, Constraint>
 

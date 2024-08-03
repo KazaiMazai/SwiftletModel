@@ -9,7 +9,7 @@ import Foundation
 
 public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashable
     where
-    Entity: EntityModel,
+    Entity: EntityModelProtocol,
     Directionality: DirectionalityProtocol,
     Cardinality: CardinalityProtocol,
     Constraints: ConstraintsProtocol {
@@ -286,7 +286,7 @@ extension Relation where Entity: Codable {
 
 extension Relation where Entity: Codable {
     // swiftlint:disable:next type_name
-    struct ID<T: EntityModel>: Codable {
+    struct ID<T: EntityModelProtocol>: Codable {
         let id: T.ID
     }
 
@@ -339,7 +339,7 @@ extension Relation where Entity: Codable {
 // swiftlint:disable file_length
 private extension Relation {
 
-    indirect enum State<T: EntityModel>: Hashable {
+    indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
         case entity(entity: T?)
         case ids(ids: [T.ID])

@@ -16,7 +16,7 @@ import SwiftSyntaxMacros
 #endif
 
 
-public struct StorableEntityMacro: ExtensionMacro {
+public struct EntityModelMacro: ExtensionMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
         
         let attributes = declaration.memberBlock.members
@@ -27,18 +27,29 @@ public struct StorableEntityMacro: ExtensionMacro {
             .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
             .joined(separator: "\n")
         
+        let detachAll = attributes
+            .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
+            .joined(separator: "\n")
+        
         let normalizeAll = attributes
             .map { "$\($0.propertyName).normalize()" }
             .joined(separator: "\n")
         
         let syntax = try ExtensionDeclSyntax("""
-        extension \(raw: type) {
-            func saveMe(to context: inout Context) throws {
-                context.insert(self)
+        extension \(raw: type): EntityModelProtocol {
+            func save(to context: inout Context) throws {
+                try willSave(to: &context)
+                context.insert(self, options: Self.mergeStrategy)
                 \(raw: saveAll)
             }
         
-            mutating func normalizeMe() {
+            func delete(from context: inout Context) throws {
+                try willDelete(from: &context)
+                context.remove(Self.self, id: id)
+                \(raw: detachAll)
+            }
+        
+            mutating func normalize() {
                \(raw: normalizeAll)
             }
         }
