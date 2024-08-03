@@ -7,12 +7,14 @@
 
 import Foundation
 
-public protocol EntityModel {
+public protocol EntityModel: Storable {
     // swiftlint:disable:next type_name
     associatedtype ID: Hashable, Codable, LosslessStringConvertible
 
     var id: ID { get }
+}
 
+public protocol Storable {
     func delete(from context: inout Context) throws
 
     func save(to context: inout Context) throws
@@ -72,4 +74,8 @@ extension EntityModel {
     ) -> Relation<Child, Direction, Cardinality, Constraint> {
         self[keyPath: keyPath]
     }
+}
+
+public protocol ListablePropertiesProtocol {
+//    static func getProperties() -> [String]
 }
