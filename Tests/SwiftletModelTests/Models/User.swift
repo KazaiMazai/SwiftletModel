@@ -16,19 +16,6 @@ struct CurrentUser: Codable {
 
     @HasOne
     var user: User? = nil
-
-//    mutating func normalize() {
-//        $user.normalize()
-//    }
-//
-//    func save(to context: inout Context) throws {
-//        context.insert(self)
-//        try save(\.$user, to: &context)
-//    }
-//
-//    func delete(from context: inout Context) throws {
-//        detach(\.$user, in: &context)
-//    }
 }
 
 extension User {
@@ -57,23 +44,6 @@ struct User: Codable {
     @HasMany(\.adminOf, inverse: \.admins)
     var adminOf: [Chat]?
 
-//    mutating func normalize() {
-//        $chats.normalize()
-//        $adminOf.normalize()
-//    }
-//
-//    func save(to context: inout Context) throws {
-//        context.insert(self, options: Self.mergeStrategy)
-//        try save(\.$chats, inverse: \.$users, to: &context)
-//        try save(\.$adminOf, inverse: \.$admins, to: &context)
-//    }
-//
-//    func delete(from context: inout Context) throws {
-//        context.remove(User.self, id: id)
-//        detach(\.$chats, inverse: \.$users, in: &context)
-//        detach(\.$adminOf, inverse: \.$admins, in: &context)
-//    }
-
     static var mergeStrategy: MergeStrategy<User> {
         MergeStrategy(
             .patch(\.name),
@@ -81,13 +51,6 @@ struct User: Codable {
             .patch(\.avatar)
         )
     }
-//    static func patch() -> MergeStrategy<User> {
-//        MergeStrategy(
-//            .patch(\.name),
-//            .patch(\.profile),
-//            .patch(\.avatar)
-//        )
-//    }
 }
 
 extension Query where Entity == User {

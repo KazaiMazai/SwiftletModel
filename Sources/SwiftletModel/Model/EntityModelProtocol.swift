@@ -15,13 +15,17 @@ public protocol EntityModelProtocol {
     
     var id: ID { get }
     
-    func delete(from context: inout Context) throws
-    
     func save(to context: inout Context) throws
+    
+    func willSave(to context: inout Context) throws
+    
+    func didSave(to context: inout Context) throws
+    
+    func delete(from context: inout Context) throws
     
     func willDelete(from context: inout Context) throws
     
-    func willSave(to context: inout Context) throws
+    func didDelete(from context: inout Context) throws
      
     mutating func normalize()
 }
@@ -29,13 +33,13 @@ public protocol EntityModelProtocol {
 public extension EntityModelProtocol {
     static var mergeStrategy: MergeStrategy<Self> { .replace }
     
-    func willDelete(from context: inout Context) throws {
-        
-    }
+    func willDelete(from context: inout Context) throws { }
     
-    func willSave(to context: inout Context) throws {
-        
-    }
+    func willSave(to context: inout Context) throws { }
+    
+    func didDelete(from context: inout Context) throws { }
+    
+    func didSave(to context: inout Context) throws { }
 }
  
 public extension EntityModelProtocol {

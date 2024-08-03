@@ -19,19 +19,19 @@ import SwiftSyntaxMacros
 public struct EntityModelMacro: ExtensionMacro {
     public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
         
-        let attributes = declaration.memberBlock.members
+        let atts = declaration.memberBlock.members
             .compactMap { $0.decl.as(VariableDeclSyntax.self) }
             .compactMap { extractRelationPropertyWrappersAttributes(from: $0) }
         
-        let saveAll = attributes
+        let saveAll = atts
             .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
             .joined(separator: "\n")
         
-        let detachAll = attributes
+        let detachAll = atts
             .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
             .joined(separator: "\n")
         
-        let normalizeAll = attributes
+        let normalizeAll = atts
             .map { "$\($0.propertyName).normalize()" }
             .joined(separator: "\n")
         
@@ -41,12 +41,14 @@ public struct EntityModelMacro: ExtensionMacro {
                 try willSave(to: &context)
                 context.insert(self, options: Self.mergeStrategy)
                 \(raw: saveAll)
+                try didSave(to: &context)
             }
         
             func delete(from context: inout Context) throws {
                 try willDelete(from: &context)
                 context.remove(Self.self, id: id)
                 \(raw: detachAll)
+                try didDelete(from: &context)
             }
         
             mutating func normalize() {
