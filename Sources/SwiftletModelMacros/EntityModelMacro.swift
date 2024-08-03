@@ -17,45 +17,49 @@ import SwiftSyntaxMacros
 
 
 public struct EntityModelMacro: ExtensionMacro {
-    public static func expansion(of node: SwiftSyntax.AttributeSyntax, attachedTo declaration: some SwiftSyntax.DeclGroupSyntax, providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol, conformingTo protocols: [SwiftSyntax.TypeSyntax], in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
+    public static func expansion(
+        of node: SwiftSyntax.AttributeSyntax,
+        attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
+        providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
+        conformingTo protocols: [SwiftSyntax.TypeSyntax],
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
         
-        let atts = declaration.memberBlock.members
+        let attributes = declaration.memberBlock.members
             .compactMap { $0.decl.as(VariableDeclSyntax.self) }
             .compactMap { extractRelationPropertyWrappersAttributes(from: $0) }
-        
-        let saveAll = atts
-            .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
-            .joined(separator: "\n")
-        
-        let detachAll = atts
-            .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
-            .joined(separator: "\n")
-        
-        let normalizeAll = atts
-            .map { "$\($0.propertyName).normalize()" }
-            .joined(separator: "\n")
-        
-        let syntax = try ExtensionDeclSyntax("""
+         
+        let syntax = try ExtensionDeclSyntax(
+        """
         extension \(raw: type): EntityModelProtocol {
             func save(to context: inout Context) throws {
                 try willSave(to: &context)
                 context.insert(self, options: Self.mergeStrategy)
-                \(raw: saveAll)
+                \(raw: attributes
+                    .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
+                    .joined(separator: "\n")
+                )
                 try didSave(to: &context)
             }
         
             func delete(from context: inout Context) throws {
                 try willDelete(from: &context)
                 context.remove(Self.self, id: id)
-                \(raw: detachAll)
+                \(raw: attributes
+                    .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
+                    .joined(separator: "\n")
+                )
                 try didDelete(from: &context)
             }
         
             mutating func normalize() {
-               \(raw: normalizeAll)
+               \(raw: attributes
+                    .map { "$\($0.propertyName).normalize()" }
+                    .joined(separator: "\n")
+                )
             }
         }
-        """)
+        """
+        )
 
         return [syntax]
     }
