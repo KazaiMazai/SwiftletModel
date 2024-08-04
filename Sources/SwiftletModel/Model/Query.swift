@@ -119,13 +119,13 @@ public extension Query {
         }
     }
 
-    func ids<Child, Directionality, Constraints>(
+    func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
 
        ids(keyPath, fragment: false)
     }
 
-    func ids<Child, Directionality, Constraints>(
+    func id<Child, Directionality, Constraints>(
         fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
 
        ids(keyPath, fragment: true)
@@ -166,20 +166,20 @@ public extension Collection {
         map { $0.id(keyPath) }
     }
 
-    func ids<Entity, Child, Directionality, Constraints>(
+    func id<Entity, Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
 
     ) -> [Query<Entity>] where Element == Query<Entity> {
 
-        map { $0.ids(keyPath) }
+        map { $0.id(keyPath) }
     }
 
-    func ids<Entity, Child, Directionality, Constraints>(
+    func id<Entity, Child, Directionality, Constraints>(
         fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
 
     ) -> [Query<Entity>] where Element == Query<Entity> {
 
-        map { $0.ids(fragment: keyPath) }
+        map { $0.id(fragment: keyPath) }
     }
 }
 

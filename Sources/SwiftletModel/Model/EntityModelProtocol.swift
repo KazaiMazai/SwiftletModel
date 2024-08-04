@@ -28,6 +28,8 @@ public protocol EntityModelProtocol {
     func didDelete(from context: inout Context) throws
      
     mutating func normalize()
+    
+    static func batchQuery(in context: Context) -> [Query<Self>]
 }
 
 public extension EntityModelProtocol {
@@ -94,8 +96,4 @@ extension EntityModelProtocol {
     ) -> Relation<Child, Direction, Cardinality, Constraint> {
         self[keyPath: keyPath]
     }
-}
-
-public protocol ListablePropertiesProtocol {
-//    static func getProperties() -> [String]
 }
