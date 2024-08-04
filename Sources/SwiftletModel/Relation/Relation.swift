@@ -57,19 +57,19 @@ public extension Relation where Cardinality == Relations.ToOne {
 
 public extension Relation where Cardinality == Relations.ToMany {
     static func relation(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, fragment: false))
+        Relation(state: State(entities, slice: false))
     }
 
     static func relation(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, fragment: false))
+        Relation(state: State(ids: ids, slice: false))
     }
 
-    static func fragment(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, fragment: true))
+    static func slice(_ entities: [Entity]) -> Self {
+        Relation(state: State(entities, slice: true))
     }
 
-    static func fragment(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, fragment: true))
+    static func slice(ids: [Entity.ID]) -> Self {
+        Relation(state: State(ids: ids, slice: true))
     }
 }
 
@@ -335,12 +335,12 @@ private extension Relation {
         case entities(entities: [T], slice: Bool)
         case none
 
-        init(_ items: [T], fragment: Bool) {
-            self = .entities(entities: items, slice: fragment)
+        init(_ items: [T], slice: Bool) {
+            self = .entities(entities: items, slice: slice)
         }
 
-        init(ids: [T.ID], fragment: Bool) {
-            self = .ids(ids: ids, slice: fragment)
+        init(ids: [T.ID], slice: Bool) {
+            self = .ids(ids: ids, slice: slice)
         }
 
         init(id: T.ID?) {

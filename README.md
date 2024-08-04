@@ -564,7 +564,7 @@ try message.save(to: &context)       
 ```
 
 To-many relations support not only setting up new relations, 
-but also appending new relations to the existing ones. It can be done via `fragment(...)`
+but also appending new relations to the existing ones. It can be done via `slice(...)`
 
 (See: [Handling incomplete data for to-many Relations](#Handling-incomplete-data-for-to-many-relations))
  
@@ -572,16 +572,16 @@ but also appending new relations to the existing ones. It can be done via `fragm
 ```swift
 
 /**
-New to-many relations can be appended to the existing ones when set as a fragment:
+New to-many relations can be appended to the existing ones when set as a slice:
 */
-chat.$messages = .fragment([message])
+chat.$messages = .slice([message])
 try chat.save(to: &context)
 
 /**
 An array of ids will also work, 
 but all entities should be additionally saved to the context. 
 */
-chat.$messages = .fragment(ids: [message.id])
+chat.$messages = .slice(ids: [message.id])
 try chat.save(to: &context)
 try message.save(to: &context)    
 
@@ -758,16 +758,16 @@ If we have a collection of anything on the backend it will almost certainly be p
 
 SwiftletModel provides a convenient way to deal with incomplete collections for to-many relations.
 
-When setting to-many relation it's possible to mark the collection as a fragment. 
+When setting to-many relation it's possible to mark the collection as a slice. 
 In that case, all the related entities will be appended to the existing.
  
 ```swift
 
 /**
 New to-many relations can be appended 
-to the existing ones when we set them as a fragment:
+to the existing ones when we set them as a slice:
 */
-chat.$messages = .fragment([message])
+chat.$messages = .slice([message])
 try chat.save(to: &context)
  
 

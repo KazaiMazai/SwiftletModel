@@ -285,14 +285,14 @@ final class RelationEncodingTests: XCTestCase {
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(fragment: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(fragment: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()
@@ -368,14 +368,14 @@ final class RelationEncodingTests: XCTestCase {
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(fragment: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(fragment: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()
@@ -450,14 +450,14 @@ final class RelationEncodingTests: XCTestCase {
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(fragment: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(fragment: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()

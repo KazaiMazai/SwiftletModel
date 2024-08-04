@@ -43,12 +43,12 @@ public extension HasMany {
         HasMany(relation: .relation(entities))
     }
 
-    static func fragment(ids: [T.ID]) -> Self {
-        HasMany(relation: .fragment(ids: ids))
+    static func slice(ids: [T.ID]) -> Self {
+        HasMany(relation: .slice(ids: ids))
     }
 
-    static func fragment(_ entities: [T]) -> Self {
-        HasMany(relation: .fragment(entities))
+    static func slice(_ entities: [T]) -> Self {
+        HasMany(relation: .slice(entities))
     }
 }
 
