@@ -231,7 +231,7 @@ final class RelationDecodingTests: XCTestCase {
         XCTAssertEqual(userJSON, userInputJSON)
     }
 
-    func test_WhenExactDecodingFragment_EqualExpectedJSON() {
+    func test_WhenExactDecodingSlice_EqualExpectedJSON() {
         let userInputJSON = """
         {
           "adminOf" : null,

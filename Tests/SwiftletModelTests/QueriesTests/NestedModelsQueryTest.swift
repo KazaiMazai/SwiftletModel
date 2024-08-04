@@ -448,7 +448,7 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedModelsFragment_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedModelsSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -586,7 +586,7 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedIdsFragment_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedIdsSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 

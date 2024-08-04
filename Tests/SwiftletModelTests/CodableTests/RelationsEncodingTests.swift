@@ -278,7 +278,7 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenExactEncodingFragment_EqualExpectedJSON() {
+    func test_WhenExactEncodingSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -360,7 +360,7 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenExplicitEncodingFragment_EqualExpectedJSON() {
+    func test_WhenExplicitEncodingSlice_EqualExpectedJSON() {
 
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
@@ -443,7 +443,7 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenDefaultEncodingFragment_EqualExpectedJSON() {
+    func test_WhenDefaultEncodingSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
