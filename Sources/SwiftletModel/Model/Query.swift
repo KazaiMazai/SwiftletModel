@@ -86,15 +86,8 @@ public extension Query {
         }
     
     func with<Child, Directionality, Constraints>(
-        fragment keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
-            
-            with(keyPath, fragment: true, nested: nested)
-        }
-    
-    func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-       
+        
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
             with(keyPath, chunk: false, fragment: false, nested: nested)
@@ -106,17 +99,26 @@ public extension Query {
             
             with(keyPath, chunk: true, fragment: false, nested: nested)
         }
+}
+
+public extension Query {
+    func fragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+            
+            with(keyPath, fragment: true, nested: nested)
+        }
     
     
-    func with<Child, Directionality, Constraints>(
-        fragment keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+    func fragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
             with(keyPath, chunk: false, fragment: true, nested: nested)
         }
     
-    func with<Child, Directionality, Constraints>(
-        fragmentsChunk keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+    func fragment<Child, Directionality, Constraints>(
+        chunk keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
             
@@ -125,7 +127,6 @@ public extension Query {
 }
 
 public extension Query {
-
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
 
