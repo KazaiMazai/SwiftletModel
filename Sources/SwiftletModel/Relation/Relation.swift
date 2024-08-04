@@ -14,10 +14,16 @@ public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashab
     Cardinality: CardinalityProtocol,
     Constraints: ConstraintsProtocol {
 
-    private var state: State<Entity>
+    private(set) var state: State<Entity>
 
-    fileprivate init(state: State<Entity>) {
+    init(state: State<Entity>) {
         self.state = state
+    }
+}
+
+public extension Relation {
+    mutating func normalize() {
+        state.normalize()
     }
 }
 
@@ -31,63 +37,7 @@ public extension Relation {
     }
 }
 
-public extension Relation {
-    static var none: Self {
-        Relation(state: .none)
-    }
-}
-
-public extension Relation where Cardinality == Relations.ToOne,
-                                Constraints: OptionalRelation {
-
-    static var null: Self {
-        Relation(state: State(nil, fragment: false))
-    }
-}
-
-public extension Relation where Cardinality == Relations.ToOne {
-    static func relation(id: Entity.ID) -> Self {
-        Relation(state: State(id: id))
-    }
-    
-    static func relation(_ entity: Entity) -> Self {
-        Relation(state: State(entity, fragment: false))
-    }
-    
-    static func relation(fragment entity: Entity) -> Self {
-        Relation(state: State(entity, fragment: true))
-    }
-}
-
-public extension Relation where Cardinality == Relations.ToMany {
-    static func relation(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: false))
-    }
-    
-    static func relation(fragment entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: true))
-    }
-    
-    static func relation(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, chunk: false))
-    }
-
-    static func appending(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: false))
-    }
-    
-    static func appending(fragment entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: true))
-    }
- 
-    static func appending(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, chunk: true))
-    }
-    
-   
-}
-
-extension Relation {
+extension Relation where Cardinality == Relations.ToMany {
     static func appending(_ entities: [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, chunk: true, fragment: fragment))
     }
@@ -97,10 +47,9 @@ extension Relation {
     }
 }
 
-public extension Relation {
-
-    mutating func normalize() {
-        state.normalize()
+extension Relation where Cardinality == Relations.ToOne {
+    static func relation(_ entity: Entity, fragment: Bool) -> Self {
+        Relation(state: State(entity, fragment: fragment))
     }
 }
 
@@ -155,216 +104,9 @@ extension Relation {
 
 extension Relation.State: Codable where T: Codable { }
 
-extension Relation: Codable where Entity: Codable {
-    public func encode(to encoder: any Encoder) throws {
-        switch encoder.relationEncodingStrategy {
-        case .plain:
-            try encodePlainContainer(to: encoder)
-        case .keyedContainer:
-            try encodeKeyedContainer(to: encoder)
-        case .explicitKeyedContainer:
-            try encodeExplicitKeyedContainer(to: encoder)
-        }
-    }
-
-    public init(from decoder: any Decoder) throws {
-        if decoder.relationDecodingStrategy.contains(.explicitKeyedContainer),
-           let relation = try? Self.decodeExplicitKeyedContainer(from: decoder) {
-
-            self = relation
-            return
-        }
-
-        if decoder.relationDecodingStrategy.contains(.keyedContainer),
-           let relation = try? Self.decodeKeyedContainer(from: decoder) {
-
-            self = relation
-            return
-        }
-
-        self = try Self.decodePlainContainer(from: decoder)
-    }
-}
-
-// MARK: - Codable Explicitly
-
-extension Relation where Entity: Codable {
-    enum RelationCodingKeys: String, CodingKey {
-        case id = "id"
-        case entity = "object"
-        case ids = "ids"
-        case entities = "objects"
-        case none
-    }
-
-    func encodeKeyedContainer(to encoder: Encoder) throws {
-        switch state {
-        case .id(let value):
-            var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .id)
-        case .entity(let value, _):
-            var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .entity)
-        case .ids(let value, _):
-            var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .ids)
-        case .entities(let value, _, _):
-            var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .entities)
-        case .none:
-            var container = encoder.singleValueContainer()
-            try container.encodeNil()
-        }
-    }
-
-    static func decodeKeyedContainer(from decoder: any Decoder) throws -> Relation {
-        guard let container = try? decoder.container(keyedBy: RelationCodingKeys.self),
-              let key = container.allKeys.first
-        else {
-            return .none
-        }
-
-        switch key {
-        case .id:
-            let value = try? container.decode(Entity.ID?.self, forKey: .id)
-            return Relation(state: .id(id: value))
-        case .entity:
-            let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value, fragment: false))
-        case .ids:
-            let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, chunk: false))
-        case .entities:
-            let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
-        case .none:
-            return .none
-        }
-    }
-}
-
-// MARK: - Codable Exactly
-
-extension Relation where Entity: Codable {
-    enum RelationExplicitCodingKeys: String, CodingKey {
-        case id = "id"
-        case entity = "object"
-        case ids = "ids"
-        case entities = "objects"
-        case idsChunk = "chunk_ids"
-        case chunk = "chunk"
-        case none
-    }
-
-    func encodeExplicitKeyedContainer(to encoder: Encoder) throws {
-        switch state {
-        case .id(let value):
-            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            try container.encode(value, forKey: .id)
-        case .entity(let value, _):
-            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            try container.encode(value, forKey: .entity)
-        case .ids(let value, let chunk):
-            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            chunk ?
-            try container.encode(value, forKey: .idsChunk)
-            : try container.encode(value, forKey: .ids)
-           
-        case .entities(let value, let chunk, _):
-            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            chunk ? 
-            try container.encode(value, forKey: .chunk)
-            : try container.encode(value, forKey: .entities)
-        case .none:
-            var container = encoder.singleValueContainer()
-            try container.encodeNil()
-        }
-    }
-
-    static func decodeExplicitKeyedContainer(from decoder: any Decoder) throws -> Relation {
-        guard let container = try? decoder.container(keyedBy: RelationExplicitCodingKeys.self),
-              let key = container.allKeys.first
-        else {
-            return .none
-        }
-
-        switch key {
-        case .id:
-            let value = try? container.decode(Entity.ID?.self, forKey: .id)
-            return Relation(state: .id(id: value))
-        case .entity:
-            let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value, fragment: false))
-        case .ids:
-            let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, chunk: false))
-        case .entities:
-            let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
-        case .idsChunk:
-            let value = try container.decode([Entity.ID].self, forKey: .idsChunk)
-            return Relation(state: .ids(ids: value, chunk: true))
-        case .chunk:
-            let value = try container.decode([Entity].self, forKey: .chunk)
-            return Relation(state: .entities(entities: value, chunk: true, fragment: false))
-        case .none:
-            return .none
-        }
-    }
-}
-
-// MARK: - Codable Flattaned
-
-extension Relation where Entity: Codable {
-    // swiftlint:disable:next type_name
-    struct ID<T: EntityModelProtocol>: Codable {
-        let id: T.ID
-    }
-
-    func encodePlainContainer(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch state {
-        case .id(let value):
-            try container.encode(value.map { ID<Entity>(id: $0) })
-        case .entity(let value, _):
-            try container.encode(value)
-        case .ids(let value, _):
-            try container.encode(value.map { ID<Entity>(id: $0) })
-        case .entities(let value, _, _):
-            try container.encode(value)
-        case .none:
-            try container.encodeNil()
-        }
-    }
-
-    static func decodePlainContainer(from decoder: any Decoder) throws -> Relation {
-        guard let container = try? decoder.singleValueContainer() else {
-            return .none
-        }
-
-        if let value = try? container.decode(Entity?.self) {
-            return Relation(state: .entity(entity: value, fragment: false))
-        }
-
-        if let value = try? container.decode(ID<Entity>?.self) {
-            return Relation(state: .id(id: value.id))
-        }
-
-        if let value = try? container.decode([Entity].self) {
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
-        }
-
-        if let value = try? container.decode([ID<Entity>].self) {
-            return Relation(state: .ids(ids: value.map { $0.id }, chunk: false))
-        }
-
-        return .none
-    }
-}
-
 // MARK: - Private State
-// swiftlint:disable file_length
-private extension Relation {
+
+extension Relation {
 
     indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
@@ -427,7 +169,7 @@ private extension Relation.State {
     }
 }
 
-private extension Relation.State {
+extension Relation.State {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.ids == rhs.ids
     }
