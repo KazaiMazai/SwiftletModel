@@ -41,7 +41,7 @@ public extension Relation where Cardinality == Relations.ToOne,
                                 Constraints: OptionalRelation {
 
     static var null: Self {
-        Relation(state: State(nil))
+        Relation(state: State(nil, fragment: false))
     }
 }
 
@@ -49,25 +49,29 @@ public extension Relation where Cardinality == Relations.ToOne {
     static func relation(id: Entity.ID) -> Self {
         Relation(state: State(id: id))
     }
-
-    static func relation(_ entity: Entity) -> Self {
-        Relation(state: State(entity))
+    
+    static func relation(_ entity: Entity, fragment: Bool = false) -> Self {
+        Relation(state: State(entity, fragment: fragment))
+    }
+    
+    static func relation(fragment entity: Entity) -> Self {
+        Relation(state: State(entity, fragment: true))
     }
 }
 
 public extension Relation where Cardinality == Relations.ToMany {
-    static func relation(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, slice: false))
+    static func relation(_ entities: [Entity], fragment: Bool = false) -> Self {
+        Relation(state: State(entities, slice: false, fragment: fragment))
     }
-
+    
     static func relation(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, slice: false))
     }
 
-    static func slice(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, slice: true))
+    static func slice(_ entities: [Entity], fragment: Bool = false) -> Self {
+        Relation(state: State(entities, slice: true, fragment: fragment))
     }
-
+ 
     static func slice(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, slice: true))
     }
@@ -95,7 +99,7 @@ extension Relation {
         switch state {
         case .entity, .id:
             return .replace
-        case .entities(_, let slice), .ids(_, let slice):
+        case .entities(_, let slice, _), .ids(_, let slice):
             return slice ? .append : .replace
         case .none:
             return .append
@@ -105,11 +109,25 @@ extension Relation {
     static var inverseLinkUpdateOption: Option {
         Cardinality.isToMany ? .append : .replace
     }
+    
+    var isFragment: Bool {
+        switch state {
+        case .entity(_, let fragment), .entities(_, _, let fragment):
+            return fragment
+        case .id, .ids, .none:
+            return false
+        }
+    }
 }
 
 extension Relation {
     public func save(_ context: inout Context) throws {
-        try entities.forEach { entity in try entity.save(to: &context) }
+        try entities.forEach {
+            try $0.save(
+                to: &context,
+                options: isFragment ? .fragment : .default
+            )
+        }
     }
 }
 
@@ -164,13 +182,13 @@ extension Relation where Entity: Codable {
         case .id(let value):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .id)
-        case .entity(let value):
+        case .entity(let value, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .entity)
         case .ids(let value, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .ids)
-        case .entities(let value, _):
+        case .entities(let value, _, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .entities)
         case .none:
@@ -192,13 +210,13 @@ extension Relation where Entity: Codable {
             return Relation(state: .id(id: value))
         case .entity:
             let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value))
+            return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
             return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
         case .none:
             return .none
         }
@@ -223,7 +241,7 @@ extension Relation where Entity: Codable {
         case .id(let value):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .id)
-        case .entity(let value):
+        case .entity(let value, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entity)
         case .ids(let value, let slice):
@@ -232,7 +250,7 @@ extension Relation where Entity: Codable {
             try container.encode(value, forKey: .idsSlice)
             : try container.encode(value, forKey: .ids)
            
-        case .entities(let value, let slice):
+        case .entities(let value, let slice, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ? 
             try container.encode(value, forKey: .slice)
@@ -256,19 +274,19 @@ extension Relation where Entity: Codable {
             return Relation(state: .id(id: value))
         case .entity:
             let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value))
+            return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
             return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
         case .idsSlice:
             let value = try container.decode([Entity.ID].self, forKey: .idsSlice)
             return Relation(state: .ids(ids: value, slice: true))
         case .slice:
             let value = try container.decode([Entity].self, forKey: .slice)
-            return Relation(state: .entities(entities: value, slice: true))
+            return Relation(state: .entities(entities: value, slice: true, fragment: false))
         case .none:
             return .none
         }
@@ -288,11 +306,11 @@ extension Relation where Entity: Codable {
         switch state {
         case .id(let value):
             try container.encode(value.map { ID<Entity>(id: $0) })
-        case .entity(let value):
+        case .entity(let value, _):
             try container.encode(value)
         case .ids(let value, _):
             try container.encode(value.map { ID<Entity>(id: $0) })
-        case .entities(let value, _):
+        case .entities(let value, _, _):
             try container.encode(value)
         case .none:
             try container.encodeNil()
@@ -305,7 +323,7 @@ extension Relation where Entity: Codable {
         }
 
         if let value = try? container.decode(Entity?.self) {
-            return Relation(state: .entity(entity: value))
+            return Relation(state: .entity(entity: value, fragment: false))
         }
 
         if let value = try? container.decode(ID<Entity>?.self) {
@@ -313,7 +331,7 @@ extension Relation where Entity: Codable {
         }
 
         if let value = try? container.decode([Entity].self) {
-            return Relation(state: .entities(entities: value, slice: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
         }
 
         if let value = try? container.decode([ID<Entity>].self) {
@@ -330,13 +348,13 @@ private extension Relation {
 
     indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
-        case entity(entity: T?)
+        case entity(entity: T?, fragment: Bool)
         case ids(ids: [T.ID], slice: Bool)
-        case entities(entities: [T], slice: Bool)
+        case entities(entities: [T], slice: Bool, fragment: Bool)
         case none
 
-        init(_ items: [T], slice: Bool) {
-            self = .entities(entities: items, slice: slice)
+        init(_ items: [T], slice: Bool, fragment: Bool) {
+            self = .entities(entities: items, slice: slice, fragment: fragment)
         }
 
         init(ids: [T.ID], slice: Bool) {
@@ -347,8 +365,8 @@ private extension Relation {
             self = .id(id: id)
         }
 
-        init(_ entity: T?) {
-            self = .entity(entity: entity)
+        init(_ entity: T?, fragment: Bool) {
+            self = .entity(entity: entity, fragment: fragment)
         }
     }
 }
@@ -358,11 +376,11 @@ private extension Relation.State {
         switch self {
         case .id(let id):
             return [id].compactMap { $0 }
-        case .entity(let entity):
+        case .entity(let entity, _):
             return [entity].compactMap { $0?.id }
         case .ids(let ids, _):
             return ids
-        case .entities(let entities, _):
+        case .entities(let entities, _, _):
             return entities.map { $0.id }
         case .none:
             return []
@@ -373,9 +391,9 @@ private extension Relation.State {
         switch self {
         case .id, .ids:
             return []
-        case .entity(let entity):
+        case .entity(let entity, _):
             return [entity].compactMap { $0 }
-        case .entities(let entities, _):
+        case .entities(let entities, _, _):
             return entities
         case .none:
             return []

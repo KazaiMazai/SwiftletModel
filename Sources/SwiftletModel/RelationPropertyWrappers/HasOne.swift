@@ -40,7 +40,11 @@ public extension HasOne {
     }
 
     static func relation(_ entity: T) -> Self {
-        HasOne(relation: .relation(entity))
+        HasOne(relation: .relation(entity, fragment: false))
+    }
+    
+    static func relation(fragment entity: T) -> Self {
+        HasOne(relation: .relation(entity, fragment: true))
     }
 }
 

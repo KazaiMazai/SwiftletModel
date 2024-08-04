@@ -41,7 +41,11 @@ public extension BelongsTo {
     }
 
     static func relation(_ entity: T) -> Self {
-        BelongsTo(relation: .relation(entity))
+        BelongsTo(relation: .relation(entity, fragment: false))
+    }
+    
+    static func relation(fragment entity: T) -> Self {
+        BelongsTo(relation: .relation(entity, fragment: true))
     }
 }
 
