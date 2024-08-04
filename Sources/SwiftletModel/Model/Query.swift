@@ -277,7 +277,7 @@ private extension Query {
                 .compactMap { $0.resolve() }
 
             entity[keyPath: keyPath] = chunk ? 
-                .chunk(relatedEntities, fragment: fragment) :
+                .appending(relatedEntities, fragment: fragment) :
                 .relation(relatedEntities, fragment: fragment)
             return entity
         }
@@ -290,7 +290,7 @@ private extension Query {
         whenResolved {
             var entity = $0
             let ids = related(keyPath).map { $0.id }
-            entity[keyPath: keyPath] = chunk ? .chunk(ids: ids) : .relation(ids: ids)
+            entity[keyPath: keyPath] = chunk ? .appending(ids: ids) : .relation(ids: ids)
             return entity
         }
     }

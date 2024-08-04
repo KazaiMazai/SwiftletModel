@@ -68,11 +68,11 @@ public extension Relation where Cardinality == Relations.ToMany {
         Relation(state: State(ids: ids, chunk: false))
     }
 
-    static func chunk(_ entities: [Entity], fragment: Bool = false) -> Self {
+    static func appending(_ entities: [Entity], fragment: Bool = false) -> Self {
         Relation(state: State(entities, chunk: true, fragment: fragment))
     }
  
-    static func chunk(ids: [Entity.ID]) -> Self {
+    static func appending(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, chunk: true))
     }
 }
