@@ -35,9 +35,9 @@ public struct EntityModelMacro: ExtensionMacro {
         let syntax = try ExtensionDeclSyntax(
         """
         extension \(raw: type): EntityModelProtocol {
-            func save(to context: inout Context) throws {
+            func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
                 try willSave(to: &context)
-                context.insert(self, options: Self.mergeStrategy)
+                context.insert(self, options: options)
                 \(raw: attributes
                     .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
                     .joined(separator: "\n")
