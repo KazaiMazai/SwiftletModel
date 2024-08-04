@@ -43,14 +43,6 @@ struct User: Codable {
 
     @HasMany(\.adminOf, inverse: \.admins)
     var adminOf: [Chat]?
-
-    static var mergeStrategy: MergeStrategy<User> {
-        MergeStrategy(
-            .patch(\.name),
-            .patch(\.profile),
-            .patch(\.avatar)
-        )
-    }
 }
 
 extension Query where Entity == User {
