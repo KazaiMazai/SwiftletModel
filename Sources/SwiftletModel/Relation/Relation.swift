@@ -50,8 +50,8 @@ public extension Relation where Cardinality == Relations.ToOne {
         Relation(state: State(id: id))
     }
     
-    static func relation(_ entity: Entity, fragment: Bool = false) -> Self {
-        Relation(state: State(entity, fragment: fragment))
+    static func relation(_ entity: Entity) -> Self {
+        Relation(state: State(entity, fragment: false))
     }
     
     static func relation(fragment entity: Entity) -> Self {
@@ -60,20 +60,40 @@ public extension Relation where Cardinality == Relations.ToOne {
 }
 
 public extension Relation where Cardinality == Relations.ToMany {
-    static func relation(_ entities: [Entity], fragment: Bool = false) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: fragment))
+    static func relation(_ entities: [Entity]) -> Self {
+        Relation(state: State(entities, chunk: false, fragment: false))
+    }
+    
+    static func relation(fragment entities: [Entity]) -> Self {
+        Relation(state: State(entities, chunk: false, fragment: true))
     }
     
     static func relation(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, chunk: false))
     }
 
-    static func appending(_ entities: [Entity], fragment: Bool = false) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: fragment))
+    static func appending(_ entities: [Entity]) -> Self {
+        Relation(state: State(entities, chunk: true, fragment: false))
+    }
+    
+    static func appending(fragment entities: [Entity]) -> Self {
+        Relation(state: State(entities, chunk: true, fragment: true))
     }
  
     static func appending(ids: [Entity.ID]) -> Self {
         Relation(state: State(ids: ids, chunk: true))
+    }
+    
+   
+}
+
+extension Relation {
+    static func appending(_ entities: [Entity], fragment: Bool) -> Self {
+        Relation(state: State(entities, chunk: true, fragment: fragment))
+    }
+    
+    static func relation(_ entities: [Entity], fragment: Bool) -> Self {
+        Relation(state: State(entities, chunk: false, fragment: fragment))
     }
 }
 
