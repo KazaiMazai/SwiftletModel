@@ -61,19 +61,19 @@ public extension Relation where Cardinality == Relations.ToOne {
 
 public extension Relation where Cardinality == Relations.ToMany {
     static func relation(_ entities: [Entity], fragment: Bool = false) -> Self {
-        Relation(state: State(entities, slice: false, fragment: fragment))
+        Relation(state: State(entities, chunk: false, fragment: fragment))
     }
     
     static func relation(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, slice: false))
+        Relation(state: State(ids: ids, chunk: false))
     }
 
-    static func slice(_ entities: [Entity], fragment: Bool = false) -> Self {
-        Relation(state: State(entities, slice: true, fragment: fragment))
+    static func chunk(_ entities: [Entity], fragment: Bool = false) -> Self {
+        Relation(state: State(entities, chunk: true, fragment: fragment))
     }
  
-    static func slice(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, slice: true))
+    static func chunk(ids: [Entity.ID]) -> Self {
+        Relation(state: State(ids: ids, chunk: true))
     }
 }
 
@@ -99,8 +99,8 @@ extension Relation {
         switch state {
         case .entity, .id:
             return .replace
-        case .entities(_, let slice, _), .ids(_, let slice):
-            return slice ? .append : .replace
+        case .entities(_, let chunk, _), .ids(_, let chunk):
+            return chunk ? .append : .replace
         case .none:
             return .append
         }
@@ -213,10 +213,10 @@ extension Relation where Entity: Codable {
             return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, slice: false))
+            return Relation(state: .ids(ids: value, chunk: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
         case .none:
             return .none
         }
@@ -231,8 +231,8 @@ extension Relation where Entity: Codable {
         case entity = "object"
         case ids = "ids"
         case entities = "objects"
-        case idsSlice = "slice_ids"
-        case slice = "slice"
+        case idsChunk = "chunk_ids"
+        case chunk = "chunk"
         case none
     }
 
@@ -244,16 +244,16 @@ extension Relation where Entity: Codable {
         case .entity(let value, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entity)
-        case .ids(let value, let slice):
+        case .ids(let value, let chunk):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            slice ?
-            try container.encode(value, forKey: .idsSlice)
+            chunk ?
+            try container.encode(value, forKey: .idsChunk)
             : try container.encode(value, forKey: .ids)
            
-        case .entities(let value, let slice, _):
+        case .entities(let value, let chunk, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            slice ? 
-            try container.encode(value, forKey: .slice)
+            chunk ? 
+            try container.encode(value, forKey: .chunk)
             : try container.encode(value, forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
@@ -277,16 +277,16 @@ extension Relation where Entity: Codable {
             return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, slice: false))
+            return Relation(state: .ids(ids: value, chunk: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
-        case .idsSlice:
-            let value = try container.decode([Entity.ID].self, forKey: .idsSlice)
-            return Relation(state: .ids(ids: value, slice: true))
-        case .slice:
-            let value = try container.decode([Entity].self, forKey: .slice)
-            return Relation(state: .entities(entities: value, slice: true, fragment: false))
+            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
+        case .idsChunk:
+            let value = try container.decode([Entity.ID].self, forKey: .idsChunk)
+            return Relation(state: .ids(ids: value, chunk: true))
+        case .chunk:
+            let value = try container.decode([Entity].self, forKey: .chunk)
+            return Relation(state: .entities(entities: value, chunk: true, fragment: false))
         case .none:
             return .none
         }
@@ -331,11 +331,11 @@ extension Relation where Entity: Codable {
         }
 
         if let value = try? container.decode([Entity].self) {
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
         }
 
         if let value = try? container.decode([ID<Entity>].self) {
-            return Relation(state: .ids(ids: value.map { $0.id }, slice: false))
+            return Relation(state: .ids(ids: value.map { $0.id }, chunk: false))
         }
 
         return .none
@@ -349,16 +349,16 @@ private extension Relation {
     indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
         case entity(entity: T?, fragment: Bool)
-        case ids(ids: [T.ID], slice: Bool)
-        case entities(entities: [T], slice: Bool, fragment: Bool)
+        case ids(ids: [T.ID], chunk: Bool)
+        case entities(entities: [T], chunk: Bool, fragment: Bool)
         case none
 
-        init(_ items: [T], slice: Bool, fragment: Bool) {
-            self = .entities(entities: items, slice: slice, fragment: fragment)
+        init(_ items: [T], chunk: Bool, fragment: Bool) {
+            self = .entities(entities: items, chunk: chunk, fragment: fragment)
         }
 
-        init(ids: [T.ID], slice: Bool) {
-            self = .ids(ids: ids, slice: slice)
+        init(ids: [T.ID], chunk: Bool) {
+            self = .ids(ids: ids, chunk: chunk)
         }
 
         init(id: T.ID?) {

@@ -448,13 +448,13 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedModelsSlice_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedModelsChunk_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
             .query(in: context)
-            .with(slice: \.$replies) {
+            .with(chunk: \.$replies) {
                 $0.id(\.$replyTo)
             }
             .resolve()
@@ -468,7 +468,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "slice" : [
+              "chunk" : [
                 {
                   "attachment" : null,
                   "author" : null,
@@ -529,7 +529,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "slice" : [
+              "chunk" : [
 
               ]
             },
@@ -543,7 +543,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "slice" : [
+              "chunk" : [
 
               ]
             },
@@ -557,7 +557,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "slice" : [
+              "chunk" : [
 
               ]
             },
@@ -571,7 +571,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "slice" : [
+              "chunk" : [
 
               ]
             },
@@ -586,13 +586,13 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedIdsSlice_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedIdsChunk_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
             .query(in: context)
-            .id(slice: \.$replies)
+            .id(chunk: \.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
 
@@ -604,7 +604,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "slice_ids" : [
+              "chunk_ids" : [
                 "1",
                 "2",
                 "3",
@@ -621,7 +621,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "slice_ids" : [
+              "chunk_ids" : [
 
               ]
             },
@@ -635,7 +635,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "slice_ids" : [
+              "chunk_ids" : [
 
               ]
             },
@@ -649,7 +649,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "slice_ids" : [
+              "chunk_ids" : [
 
               ]
             },
@@ -663,7 +663,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "slice_ids" : [
+              "chunk_ids" : [
 
               ]
             },

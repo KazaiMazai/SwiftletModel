@@ -231,7 +231,7 @@ final class RelationDecodingTests: XCTestCase {
         XCTAssertEqual(userJSON, userInputJSON)
     }
 
-    func test_WhenExactDecodingSlice_EqualExpectedJSON() {
+    func test_WhenExactDecodingChunk_EqualExpectedJSON() {
         let userInputJSON = """
         {
           "adminOf" : null,
@@ -245,7 +245,7 @@ final class RelationDecodingTests: XCTestCase {
                 },
                 "id" : "1",
                 "messages" : {
-                  "slice" : [
+                  "chunk" : [
                     {
                       "attachment" : {
                         "object" : {
@@ -275,7 +275,7 @@ final class RelationDecodingTests: XCTestCase {
                   ]
                 },
                 "users" : {
-                  "slice_ids" : [
+                  "chunk_ids" : [
                     "1",
                     "2",
                     "5",
