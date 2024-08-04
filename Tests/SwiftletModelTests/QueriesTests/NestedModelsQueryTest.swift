@@ -236,7 +236,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
-            .ids(\.$replies)
+            .id(\.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
 
@@ -592,7 +592,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
-            .ids(fragment: \.$replies)
+            .id(fragment: \.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
 

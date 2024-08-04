@@ -44,8 +44,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(\.$users)
-                .ids(\.$admins)
+                .id(\.$users)
+                .id(\.$admins)
             }
             .resolve()
 
@@ -128,8 +128,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(\.$users)
-                .ids(\.$admins)
+                .id(\.$users)
+                .id(\.$admins)
             }
             .resolve()
 
@@ -210,8 +210,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(\.$users)
-                .ids(\.$admins)
+                .id(\.$users)
+                .id(\.$admins)
             }
             .resolve()
 
@@ -292,8 +292,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(fragment: \.$users)
-                .ids(\.$admins)
+                .id(fragment: \.$users)
+                .id(\.$admins)
             }
             .resolve()
 
@@ -375,8 +375,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(fragment: \.$users)
-                .ids(\.$admins)
+                .id(fragment: \.$users)
+                .id(\.$admins)
             }
             .resolve()
 
@@ -457,8 +457,8 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .ids(fragment: \.$users)
-                .ids(\.$admins)
+                .id(fragment: \.$users)
+                .id(\.$admins)
             }
             .resolve()
 

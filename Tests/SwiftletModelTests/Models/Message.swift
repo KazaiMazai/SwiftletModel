@@ -36,6 +36,8 @@ struct Message: Codable {
     }
 }
 
+
+
 extension Query where Entity == Message {
     var isMyMessage: Bool? {
         related(\.$author)?.isMe

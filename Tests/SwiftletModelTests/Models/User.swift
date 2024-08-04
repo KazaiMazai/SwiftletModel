@@ -12,7 +12,7 @@ import Foundation
 struct CurrentUser: Codable {
     static let id: String = "current"
 
-    private(set) var id: String = CurrentUser.id
+    var id: String = CurrentUser.id
 
     @HasOne
     var user: User? = nil
