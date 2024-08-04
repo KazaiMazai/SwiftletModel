@@ -213,8 +213,8 @@ extension Relation where Entity: Codable {
         case entity = "object"
         case ids = "ids"
         case entities = "objects"
-        case idsFragment = "fragment_ids"
-        case entitiesFragment = "fragment"
+        case idsSlice = "slice_ids"
+        case slice = "slice"
         case none
     }
 
@@ -229,13 +229,13 @@ extension Relation where Entity: Codable {
         case .ids(let value, let slice):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ?
-            try container.encode(value, forKey: .idsFragment)
+            try container.encode(value, forKey: .idsSlice)
             : try container.encode(value, forKey: .ids)
            
         case .entities(let value, let slice):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ? 
-            try container.encode(value, forKey: .entitiesFragment)
+            try container.encode(value, forKey: .slice)
             : try container.encode(value, forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
@@ -263,11 +263,11 @@ extension Relation where Entity: Codable {
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
             return Relation(state: .entities(entities: value, slice: false))
-        case .idsFragment:
-            let value = try container.decode([Entity.ID].self, forKey: .idsFragment)
+        case .idsSlice:
+            let value = try container.decode([Entity.ID].self, forKey: .idsSlice)
             return Relation(state: .ids(ids: value, slice: true))
-        case .entitiesFragment:
-            let value = try container.decode([Entity].self, forKey: .entitiesFragment)
+        case .slice:
+            let value = try container.decode([Entity].self, forKey: .slice)
             return Relation(state: .entities(entities: value, slice: true))
         case .none:
             return .none

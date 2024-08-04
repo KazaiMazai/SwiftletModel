@@ -245,7 +245,7 @@ final class RelationDecodingTests: XCTestCase {
                 },
                 "id" : "1",
                 "messages" : {
-                  "fragment" : [
+                  "slice" : [
                     {
                       "attachment" : {
                         "object" : {
@@ -275,7 +275,7 @@ final class RelationDecodingTests: XCTestCase {
                   ]
                 },
                 "users" : {
-                  "fragment_ids" : [
+                  "slice_ids" : [
                     "1",
                     "2",
                     "5",

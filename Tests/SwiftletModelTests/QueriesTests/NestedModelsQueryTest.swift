@@ -468,7 +468,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "fragment" : [
+              "slice" : [
                 {
                   "attachment" : null,
                   "author" : null,
@@ -529,7 +529,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -543,7 +543,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -557,7 +557,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -571,7 +571,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -604,7 +604,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
                 "1",
                 "2",
                 "3",
@@ -621,7 +621,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -635,7 +635,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -649,7 +649,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -663,7 +663,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
