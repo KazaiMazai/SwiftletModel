@@ -70,7 +70,8 @@ First, we define the model with all kinds of relations:
 
 ```swift
 
-struct Message: EntityModel, Codable {
+@EntityModel
+struct Message: Codable {
     let id: String
     let text: String
     
@@ -95,62 +96,36 @@ struct Message: EntityModel, Codable {
 
 ```
 
-Now we need to implement EntityModel protocol requirements. 
-
-### Save to context
-
-The save method defines how the model will be saved: 
-- Current instance should be inserted into context
-- Related entities should be saved with their relations.
+That's pretty much it. EntityModel macro will generate all necessary stuff to
+make our model conform to `EntityModelProtocol` requirements:
 
 ```swift
-
-func save(to context: inout Context) throws {
-    context.insert(self)
-    try save(\.$author, to: &context)
-    try save(\.$chat, inverse: \.$messages, to: &context)
-    try save(\.$attachment, inverse: \.$message, to: &context)
-    try save(\.$replies, inverse: \.$replyTo, to: &context)
-    try save(\.$replyTo, inverse: \.$replies, to: &context)
-    try save(\.$viewedBy, to: &context)
-}
-```
-The method is throwing to have some room for validations in case of need.
-
-### Delete from context
-
-The delete method defines the delete strategy for the entity 
-- Current instance should be removed from the context
-- We may want to `delete(...)` related entities recursively to implement a cascade deletion. 
-- We can nullify relations with a `detach(...)` method
-
-```swift    
-func delete(from context: inout Context) throws {
-    context.remove(Message.self, id: id)
-    detach(\.$author, in: &context)
-    detach(\.$chat, inverse: \.$messages, in: &context)
-    detach(\.$replies, inverse: \.$replyTo, in: &context)
-    detach(\.$replyTo, inverse: \.$replies, in: &context)
-    detach(\.$viewedBy, in: &context)
-    try delete(\.$attachment, inverse: \.$message, from: &context)
-}
-```
-
-The method is throwing to be able to perform some additional checks before deletion 
-and throw an error if something has gone wrong.
-
-### Normalization
-
-All relations should be normalized in `normalize()`. The method will be called when the entity is saved to context.
-
-```swift
-mutating func normalize() {
-    $author.normalize()
-    $chat.normalize()
-    $attachment.normalize()
-    $replies.normalize()
-    $replyTo.normalize()
-    $viewedBy.normalize()
+public protocol EntityModelProtocol {
+    associatedtype ID: Hashable, LosslessStringConvertible
+  
+    var id: ID { get }
+     
+    func save(to context: inout Context, options: MergeStrategy<Self>) throws
+    
+    func willSave(to context: inout Context) throws
+    
+    func didSave(to context: inout Context) throws
+    
+    func delete(from context: inout Context) throws
+    
+    func willDelete(from context: inout Context) throws
+    
+    func didDelete(from context: inout Context) throws
+     
+    mutating func normalize()
+    
+    static func batchQuery(in context: Context) -> [Query<Self>]
+    
+    static var defaultMergeStrategy: MergeStrategy<Self> { get }
+    
+    static var fragmentMergeStrategy: MergeStrategy<Self> { get }
+    
+    static var patch: MergeStrategy<Self> { get }
 }
 ```
 
@@ -199,7 +174,9 @@ try chat.save(to: &context)
 
 ```
 
-Just look at this. Instead of providing the full entities everywhere...We need to provide them at least somewhere!
+Just look at this. 
+
+Instead of providing the full entities everywhere...We need to provide them at least somewhere!
 In other cases, we can just put ids and it will be enough to establish proper relations.
 
 At this point, our chat and the related entities will be saved to the context.
@@ -207,6 +184,36 @@ At this point, our chat and the related entities will be saved to the context.
 - All entities will be normalized so we don't have to care about duplication.
 - Bidirectional links will be managed.
 
+
+## How to Delete Entities 
+
+The delete method is generated via EntityModel macro making deletion as simple as:
+
+```swift
+
+let chat = Chat("1")
+chat.delete(from: &context)
+
+```
+
+Calling `delete(...)` will 
+- remove current instance from the context
+- it will nullify all relations
+- call willDelete(...) and `didDelete(...)` callbacks when needed.
+
+### How to cascade delete
+
+There is `willDelete(...)` callback that can be utilized for cascade deletion imlementation:
+
+```swift
+extension Message {
+    func willDelete(from context: inout Context) throws {
+        try delete(\.$attachment, inverse: \.$message, from: &context)
+    }
+}
+```
+The method is throwing to be able to perform some additional checks before deletion 
+and throw an error if something has gone wrong.
 
 ## How to Query Entities
 
