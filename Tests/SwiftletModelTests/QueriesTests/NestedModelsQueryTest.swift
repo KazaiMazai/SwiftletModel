@@ -27,28 +27,28 @@ final class NestedModelsQueryTest: XCTestCase {
                     id: "1",
                     text: "hello",
                     author: .relation(.alice),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "2",
                     text: "howdy",
                     author: .relation(.bob),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "3",
                     text: "yo!",
                     author: .relation(.tom),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "4",
                     text: "wassap!",
                     author: .relation(.john),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 )
             ]),
             admins: .relation([.bob])
