@@ -16,25 +16,11 @@ extension Attachment {
     }
 }
 
-struct Attachment: EntityModel, Codable {
+@EntityModel
+struct Attachment: Codable {
     let id: String
     var kind: Kind
 
     @BelongsTo(\.message, inverse: \.attachment)
     var message: Message?
-
-    mutating func normalize() {
-        $message.normalize()
-    }
-
-    func save(to context: inout Context) throws {
-        context.insert(self)
-        try save(\.$message, inverse: \.$attachment, to: &context)
-    }
-
-    func delete(from context: inout Context) throws {
-        context.remove(Attachment.self, id: id)
-        detach(\.$message, inverse: \.$attachment, in: &context)
-    }
-
 }

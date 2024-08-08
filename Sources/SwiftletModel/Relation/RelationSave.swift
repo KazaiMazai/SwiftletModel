@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Save Relations and Attached Entities
 
-public extension EntityModel {
+public extension EntityModelProtocol {
     func save<Child, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         to context: inout Context) throws {
@@ -19,7 +19,7 @@ public extension EntityModel {
     }
 }
 
-public extension EntityModel {
+public extension EntityModelProtocol {
 
     func save<Child, Constaint, InverseConstraint>(
         _ keyPath: KeyPath<Self, OneToManyRelation<Child, Constaint>>,
@@ -60,7 +60,7 @@ public extension EntityModel {
 
 // MARK: - Private
 
-private extension EntityModel {
+private extension EntityModelProtocol {
 
     func saveRelation<Child, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
@@ -91,7 +91,7 @@ private extension EntityModel {
     }
 }
 
-private extension EntityModel {
+private extension EntityModelProtocol {
     func saveEntities<Child, Directionality, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, Relation<Child, Directionality, Cardinality, Constraint>>,
         in context: inout Context) throws {
@@ -100,7 +100,7 @@ private extension EntityModel {
     }
 }
 
-private extension EntityModel {
+private extension EntityModelProtocol {
     func link<Child, Cardinality, Constraint>(
         _ children: [Child.ID],
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>

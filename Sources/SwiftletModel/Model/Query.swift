@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Query<Entity: EntityModel> {
+public struct Query<Entity: EntityModelProtocol> {
     typealias Resolver = () -> Entity?
 
     public let id: Entity.ID
@@ -75,7 +75,7 @@ public extension Collection {
     }
 }
 
-public typealias QueryModifier<T: EntityModel> = (Query<T>) -> Query<T>
+public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
 
 public extension Query {
 
@@ -184,15 +184,15 @@ public extension Collection {
 }
 
 extension Context {
-    func query<Entity: EntityModel>(_ id: Entity.ID) -> Query<Entity> {
+    func query<Entity: EntityModelProtocol>(_ id: Entity.ID) -> Query<Entity> {
         Query(context: self, id: id)
     }
 
-    func query<Entity: EntityModel>(_ ids: [Entity.ID]) -> [Query<Entity>] {
+    func query<Entity: EntityModelProtocol>(_ ids: [Entity.ID]) -> [Query<Entity>] {
         ids.map { query($0) }
     }
 
-    func query<Entity: EntityModel>() -> [Query<Entity>] {
+    func query<Entity: EntityModelProtocol>() -> [Query<Entity>] {
         query(ids(Entity.self))
     }
 }
