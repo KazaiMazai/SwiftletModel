@@ -39,11 +39,11 @@ public extension Relation {
 
 extension Relation where Cardinality == Relations.ToMany {
     static func appending(_ entities: [Entity], fragment: Bool) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: fragment))
+        Relation(state: State(entities, slice: true, fragment: fragment))
     }
     
     static func relation(_ entities: [Entity], fragment: Bool) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: fragment))
+        Relation(state: State(entities, slice: false, fragment: fragment))
     }
 }
 
@@ -68,8 +68,8 @@ extension Relation {
         switch state {
         case .entity, .id:
             return .replace
-        case .entities(_, let chunk, _), .ids(_, let chunk):
-            return chunk ? .append : .replace
+        case .entities(_, let slice, _), .ids(_, let slice):
+            return slice ? .append : .replace
         case .none:
             return .append
         }
@@ -111,16 +111,16 @@ extension Relation {
     indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
         case entity(entity: T?, fragment: Bool)
-        case ids(ids: [T.ID], chunk: Bool)
-        case entities(entities: [T], chunk: Bool, fragment: Bool)
+        case ids(ids: [T.ID], slice: Bool)
+        case entities(entities: [T], slice: Bool, fragment: Bool)
         case none
 
-        init(_ items: [T], chunk: Bool, fragment: Bool) {
-            self = .entities(entities: items, chunk: chunk, fragment: fragment)
+        init(_ items: [T], slice: Bool, fragment: Bool) {
+            self = .entities(entities: items, slice: slice, fragment: fragment)
         }
 
-        init(ids: [T.ID], chunk: Bool) {
-            self = .ids(ids: ids, chunk: chunk)
+        init(ids: [T.ID], slice: Bool) {
+            self = .ids(ids: ids, slice: slice)
         }
 
         init(id: T.ID?) {

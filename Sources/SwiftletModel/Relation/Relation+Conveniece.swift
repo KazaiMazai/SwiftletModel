@@ -37,26 +37,26 @@ public extension Relation where Cardinality == Relations.ToOne {
 
 public extension Relation where Cardinality == Relations.ToMany {
     static func relation(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: false))
+        Relation(state: State(entities, slice: false, fragment: false))
     }
     
     static func fragment(_ entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: false, fragment: true))
+        Relation(state: State(entities, slice: false, fragment: true))
     }
     
     static func ids(_ ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, chunk: false))
+        Relation(state: State(ids: ids, slice: false))
     }
 
     static func appending(relation entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: false))
+        Relation(state: State(entities, slice: true, fragment: false))
     }
     
     static func appending(fragment entities: [Entity]) -> Self {
-        Relation(state: State(entities, chunk: true, fragment: true))
+        Relation(state: State(entities, slice: true, fragment: true))
     }
  
     static func appending(ids: [Entity.ID]) -> Self {
-        Relation(state: State(ids: ids, chunk: true))
+        Relation(state: State(ids: ids, slice: true))
     }
 }

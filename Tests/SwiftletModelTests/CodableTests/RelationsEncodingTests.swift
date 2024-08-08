@@ -278,21 +278,21 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenExactEncodingChunk_EqualExpectedJSON() {
+    func test_WhenExactEncodingSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(chunk: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(chunk: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()
@@ -311,7 +311,7 @@ final class RelationEncodingTests: XCTestCase {
                 },
                 "id" : "1",
                 "messages" : {
-                  "chunk" : [
+                  "slice" : [
                     {
                       "attachment" : {
                         "object" : {
@@ -341,7 +341,7 @@ final class RelationEncodingTests: XCTestCase {
                   ]
                 },
                 "users" : {
-                  "chunk_ids" : [
+                  "slice_ids" : [
                     "1",
                     "2",
                     "5",
@@ -360,7 +360,7 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenExplicitEncodingChunk_EqualExpectedJSON() {
+    func test_WhenExplicitEncodingSlice_EqualExpectedJSON() {
 
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
@@ -368,14 +368,14 @@ final class RelationEncodingTests: XCTestCase {
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(chunk: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(chunk: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()
@@ -443,21 +443,21 @@ final class RelationEncodingTests: XCTestCase {
         XCTAssertEqual(userJSON, expectedJSON)
     }
 
-    func test_WhenDefaultEncodingChunk_EqualExpectedJSON() {
+    func test_WhenDefaultEncodingSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
         let user = User
             .query(User.bob.id, in: context)
             .with(\.$chats) {
-                $0.with(chunk: \.$messages) {
+                $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
                         $0.id(\.$message)
                     }
                     .id(\.$author)
                     .id(\.$chat)
                 }
-                .id(chunk: \.$users)
+                .id(slice: \.$users)
                 .id(\.$admins)
             }
             .resolve()

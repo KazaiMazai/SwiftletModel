@@ -572,9 +572,9 @@ but also appending new relations to the existing ones. It can be done via `appen
 ```swift
 
 /**
-New to-many relations can be appended to the existing ones when set as an appending chunk:
+New to-many relations can be appended to the existing ones when set as an appending slice:
 */
-chat.$messages = .appending([message])
+chat.$messages = .appending(relation: [message])
 try chat.save(to: &context)
 
 /**
@@ -758,14 +758,14 @@ If we have a collection of anything on the backend it will almost certainly be p
 
 SwiftletModel provides a convenient way to deal with incomplete collections for to-many relations.
 
-When setting to-many relation it's possible to mark the collection as a appending chunk. 
+When setting to-many relation it's possible to mark the collection as a appending slice. 
 In that case, all the related entities will be appended to the existing.
  
 ```swift
 
 /**
 New to-many relations can be appended 
-to the existing ones when we set them as a appending chunk:
+to the existing ones when we set them as a appending slice:
 */
 chat.$messages = .appending([message])
 try chat.save(to: &context)

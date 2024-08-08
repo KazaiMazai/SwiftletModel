@@ -87,10 +87,10 @@ extension Relation where Entity: Codable {
             return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, chunk: false))
+            return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
         case .none:
             return .none
         }
@@ -105,8 +105,8 @@ extension Relation where Entity: Codable {
         case entity = "object"
         case ids = "ids"
         case entities = "objects"
-        case idsChunk = "chunk_ids"
-        case chunk = "chunk"
+        case idsSlice = "slice_ids"
+        case slice = "slice"
         case none
     }
 
@@ -118,16 +118,16 @@ extension Relation where Entity: Codable {
         case .entity(let value, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .entity)
-        case .ids(let value, let chunk):
+        case .ids(let value, let slice):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            chunk ?
-            try container.encode(value, forKey: .idsChunk)
+            slice ?
+            try container.encode(value, forKey: .idsSlice)
             : try container.encode(value, forKey: .ids)
            
-        case .entities(let value, let chunk, _):
+        case .entities(let value, let slice, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            chunk ?
-            try container.encode(value, forKey: .chunk)
+            slice ?
+            try container.encode(value, forKey: .slice)
             : try container.encode(value, forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
@@ -151,16 +151,16 @@ extension Relation where Entity: Codable {
             return Relation(state: .entity(entity: value, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
-            return Relation(state: .ids(ids: value, chunk: false))
+            return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
-        case .idsChunk:
-            let value = try container.decode([Entity.ID].self, forKey: .idsChunk)
-            return Relation(state: .ids(ids: value, chunk: true))
-        case .chunk:
-            let value = try container.decode([Entity].self, forKey: .chunk)
-            return Relation(state: .entities(entities: value, chunk: true, fragment: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+        case .idsSlice:
+            let value = try container.decode([Entity.ID].self, forKey: .idsSlice)
+            return Relation(state: .ids(ids: value, slice: true))
+        case .slice:
+            let value = try container.decode([Entity].self, forKey: .slice)
+            return Relation(state: .entities(entities: value, slice: true, fragment: false))
         case .none:
             return .none
         }
@@ -205,11 +205,11 @@ extension Relation where Entity: Codable {
         }
 
         if let value = try? container.decode([Entity].self) {
-            return Relation(state: .entities(entities: value, chunk: false, fragment: false))
+            return Relation(state: .entities(entities: value, slice: false, fragment: false))
         }
 
         if let value = try? container.decode([ID<Entity>].self) {
-            return Relation(state: .ids(ids: value.map { $0.id }, chunk: false))
+            return Relation(state: .ids(ids: value.map { $0.id }, slice: false))
         }
 
         return .none
