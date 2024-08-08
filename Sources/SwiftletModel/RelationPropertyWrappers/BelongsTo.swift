@@ -36,16 +36,16 @@ public extension BelongsTo where Directionality == Relations.Mutual {
 
 public extension BelongsTo {
 
-    static func relation(id: T.ID) -> Self {
-        BelongsTo(relation: .relation(id: id))
+    static func id(_ id: T.ID) -> Self {
+        BelongsTo(relation: .id(id))
     }
 
     static func relation(_ entity: T) -> Self {
         BelongsTo(relation: .relation(entity))
     }
     
-    static func relation(fragment entity: T) -> Self {
-        BelongsTo(relation: .relation(fragment: entity))
+    static func fragment(_ entity: T) -> Self {
+        BelongsTo(relation: .fragment(entity))
     }
 }
 

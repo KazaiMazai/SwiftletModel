@@ -34,7 +34,7 @@ final class ManyToManyTests: XCTestCase {
         chat.$users = .relation([.bob, .alice, .tom])
         try! chat.save(to: &context)
 
-        chat.$users = .appending([.john, .michael])
+        chat.$users = .appending(relation: [.john, .michael])
         try! chat.save(to: &context)
 
         let chatUsers = Chat

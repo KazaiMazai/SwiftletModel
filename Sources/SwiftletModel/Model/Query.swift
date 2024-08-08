@@ -133,7 +133,7 @@ public extension Query {
         whenResolved {
             var entity = $0
             entity[keyPath: keyPath] = related(keyPath)
-                .map { .relation(id: $0.id) } ?? .none
+                .map { .id($0.id) } ?? .none
             return entity
         }
     }
@@ -291,7 +291,7 @@ private extension Query {
         whenResolved {
             var entity = $0
             let ids = related(keyPath).map { $0.id }
-            entity[keyPath: keyPath] = chunk ? .appending(ids: ids) : .relation(ids: ids)
+            entity[keyPath: keyPath] = chunk ? .appending(ids: ids) : .ids(ids)
             return entity
         }
     }

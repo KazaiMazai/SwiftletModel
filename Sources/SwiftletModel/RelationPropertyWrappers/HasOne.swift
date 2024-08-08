@@ -35,16 +35,16 @@ public extension HasOne where Directionality == Relations.Mutual {
 
 public extension HasOne {
 
-    static func relation(id: T.ID) -> Self {
-        HasOne(relation: .relation(id: id))
+    static func id(_ id: T.ID) -> Self {
+        HasOne(relation: .id(id))
     }
 
     static func relation(_ entity: T) -> Self {
         HasOne(relation: .relation(entity))
     }
     
-    static func relation(fragment entity: T) -> Self {
-        HasOne(relation: .relation(fragment: entity))
+    static func fragment(_ entity: T) -> Self {
+        HasOne(relation: .fragment( entity))
     }
 }
 
