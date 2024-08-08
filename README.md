@@ -36,10 +36,9 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
 
 - [Getting Started](#getting-started)
   * [Model Definitions](#model-definitions)
-  * [Save to context](#save-to-context)
-  * [Delete from context](#delete-from-context)
-  * [Normalization](#normalization)
 - [How to Save Entities](#how-to-save-entities)
+- [How to Delete Entities](#how-to-delete-entities)
+  * [How to cascade delete](#how-to-cascade-delete)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
   * [Related models query](#related-models-query)
@@ -54,8 +53,11 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Saving Relations](#saving-relations)
   * [Removing Relations](#removing-relations)
 - [Incomplete Data Handling](#incomplete-data-handling)
-  * [Handling incomplete Entity data](#handling-incomplete-entity-data)
+  * [Handling incomplete Entity Models](#handling-incomplete-entity-models)
+    + [Default Merge Strategy](#default-merge-strategy)
+    + [Fragment Merge Strategy](#fragment-merge-strategy)
     + [Advanced Merge Strategies](#advanced-merge-strategies)
+  * [Handling incomplete Related Entity Models](#handling-incomplete-related-entity-models)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
 - [Type Safety](#type-safety)
@@ -71,7 +73,7 @@ First, we define the model with all kinds of relations:
 ```swift
 
 @EntityModel
-struct Message: Codable {
+struct Message {
     let id: String
     let text: String
     
@@ -97,37 +99,8 @@ struct Message: Codable {
 ```
 
 That's pretty much it. EntityModel macro will generate all necessary stuff to
-make our model conform to `EntityModelProtocol` requirements:
+make our model conform to `EntityModelProtocol` requirements.
 
-```swift
-public protocol EntityModelProtocol {
-    associatedtype ID: Hashable, LosslessStringConvertible
-  
-    var id: ID { get }
-     
-    func save(to context: inout Context, options: MergeStrategy<Self>) throws
-    
-    func willSave(to context: inout Context) throws
-    
-    func didSave(to context: inout Context) throws
-    
-    func delete(from context: inout Context) throws
-    
-    func willDelete(from context: inout Context) throws
-    
-    func didDelete(from context: inout Context) throws
-     
-    mutating func normalize()
-    
-    static func batchQuery(in context: Context) -> [Query<Self>]
-    
-    static var defaultMergeStrategy: MergeStrategy<Self> { get }
-    
-    static var fragmentMergeStrategy: MergeStrategy<Self> { get }
-    
-    static var patch: MergeStrategy<Self> { get }
-}
-```
 
 ## How to Save Entities
 
@@ -152,16 +125,16 @@ let chat = Chat(
         Message(
             id: "1",
             text: "Any thoughts on SwiftletModel?",
-            author: .relation(id: "1")
+            author: .id( "1")
         ),
         
         Message(
             id: "1",
             text: "Yes.",
-            author: .relation(id: "2")
+            author: .id( "2")
         )
     ]),
-    admins: .relation(ids: ["1"])
+    admins: .ids(["1"])
 )
 ```
 
@@ -183,6 +156,16 @@ At this point, our chat and the related entities will be saved to the context.
 
 - All entities will be normalized so we don't have to care about duplication.
 - Bidirectional links will be managed.
+
+
+If your model has optional fields and contains incomplete data, you can save it with as a fragment:
+
+```swift
+
+try chat.save(to: &context, options: .fragment)
+```
+
+It will patch the existing model. Read more about fragment data handling: [Handling incomplete Entity data](#handling-incomplete-entity-data)
 
 
 ## How to Delete Entities 
@@ -221,20 +204,6 @@ and throw an error if something has gone wrong.
 
 Let's query something. For example, a User with the following nested models:
 
-```yaml
-User 
-- chats 
-  - messages 
-    - replies 
-        - authorUser 
-        - replyToMessageId
-    - authorId
-    - chatId
-  - users
-  - adminIds
-  
-```
-
 It can be done with the following syntax:
 
 
@@ -242,17 +211,17 @@ It can be done with the following syntax:
 
 let user = User
     .query("1", in: context)
-    .with(\.$chats) {
-        $0.with(\.$messages) {
-            $0.with(\.$replies) {
-                $0.with(\.$author)
-                  .id(\.$replyTo)
+    .with(\.$chats) { chat in
+        chat.with(\.$messages) { message in
+            message.with(\.$replies) { reply in
+                reply.with(\.$author)
+                     .id(\.$replyTo)
             }
             .id(\.$author)
             .id(\.$chat)
         }
         .with(\.$users)
-        .ids(\.$admins)
+        .id(\.$admins)
     }
     .resolve()
 ```
@@ -280,16 +249,24 @@ let userChats: [Chat] = User
 
 ## Codable Conformance
 
-Since models are implemented as plain structs we get codable out of the box.
-
+Since models are implemented as plain structs we can get `Codable` out of the box:
 
 ```swift
+
+extension User: Codable { }
+
+extension Chat: Codable { }
+
+extension Message: Codable { }
+
+/** 
+And then use it for our codable purposes:
+*/
 
 let encoder = JSONEncoder.prettyPrinting
 encoder.relationEncodingStrategy = .plain
 let userJSON = user.prettyDescription(with: encoder) ?? ""
 print(userJSON)
-
 
 ```
 
@@ -435,7 +412,7 @@ the existing message-attachment relation in the context.
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
+    author: .id( "1"),
     attachment: .null
 )
 
@@ -525,7 +502,7 @@ We can also attach by id. In that case 
 we need to make sure that both entities exist in the context
 */
  
-message.$author = .relation(id: user.id)
+message.$author = .id( user.id)
 try message.save(to: &context)
 try user.save(to: &context)
 
@@ -565,7 +542,7 @@ try chat.save(to: &context)
 /**
 An array of ids will also work, but all entities should be additionally saved to the context. 
 */
-chat.$messages = .relation(ids: [message.id])
+chat.$messages = .ids([message.id])
 try chat.save(to: &context)
 try message.save(to: &context)       
 ```
@@ -596,22 +573,8 @@ try message.save(to: &context)    
 
 ### Saving Relations
 
-Saving an entity with all related ones is possible thanks to the Entity save method:
+Saving an entity with all related ones is possible thanks to the Entity save method and is done automatically.
 
-```swift
-
-extension User {
-    /**
-    Save with relation KeyPaths will save both related entities and relations to them.
-    */
-    func save(to context: inout Context) throws {
-        context.insert(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &context)
-        try save(\.$adminOf, inverse: \.$admins, to: &context)
-    }
-}
-
-```
 
 ### Removing Relations
 
@@ -635,8 +598,6 @@ We can explicitly nullify the relation. This is an equivalent of `detach(...)`
 */
 message.$attachment = .null
 try message.save(to: &context)
-
-
 
 ```
 
@@ -896,7 +857,7 @@ existing relations to attachments if there are any:
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
+    author: .id( "1"),
 )
 
 try message.save(to: &context)
@@ -914,7 +875,7 @@ is saved it **WILL OVERWRITE** existing relations to the attachment by nullifyin
 let message = Message(
     id: "1",
     text: "Any thoughts on SwiftletModel?",
-    author: .relation(id: "1"),
+    author: .id( "1"),
     attachment: .null
 )
 
