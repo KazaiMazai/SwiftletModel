@@ -98,7 +98,7 @@ struct Message {
 
 ```
 
-That's pretty much it. EntityModel macro will generate all necessary stuff to
+That's pretty much it. EntityModel macro will generate all the necessary stuff to
 make our model conform to `EntityModelProtocol` requirements.
 
 
@@ -106,6 +106,7 @@ make our model conform to `EntityModelProtocol` requirements.
 
 Now let's create a chat instance and put some messages into it. 
 To do it we need to create a context first:
+
 
 
 ```swift
@@ -147,7 +148,8 @@ try chat.save(to: &context)
 
 ```
 
-Just look at this. 
+
+Just look at this. 
 
 Instead of providing the full entities everywhere...We need to provide them at least somewhere!
 In other cases, we can just put ids and it will be enough to establish proper relations.
@@ -158,7 +160,7 @@ At this point, our chat and the related entities will be saved to the context.
 - Bidirectional links will be managed.
 
 
-If your model has optional fields and contains incomplete data, you can save it with as a fragment:
+If your model has optional fields and contains incomplete data, you can save it as a fragment:
 
 ```swift
 
@@ -179,14 +181,14 @@ chat.delete(from: &context)
 
 ```
 
-Calling `delete(...)` will 
-- remove current instance from the context
+Calling `delete(...)` will 
+- remove the current instance from the context
 - it will nullify all relations
-- call willDelete(...) and `didDelete(...)` callbacks when needed.
+- call `willDelete(...)` and `didDelete(...)` callbacks when needed.
 
 ### How to cascade delete
 
-There is `willDelete(...)` callback that can be utilized for cascade deletion imlementation:
+There is a `willDelete(...)` callback that can be utilized for cascade deletion implementation:
 
 ```swift
 extension Message {
@@ -604,7 +606,6 @@ try message.save(to: &context)
 
 ## Incomplete Data Handling
 
-
 SwiftletModel provides a few strategies to handle incomplete data for the cases:
 
 - Incomplete Entity Models
@@ -646,10 +647,11 @@ struct User: Codable {
 
 ```
 
-In SwiftletModel partial entity models are called fragments. SwiftletModel provides a reliable way 
+In SwiftletModel partial entity models are called fragments. SwiftletModel provides a reliable way 
 to deal with fragments via `MergeStrategy` without corrupting existing data.
 
 MergeStrategy defines how new entities are merged with existing ones that we already have in the Context.
+
 
 ```swift
 
@@ -666,10 +668,10 @@ public extension EntityModelProtocol {
 
 #### Default Merge Strategy
 
-When saving enities to context, you can omit the `options`
-since the defaultMergeStrategy is used as a default. 
+When saving entities to context, you can omit the `options`
+since the defaultMergeStrategy is used. 
 
-The default merge Strategy replaces existing models in the context upon save:
+The default merge Strategy replaces existing models in the context upon saving:
 
 ```swift
 var context = Context()
@@ -691,9 +693,10 @@ try save(to: &context)
 
 #### Fragment Merge Strategy
 
-Fragment merge strategy patches existing models in the context. 
-In other words, it updates only non-nil values. 
+Fragment merge strategy patches existing models in the context. 
+In other words, it updates only non-nil values. 
 It's automatically generated via macro so you don't have to do anything.
+
 
 ```swift
 var context = Context()
@@ -716,7 +719,7 @@ try save(to: &context, options: .fragment)
 #### Advanced Merge Strategies
 
 
-Both default and fragment merge strategies can be overriden for any entity:
+Both default and fragment merge strategies can be overridden for any entity:
  
 ```swift
 extension User {
@@ -780,7 +783,7 @@ extension MergeStrategy {
 
 ### Handling incomplete Related Entity Models
 
-When assigning related nested entities, we can mark them as fragments to ulitise fragment merging strategy:
+When assigning related nested entities, we can mark them as fragments to utilise fragment merging strategy:
 
 ```swift
 
@@ -793,13 +796,13 @@ try! chat.save(to: &context)
 
 ### Handling incomplete data for to-many Relations
 
-We often have to deal with portional data. 
+We often have to deal with portions of data. 
 If we have a collection of anything on the backend it will almost certainly be paginated.
 
 SwiftletModel provides a convenient way to deal with incomplete collections for to-many relations.
 
 When setting to-many relation it's possible to mark the collection as a appending slice. 
-In that case, all the related entities will be appended to the existing.
+In that case, all the related entities will be appended to the existing ones.
  
 ```swift
 
@@ -833,7 +836,7 @@ Basically, data can be missing for at least 3 reasons:
 
 1. The business logic of the app allows the related entity to be missing. For example: a message may not have an attachment.
 
-2. Data is missing because we haven't loaded it yet. If the source is a backend or even a local storage there is almost certainly a case when the app haven't received the data yet. 
+2. Data is missing because we haven't loaded it yet. If the source is a backend or even a local storage there is almost certainly a case when the app hasn't received the data yet. 
 
 3. The logic of obtaining the data implies that some of the data will be missing. For example: a typical app flow where we obtain a list of chats from the backend. Then we get a list of messages for the chat. Even though a message cannot exist without a chat, a message model coming from the backend will hardly ever contain a chat model because it will make the shape of the data weird with a lot of duplication.
 
@@ -845,7 +848,7 @@ That's why SwiftletModel's relations properties are always optional. 
 It allows to implement a patching update policy for relations by default: when entities with missing relations are saved to the storage they don't overwrite or nullify existing relations.
 
 
-This allows to safely update models and merge it with the exising data:
+This allows to safely update models and merge them with the exising data:
 
 
 ```swift
