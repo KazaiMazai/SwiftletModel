@@ -27,28 +27,28 @@ final class NestedModelsQueryTest: XCTestCase {
                     id: "1",
                     text: "hello",
                     author: .relation(.alice),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "2",
                     text: "howdy",
                     author: .relation(.bob),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "3",
                     text: "yo!",
                     author: .relation(.tom),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 ),
 
                 Message(
                     id: "4",
                     text: "wassap!",
                     author: .relation(.john),
-                    replyTo: .relation(id: "0")
+                    replyTo: .id("0")
                 )
             ]),
             admins: .relation([.bob])
@@ -236,7 +236,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
-            .ids(\.$replies)
+            .id(\.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
 
@@ -448,13 +448,13 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedModelsFragment_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedModelsSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
             .query(in: context)
-            .with(fragment: \.$replies) {
+            .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
             }
             .resolve()
@@ -468,7 +468,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "fragment" : [
+              "slice" : [
                 {
                   "attachment" : null,
                   "author" : null,
@@ -529,7 +529,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -543,7 +543,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -557,7 +557,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -571,7 +571,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "fragment" : [
+              "slice" : [
 
               ]
             },
@@ -586,13 +586,13 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 
-    func test_WhenQueryWithNestedIdsFragment_EqualExpectedJSON() {
+    func test_WhenQueryWithNestedIdsSlice_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
             .query(in: context)
-            .ids(fragment: \.$replies)
+            .id(slice: \.$replies)
             .resolve()
             .sorted(by: { $0.id < $1.id})
 
@@ -604,7 +604,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "0",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
                 "1",
                 "2",
                 "3",
@@ -621,7 +621,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "1",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -635,7 +635,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "2",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -649,7 +649,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "3",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },
@@ -663,7 +663,7 @@ final class NestedModelsQueryTest: XCTestCase {
             "chat" : null,
             "id" : "4",
             "replies" : {
-              "fragment_ids" : [
+              "slice_ids" : [
 
               ]
             },

@@ -11,11 +11,9 @@ public protocol EntityModelProtocol {
     // swiftlint:disable:next type_name
     associatedtype ID: Hashable, Codable, LosslessStringConvertible
   
-    static var mergeStrategy: MergeStrategy<Self> { get }
-    
     var id: ID { get }
-    
-    func save(to context: inout Context) throws
+     
+    func save(to context: inout Context, options: MergeStrategy<Self>) throws
     
     func willSave(to context: inout Context) throws
     
@@ -28,10 +26,20 @@ public protocol EntityModelProtocol {
     func didDelete(from context: inout Context) throws
      
     mutating func normalize()
+    
+    static func batchQuery(in context: Context) -> [Query<Self>]
+    
+    static var defaultMergeStrategy: MergeStrategy<Self> { get }
+    
+    static var fragmentMergeStrategy: MergeStrategy<Self> { get }
+    
+    static var patch: MergeStrategy<Self> { get }
 }
 
 public extension EntityModelProtocol {
-    static var mergeStrategy: MergeStrategy<Self> { .replace }
+    static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
+    
+    static var fragmentMergeStrategy: MergeStrategy<Self> { Self.patch }
     
     func willDelete(from context: inout Context) throws { }
     
@@ -40,6 +48,16 @@ public extension EntityModelProtocol {
     func didDelete(from context: inout Context) throws { }
     
     func didSave(to context: inout Context) throws { }
+}
+
+public extension MergeStrategy where T: EntityModelProtocol {
+    static var `default`: MergeStrategy<T> {
+        T.defaultMergeStrategy
+    }
+    
+    static var fragment: MergeStrategy<T> {
+        T.fragmentMergeStrategy
+    }
 }
  
 public extension EntityModelProtocol {
@@ -94,8 +112,4 @@ extension EntityModelProtocol {
     ) -> Relation<Child, Direction, Cardinality, Constraint> {
         self[keyPath: keyPath]
     }
-}
-
-public protocol ListablePropertiesProtocol {
-//    static func getProperties() -> [String]
 }

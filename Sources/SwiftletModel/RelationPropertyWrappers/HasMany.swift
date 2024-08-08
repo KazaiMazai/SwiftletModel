@@ -35,20 +35,28 @@ public extension HasMany where Directionality == Relations.Mutual {
 
 public extension HasMany {
 
-    static func relation(ids: [T.ID]) -> Self {
-        HasMany(relation: .relation(ids: ids))
+    static func ids(_ ids: [T.ID]) -> Self {
+        HasMany(relation: .ids(ids))
     }
 
     static func relation(_ entities: [T]) -> Self {
         HasMany(relation: .relation(entities))
     }
-
-    static func fragment(ids: [T.ID]) -> Self {
-        HasMany(relation: .fragment(ids: ids))
-    }
-
+    
     static func fragment(_ entities: [T]) -> Self {
         HasMany(relation: .fragment(entities))
+    }
+
+    static func appending(ids: [T.ID]) -> Self {
+        HasMany(relation: .appending(ids: ids))
+    }
+
+    static func appending(relation entities: [T]) -> Self {
+        HasMany(relation: .appending(relation: entities))
+    }
+    
+    static func appending(fragment entities: [T]) -> Self {
+        HasMany(relation: .appending(fragment: entities))
     }
 }
 

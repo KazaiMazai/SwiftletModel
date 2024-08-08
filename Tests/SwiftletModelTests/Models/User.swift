@@ -12,7 +12,7 @@ import Foundation
 struct CurrentUser: Codable {
     static let id: String = "current"
 
-    private(set) var id: String = CurrentUser.id
+    var id: String = CurrentUser.id
 
     @HasOne
     var user: User? = nil
@@ -43,14 +43,6 @@ struct User: Codable {
 
     @HasMany(\.adminOf, inverse: \.admins)
     var adminOf: [Chat]?
-
-    static var mergeStrategy: MergeStrategy<User> {
-        MergeStrategy(
-            .patch(\.name),
-            .patch(\.profile),
-            .patch(\.avatar)
-        )
-    }
 }
 
 extension Query where Entity == User {

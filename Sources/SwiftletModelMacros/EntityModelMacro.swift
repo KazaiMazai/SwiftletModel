@@ -27,13 +27,17 @@ public struct EntityModelMacro: ExtensionMacro {
         let attributes = declaration.memberBlock.members
             .compactMap { $0.decl.as(VariableDeclSyntax.self) }
             .compactMap { extractRelationPropertyWrappersAttributes(from: $0) }
+            
+        let optionalProperties = declaration.memberBlock.members
+            .compactMap { $0.decl.as(VariableDeclSyntax.self) }
+            .compactMap { extractOptionalPropertyAttributes(from: $0) }
          
         let syntax = try ExtensionDeclSyntax(
         """
         extension \(raw: type): EntityModelProtocol {
-            func save(to context: inout Context) throws {
+            func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
                 try willSave(to: &context)
-                context.insert(self, options: Self.mergeStrategy)
+                context.insert(self, options: options)
                 \(raw: attributes
                     .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
                     .joined(separator: "\n")
@@ -57,7 +61,26 @@ public struct EntityModelMacro: ExtensionMacro {
                     .joined(separator: "\n")
                 )
             }
+        
+            static func batchQuery(in context: Context) -> [Query<Self>]  {
+                Self.query(in: context)
+                   \(raw: attributes
+                        .map { "\\.$\($0.propertyName)" }
+                        .map { ".id(\($0))"}
+                        .joined(separator: "\n")
+                    )
+            }
+        
+            static let patch: MergeStrategy<Self> = {
+                MergeStrategy(
+                    \(raw: optionalProperties
+                        .map { ".patch(\\.\($0))"}
+                        .joined(separator: ",\n")
+                    )
+                )
+            }()
         }
+
         """
         )
 
@@ -99,7 +122,67 @@ public struct EntityModelMacro: ExtensionMacro {
         }
         return nil
     }
+    
+    static func extractOptionalPropertyAttributes(from vars: VariableDeclSyntax) -> String? {
+        for attribute in vars.attributes {
+            
+            if let customAttribute = attribute.as(AttributeSyntax.self),
+               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+               let wrapperType = RelationPropertyWrapperAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+                return nil
+            }
+        }
+        
+        guard vars.modifiers.first?.name.text != "static" else {
+            return nil
+        }
+         
+        for binding in vars.bindings {
+            guard let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+                  let typeAnnotation = binding.typeAnnotation?.type else {
+                continue
+            }
+            
+            let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
+            let hasInitializer = binding.initializer != nil
+            
+            guard isOptional else {
+                continue
+            }
+            
+            return property
+            
+        }
+        return nil
+    }
+            
+    static func extractOptionalPropertyAttributes1(from vars: VariableDeclSyntax) -> String? {
+        
+        for binding in vars.bindings {
+            guard let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+                  let typeAnnotation = binding.typeAnnotation?.type else {
+                continue
+            }
+            
+            let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
+            let hasInitializer = binding.initializer != nil
+            
+            guard isOptional || hasInitializer else {
+                continue
+            }
+            
+            return property
+            
+        }
+        return nil
+    }
 }
+
+
+struct OptionalPropertyAttributes {
+    let propertyName: String
+}
+
 
 struct RelationPropertyWrapperAttributes {
     let relationWrapperType: WrapperType
