@@ -640,17 +640,15 @@ try message.save(to: &context)
 SwiftletModel provides a few strategies to handle incomplete data for the cases:
 
 - Incomplete Entity Models
+- Incomplete Related Entity Models
 - Incomplete collections of to-many Relations
 - Missing Data for to-one Relations
 
 
-### Handling incomplete Entity data
+### Handling incomplete Entity Models
 
 When the service gets more mature, models often become bulky.
-We sometimes have to fetch them from different sources or deal with partial model data. 
-
-SwiftletModel provides a reliable way to deal with incomplete model data via `MergeStrategy`.
-MergeStrategy defines how new entities are merged with existing ones that we already have in the Context.
+We sometimes have to fetch them partially from different sources or deal with partial model data. 
 
 Let's define a user model with an optional Profile. 
 
@@ -663,7 +661,8 @@ extension User {
     struct Profile: Codable { ... }
 }
  
-struct User: EntityModel, Codable {
+@EntityModel 
+struct User: Codable {
     let id: String
     private(set) var name: String
     private(set) var avatar: Avatar
@@ -675,43 +674,103 @@ struct User: EntityModel, Codable {
     @HasMany(\.adminOf, inverse: \.admins)
     var adminOf: [Chat]?
 }
+ 
+
 ```
 
-Let's define a patch `MergeStrategy`:
+In SwiftletModel partial entity models are called fragments. SwiftletModel provides a reliable way 
+to deal with fragments via `MergeStrategy` without corrupting existing data.
+
+MergeStrategy defines how new entities are merged with existing ones that we already have in the Context.
 
 ```swift
-extension User {
-    /**
-    This `MergeStrategy` will overwrite the existing users' profiles 
-    only if the new users' profiles are not nil.
-    */
-    static func patch() -> MergeStrategy<User> {
-        MergeStrategy(
-            .patch(\.profile)
-        )
-    }
-}
 
+/**
+To handle that `EntityModelProtocol` has a default and fragment merge strategies:
+*/
+
+public extension EntityModelProtocol {
+    static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
+    
+    static var fragmentMergeStrategy: MergeStrategy<Self> { Self.patch }
+}
 ```
 
-Now we can use the merge strategy in the User's save method:
+#### Default Merge Strategy
+
+When saving enities to context, you can omit the `options`
+since the defaultMergeStrategy is used as a default. 
+
+The default merge Strategy replaces existing models in the context upon save:
 
 ```swift
-extension User {
-    /**
-    The Default `MergeStrategy` for inserting entities into the Context is replaced.
-    Here we provide a patch strategy that will be patching users' profiles.
-    */
-    func save(to context: inout Context) throws {
-        context.insert(self, options: User.patch())
-        try save(\.$chats, inverse: \.$users, to: &context)
-        try save(\.$adminOf, inverse: \.$admins, to: &context)
-    }
-}
+var context = Context()
+
+/**
+This is a complete user entity having all properties set:
+*/
+let user = User(
+    id: "1", 
+    name: "Bob", 
+    avatar: Avatar(...), 
+    profile: User.Profile(...)
+)
+
+try save(to: &context)
 
 ```
+
+
+#### Fragment Merge Strategy
+
+Fragment merge strategy patches existing models in the context. 
+In other words, it updates only non-nil values. 
+It's automatically generated via macro so you don't have to do anything.
+
+```swift
+var context = Context()
+
+/**
+This is a fragment. It doesn't a profile. 
+Probably for a reason, we don't know, but we have to deal with it.
+*/
+let user = User(
+    id: "1", 
+    name: "Bob", 
+    avatar: Avatar(...)
+)
+
+try save(to: &context, options: .fragment)
+
+
+``` 
 
 #### Advanced Merge Strategies
+
+
+Both default and fragment merge strategies can be overriden for any entity:
+ 
+```swift
+extension User {
+    /**
+    This will make patching as the default behavior:
+    */
+    static var defaultMergeStrategy: MergeStrategy<Self> {
+        User.patch
+    }
+    
+    /**
+    This is what the `User.patch` strategy for the user 
+    with an optional `profile` actually looks like: 
+    */
+    static var fragmentMergeStrategy: MergeStrategy<Self> { 
+        MergeStrategy(
+            .patch(\.profile)
+        )
+     }
+}
+
+```
 
 Merge strategy may include several properties.
 
@@ -751,9 +810,22 @@ extension MergeStrategy {
 
 ```
 
+### Handling incomplete Related Entity Models
+
+When assigning related nested entities, we can mark them as fragments to ulitise fragment merging strategy:
+
+```swift
+
+var chat = Chat(id: "1")
+chat.$users = .fragment([.bob, .alice, .john])
+try! chat.save(to: &context)
+
+```
+
+
 ### Handling incomplete data for to-many Relations
 
-We often have to deal with proportional data. 
+We often have to deal with portional data. 
 If we have a collection of anything on the backend it will almost certainly be paginated.
 
 SwiftletModel provides a convenient way to deal with incomplete collections for to-many relations.
@@ -765,11 +837,22 @@ In that case, all the related entities will be appended to the existing.
 
 /**
 New to-many relations can be appended 
-to the existing ones when we set them as a appending slice:
+to the existing ones when we set them as a appending entities:
 */
-chat.$messages = .appending([message])
+chat.$messages = .appending(relation: [message])
 try chat.save(to: &context)
- 
+
+/**
+or appending ids:
+*/
+chat.$messages = .appending(ids: [message])
+try chat.save(to: &context)
+
+/**
+or appending fragments to ulitise fragment merging strategy:
+*/ 
+chat.$messages = .appending(fragment: [message])
+try chat.save(to: &context)
 
 ```
 
