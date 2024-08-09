@@ -37,7 +37,7 @@ public extension Relation {
     }
 }
 
-extension Relation where Cardinality == Relations.ToMany {
+extension Relation where Cardinality == Relations.ToMany<Entity> {
     static func appending(_ entities: [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, slice: true, fragment: fragment))
     }
@@ -47,7 +47,7 @@ extension Relation where Cardinality == Relations.ToMany {
     }
 }
 
-extension Relation where Cardinality == Relations.ToOne {
+extension Relation where Cardinality == Relations.ToOne<Entity> {
     static func relation(_ entity: Entity, fragment: Bool) -> Self {
         Relation(state: State(entity, fragment: fragment))
     }

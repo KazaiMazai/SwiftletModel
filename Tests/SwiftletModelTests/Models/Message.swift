@@ -22,7 +22,7 @@ struct Message: Codable {
     @HasOne(\.attachment, inverse: \.message)
     var attachment: Attachment?
 
-    @HasMany(\.replies, inverse: \.replyTo)
+    @Relationship(\.replies, inverse: \.replyTo)
     var replies: [Message]?
 
     @HasOne(\.replyTo, inverse: \.replies)
