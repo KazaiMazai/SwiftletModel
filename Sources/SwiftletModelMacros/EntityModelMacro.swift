@@ -195,6 +195,7 @@ extension RelationPropertyWrapperAttributes {
         case hasMany = "HasMany"
         case hasOne = "HasOne"
         case belongsTo = "BelongsTo"
+        case relationship = "Relationship"
         
         var title: String {
             rawValue
