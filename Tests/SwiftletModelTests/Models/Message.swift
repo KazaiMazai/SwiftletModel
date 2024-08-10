@@ -34,17 +34,7 @@ struct Message: Codable {
     func willDelete(from context: inout Context) throws {
         try delete(\.$attachment, inverse: \.$message, from: &context)
     }
-    
-
 }
-
-
-func foo() {
-    var msg = Message(id: "1", text: "text")
-    var msg2 = Message(id: "1", text: "text")
-    
-}
-
 
 extension Query where Entity == Message {
     var isMyMessage: Bool? {
