@@ -42,80 +42,67 @@ public protocol DirectionalityProtocol { }
 
 public protocol ConstraintsProtocol { }
 
-
 public protocol RequiredRelation: ConstraintsProtocol { }
 
 public protocol OptionalRelation: ConstraintsProtocol { }
 
-
 public protocol CardinalityProtocol {
-    
-    
-    static var isToMany: Bool { get }
-    
-    
-}
-
-public enum Relations { }
- 
-public protocol EntityResolver {
     associatedtype Value
     associatedtype Entity: EntityModelProtocol
+    
+    static var isToMany: Bool { get }
     
     static func entity<Directionality, Cardinality, Constraint>(_ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> Value
 }
 
+public enum Relations { }
+
 public extension Relations {
     enum OneWay: DirectionalityProtocol { }
-
+    
     enum Mutual: DirectionalityProtocol { }
 
-    enum ToMany<Entity: EntityModelProtocol>: CardinalityProtocol, EntityResolver {
-        public static var isToMany: Bool { true }
-        
-        public static func entity<Directionality, Cardinality, Constraint>(
-            _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> [Entity]?
-        where
-        Entity: EntityModelProtocol,
-        Directionality: DirectionalityProtocol,
-        Cardinality: CardinalityProtocol,
-        Constraint: ConstraintsProtocol {
+    enum ToMany<Entity: EntityModelProtocol> { }
+    
+    enum ToOne<Entity: EntityModelProtocol> { }
+    
+    enum Required: RequiredRelation { }
+    
+    enum Optional: OptionalRelation { }
+}
+ 
+extension Relations.ToMany: CardinalityProtocol {
+    
+    public static var isToMany: Bool { true }
+    
+    public static func entity<Directionality, Cardinality, Constraint>(
+        _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> [Entity]?
+    where
+    Entity: EntityModelProtocol,
+    Directionality: DirectionalityProtocol,
+    Cardinality: CardinalityProtocol,
+    Constraint: ConstraintsProtocol {
         
         relation.entities
-    }
-    }
-
-    enum ToOne<Entity: EntityModelProtocol>: CardinalityProtocol, EntityResolver {
         
-        public static func entity<Directionality, Cardinality, Constraint>(
-            _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> Entity?
-        where
-        Entity: EntityModelProtocol,
-        Directionality: DirectionalityProtocol,
-        Cardinality: CardinalityProtocol,
-        Constraint: ConstraintsProtocol {
+    }
+}
+    
+extension Relations.ToOne: CardinalityProtocol {
+    public static var isToMany: Bool { false }
+    public static func entity<Directionality, Cardinality, Constraint>(
+        _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> Entity?
+    where
+    Entity: EntityModelProtocol,
+    Directionality: DirectionalityProtocol,
+    Cardinality: CardinalityProtocol,
+    Constraint: ConstraintsProtocol {
         
         relation.entities.first
     }
-        
-        
-        public static var isToMany: Bool { false }
-        
-
-    }
-
-    enum Required: RequiredRelation {
-        
-    }
-    
-    enum Optional: OptionalRelation { 
-         
-    }
 }
- 
-public struct Constraint<C: ConstraintsProtocol> {
-     
-}
+
+public struct Constraint<C: ConstraintsProtocol> { }
 
 public extension Constraint {
     static var required: Constraint<Relations.Required> {

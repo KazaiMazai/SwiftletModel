@@ -12,7 +12,6 @@ import Foundation
 public struct Relationship<Value, Entity, Directionality, Cardinality, Constraints>: Hashable
     where
     Cardinality: CardinalityProtocol,
-    Cardinality: EntityResolver,
     Cardinality.Value == Value?,
     Cardinality.Entity == Entity,
     Entity: EntityModelProtocol,
@@ -30,7 +29,6 @@ public struct Relationship<Value, Entity, Directionality, Cardinality, Constrain
         set { relation = newValue }
     }
 }
-
 
 public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Optional,
@@ -167,7 +165,6 @@ public extension Relationship where Cardinality == Relations.ToOne<Entity> {
     }
 }
 
-
 public extension Relationship where Cardinality == Relations.ToMany<Entity> {
 
     static func ids(_ ids: [Entity.ID]) -> Self {
@@ -194,7 +191,6 @@ public extension Relationship where Cardinality == Relations.ToMany<Entity> {
         Relationship(relation: .appending(fragment: entities))
     }
 }
-
 
 public extension Relationship where Cardinality == Relations.ToOne<Entity>, Constraints: OptionalRelation {
     static var null: Self {
