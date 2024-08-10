@@ -62,7 +62,7 @@ public extension Relationship where Directionality == Relations.Mutual,
 }
 
 public extension Relationship where Directionality == Relations.Mutual,
-                                    Constraints == Relations.Optional,
+                                    Constraints == Relations.Required,
                                     Cardinality == Relations.ToMany<Entity> {
     
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [Entity]?>, inverse: KeyPath<Entity, EnclosingType?>) {
