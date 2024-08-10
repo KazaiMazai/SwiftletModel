@@ -89,7 +89,9 @@ extension Relations.ToMany: CardinalityProtocol {
 }
     
 extension Relations.ToOne: CardinalityProtocol {
+    
     public static var isToMany: Bool { false }
+    
     public static func entity<Directionality, Cardinality, Constraint>(
         _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> Entity?
     where
@@ -108,9 +110,7 @@ public extension Constraint {
     static var required: Constraint<Relations.Required> {
         Constraint<Relations.Required>()
     }
-}
 
-public extension Constraint {
     static var optional: Constraint<Relations.Optional> {
         Constraint<Relations.Optional>()
     }
