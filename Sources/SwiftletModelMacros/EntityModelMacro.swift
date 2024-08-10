@@ -124,7 +124,8 @@ private extension EntityModelMacro {
             return RelationshipAttributes(
                 relationWrapperType: wrapperType,
                 propertyName: property,
-                keyPathAttributes: .init(labeledKeyPathsList: keyPathsExprList)
+                keyPathAttributes: .init(propertyIdentifier: property,
+                                         labeledKeyPathsList: keyPathsExprList)
             )
         }
         return nil

@@ -41,16 +41,21 @@ extension RelationshipAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
         
-        init(labeledKeyPathsList: LabeledExprListSyntax) {
+        init(propertyIdentifier: String,
+             labeledKeyPathsList: LabeledExprListSyntax) {
             let keyPathAttributes = labeledKeyPathsList.map {
                 let label = $0.labelString.map { "\($0): "} ?? ""
                 let expression = $0.expression
                 return "\(label)\(expression)"
+            }.map {
+                $0.replacingOccurrences(of: "\\.", with: "\\.$")
             }
-            .joined(separator: ",")
-            .replacingOccurrences(of: "\\.", with: "\\.$")
             
-            self = .labeledExpressionList(keyPathAttributes)
+            let attributes = [["\\.$\(propertyIdentifier)"], keyPathAttributes]
+                .flatMap { $0 }
+                .joined(separator: ",")
+            
+            self = .labeledExpressionList(attributes)
         }
 
         init(propertyIdentifier: String) {

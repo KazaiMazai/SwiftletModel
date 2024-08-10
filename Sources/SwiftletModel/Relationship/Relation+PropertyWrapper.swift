@@ -39,11 +39,7 @@ public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Optional,
                                     Cardinality == Relations.ToOne<Entity> {
     
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>, inverse: KeyPath<Entity, EnclosingType?>) {
-        self.init(relation: .none)
-    }
-
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>, inverse: KeyPath<Entity, [EnclosingType]?>) {
+    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
@@ -51,14 +47,7 @@ public extension Relationship where Directionality == Relations.Mutual,
 public extension Relationship where Directionality == Relations.Mutual,
                                     Cardinality == Relations.ToOne<Entity> {
     
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>,
-                        inverse: KeyPath<Entity, EnclosingType?>,
-                        _ constraint: Constraint<Constraints>) {
-        self.init(relation: .none)
-    }
-
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>,
-                        inverse: KeyPath<Entity, [EnclosingType]?>,
+    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>,
                         _ constraint: Constraint<Constraints>) {
         self.init(relation: .none)
     }
@@ -68,11 +57,7 @@ public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Required,
                                     Cardinality == Relations.ToMany<Entity> {
     
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, [Entity]?>, inverse: KeyPath<Entity, EnclosingType?>) {
-        self.init(relation: .none)
-    }
-
-    init<EnclosingType>(_ direct: KeyPath<EnclosingType, [Entity]?>, inverse: KeyPath<Entity, [EnclosingType]?>) {
+    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
