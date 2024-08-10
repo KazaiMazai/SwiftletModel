@@ -38,10 +38,10 @@ struct User: Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
 
-    @Relationship(\.chats, inverse: \.users)
+    @Relationship(inverse: \.users)
     var chats: [Chat]?
 
-    @Relationship(\.adminOf, inverse: \.admins)
+    @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
 }
 

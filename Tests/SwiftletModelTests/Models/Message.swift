@@ -15,17 +15,17 @@ struct Message: Codable {
 
     @Relationship(.required)
     var author: User?
-     
-    @Relationship(\.chat, inverse: \.messages)
+ 
+    @Relationship(inverse: \.messages)
     var chat: Chat?
 
-    @Relationship(\.attachment, inverse: \.message)
+    @Relationship(inverse: \.message)
     var attachment: Attachment?
 
-    @Relationship(\.replies, inverse: \.replyTo)
+    @Relationship(inverse: \.replyTo)
     var replies: [Message]?
 
-    @Relationship(\.replyTo, inverse: \.replies)
+    @Relationship(inverse: \.replies)
     var replyTo: Message?
 
     @Relationship
