@@ -12,13 +12,13 @@ import Foundation
 struct Chat: Codable {
     let id: String
 
-    @HasMany(\.users, inverse: \.chats)
+    @Relationship(\.users, inverse: \.chats)
     var users: [User]?
 
-    @HasMany(\.messages, inverse: \.chat)
+    @Relationship(\.messages, inverse: \.chat)
     var messages: [Message]?
 
-    @HasMany(\.admins, inverse: \.adminOf)
+    @Relationship(\.admins, inverse: \.adminOf)
     var admins: [User]?
     
     func willDelete(from context: inout Context) throws {

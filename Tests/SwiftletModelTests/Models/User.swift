@@ -14,7 +14,7 @@ struct CurrentUser: Codable {
 
     var id: String = CurrentUser.id
 
-    @HasOne
+    @Relationship
     var user: User? = nil
 }
 
@@ -38,10 +38,10 @@ struct User: Codable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
 
-    @HasMany(\.chats, inverse: \.users)
+    @Relationship(\.chats, inverse: \.users)
     var chats: [Chat]?
 
-    @HasMany(\.adminOf, inverse: \.admins)
+    @Relationship(\.adminOf, inverse: \.admins)
     var adminOf: [Chat]?
 }
 
