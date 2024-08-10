@@ -19,6 +19,10 @@ public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashab
     init(state: State<Entity>) {
         self.state = state
     }
+        
+    init() {
+        state = .none
+    }
 }
 
 public extension Relation {

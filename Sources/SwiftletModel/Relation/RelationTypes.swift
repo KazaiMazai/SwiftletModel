@@ -42,6 +42,7 @@ public protocol DirectionalityProtocol { }
 
 public protocol ConstraintsProtocol { }
 
+
 public protocol RequiredRelation: ConstraintsProtocol { }
 
 public protocol OptionalRelation: ConstraintsProtocol { }
@@ -73,7 +74,7 @@ public extension Relations {
         public static var isToMany: Bool { true }
         
         public static func entity<Directionality, Cardinality, Constraint>(
-            _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> [Entity]
+            _ relation: Relation<Entity, Directionality, Cardinality, Constraint>) -> [Entity]?
         where
         Entity: EntityModelProtocol,
         Directionality: DirectionalityProtocol,
@@ -103,7 +104,27 @@ public extension Relations {
 
     }
 
-    enum Required: RequiredRelation { }
+    enum Required: RequiredRelation {
+        
+    }
+    
+    enum Optional: OptionalRelation { 
+         
+    }
+}
+ 
+public struct Constraint<C: ConstraintsProtocol> {
+     
+}
 
-    enum Optional: OptionalRelation { }
+public extension Constraint {
+    static var required: Constraint<Relations.Required> {
+        Constraint<Relations.Required>()
+    }
+}
+
+public extension Constraint {
+    static var optional: Constraint<Relations.Optional> {
+        Constraint<Relations.Optional>()
+    }
 }

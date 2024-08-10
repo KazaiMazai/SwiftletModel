@@ -7,12 +7,13 @@
 
 import Foundation
 
+ 
 @propertyWrapper
 public struct Relationship<Value, Entity, Directionality, Cardinality, Constraints>: Hashable
     where
     Cardinality: CardinalityProtocol,
     Cardinality: EntityResolver,
-    Cardinality.Value == Value,
+    Cardinality.Value == Value?,
     Cardinality.Entity == Entity,
     Entity: EntityModelProtocol,
     Directionality: DirectionalityProtocol,
@@ -32,28 +33,122 @@ public struct Relationship<Value, Entity, Directionality, Cardinality, Constrain
 
 
 public extension Relationship where Directionality == Relations.Mutual,
+                                    Constraints == Relations.Optional,
                                     Cardinality == Relations.ToOne<Entity> {
     
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>, inverse: KeyPath<Entity, EnclosingType?>) {
-        self.init(relation: .none)
+        self.init(relation: Relation())
     }
 
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>, inverse: KeyPath<Entity, [EnclosingType]?>) {
-        self.init(relation: .none)
+        self.init(relation: Relation())
     }
 }
 
+public extension Relationship where Directionality == Relations.Mutual,
+                                    Cardinality == Relations.ToOne<Entity> {
+    
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>,
+                        inverse: KeyPath<Entity, EnclosingType?>,
+                        _ constraint: Constraint<Constraints>) {
+        self.init(relation: Relation())
+    }
+
+    init<EnclosingType>(_ direct: KeyPath<EnclosingType, Entity?>,
+                        inverse: KeyPath<Entity, [EnclosingType]?>,
+                        _ constraint: Constraint<Constraints>) {
+        self.init(relation: Relation())
+    }
+}
 
 public extension Relationship where Directionality == Relations.Mutual,
-                                    Constraints == Relations.Required,
+                                    Constraints == Relations.Optional,
                                     Cardinality == Relations.ToMany<Entity> {
     
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [Entity]?>, inverse: KeyPath<Entity, EnclosingType?>) {
-        self.init(relation: .none)
+        self.init(relation: Relation())
     }
 
     init<EnclosingType>(_ direct: KeyPath<EnclosingType, [Entity]?>, inverse: KeyPath<Entity, [EnclosingType]?>) {
-        self.init(relation: .none)
+        self.init(relation: Relation())
+    }
+}
+
+public extension Relationship where Directionality == Relations.OneWay,
+                                    Cardinality == Relations.ToOne<Entity>,
+                                    Constraints == Relations.Required {
+    /**
+     This initializer is used by the Swift compiler to autogenerate a convenient initializer
+     for the enclosing type that utilizes this property wrapper. It is specifically designed
+     for one-way relations.
+     
+     This is particularly useful when the property
+     wrapper is used with a directly provided relation as a default wrapped value.
+     
+     The initializer takes an optional `ToOneRelation` instance
+     and initializes the `Relationship` relation. If the wrapped value is nil, it defaults to `.initial`,
+     ensuring that the relation is always properly initialized.
+     
+     - Parameter wrappedValue: An optional `ToOneRelation` instance that represents the one-way relation.
+     */
+    init(wrappedValue: Entity) {
+        self.init(relation: .relation(wrappedValue))
+    }
+    
+    init(wrappedValue: Entity.ID) {
+        self.init(relation: .id(wrappedValue))
+    }
+}
+
+public extension Relationship where Directionality == Relations.OneWay,
+                                    Cardinality == Relations.ToOne<Entity> {
+    
+    init(_ constraint: Constraint<Constraints>) {
+        self.init(relation: Relation())
+    }
+}
+
+public extension Relationship where Directionality == Relations.OneWay,
+                                    Cardinality == Relations.ToOne<Entity>,
+                                    Constraints == Relations.Optional {
+    /**
+     This initializer is used by the Swift compiler to autogenerate a convenient initializer
+     for the enclosing type that utilizes this property wrapper. It is specifically designed
+     for one-way relations.
+     
+     This is particularly useful when the property
+     wrapper is used with a directly provided relation as a default wrapped value.
+     
+     The initializer takes an optional `ToOneRelation` instance
+     and initializes the `Relationship` relation. If the wrapped value is nil, it defaults to `.initial`,
+     ensuring that the relation is always properly initialized.
+     
+     - Parameter wrappedValue: An optional `ToOneRelation` instance that represents the one-way relation.
+     */
+    init(wrappedValue: ToOneRelation<Entity, Directionality, Constraints>?) {
+        self.init(relation: wrappedValue ?? Relation())
+    }
+}
+
+public extension Relationship where Directionality == Relations.OneWay,
+                                    Cardinality == Relations.ToMany<Entity>,
+                                    Constraints == Relations.Required {
+    /**
+     This initializer is used by the Swift compiler to autogenerate a convenient initializer
+     for the enclosing type that utilizes this property wrapper. It is specifically designed
+     for one-way relations.
+     
+     This is particularly useful when the property
+     wrapper is used with a directly provided relation as a default wrapped value.
+     
+     The initializer takes an optional `ToManyRelation` instance
+     and initializes the `HasMany` relation. If the wrapped value is nil, it defaults to `.initial`,
+     ensuring that the relation is always properly initialized.
+     
+     - Parameter wrappedValue: An optional `ToManyRelation` instance that represents the one-way relation.
+     */
+    init(wrappedValue: ToManyRelation<Entity, Directionality, Constraints>?) {
+        self.init(relation: wrappedValue ?? Relation())
     }
 }
 
@@ -72,8 +167,8 @@ public extension Relationship where Cardinality == Relations.ToOne<Entity> {
     }
 }
 
-public extension Relationship where Cardinality == Relations.ToMany<Entity>,
-                                    Constraints == Relations.Required {
+
+public extension Relationship where Cardinality == Relations.ToMany<Entity> {
 
     static func ids(_ ids: [Entity.ID]) -> Self {
         Relationship(relation: .ids(ids))
@@ -107,47 +202,10 @@ public extension Relationship where Cardinality == Relations.ToOne<Entity>, Cons
     }
 }
 
+public extension Relationship where Constraints: OptionalRelation {
 
-public extension Relationship where Directionality == Relations.OneWay,
-                                    Cardinality == Relations.ToOne<Entity> {
-    /**
-     This initializer is used by the Swift compiler to autogenerate a convenient initializer
-     for the enclosing type that utilizes this property wrapper. It is specifically designed
-     for one-way relations.
-     
-     This is particularly useful when the property
-     wrapper is used with a directly provided relation as a default wrapped value.
-     
-     The initializer takes an optional `ToOneRelation` instance
-     and initializes the `Relationship` relation. If the wrapped value is nil, it defaults to `.none`,
-     ensuring that the relation is always properly initialized.
-     
-     - Parameter wrappedValue: An optional `ToOneRelation` instance that represents the one-way relation.
-     */
-    init(wrappedValue: ToOneRelation<Entity, Directionality, Constraints>?) {
-        self.init(relation: wrappedValue ?? .none)
-    }
-}
-
-public extension Relationship where Directionality == Relations.OneWay,
-                                    Cardinality == Relations.ToMany<Entity>,
-                                    Constraints == Relations.Required {
-    /**
-     This initializer is used by the Swift compiler to autogenerate a convenient initializer
-     for the enclosing type that utilizes this property wrapper. It is specifically designed
-     for one-way relations.
-     
-     This is particularly useful when the property
-     wrapper is used with a directly provided relation as a default wrapped value.
-     
-     The initializer takes an optional `ToManyRelation` instance
-     and initializes the `HasMany` relation. If the wrapped value is nil, it defaults to `.none`,
-     ensuring that the relation is always properly initialized.
-     
-     - Parameter wrappedValue: An optional `ToManyRelation` instance that represents the one-way relation.
-     */
-    init(wrappedValue: ToManyRelation<Entity, Directionality, Constraints>?) {
-        self.init(relation: wrappedValue ?? .none)
+    static var none: Self {
+        Relationship(relation: Relation())
     }
 }
 
@@ -161,4 +219,6 @@ extension Relationship: Codable where Value: Codable, Entity: Codable {
         try relation = .init(from: decoder)
     }
 }
+
+
 
