@@ -16,7 +16,7 @@ public extension Relation {
 }
 
 public extension Relation where Cardinality == Relations.ToOne<Entity>,
-                                Constraints: OptionalRelation {
+                                Constraints == Relations.Optional {
 
     static var null: Self {
         Relation(state: State(nil, fragment: false))
@@ -107,7 +107,8 @@ public extension Relationship where Cardinality == Relations.ToMany<Entity> {
     }
 }
 
-public extension Relationship where Cardinality == Relations.ToOne<Entity>, Constraints: OptionalRelation {
+public extension Relationship where Cardinality == Relations.ToOne<Entity>,
+                                    Constraints == Relations.Optional {
 
     static var null: Self {
         Relationship(relation: .null)

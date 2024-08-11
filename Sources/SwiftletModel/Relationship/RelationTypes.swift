@@ -38,13 +38,19 @@ public typealias ToManyRelation<T: EntityModelProtocol,
 
 // swiftlint:enable line_length
 
+public enum Relations { }
+
+//MARK: - Directionality
+
 public protocol DirectionalityProtocol { }
 
-public protocol ConstraintsProtocol { }
+public extension Relations {
+    enum OneWay: DirectionalityProtocol { }
+    
+    enum Mutual: DirectionalityProtocol { }
+}
 
-public protocol RequiredRelation: ConstraintsProtocol { }
-
-public protocol OptionalRelation: ConstraintsProtocol { }
+//MARK: - Cardinality
 
 public protocol CardinalityProtocol {
     associatedtype Value
@@ -57,20 +63,10 @@ public protocol CardinalityProtocol {
     ) -> Value
 }
 
-public enum Relations { }
-
 public extension Relations {
-    enum OneWay: DirectionalityProtocol { }
-
-    enum Mutual: DirectionalityProtocol { }
-
     enum ToMany<Entity: EntityModelProtocol> { }
-
+    
     enum ToOne<Entity: EntityModelProtocol> { }
-
-    enum Required: RequiredRelation { }
-
-    enum Optional: OptionalRelation { }
 }
 
 extension Relations.ToMany: CardinalityProtocol {
@@ -104,6 +100,16 @@ extension Relations.ToOne: CardinalityProtocol {
 
         relation.entities.first
     }
+}
+
+//MARK: - Constraints
+
+public protocol ConstraintsProtocol { }
+
+public extension Relations {
+    enum Required: ConstraintsProtocol { }
+
+    enum Optional: ConstraintsProtocol { }
 }
 
 public struct Constraint<C: ConstraintsProtocol> { }
