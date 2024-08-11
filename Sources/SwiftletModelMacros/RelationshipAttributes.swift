@@ -23,9 +23,6 @@ struct RelationshipAttributes {
 
 extension RelationshipAttributes {
     enum WrapperType: String, CaseIterable {
-        case hasMany = "HasMany"
-        case hasOne = "HasOne"
-        case belongsTo = "BelongsTo"
         case relationship = "Relationship"
         
         var title: String {
