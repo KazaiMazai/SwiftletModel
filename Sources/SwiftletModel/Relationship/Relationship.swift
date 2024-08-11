@@ -47,8 +47,8 @@ public extension Relationship where Directionality == Relations.Mutual,
 public extension Relationship where Directionality == Relations.Mutual,
                                     Cardinality == Relations.ToOne<Entity> {
 
-    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>,
-                        _ constraint: Constraint<Constraints>) {
+    init<EnclosingType>(_ constraint: Constraint<Constraints>, 
+                        inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
