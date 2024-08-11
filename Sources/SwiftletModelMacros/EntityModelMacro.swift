@@ -35,8 +35,9 @@ public extension EntityModelMacro {
                 .compactMap { $0.decl.as(VariableDeclSyntax.self) }
                 .compactMap { extractOptionalPropertiesAttributes(from: $0) }
 
-            let syntax = try ExtensionDeclSyntax.entityModelProtocolDeclaration(
+            let syntax = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
+                conformingTo: protocols,
                 attributes: attributes,
                 optionalProperties: optionalProperties
             )
@@ -46,25 +47,31 @@ public extension EntityModelMacro {
 }
 
 extension ExtensionDeclSyntax {
-    static func entityModelProtocolDeclaration(type: some SwiftSyntax.TypeSyntaxProtocol,
+    static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
+                                               conformingTo protocols: [SwiftSyntax.TypeSyntax],
                                                attributes: [RelationshipAttributes],
                                                optionalProperties: [PropertyAttributes]
-        ) throws -> ExtensionDeclSyntax {
+    ) throws -> ExtensionDeclSyntax {
+        let protocolsString = protocols.map { "\($0)" }
+            .joined(separator: ",")
+            .trimmingCharacters(in: .whitespaces)
         
-        try ExtensionDeclSyntax(
+        return try ExtensionDeclSyntax(
         """
-        extension \(raw: type): EntityModelProtocol {
-            \(raw: saveDeclaration(attributes: attributes))
-            \(raw: deleteDeclaration(attributes: attributes))
-            \(raw: normalizeDeclaration(attributes: attributes))
-            \(raw: batchQueryDeclaration(attributes: attributes))
-            \(raw: patchDeclaration(optionalProperties: optionalProperties))
+        extension \(raw: type): \(raw: protocolsString) {
+            \(raw: FunctionDeclSyntax.save(attributes: attributes))
+            \(raw: FunctionDeclSyntax.delete(attributes: attributes))
+            \(raw: FunctionDeclSyntax.normalize(attributes: attributes))
+            \(raw: FunctionDeclSyntax.batchQuery(attributes: attributes))
+            \(raw: VariableDeclSyntax.patch(attributes: optionalProperties))
         }
         """
         )
     }
-    
-    static func saveDeclaration(
+}
+
+extension FunctionDeclSyntax {
+    static func save(
         attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
@@ -84,7 +91,7 @@ extension ExtensionDeclSyntax {
         )
     }
     
-    static func deleteDeclaration(
+    static func delete(
         attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
@@ -104,7 +111,7 @@ extension ExtensionDeclSyntax {
         )
     }
     
-    static func normalizeDeclaration(
+    static func normalize(
         attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
@@ -121,14 +128,14 @@ extension ExtensionDeclSyntax {
         )
     }
     
-    static func batchQueryDeclaration(
+    static func batchQuery(
         attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
         
-        static func batchQuery(in context: Context) -> [Query<Self>]  {
+        static func batchQuery(in context: Context) -> [Query<Self>] {
             Self.query(in: context)
                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
@@ -139,9 +146,12 @@ extension ExtensionDeclSyntax {
         """
         )
     }
+}
+
+extension VariableDeclSyntax {
     
-    static func patchDeclaration(
-        optionalProperties: [PropertyAttributes]
+    static func patch(
+        attributes: [PropertyAttributes]
     ) throws -> VariableDeclSyntax {
         
         try VariableDeclSyntax(
@@ -149,7 +159,7 @@ extension ExtensionDeclSyntax {
         
         static let patch: MergeStrategy<Self> = {
             MergeStrategy(
-                \(raw: optionalProperties
+                \(raw: attributes
                     .map { ".patch(\\.\($0.propertyName))"}
                     .joined(separator: ",\n")
                 )
