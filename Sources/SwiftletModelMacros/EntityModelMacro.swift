@@ -26,19 +26,22 @@ public extension EntityModelMacro {
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
-
-            let attributes = declaration.memberBlock.members
+            
+            let variableDeclarations = declaration
+                .memberBlock
+                .members
                 .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-                .compactMap { extractRelationshipPropertyWrappersAttributes(from: $0) }
+            
+            let relationshipAttributes = variableDeclarations
+                .compactMap { $0.relationshipAttributes() }
 
-            let optionalProperties = declaration.memberBlock.members
-                .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-                .compactMap { extractOptionalPropertiesAttributes(from: $0) }
+            let optionalProperties = variableDeclarations
+                .compactMap { $0.optionalPropertiesAttributes() }
 
             let syntax = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
-                attributes: attributes,
+                relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties
             )
            
@@ -49,7 +52,7 @@ public extension EntityModelMacro {
 extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
                                                conformingTo protocols: [SwiftSyntax.TypeSyntax],
-                                               attributes: [RelationshipAttributes],
+                                               relationshipAttributes: [RelationshipAttributes],
                                                optionalProperties: [PropertyAttributes]
     ) throws -> ExtensionDeclSyntax {
         let protocolsString = protocols.map { "\($0)" }
@@ -59,11 +62,11 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(attributes: attributes))
-            \(raw: FunctionDeclSyntax.delete(attributes: attributes))
-            \(raw: FunctionDeclSyntax.normalize(attributes: attributes))
-            \(raw: FunctionDeclSyntax.batchQuery(attributes: attributes))
-            \(raw: VariableDeclSyntax.patch(attributes: optionalProperties))
+            \(raw: FunctionDeclSyntax.save(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.delete(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.normalize(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.batchQuery(relationshipAttributes))
+            \(raw: VariableDeclSyntax.patch(optionalProperties))
         }
         """
         )
@@ -72,7 +75,7 @@ extension ExtensionDeclSyntax {
 
 extension FunctionDeclSyntax {
     static func save(
-        attributes: [RelationshipAttributes]
+        _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -92,7 +95,7 @@ extension FunctionDeclSyntax {
     }
     
     static func delete(
-        attributes: [RelationshipAttributes]
+        _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -112,7 +115,7 @@ extension FunctionDeclSyntax {
     }
     
     static func normalize(
-        attributes: [RelationshipAttributes]
+        _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -129,7 +132,7 @@ extension FunctionDeclSyntax {
     }
     
     static func batchQuery(
-        attributes: [RelationshipAttributes]
+        _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -151,7 +154,7 @@ extension FunctionDeclSyntax {
 extension VariableDeclSyntax {
     
     static func patch(
-        attributes: [PropertyAttributes]
+        _ attributes: [PropertyAttributes]
     ) throws -> VariableDeclSyntax {
         
         try VariableDeclSyntax(
@@ -170,10 +173,10 @@ extension VariableDeclSyntax {
     }
 }
 
-private extension EntityModelMacro {
+private extension VariableDeclSyntax {
 
-    static func extractRelationshipPropertyWrappersAttributes(from vars: VariableDeclSyntax) -> RelationshipAttributes? {
-        for attribute in vars.attributes {
+    func relationshipAttributes() -> RelationshipAttributes? {
+        for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                 let wrapperType = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
@@ -181,7 +184,7 @@ private extension EntityModelMacro {
                 continue
             }
 
-            guard let binding = vars.bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
             else {
                 return nil
@@ -212,8 +215,8 @@ private extension EntityModelMacro {
         return nil
     }
 
-    static func extractOptionalPropertiesAttributes(from vars: VariableDeclSyntax) -> PropertyAttributes? {
-        for attribute in vars.attributes {
+    func optionalPropertiesAttributes() -> PropertyAttributes? {
+        for attribute in attributes {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
@@ -222,11 +225,11 @@ private extension EntityModelMacro {
             }
         }
 
-        guard vars.modifiers.first?.name.text != "static" else {
+        guard modifiers.first?.name.text != "static" else {
             return nil
         }
 
-        for binding in vars.bindings {
+        for binding in bindings {
             guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
                   let typeAnnotation = binding.typeAnnotation?.type else {
                 continue
