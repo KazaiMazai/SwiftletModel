@@ -108,6 +108,7 @@ public extension Relationship where Cardinality == Relations.ToMany<Entity> {
 }
 
 public extension Relationship where Cardinality == Relations.ToOne<Entity>, Constraints: OptionalRelation {
+   
     static var null: Self {
         Relationship(relation: .null)
     }
