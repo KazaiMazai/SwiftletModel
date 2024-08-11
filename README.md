@@ -101,7 +101,7 @@ struct Message {
 That's pretty much it. EntityModel macro will generate all the necessary stuff to
 make our model conform to `EntityModelProtocol` requirements.
 
-<details><summary>Here is the JSON string that we will get</summary>
+<details><summary>EntityModelProtocol definitions</summary>
 <p>
 
 ```swift
