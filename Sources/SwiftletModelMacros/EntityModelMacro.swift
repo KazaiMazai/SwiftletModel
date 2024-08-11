@@ -15,222 +15,234 @@ import SwiftSyntaxMacros
   import SwiftSyntaxMacroExpansion
 #endif
 
-
 public struct EntityModelMacro: ExtensionMacro {
-    public static func expansion(
+
+}
+
+public extension EntityModelMacro {
+    static func expansion(
         of node: SwiftSyntax.AttributeSyntax,
         attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
-        
-        let attributes = declaration.memberBlock.members
-            .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-            .compactMap { extractRelationPropertyWrappersAttributes(from: $0) }
             
-        let optionalProperties = declaration.memberBlock.members
-            .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-            .compactMap { extractOptionalPropertyAttributes(from: $0) }
-         
-        let syntax = try ExtensionDeclSyntax(
-        """
-        extension \(raw: type): EntityModelProtocol {
-            func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
-                try willSave(to: &context)
-                context.insert(self, options: options)
-                \(raw: attributes
-                    .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
-                    .joined(separator: "\n")
-                )
-                try didSave(to: &context)
-            }
-        
-            func delete(from context: inout Context) throws {
-                try willDelete(from: &context)
-                context.remove(Self.self, id: id)
-                \(raw: attributes
-                    .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
-                    .joined(separator: "\n")
-                )
-                try didDelete(from: &context)
-            }
-        
-            mutating func normalize() {
-               \(raw: attributes
-                    .map { "$\($0.propertyName).normalize()" }
-                    .joined(separator: "\n")
-                )
-            }
-        
-            static func batchQuery(in context: Context) -> [Query<Self>]  {
-                Self.query(in: context)
-                   \(raw: attributes
-                        .map { "\\.$\($0.propertyName)" }
-                        .map { ".id(\($0))"}
-                        .joined(separator: "\n")
-                    )
-            }
-        
-            static let patch: MergeStrategy<Self> = {
-                MergeStrategy(
-                    \(raw: optionalProperties
-                        .map { ".patch(\\.\($0))"}
-                        .joined(separator: ",\n")
-                    )
-                )
-            }()
-        }
+            let variableDeclarations = declaration
+                .memberBlock
+                .members
+                .compactMap { $0.decl.as(VariableDeclSyntax.self) }
+            
+            let relationshipAttributes = variableDeclarations
+                .compactMap { $0.relationshipAttributes() }
 
+            let optionalProperties = variableDeclarations
+                .compactMap { $0.optionalPropertiesAttributes() }
+
+            let syntax = try ExtensionDeclSyntax.entityModelProtocol(
+                type: type,
+                conformingTo: protocols,
+                relationshipAttributes: relationshipAttributes,
+                optionalProperties: optionalProperties
+            )
+           
+            return  [syntax]
+        }
+}
+
+extension ExtensionDeclSyntax {
+    static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
+                                               conformingTo protocols: [SwiftSyntax.TypeSyntax],
+                                               relationshipAttributes: [RelationshipAttributes],
+                                               optionalProperties: [PropertyAttributes]
+    ) throws -> ExtensionDeclSyntax {
+        let protocolsString = protocols.map { "\($0)" }
+            .joined(separator: ",")
+            .trimmingCharacters(in: .whitespaces)
+        
+        return try ExtensionDeclSyntax(
+        """
+        extension \(raw: type): \(raw: protocolsString) {
+            \(raw: FunctionDeclSyntax.save(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.delete(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.normalize(relationshipAttributes))
+            \(raw: FunctionDeclSyntax.batchQuery(relationshipAttributes))
+            \(raw: VariableDeclSyntax.patch(optionalProperties))
+        }
         """
         )
+    }
+}
 
-        return [syntax]
+extension FunctionDeclSyntax {
+    static func save(
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+         
+        func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
+            try willSave(to: &context)
+            context.insert(self, options: options)
+            \(raw: attributes
+                .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
+                .joined(separator: "\n")
+            )
+            try didSave(to: &context)
+        }
+        """
+        )
     }
     
-    static func extractRelationPropertyWrappersAttributes(from vars: VariableDeclSyntax) -> RelationPropertyWrapperAttributes? {
-        for attribute in vars.attributes {
+    static func delete(
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+        
+        func delete(from context: inout Context) throws {
+            try willDelete(from: &context)
+            context.remove(Self.self, id: id)
+            \(raw: attributes
+                .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            try didDelete(from: &context)
+        }
+        """
+        )
+    }
+    
+    static func normalize(
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+        
+        mutating func normalize() {
+           \(raw: attributes
+                .map { "$\($0.propertyName).normalize()" }
+                .joined(separator: "\n")
+            )
+        }
+        """
+        )
+    }
+    
+    static func batchQuery(
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+        
+        static func batchQuery(in context: Context) -> [Query<Self>] {
+            Self.query(in: context)
+               \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".id(\($0))"}
+                    .joined(separator: "\n")
+                )
+        }
+        """
+        )
+    }
+}
+
+extension VariableDeclSyntax {
+    
+    static func patch(
+        _ attributes: [PropertyAttributes]
+    ) throws -> VariableDeclSyntax {
+        
+        try VariableDeclSyntax(
+        """
+        
+        static let patch: MergeStrategy<Self> = {
+            MergeStrategy(
+                \(raw: attributes
+                    .map { ".patch(\\.\($0.propertyName))"}
+                    .joined(separator: ",\n")
+                )
+            )
+        }()
+        """
+        )
+    }
+}
+
+private extension VariableDeclSyntax {
+
+    func relationshipAttributes() -> RelationshipAttributes? {
+        for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                let wrapperType = RelationPropertyWrapperAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+                let wrapperType = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
             else {
                 continue
             }
-            
-            guard let binding = vars.bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
             else {
                 return nil
             }
             
-            guard let argumentList = customAttribute.arguments?.as(LabeledExprListSyntax.self) else {
-                return RelationPropertyWrapperAttributes(
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+                
+                return RelationshipAttributes(
                     relationWrapperType: wrapperType,
                     propertyName: property,
-                    keyPathAttributes: .init(propertyIdentifier: property)
+                    keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
+                        propertyIdentifier: property
+                    )
                 )
             }
             
-            return RelationPropertyWrapperAttributes(
+            return RelationshipAttributes(
                 relationWrapperType: wrapperType,
                 propertyName: property,
-                keyPathAttributes: .init(labeledExpressionList: argumentList.map { argument in
-                    let label = argument.label.map { "\($0)" }
-                    let expression = "\(argument.expression)"
-                    return (label, expression)
-                })
+                keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                )
             )
         }
         return nil
     }
-    
-    static func extractOptionalPropertyAttributes(from vars: VariableDeclSyntax) -> String? {
-        for attribute in vars.attributes {
-            
+
+    func optionalPropertiesAttributes() -> PropertyAttributes? {
+        for attribute in attributes {
+
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let wrapperType = RelationPropertyWrapperAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
-        
-        guard vars.modifiers.first?.name.text != "static" else {
+
+        guard modifiers.first?.name.text != "static" else {
             return nil
         }
-         
-        for binding in vars.bindings {
-            guard let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+
+        for binding in bindings {
+            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
                   let typeAnnotation = binding.typeAnnotation?.type else {
                 continue
             }
-            
+
             let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
-            let hasInitializer = binding.initializer != nil
-            
             guard isOptional else {
                 continue
             }
-            
-            return property
-            
+
+            return PropertyAttributes(propertyName: propertyName)
+
         }
         return nil
-    }
-            
-    static func extractOptionalPropertyAttributes1(from vars: VariableDeclSyntax) -> String? {
-        
-        for binding in vars.bindings {
-            guard let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
-                  let typeAnnotation = binding.typeAnnotation?.type else {
-                continue
-            }
-            
-            let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
-            let hasInitializer = binding.initializer != nil
-            
-            guard isOptional || hasInitializer else {
-                continue
-            }
-            
-            return property
-            
-        }
-        return nil
-    }
-}
-
-
-struct OptionalPropertyAttributes {
-    let propertyName: String
-}
-
-
-struct RelationPropertyWrapperAttributes {
-    let relationWrapperType: WrapperType
-    let propertyName: String
-    let keyPathAttributes: KeyPathAttributes
-}
-
-extension RelationPropertyWrapperAttributes {
-    enum WrapperType: String, CaseIterable {
-        case hasMany = "HasMany"
-        case hasOne = "HasOne"
-        case belongsTo = "BelongsTo"
-        
-        var title: String {
-            rawValue
-        }
-        
-        static let allCasesTitleSet: Set<String> = {
-            Set(Self.allCases.map { $0.title })
-        }()
-    }
-    
-    enum KeyPathAttributes {
-        case labeledExpressionList(String)
-        case propertyIdentifier(String)
-        
-        init(labeledExpressionList: [(label: String?, expression: String)]) {
-            let keyPathAttributes = labeledExpressionList.map {
-                let label = $0.label.map { "\($0): "} ?? ""
-                let expression = "\($0.expression)"
-                return "\(label)\(expression)"
-            }
-            .joined(separator: ",")
-            .replacingOccurrences(of: "\\.", with: "\\.$")
-            
-            self = .labeledExpressionList(keyPathAttributes)
-        }
-        
-        init(propertyIdentifier: String) {
-            self = .propertyIdentifier("\\.$\(propertyIdentifier)")
-        }
-        
-        var attribute: String {
-            switch self {
-            case .labeledExpressionList(let value), .propertyIdentifier(let value):
-                return value
-            }
-        }
-        
     }
 }

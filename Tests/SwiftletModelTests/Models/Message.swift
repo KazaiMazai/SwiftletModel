@@ -13,30 +13,28 @@ struct Message: Codable {
     let id: String
     let text: String
 
-    @BelongsTo
-    var author: User? = nil
+    @Relationship(.required)
+    var author: User?
 
-    @BelongsTo(\.chat, inverse: \.messages)
+    @Relationship(inverse: \.messages)
     var chat: Chat?
 
-    @HasOne(\.attachment, inverse: \.message)
+    @Relationship(inverse: \.message)
     var attachment: Attachment?
 
-    @HasMany(\.replies, inverse: \.replyTo)
+    @Relationship(inverse: \.replyTo)
     var replies: [Message]?
 
-    @HasOne(\.replyTo, inverse: \.replies)
+    @Relationship(inverse: \.replies)
     var replyTo: Message?
 
-    @HasMany
+    @Relationship
     var viewedBy: [User]? = nil
-    
+
     func willDelete(from context: inout Context) throws {
         try delete(\.$attachment, inverse: \.$message, from: &context)
     }
 }
-
-
 
 extension Query where Entity == Message {
     var isMyMessage: Bool? {
