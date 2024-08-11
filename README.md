@@ -101,6 +101,43 @@ struct Message {
 That's pretty much it. EntityModel macro will generate all the necessary stuff to
 make our model conform to `EntityModelProtocol` requirements.
 
+<details><summary>EntityModelProtocol definitions</summary>
+<p>
+
+```swift
+protocol EntityModelProtocol {
+    // swiftlint:disable:next type_name
+    associatedtype ID: Hashable, Codable, LosslessStringConvertible
+
+    var id: ID { get }
+
+    func save(to context: inout Context, options: MergeStrategy<Self>) throws
+
+    func willSave(to context: inout Context) throws
+
+    func didSave(to context: inout Context) throws
+
+    func delete(from context: inout Context) throws
+
+    func willDelete(from context: inout Context) throws
+
+    func didDelete(from context: inout Context) throws
+
+    mutating func normalize()
+
+    static func batchQuery(in context: Context) -> [Query<Self>]
+
+    static var defaultMergeStrategy: MergeStrategy<Self> { get }
+
+    static var fragmentMergeStrategy: MergeStrategy<Self> { get }
+
+    static var patch: MergeStrategy<Self> { get }
+}
+```
+
+</p>
+</details>
+
 
 ## How to Save Entities
 
