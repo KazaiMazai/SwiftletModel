@@ -43,10 +43,10 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Query with nested models](#query-with-nested-models)
   * [Related models query](#related-models-query)
 - [Codable Conformance](#codable-conformance)
-- [Relation Types](#relation-types)
-  * [HasOne](#hasone)
-  * [BelongsTo](#belongsto)
-  * [HasMany](#hasmany)
+- [Relationship Types](#relationship-types)
+  * [Optional to-one Relationship](#optional-to-one-relationship)
+  * [Required to-one Relationship](#required-to-one-relationship)
+  * [To-many Relationship](#to-many-relationship)
 - [Establishing Relations](#establishing-relations)
   * [Setting to-one relations](#setting-to-one-relations)
   * [Setting to-many relations](#setting-to-many-relations)
@@ -77,22 +77,22 @@ struct Message {
     let id: String
     let text: String
     
-    @BelongsTo
-    var author: User? = nil
+    @Relationship(.required)
+    var author: User?
     
-    @BelongsTo(\.chat, inverse: \.messages)
+    @Relationship(.required, inverse: \.messages)
     var chat: Chat?
     
-    @HasOne(\.attachment, inverse: \.message)
+    @Relationship(inverse: \.message)
     var attachment: Attachment?
     
-    @HasMany(\.replies, inverse: \.replyTo)
+    @Relationship(inverse: \.replyTo)
     var replies: [Message]?
     
-    @HasOne(\.replyTo, inverse: \.replies)
+    @Relationshipinverse: \.replies)
     var replyTo: Message?
     
-    @HasMany
+    @Relationship
     var viewedBy: [User]? = nil
 }
 
@@ -362,7 +362,7 @@ print(userJSON)
 </details>
 
 
-## Relation Types
+## Relationship Types
 
 
 SwiftletModel supports the following types of relations:
@@ -370,37 +370,30 @@ SwiftletModel supports the following types of relations:
 - To One & To Many
 - Optional & Required
 
-They are represented by the following property wrappers:
-- `@BelongsTo`
-- `@HasOne`
-- `@HasMany`
+All of them are represented by a single property wrapper: `@Relationship`
+ 
+### Optional to-one Relationship
 
-
-### HasOne
-
-`@HasOne` is an optional to-one relation. 
+Here is a way to define an optional relation. 
 
 ```swift
 /**
-It can be either one way. One-way relation requires providing a default value. 
-Actually, the default value will be always nil. 
+It can be either one way. 
 */
 
-@HasOne
+@Relationship
 var user: User? = nil
 
 
 /**
-It can be mutual. Mutual relation requires providing a witness to ensure 
-that it is indeed mutual: direct and inverse key paths.
+Or can be mutual. Mutual relation requires providing an inverse key pathsa as a witness to ensure 
+that it is indeed mutual
 */
 
-@HasOne(\.attachment, inverse: \.message)
+@Relationship(inverse: \.message)
 var attachment: Attachment?
 
 ```
-
-
 
 The optionality of the Relation means that it can be explicitly nullified. 
 (See: [Handling missing Data for to-one Relations](#handling-missing-data-for-to-one-relations))
@@ -423,9 +416,9 @@ try message.save(to: &context)
 
 ```
 
-### BelongsTo
+### Required to-one Relationship
 
-`@BelongsTo` is a required to-one relation. 
+There is a way to define an required relation. 
 
 
 ```swift
@@ -433,8 +426,8 @@ try message.save(to: &context)
 It can be either one way: 
 */
 
-@BelongsTo
-var author: User? = nil
+@Relationship(.required)
+var author: User?
     
 
 /**
@@ -442,37 +435,37 @@ It can be mutual. Mutual relation requires providing a witness to ensure that it
 Inverse relations can be either to-one or to-many and must be mutual.
 */
 
-@BelongsTo(\.chat, inverse: \.messages)
+@Relationship(.required, inverse: \.messages)
 var chat: Chat?
 
 ```
 
 
-If `BelongsTo` is a required relation, why is the property still optional? 
+If it is a required relation, why is the property still optional? 
 Relation properties are always optional because it's the way how SwiftletModel handles incomplete data. 
 
-Required relation means that it cannot be explicitly nullified.
+Required relation only means that it cannot be explicitly nullified.
 
 
-### HasMany
+### To-many Relationship
 
-`@HasMany` is a required to-many relation. 
+To-many relationships can be defined the following way:
 
 ```swift
 /**
-Like other relations it can be either one way:
+It can be either one way:
 */
 
-@HasMany
+@Relationship
 var viewedBy: [User]? = nil
 
  
 /**
-It can be mutual. Mutual relation requires to provide a witness 
-to ensure that it is really mutual: direct and inverse key paths.
+It can also be mutual. Mutual relation requires to provide an inverse key path as a witness 
+to ensure that it is really mutual.
 */
 
-@HasMany(\.replies, inverse: \.replyTo)
+@Relationship(inverse: \.replyTo)
 var replies: [Message]?
 
 ```
@@ -637,10 +630,10 @@ struct User: Codable {
     private(set) var avatar: Avatar
     private(set) var profile: Profile?
     
-    @HasMany(\.chats, inverse: \.users)
+    @Relationship(inverse: \.users)
     var chats: [Chat]?
     
-    @HasMany(\.adminOf, inverse: \.admins)
+    @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
 }
  
@@ -830,7 +823,7 @@ try chat.save(to: &context)
 
 ### Handling missing data for to-one Relations
 
-To-one relation can be either optional: `@HasOne` or required: `@BelongsTo`
+To-one relation can be either optional or required.
 
 Basically, data can be missing for at least 3 reasons:
 
@@ -867,7 +860,7 @@ try message.save(to: &context)
 
 ```
 
-HasOne allows to set the relation as an explicit nil:  
+Optional relation allows to set the relation to an explicit nil:  
 
 ```swift
 
