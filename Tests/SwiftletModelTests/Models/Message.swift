@@ -15,7 +15,7 @@ struct Message: Codable {
 
     @Relationship(.required)
     var author: User?
- 
+
     @Relationship(inverse: \.messages)
     var chat: Chat?
 
@@ -30,7 +30,7 @@ struct Message: Codable {
 
     @Relationship
     var viewedBy: [User]? = nil
-    
+
     func willDelete(from context: inout Context) throws {
         try delete(\.$attachment, inverse: \.$message, from: &context)
     }

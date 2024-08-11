@@ -20,7 +20,7 @@ struct Chat: Codable {
 
     @Relationship(inverse: \.adminOf)
     var admins: [User]?
-    
+
     func willDelete(from context: inout Context) throws {
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }

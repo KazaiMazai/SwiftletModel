@@ -19,7 +19,7 @@ public struct Relation<Entity, Directionality, Cardinality, Constraints>: Hashab
     init(state: State<Entity>) {
         self.state = state
     }
-        
+
     init() {
         state = .none
     }
@@ -45,7 +45,7 @@ extension Relation where Cardinality == Relations.ToMany<Entity> {
     static func appending(_ entities: [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, slice: true, fragment: fragment))
     }
-    
+
     static func relation(_ entities: [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, slice: false, fragment: fragment))
     }
@@ -82,7 +82,7 @@ extension Relation {
     static var inverseLinkUpdateOption: Option {
         Cardinality.isToMany ? .append : .replace
     }
-    
+
     var isFragment: Bool {
         switch state {
         case .entity(_, let fragment), .entities(_, _, let fragment):

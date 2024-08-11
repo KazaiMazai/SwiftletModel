@@ -48,19 +48,19 @@ public extension Context {
     }
 
     mutating func insert<T: EntityModelProtocol>(_ entity: T,
-                                         options: MergeStrategy<T> = .replace) {
+                                                 options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entity, options: options)
     }
 
     mutating func insert<T: EntityModelProtocol>(_ entity: T?,
-                                         options: MergeStrategy<T> = .replace) {
+                                                 options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entity, options: options)
     }
 
     mutating func insert<T: EntityModelProtocol>(_ entities: [T],
-                                         options: MergeStrategy<T> = .replace) {
+                                                 options: MergeStrategy<T> = .replace) {
 
         entitiesRepository.insert(entities, options: options)
     }

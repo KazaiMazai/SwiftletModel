@@ -123,7 +123,7 @@ extension Relation where Entity: Codable {
             slice ?
             try container.encode(value, forKey: .idsSlice)
             : try container.encode(value, forKey: .ids)
-           
+
         case .entities(let value, let slice, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ?

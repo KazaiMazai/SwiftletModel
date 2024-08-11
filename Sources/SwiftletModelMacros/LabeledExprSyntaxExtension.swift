@@ -19,11 +19,11 @@ extension LabeledExprSyntax {
     var labelString: String? {
         label.map { "\($0)" }
     }
-    
+
     var expressionString: String {
         "\(expression)"
     }
-    
+
     var isKeyPath: Bool {
         expressionString.isKeyPath
     }
@@ -33,7 +33,7 @@ fileprivate extension String {
     static var keyPathRegEx: String {
        #"^\\.*\..*$"#
     }
-    
+
     var isKeyPath: Bool {
         range(of: String.keyPathRegEx, options: .regularExpression) != nil
     }

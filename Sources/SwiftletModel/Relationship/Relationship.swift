@@ -27,18 +27,18 @@ public struct Relationship<Value, Entity, Directionality, Cardinality, Constrain
         get { relation }
         set { relation = newValue }
     }
-        
+
     init(relation: Relation<Entity, Directionality, Cardinality, Constraints>) {
         self.relation = relation
     }
 }
 
-//MARK: - Mutual Relationship
+// MARK: - Mutual Relationship
 
 public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Optional,
                                     Cardinality == Relations.ToOne<Entity> {
-    
+
     init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -46,7 +46,7 @@ public extension Relationship where Directionality == Relations.Mutual,
 
 public extension Relationship where Directionality == Relations.Mutual,
                                     Cardinality == Relations.ToOne<Entity> {
-    
+
     init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>,
                         _ constraint: Constraint<Constraints>) {
         self.init(relation: .none)
@@ -56,27 +56,27 @@ public extension Relationship where Directionality == Relations.Mutual,
 public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Required,
                                     Cardinality == Relations.ToMany<Entity> {
-    
+
     init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
 
-//MARK: - One Way Relationship
+// MARK: - One Way Relationship
 
 public extension Relationship where Directionality == Relations.OneWay,
                                     Cardinality == Relations.ToOne<Entity>,
                                     Constraints == Relations.Optional {
-    
+
     init(wrappedValue: ToOneRelation<Entity, Directionality, Constraints>?) {
         self.init(relation: wrappedValue ?? .none)
     }
-    
+
 }
 
 public extension Relationship where Directionality == Relations.OneWay,
                                     Cardinality == Relations.ToOne<Entity> {
-    
+
     init(_ constraint: Constraint<Constraints> = .optional) {
         self.init(relation: .none)
     }
@@ -85,17 +85,17 @@ public extension Relationship where Directionality == Relations.OneWay,
 public extension Relationship where Directionality == Relations.OneWay,
                                     Cardinality == Relations.ToMany<Entity>,
                                     Constraints == Relations.Required {
-    
+
     init() {
         self.init(relation: .none)
     }
-    
+
     init(wrappedValue: ToManyRelation<Entity, Directionality, Constraints>?) {
         self.init(relation: wrappedValue ?? .none)
     }
 }
 
-//MARK: - Codable
+// MARK: - Codable
 
 extension Relationship: Codable where Value: Codable, Entity: Codable {
 

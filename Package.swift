@@ -15,14 +15,14 @@ let package = Package(
     products: [
         .library(
             name: "SwiftletModel",
-            targets: ["SwiftletModel"]),
+            targets: ["SwiftletModel"])
     ],
     dependencies: [
         .package(
              url: "https://github.com/apple/swift-collections.git",
              .upToNextMajor(from: "1.1.0")
            ),
-       .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+       .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
     ],
     targets: [
         .macro(
@@ -38,7 +38,7 @@ let package = Package(
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections")
             ]),
-        
+
         .testTarget(
             name: "SwiftletModelTests",
             dependencies: [
