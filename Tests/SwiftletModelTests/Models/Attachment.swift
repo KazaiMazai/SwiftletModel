@@ -21,6 +21,6 @@ struct Attachment: Codable {
     let id: String
     var kind: Kind
 
-    @Relationship(inverse: \.attachment, .required)
+    @Relationship(.required, inverse: \.attachment)
     var message: Message?
 }

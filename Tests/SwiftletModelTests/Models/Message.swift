@@ -41,3 +41,4 @@ extension Query where Entity == Message {
         related(\.$author)?.isMe
     }
 }
+ 
