@@ -176,24 +176,27 @@ private extension EntityModelMacro {
             else {
                 return nil
             }
-
+            
             guard let keyPathsExprList = customAttribute
                 .arguments?
-                .as(LabeledExprListSyntax.self)?
-                .filter(\.isKeyPath), !keyPathsExprList.isEmpty else {
-
+                .as(LabeledExprListSyntax.self) else {
+                
                 return RelationshipAttributes(
                     relationWrapperType: wrapperType,
                     propertyName: property,
-                    keyPathAttributes: .init(propertyIdentifier: property)
+                    keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
+                        propertyIdentifier: property
+                    )
                 )
             }
-
+            
             return RelationshipAttributes(
                 relationWrapperType: wrapperType,
                 propertyName: property,
-                keyPathAttributes: .init(propertyIdentifier: property,
-                                         labeledKeyPathsList: keyPathsExprList)
+                keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                )
             )
         }
         return nil
