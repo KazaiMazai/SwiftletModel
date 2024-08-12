@@ -17,7 +17,7 @@ extension Attachment {
 }
 
 @EntityModel
-struct Attachment: Codable {
+struct Attachment: Codable, Sendable {
     let id: String
     var kind: Kind
 

@@ -108,6 +108,12 @@ extension Relation {
 
 extension Relation.State: Codable where T: Codable { }
 
+// MARK: - Sendable
+
+extension Relation: Sendable where Entity: Sendable, Entity.ID: Sendable { }
+
+extension Relation.State: Sendable where T: Sendable, T.ID: Sendable { }
+
 // MARK: - Private State
 
 extension Relation {

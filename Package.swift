@@ -34,10 +34,12 @@ let package = Package(
         ),
         .target(
             name: "SwiftletModel",
+          
             dependencies: [
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections")
-            ]),
+            ]
+        ),
 
         .testTarget(
             name: "SwiftletModelTests",

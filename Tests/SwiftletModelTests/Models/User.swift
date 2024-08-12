@@ -9,7 +9,7 @@
 import Foundation
 
 @EntityModel
-struct CurrentUser: Codable {
+struct CurrentUser: Codable, Sendable {
     static let id: String = "current"
 
     var id: String = CurrentUser.id
@@ -32,7 +32,7 @@ extension User {
 }
 
 @EntityModel
-struct User: Codable {
+struct User: Codable, Sendable {
     let id: String
     private(set) var name: String?
     private(set) var avatar: Avatar?

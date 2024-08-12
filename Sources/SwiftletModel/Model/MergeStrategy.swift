@@ -7,10 +7,10 @@
 
 import Foundation
 
-public struct MergeStrategy<T> {
-    let merge: (_ old: T, _ new: T) -> T
+public struct MergeStrategy<T>: Sendable {
+    let merge: @Sendable (_ old: T, _ new: T) -> T
 
-    public init(merge: @escaping (T, T) -> T) {
+    public init(merge: @Sendable @escaping (T, T) -> T) {
         self.merge = merge
     }
 }
@@ -33,10 +33,13 @@ public extension MergeStrategy {
 
 public extension MergeStrategy {
 
-    static func patch<Entity, Value>(_ keyPath: WritableKeyPath<Entity, Value?>) -> MergeStrategy<Entity> {
+    static func patch<Entity, Value>(
+        _ keyPath: @Sendable @escaping @autoclosure () -> WritableKeyPath<Entity, Value?>
+    ) -> MergeStrategy<Entity> {
+        
         MergeStrategy<Entity> { old, new in
             var new = new
-            new[keyPath: keyPath] = new[keyPath: keyPath] ?? old[keyPath: keyPath]
+            new[keyPath: keyPath()] = new[keyPath: keyPath()] ?? old[keyPath: keyPath()]
             return new
         }
     }
@@ -49,21 +52,27 @@ public extension MergeStrategy {
 }
 
 public extension MergeStrategy {
-    static func append<Entity, Value>(_ keyPath: WritableKeyPath<Entity, [Value]>) -> MergeStrategy<Entity> {
+    static func append<Entity, Value>(
+        _ keyPath: @Sendable @escaping @autoclosure () -> WritableKeyPath<Entity, [Value]>
+    ) -> MergeStrategy<Entity> {
+        
         MergeStrategy<Entity> { old, new in
             var new = new
-            new[keyPath: keyPath] = [old[keyPath: keyPath], new[keyPath: keyPath]].flatMap { $0 }
+            new[keyPath: keyPath()] = [old[keyPath: keyPath()], new[keyPath: keyPath()]].flatMap { $0 }
             return new
         }
     }
 
-    static func append<Entity, Value>(_ keyPath: WritableKeyPath<Entity, [Value]?>) -> MergeStrategy<Entity> {
+    static func append<Entity, Value>(
+        _ keyPath: @Sendable @escaping @autoclosure () -> WritableKeyPath<Entity, [Value]?>
+    ) -> MergeStrategy<Entity> {
+        
         MergeStrategy<Entity> { old, new in
             var new = new
-            let result = [old[keyPath: keyPath], new[keyPath: keyPath]]
+            let result = [old[keyPath: keyPath()], new[keyPath: keyPath()]]
                 .compactMap { $0 }
                 .flatMap { $0 }
-            new[keyPath: keyPath] = result.isEmpty ? nil : result
+            new[keyPath: keyPath()] = result.isEmpty ? nil : result
             return new
         }
     }

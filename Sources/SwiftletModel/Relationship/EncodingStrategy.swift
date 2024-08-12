@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum RelationEncodingStrategy {
+public enum RelationEncodingStrategy: Sendable {
     case plain
     case keyedContainer
     case explicitKeyedContainer

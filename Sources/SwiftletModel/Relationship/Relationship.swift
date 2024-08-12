@@ -107,3 +107,8 @@ extension Relationship: Codable where Value: Codable, Entity: Codable {
         try relation = .init(from: decoder)
     }
 }
+
+// MARK: - Sendable
+
+extension Relationship: Sendable where Entity: Sendable, Entity.ID: Sendable { }
+

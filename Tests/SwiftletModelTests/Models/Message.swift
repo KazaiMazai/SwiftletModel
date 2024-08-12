@@ -9,7 +9,7 @@
 import Foundation
 
 @EntityModel
-struct Message: Codable {
+struct Message: Codable, Sendable {
     let id: String
     let text: String
 
