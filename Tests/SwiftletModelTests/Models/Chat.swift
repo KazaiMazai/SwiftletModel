@@ -9,7 +9,7 @@
 import Foundation
 
 @EntityModel
-struct Chat: Codable {
+struct Chat: Codable, Sendable {
     let id: String
 
     @Relationship(inverse: \.chats)
