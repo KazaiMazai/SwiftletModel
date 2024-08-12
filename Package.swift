@@ -34,10 +34,15 @@ let package = Package(
         ),
         .target(
             name: "SwiftletModel",
+          
             dependencies: [
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections")
-            ]),
+            ],
+            swiftSettings: [
+               .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
 
         .testTarget(
             name: "SwiftletModelTests",
