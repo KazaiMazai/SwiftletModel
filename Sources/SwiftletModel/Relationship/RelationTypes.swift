@@ -40,6 +40,13 @@ public typealias ToManyRelation<T: EntityModelProtocol,
 
 public enum Relations { }
 
+public extension Relations {
+    enum DeleteRule {
+        case cascade
+        case nullify
+    }
+}
+
 //MARK: - Directionality
 
 public protocol DirectionalityProtocol { }
