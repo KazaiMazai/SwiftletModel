@@ -19,7 +19,7 @@ struct Message: Codable, Sendable {
     @Relationship(inverse: \.messages)
     var chat: Chat?
 
-    @Relationship(inverse: \.message)
+    @Relationship(deleteRule: .cascade, inverse: \.message)
     var attachment: Attachment?
 
     @Relationship(inverse: \.replyTo)
@@ -30,10 +30,6 @@ struct Message: Codable, Sendable {
 
     @Relationship
     var viewedBy: [User]? = nil
-
-    func willDelete(from context: inout Context) throws {
-        try delete(\.$attachment, inverse: \.$message, from: &context)
-    }
 }
 
 extension Query where Entity == Message {
