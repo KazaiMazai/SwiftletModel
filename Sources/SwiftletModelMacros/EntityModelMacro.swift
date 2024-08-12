@@ -44,7 +44,7 @@ public extension EntityModelMacro {
                 relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties
             )
-           
+            
             return  [syntax]
         }
 }
@@ -105,7 +105,14 @@ extension FunctionDeclSyntax {
             try willDelete(from: &context)
             context.remove(Self.self, id: id)
             \(raw: attributes
-                .map { "detach(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map {
+                    switch $0.deleteRule {
+                    case .nullify:
+                        "detach(\($0.keyPathAttributes.attribute), in: &context)"
+                    case .cascade:
+                        "try delete(\($0.keyPathAttributes.attribute), from: &context)"
+                    }
+                }
                 .joined(separator: "\n")
             )
             try didDelete(from: &context)
@@ -199,7 +206,8 @@ private extension VariableDeclSyntax {
                     propertyName: property,
                     keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
                         propertyIdentifier: property
-                    )
+                    ), 
+                    deleteRule: .nullify
                 )
             }
             
@@ -209,12 +217,13 @@ private extension VariableDeclSyntax {
                 keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
-                )
+                ),
+                deleteRule: RelationshipAttributes.DeleteRuleAttribute(labeledExprListSyntax: keyPathsExprList)
             )
         }
         return nil
     }
-
+    
     func optionalPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 
