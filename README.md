@@ -89,7 +89,7 @@ struct Message {
     @Relationship(inverse: \.replyTo)
     var replies: [Message]?
     
-    @Relationshipinverse: \.replies)
+    @Relationship(inverse: \.replies)
     var replyTo: Message?
     
     @Relationship
