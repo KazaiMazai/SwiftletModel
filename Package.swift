@@ -38,9 +38,6 @@ let package = Package(
             dependencies: [
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections")
-            ],
-            swiftSettings: [
-               .enableExperimentalFeature("StrictConcurrency")
             ]
         ),
 
