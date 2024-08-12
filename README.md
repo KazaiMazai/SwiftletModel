@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Docs/Resources/Logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Docs/Resources/Logo.svg">
-  <img src="Docs/Resources/Logo.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/KazaiMazai/SwiftletModel/blob/main/Docs/Resources/Logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/KazaiMazai/SwiftletModel/blob/main/Docs/Resources/Logo.svg">
+  <img src="https://github.com/KazaiMazai/SwiftletModel/blob/main/Docs/Resources/Logo.svg">
 </picture>
 
 # SwiftletModel
