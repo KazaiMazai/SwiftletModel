@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RelationDecodingStrategy: OptionSet {
+public struct RelationDecodingStrategy: OptionSet, Sendable {
     public let rawValue: UInt
 
     public init(rawValue: UInt) {
