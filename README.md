@@ -60,7 +60,7 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
-- [Documentation](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/0.4.3/documentation/swiftletmodel)
+- [Documentation](#documentation)
 - [Licensing](#licensing)
 
 ## Getting Started
@@ -941,13 +941,17 @@ If you want to learn more about type-driven design [here](https://swiftology.io/
 is a wonderful series of articles about it.
  
 
-##  Installation
+## Installation
 
 You can add SwiftletModel to an Xcode project as an SPM package:
 
 - From the File menu, select Add Package Dependencies...
 - Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
 - Profit
+
+## Documentation
+
+Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/0.4.3/documentation/swiftletmodel)
 
 ## Licensing
 
