@@ -4,8 +4,6 @@
   <img src="https://github.com/KazaiMazai/SwiftletModel/blob/main/Docs/Resources/Logo.svg">
 </picture>
 
-# SwiftletModel
-
 [![CI](https://github.com/KazaiMazai/SwiftletModel/workflows/Tests/badge.svg)](https://github.com/KazaiMazai/SwiftletModel/actions?query=workflow%3ATests)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
@@ -20,7 +18,7 @@ SwiftletModel offers an easy and efficient way to implement complex domain model
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
  
-## When and Why
+## Why
 
 SwiftletModel excels in the following scenarios:
 
@@ -62,6 +60,7 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
+- [Documentation](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/0.4.3/documentation/swiftletmodel)
 - [Licensing](#licensing)
 
 ## Getting Started
