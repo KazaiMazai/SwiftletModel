@@ -160,14 +160,14 @@ extension VariableDeclSyntax {
         try VariableDeclSyntax(
         """
         
-        static let patch: MergeStrategy<Self> = {
+        static var patch: MergeStrategy<Self> {
             MergeStrategy(
                 \(raw: attributes
                     .map { ".patch(\\.\($0.propertyName))"}
                     .joined(separator: ",\n")
                 )
             )
-        }()
+        }
         """
         )
     }
