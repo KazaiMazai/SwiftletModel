@@ -9,7 +9,7 @@ import Foundation
 
 public protocol EntityModelProtocol {
     // swiftlint:disable:next type_name
-    associatedtype ID: Hashable, Codable, LosslessStringConvertible
+    associatedtype ID: Hashable, LosslessStringConvertible
 
     var id: ID { get }
 
