@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Codable
 
-extension Relation: Codable where Entity: Codable {
+extension Relation: Codable where Entity: Codable, Entity.ID: Codable {
     public func encode(to encoder: any Encoder) throws {
         switch encoder.relationEncodingStrategy {
         case .plain:
@@ -42,7 +42,7 @@ extension Relation: Codable where Entity: Codable {
 
 // MARK: - Codable Explicitly
 
-extension Relation where Entity: Codable {
+extension Relation where Entity: Codable, Entity.ID: Codable {
     enum RelationCodingKeys: String, CodingKey {
         case id = "id"
         case entity = "object"
@@ -99,7 +99,7 @@ extension Relation where Entity: Codable {
 
 // MARK: - Codable Exactly
 
-extension Relation where Entity: Codable {
+extension Relation where Entity: Codable, Entity.ID: Codable {
     enum RelationExplicitCodingKeys: String, CodingKey {
         case id = "id"
         case entity = "object"
@@ -169,21 +169,25 @@ extension Relation where Entity: Codable {
 
 // MARK: - Codable Flattaned
 
-extension Relation where Entity: Codable {
+extension Relation.ID: Codable where Entity.ID: Codable {
+    
+}
+
+extension Relation where Entity: Codable, Entity.ID: Codable {
     // swiftlint:disable:next type_name
-    struct ID<T: EntityModelProtocol>: Codable {
-        let id: T.ID
+    struct ID {
+        let id: Entity.ID
     }
 
     func encodePlainContainer(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch state {
         case .id(let value):
-            try container.encode(value.map { ID<Entity>(id: $0) })
+            try container.encode(value.map { ID(id: $0) })
         case .entity(let value, _):
             try container.encode(value)
         case .ids(let value, _):
-            try container.encode(value.map { ID<Entity>(id: $0) })
+            try container.encode(value.map { ID(id: $0) })
         case .entities(let value, _, _):
             try container.encode(value)
         case .none:
@@ -200,7 +204,7 @@ extension Relation where Entity: Codable {
             return Relation(state: .entity(entity: value, fragment: false))
         }
 
-        if let value = try? container.decode(ID<Entity>?.self) {
+        if let value = try? container.decode(ID?.self) {
             return Relation(state: .id(id: value.id))
         }
 
@@ -208,7 +212,7 @@ extension Relation where Entity: Codable {
             return Relation(state: .entities(entities: value, slice: false, fragment: false))
         }
 
-        if let value = try? container.decode([ID<Entity>].self) {
+        if let value = try? container.decode([ID].self) {
             return Relation(state: .ids(ids: value.map { $0.id }, slice: false))
         }
 

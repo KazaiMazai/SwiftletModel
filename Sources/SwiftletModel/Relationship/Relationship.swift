@@ -97,7 +97,7 @@ public extension Relationship where Directionality == Relations.OneWay,
 
 // MARK: - Codable
 
-extension Relationship: Codable where Value: Codable, Entity: Codable {
+extension Relationship: Codable where Value: Codable, Entity: Codable, Entity.ID: Codable {
 
     public func encode(to encoder: Encoder) throws {
         try relation.encode(to: encoder)

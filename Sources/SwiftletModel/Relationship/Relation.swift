@@ -106,7 +106,7 @@ extension Relation {
 
 // MARK: - Codable
 
-extension Relation.State: Codable where T: Codable { }
+extension Relation.State: Codable where T: Codable, T.ID: Codable { }
 
 // MARK: - Sendable
 
