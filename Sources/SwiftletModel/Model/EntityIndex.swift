@@ -11,11 +11,10 @@ import Collections
 
 @EntityModel
 struct EntityIndex<Entity: EntityModelProtocol, Value: Comparable> {
-    static var order: Int { 100 }
-    
     let id: String
     
     var map: Map<Value, OrderedSet<Entity.ID>> = [:]
+    
     
     @Relationship
     var entities: [Entity]? = nil
@@ -24,15 +23,25 @@ struct EntityIndex<Entity: EntityModelProtocol, Value: Comparable> {
         id = keyPath.name
     }
     
+    init<T0, T1>(_ kp0: KeyPath<Entity, T0>,
+                 _ kp1: KeyPath<Entity, T1>) where Value == Pair<T0, T1>{
+        id = [kp0.name, kp1.name].joined(separator: "-")
+    }
+    
+    init(id: String) {
+        self.id = id
+    }
+    
     static func query(_ keyPath: KeyPath<Entity, Value>,
                       in context: Context) -> [Query<Entity>] {
         
         EntityIndex<Entity, Value>
             .query(keyPath.name, in: context)
             .related(\.$entities)
+            
     }
     
-    mutating func insert(_ entity: Entity, keyPath: KeyPath<Entity, Value>) {
+    mutating func insert(_ entity: Entity, value keyPath: KeyPath<Entity, Value>) {
         guard var ids = map[entity[keyPath: keyPath]] else {
             map[entity[keyPath: keyPath]] = OrderedSet(arrayLiteral: entity.id)
             return
@@ -43,18 +52,24 @@ struct EntityIndex<Entity: EntityModelProtocol, Value: Comparable> {
         $entities = .ids(ids.elements)
     }
     
-    func willSave(to context: inout Context) throws {
+    mutating func insert(_ entity: Entity, value: (Entity) -> Value) {
+        guard var ids = map[value(entity)] else {
+            map[value(entity)] = OrderedSet(arrayLiteral: entity.id)
+            return
+        }
+        
+        ids.append(entity.id)
+        map[value(entity)] = ids
         $entities = .ids(ids.elements)
     }
 }
- 
-//func foo() {
-//    var context = Context()
-//    let messages: [Message] = Index
-//            .query(\Message.createdAt, in: context)
-//            .resolve()
-    
-     
 
-    
-//}
+extension Query {
+    static func indexed<Value: Comparable>(_ keyPath: KeyPath<Entity, Value>,
+                             in context: Context) -> [Query<Entity>] {
+        
+        EntityIndex<Entity, Value>
+            .query(keyPath, in: context)
+    }
+}
+ 

@@ -30,6 +30,36 @@ public struct Message: Codable, Sendable {
 
     @Relationship
     var viewedBy: [User]? = nil
+
+
+    func willDelete(from context: inout Context) throws {
+        try delete(\.$attachment, inverse: \.$message, from: &context)
+    }
+    
+    var indexValue: Pair<String, String> {
+        map((id, text))
+    }
+    
+    var indexValue1: any Collection {
+        [self[keyPath: \.id], self[keyPath: \.text]]
+    }
+    
+    var index: any IndexProtocol {
+        Index.makeIndex(self, \.id, \.text)
+    }
+    
+    func indexEntity<Value>() -> EntityIndex<Message, Value> {
+        
+    }
+    
+    func willSave(to context: inout Context) throws {
+        var index = EntityIndex(\Message.id, \.text)
+            .query(in: context)
+            .resolve() ?? EntityIndex(\Message.id, \.text)
+        
+        index.insert(self, value: \.indexValue)
+        try index.save(to: &context)
+    }
 }
 
 extension Query where Entity == Message {
