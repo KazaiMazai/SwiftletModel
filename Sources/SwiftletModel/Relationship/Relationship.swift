@@ -39,7 +39,8 @@ public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Optional,
                                     Cardinality == Relations.ToOne<Entity> {
 
-    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
+    init<EnclosingType>(deleteRule: Relations.DeleteRule = .nullify,
+                        inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
@@ -48,6 +49,7 @@ public extension Relationship where Directionality == Relations.Mutual,
                                     Cardinality == Relations.ToOne<Entity> {
 
     init<EnclosingType>(_ constraint: Constraint<Constraints>, 
+                        deleteRule: Relations.DeleteRule = .nullify,
                         inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
@@ -57,7 +59,8 @@ public extension Relationship where Directionality == Relations.Mutual,
                                     Constraints == Relations.Required,
                                     Cardinality == Relations.ToMany<Entity> {
 
-    init<EnclosingType>(inverse: KeyPath<Entity, EnclosingType?>) {
+    init<EnclosingType>(deleteRule: Relations.DeleteRule = .nullify,
+                        inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
     }
 }
@@ -77,7 +80,8 @@ public extension Relationship where Directionality == Relations.OneWay,
 public extension Relationship where Directionality == Relations.OneWay,
                                     Cardinality == Relations.ToOne<Entity> {
 
-    init(_ constraint: Constraint<Constraints> = .optional) {
+    init(_ constraint: Constraint<Constraints> = .optional,
+         deleteRule: Relations.DeleteRule = .nullify) {
         self.init(relation: .none)
     }
 }
@@ -86,7 +90,7 @@ public extension Relationship where Directionality == Relations.OneWay,
                                     Cardinality == Relations.ToMany<Entity>,
                                     Constraints == Relations.Required {
 
-    init() {
+    init(deleteRule: Relations.DeleteRule = .nullify) {
         self.init(relation: .none)
     }
 

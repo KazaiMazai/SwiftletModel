@@ -36,7 +36,7 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
 - [How to Delete Entities](#how-to-delete-entities)
-  * [How to cascade delete](#how-to-cascade-delete)
+  * [Relationship DeleteRule](#relationship-deleterule)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
   * [Related models query](#related-models-query)
@@ -219,22 +219,22 @@ chat.delete(from: &context)
 
 Calling `delete(...)` will 
 - remove the current instance from the context
-- it will nullify all relations
+- it will nullify all relations or cascade delete depending on `DeleteRule` attribute
 - call `willDelete(...)` and `didDelete(...)` callbacks when needed.
 
-### How to cascade delete
+### Relationship DeleteRule
 
-There is a `willDelete(...)` callback that can be utilized for cascade deletion implementation:
+DeleteRule allows to specify how the related entities would be treated when current entity is deleted:
+- nullify (the default option)
+- cascade 
 
 ```swift
-extension Message {
-    func willDelete(from context: inout Context) throws {
-        try delete(\.$attachment, inverse: \.$message, from: &context)
-    }
-}
+
+@Relationship(deleteRule: .cascade, inverse: \.message)
+var attachment: Attachment?
+
 ```
-The method is throwing to be able to perform some additional checks before deletion 
-and throw an error if something has gone wrong.
+
 
 ## How to Query Entities
 
