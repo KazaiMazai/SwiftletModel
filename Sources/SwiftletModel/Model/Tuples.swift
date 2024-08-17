@@ -8,20 +8,20 @@
 import Foundation
 
 
-protocol IndexProtocol: Comparable {
-    
-}
-
-struct Index {
-    static func makeIndex<Entity, T0, T1>(_ entity: Entity,
-                                          _ kp0: KeyPath<Entity, T0>,
-                                          _ kp1: KeyPath<Entity, T1>) -> any IndexProtocol  
-    where T0: Comparable,
-          T1: Comparable {
-        
-        map((entity[keyPath: kp0], entity[keyPath: kp1]))
-    }
-}
+//protocol IndexProtocol: Comparable {
+//    
+//}
+//
+//struct Index {
+//    static func makeIndex<Entity, T0, T1>(_ entity: Entity,
+//                                          _ kp0: KeyPath<Entity, T0>,
+//                                          _ kp1: KeyPath<Entity, T1>) -> any IndexProtocol  
+//    where T0: Comparable,
+//          T1: Comparable {
+//        
+//        map((entity[keyPath: kp0], entity[keyPath: kp1]))
+//    }
+//}
 
 
 struct Pair<T0, T1> {
@@ -34,10 +34,6 @@ extension Pair: Equatable where T0: Equatable,
     
 }
 
-extension Pair: IndexProtocol where T0: Comparable,
-                                    T1: Comparable {
-}
-    
 extension Pair: Comparable where T0: Comparable,
                                  T1: Comparable {
     
@@ -94,14 +90,14 @@ extension Quadruple: Comparable where T0: Comparable,
 }
 
 
-func map<T0, T1>(_ tuple: (T0, T1)) -> Pair<T0, T1> {
+func indexValue<T0, T1>(_ tuple: (T0, T1)) -> Pair<T0, T1> {
     Pair(t0: tuple.0, t1: tuple.1)
 }
 
-func map<T0, T1, T2>(_ tuple: (T0, T1, T2)) -> Triplet<T0, T1, T2> {
+func indexValue<T0, T1, T2>(_ tuple: (T0, T1, T2)) -> Triplet<T0, T1, T2> {
     Triplet(t0: tuple.0, t1: tuple.1, t2: tuple.2)
 }
 
-func map<T0, T1, T2, T3>(_ tuple: (T0, T1, T2, T3)) -> Quadruple<T0, T1, T2, T3> {
+func indexValue<T0, T1, T2, T3>(_ tuple: (T0, T1, T2, T3)) -> Quadruple<T0, T1, T2, T3> {
     Quadruple(t0: tuple.0, t1: tuple.1, t2: tuple.2, t3: tuple.3)
 }

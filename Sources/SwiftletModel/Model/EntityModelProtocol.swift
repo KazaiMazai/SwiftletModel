@@ -101,7 +101,7 @@ extension EntityModelProtocol {
     }
 }
 
-extension KeyPath {
+extension PartialKeyPath {
     var name: String {
         String(describing: self)
     }
