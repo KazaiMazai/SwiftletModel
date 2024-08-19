@@ -26,12 +26,6 @@ public struct Query<Entity: EntityModelProtocol> {
     }
 }
 
-public extension Collection {
-    func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
-        compactMap { $0.resolve() }
-    }
-}
-
 public extension Query {
 
     func related<Child, Directionality, Constraints>(
@@ -314,6 +308,104 @@ private extension Query {
     }
 }
 
+public extension Collection {
+    func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
+        compactMap { $0.resolve() }
+    }
+    
+    func resolve<Entity, T>(sortedBy keyPath: KeyPath<Entity, T>) -> [Entity]
+    
+    where Element == Query<Entity>,
+          T: Comparable 
+    {
+        guard let context = first?.context else {
+            return resolve()
+        }
+        
+        guard let index = Entity.index(keyPath, in: context) else {
+            return resolve().sorted(using: .keyPath(keyPath))
+        }
+        
+        return resolve(sortedUsing: index)
+    }
+    
+    func resolve<Entity, T0, T1>(sortedBy
+                                 kp0: KeyPath<Entity, T0>,
+                                 kp1: KeyPath<Entity, T1>) -> [Entity]
+    
+    where Element == Query<Entity>,
+          T0: Comparable,
+          T1: Comparable
+    {
+        
+        guard let context = first?.context else {
+            return resolve()
+        }
+        
+        guard let index = Entity.index(kp0, kp1, in: context) else {
+            return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1))
+        }
+        
+        return resolve(sortedUsing: index)
+    }
+    
+    func resolve<Entity, T0, T1, T2>(sortedBy
+                                     kp0: KeyPath<Entity, T0>,
+                                     kp1: KeyPath<Entity, T1>,
+                                     kp2: KeyPath<Entity, T2>) -> [Entity]
+    where Element == Query<Entity>,
+          T0: Comparable,
+          T1: Comparable,
+          T2: Comparable
+    {
+        
+        guard let context = first?.context else {
+            return resolve()
+        }
+        
+        guard let index = Entity.index(kp0, kp1, kp2, in: context) else {
+            return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2))
+        }
+        
+        return resolve(sortedUsing: index)
+    }
+    
+    func resolve<Entity, T0, T1, T2, T3>(sortedBy
+                                         kp0: KeyPath<Entity, T0>,
+                                         kp1: KeyPath<Entity, T1>,
+                                         kp2: KeyPath<Entity, T2>,
+                                         kp3: KeyPath<Entity, T3>) -> [Entity]
+    
+    where Element == Query<Entity>,
+          T0: Comparable,
+          T1: Comparable,
+          T2: Comparable,
+          T3: Comparable
+    {
+        guard let context = first?.context else {
+            return resolve()
+        }
+        
+        guard let index = Entity.index(kp0, kp1, kp2, kp3, in: context) else {
+            return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2), .keyPath(kp3))
+        }
+        
+        return resolve(sortedUsing: index)
+    }
+}
+
+private extension Collection {
+    func resolve<Entity, T>(sortedUsing index: IndexModel<Entity, T>) -> [Entity]
+    
+    where Element == Query<Entity>, T: Comparable {
+        
+        let queries = Dictionary(map { query in (query.id, query) }, uniquingKeysWith: { $1 })
+        return index.sorted
+            .compactMap { queries[$0] }
+            .resolve()
+    }
+}
+
 private extension Query {
 
     init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
@@ -332,3 +424,5 @@ private extension Query {
         }
     }
 }
+
+ 
