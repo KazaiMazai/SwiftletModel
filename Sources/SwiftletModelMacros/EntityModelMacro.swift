@@ -16,16 +16,33 @@ import SwiftSyntaxMacros
 #endif
 
 public struct EntityModelMacro: ExtensionMacro {
-
-}
-
-public extension EntityModelMacro {
-    static func expansion(
+    public static func expansion(
         of node: SwiftSyntax.AttributeSyntax,
         attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
+            
+            let syntax = try ExtensionDeclSyntax.entityModelMacro(
+                of: node,
+                attachedTo: declaration,
+                providingExtensionsOf: type,
+                conformingTo: protocols,
+                in: context
+            )
+            return [syntax]
+        }
+}
+ 
+extension SwiftSyntax.ExtensionDeclSyntax {
+    static func entityModelMacro(
+        of node: SwiftSyntax.AttributeSyntax,
+        attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
+        providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
+        conformingTo protocols: [SwiftSyntax.TypeSyntax],
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExtensionDeclSyntax {
+            
+            let accessAttribute = declaration.accessAttribute()
             
             let variableDeclarations = declaration
                 .memberBlock
@@ -42,18 +59,21 @@ public extension EntityModelMacro {
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
-                optionalProperties: optionalProperties
+                optionalProperties: optionalProperties,
+                accessAttribute: accessAttribute
             )
             
-            return  [syntax]
+            return syntax
         }
 }
 
 extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
-                                               conformingTo protocols: [SwiftSyntax.TypeSyntax],
-                                               relationshipAttributes: [RelationshipAttributes],
-                                               optionalProperties: [PropertyAttributes]
+                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
+                                    relationshipAttributes: [RelationshipAttributes],
+                                    optionalProperties: [PropertyAttributes],
+                                    accessAttribute: AccessAttribute
+                                            
     ) throws -> ExtensionDeclSyntax {
         let protocolsString = protocols.map { "\($0)" }
             .joined(separator: ",")
@@ -62,11 +82,11 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(relationshipAttributes))
-            \(raw: FunctionDeclSyntax.delete(relationshipAttributes))
-            \(raw: FunctionDeclSyntax.normalize(relationshipAttributes))
-            \(raw: FunctionDeclSyntax.batchQuery(relationshipAttributes))
-            \(raw: VariableDeclSyntax.patch(optionalProperties))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
+            \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
         }
         """
         )
@@ -75,13 +95,14 @@ extension ExtensionDeclSyntax {
 
 extension FunctionDeclSyntax {
     static func save(
+        _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
          
-        func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
+        \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
             try willSave(to: &context)
             context.insert(self, options: options)
             \(raw: attributes
@@ -95,13 +116,14 @@ extension FunctionDeclSyntax {
     }
     
     static func delete(
+        _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
         
-        func delete(from context: inout Context) throws {
+        \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
             context.remove(Self.self, id: id)
             \(raw: attributes
@@ -122,13 +144,14 @@ extension FunctionDeclSyntax {
     }
     
     static func normalize(
+        _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
         
-        mutating func normalize() {
+        \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }
                 .joined(separator: "\n")
@@ -139,13 +162,14 @@ extension FunctionDeclSyntax {
     }
     
     static func batchQuery(
+        _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
         
-        static func batchQuery(in context: Context) -> [Query<Self>] {
+        \(raw: accessAttributes.name) static func batchQuery(in context: Context) -> [Query<Self>] {
             Self.query(in: context)
                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
@@ -161,13 +185,14 @@ extension FunctionDeclSyntax {
 extension VariableDeclSyntax {
     
     static func patch(
+        _ accessAttributes: AccessAttribute,
         _ attributes: [PropertyAttributes]
     ) throws -> VariableDeclSyntax {
         
         try VariableDeclSyntax(
         """
         
-        static var patch: MergeStrategy<Self> {
+        \(raw: accessAttributes.name) static var patch: MergeStrategy<Self> {
             MergeStrategy(
                 \(raw: attributes
                     .map { ".patch(\\.\($0.propertyName))"}
@@ -180,7 +205,17 @@ extension VariableDeclSyntax {
     }
 }
 
+private extension DeclGroupSyntax {
+    func accessAttribute() -> AccessAttribute {
+        modifiers
+            .compactMap { $0.name.text }
+            .compactMap { AccessAttribute(rawValue: $0) }
+            .first ?? .missingAttribute
+    }
+}
+
 private extension VariableDeclSyntax {
+    
 
     func relationshipAttributes() -> RelationshipAttributes? {
         for attribute in self.attributes {
