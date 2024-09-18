@@ -22,7 +22,7 @@ let package = Package(
              url: "https://github.com/apple/swift-collections.git",
              .upToNextMajor(from: "1.1.0")
            ),
-       .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
+        .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0"..<"600.0.0")
     ],
     targets: [
         .macro(
