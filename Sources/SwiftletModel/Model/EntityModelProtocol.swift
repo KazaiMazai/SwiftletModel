@@ -28,6 +28,8 @@ public protocol EntityModelProtocol {
     mutating func normalize()
 
     static func batchQuery(in context: Context) -> [Query<Self>]
+    
+    
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 

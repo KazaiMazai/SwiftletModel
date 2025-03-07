@@ -88,6 +88,10 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
         }
+        
+        extension Query where Entity == \(raw: type) {
+            \(raw: FunctionDeclSyntax.nestedQuery(type, accessAttribute, relationshipAttributes))
+        }
         """
         )
     }
@@ -171,16 +175,45 @@ extension FunctionDeclSyntax {
         
         \(raw: accessAttributes.name) static func batchQuery(in context: Context) -> [Query<Self>] {
             Self.query(in: context)
-               \(raw: attributes
+                .nested(.ids)
+        }
+        """
+        )
+    }
+    
+    static func nestedQuery(
+        _ type: some SwiftSyntax.TypeSyntaxProtocol,
+        _ accessAttributes: AccessAttribute,
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+            
+        \(raw: accessAttributes.name) func nested(_ depth: NestedQuery) -> Query<\(raw: type)> { {
+            return switch depth {
+            case .shallow:
+                self
+            case .ids:
+                self\(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".id(\($0))"}
-                    .joined(separator: "\n")
+                    .joined(separator: "\n    ")
                 )
+            case .nested, .entities:
+                self\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0)) { $0.nested(depth.next) }"}
+                    .joined(separator: "\n    ")
+                )
+            }
         }
         """
         )
     }
 }
+
+
 
 extension VariableDeclSyntax {
     
