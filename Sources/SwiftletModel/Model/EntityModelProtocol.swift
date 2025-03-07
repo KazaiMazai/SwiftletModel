@@ -29,8 +29,6 @@ public protocol EntityModelProtocol {
 
     static func batchQuery(in context: Context) -> [Query<Self>]
     
-    
-
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
     static var fragmentMergeStrategy: MergeStrategy<Self> { get }

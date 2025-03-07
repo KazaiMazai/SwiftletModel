@@ -77,53 +77,6 @@ public extension Collection {
 
 public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
 
-public enum NestedQuery {
-    case shallow
-    case ids
-    case entities
-    case nested(depth: Int)
-    
-    var depth: Int {
-        switch self {
-        case .shallow:
-            return .zero
-        case .ids:
-            return 1
-        case .entities:
-            return -1
-        case .nested(let depth):
-            return depth
-        }
-    }
-    
-    init(_ depth: Int) {
-        guard depth > 0 else {
-            self = .shallow
-            return
-        }
-        
-        guard depth > 1 else {
-            self = .ids
-            return
-        }
-        
-        self = .nested(depth: depth)
-    }
-    
-    public var next: NestedQuery {
-        switch self {
-        case .shallow:
-            return .shallow
-        case .ids:
-            return .shallow
-        case .entities:
-            return .shallow
-        case .nested(let depth):
-            return NestedQuery(depth - 1)
-        }
-    }
-}
-
 public extension Query {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,

@@ -23,14 +23,13 @@ public struct EntityModelMacro: ExtensionMacro {
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
             
-            let syntax = try ExtensionDeclSyntax.entityModelMacro(
+            return try ExtensionDeclSyntax.entityModelMacro(
                 of: node,
                 attachedTo: declaration,
                 providingExtensionsOf: type,
                 conformingTo: protocols,
                 in: context
             )
-            return [syntax]
         }
 }
  
@@ -40,7 +39,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
         attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
-        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExtensionDeclSyntax {
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
             
             let accessAttribute = declaration.accessAttribute()
             
@@ -55,7 +54,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
 
-            let syntax = try ExtensionDeclSyntax.entityModelProtocol(
+            let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
@@ -63,7 +62,15 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 accessAttribute: accessAttribute
             )
             
-            return syntax
+            let modelQueryExtension = try ExtensionDeclSyntax.modelQueryExtension(
+                type: type,
+                conformingTo: protocols,
+                relationshipAttributes: relationshipAttributes,
+                optionalProperties: optionalProperties,
+                accessAttribute: accessAttribute
+            )
+            
+            return [entityModelProtocol, modelQueryExtension]
         }
 }
 
@@ -88,7 +95,19 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
         }
-        
+        """
+        )
+    }
+    
+    static func modelQueryExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
+                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
+                                    relationshipAttributes: [RelationshipAttributes],
+                                    optionalProperties: [PropertyAttributes],
+                                    accessAttribute: AccessAttribute
+                                            
+    ) throws -> ExtensionDeclSyntax {
+        return try ExtensionDeclSyntax(
+        """
         extension Query where Entity == \(raw: type) {
             \(raw: FunctionDeclSyntax.nestedQuery(type, accessAttribute, relationshipAttributes))
         }
@@ -175,7 +194,7 @@ extension FunctionDeclSyntax {
         
         \(raw: accessAttributes.name) static func batchQuery(in context: Context) -> [Query<Self>] {
             Self.query(in: context)
-                .nested(.ids)
+                .with(.ids)
         }
         """
         )
@@ -190,9 +209,9 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) func nested(_ depth: NestedQuery) -> Query<\(raw: type)> { {
-            return switch depth {
-            case .shallow:
+        \(raw: accessAttributes.name) func with(_ nested: Nested) -> Query<\(raw: type)> { {
+            return switch nested {
+            case .none:
                 self
             case .ids:
                 self\(raw: attributes
@@ -200,7 +219,19 @@ extension FunctionDeclSyntax {
                     .map { ".id(\($0))"}
                     .joined(separator: "\n    ")
                 )
-            case .nested, .entities:
+            case .fragments:
+                self\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(\($0))"}
+                    .joined(separator: "\n    ")
+                )
+            case .entities:
+                self\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0))"}
+                    .joined(separator: "\n    ")
+                )
+            case .nested:
                 self\(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".with(\($0)) { $0.nested(depth.next) }"}
