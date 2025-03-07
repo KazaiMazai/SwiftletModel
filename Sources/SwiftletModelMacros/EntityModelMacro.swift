@@ -62,15 +62,23 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 accessAttribute: accessAttribute
             )
             
-            let modelQueryExtension = try ExtensionDeclSyntax.modelQueryExtension(
-                type: type,
-                conformingTo: protocols,
-                relationshipAttributes: relationshipAttributes,
-                optionalProperties: optionalProperties,
-                accessAttribute: accessAttribute
-            )
+//            let queryExtension = try ExtensionDeclSyntax.queryExtension(
+//                type: type,
+//                conformingTo: protocols,
+//                relationshipAttributes: relationshipAttributes,
+//                optionalProperties: optionalProperties,
+//                accessAttribute: accessAttribute
+//            )
+//            
+//            let collectionExtension = try ExtensionDeclSyntax.collectionExtension(
+//                type: type,
+//                conformingTo: protocols,
+//                relationshipAttributes: relationshipAttributes,
+//                optionalProperties: optionalProperties,
+//                accessAttribute: accessAttribute
+//            )
             
-            return [entityModelProtocol, modelQueryExtension]
+            return [entityModelProtocol]
         }
 }
 
@@ -93,27 +101,45 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.nestedQuery(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
+         
         }
         """
         )
     }
-    
-    static func modelQueryExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
-                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
-                                    relationshipAttributes: [RelationshipAttributes],
-                                    optionalProperties: [PropertyAttributes],
-                                    accessAttribute: AccessAttribute
-                                            
-    ) throws -> ExtensionDeclSyntax {
-        return try ExtensionDeclSyntax(
-        """
-        extension Query where Entity == \(raw: type) {
-            \(raw: FunctionDeclSyntax.nestedQuery(type, accessAttribute, relationshipAttributes))
-        }
-        """
-        )
-    }
+//    
+//    static func queryExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
+//                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
+//                                    relationshipAttributes: [RelationshipAttributes],
+//                                    optionalProperties: [PropertyAttributes],
+//                                    accessAttribute: AccessAttribute
+//                                            
+//    ) throws -> ExtensionDeclSyntax {
+//        return try ExtensionDeclSyntax(
+//        """
+//        extension Query where Entity == \(raw: type) {
+//            \(raw: FunctionDeclSyntax.nestedQuery(type, accessAttribute, relationshipAttributes))
+//        }
+//        """
+//        )
+//    }
+//    
+//    static func collectionExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
+//                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
+//                                    relationshipAttributes: [RelationshipAttributes],
+//                                    optionalProperties: [PropertyAttributes],
+//                                    accessAttribute: AccessAttribute
+//                                            
+//    ) throws -> ExtensionDeclSyntax {
+//        return try ExtensionDeclSyntax(
+//        """
+//        extension Collection {
+//            \(raw: FunctionDeclSyntax.nestedQueryCollection(type, accessAttribute, relationshipAttributes))
+//        }
+//        """
+//        )
+//    }
 }
 
 extension FunctionDeclSyntax {
@@ -201,6 +227,63 @@ extension FunctionDeclSyntax {
     }
     
     static func nestedQuery(
+        _ accessAttributes: AccessAttribute,
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        
+        try FunctionDeclSyntax(
+        """
+            
+        \(raw: accessAttributes.name) static func nested(_ nested: Nested, query: Query<Self>) -> Query<Self> {
+            return switch nested {
+            case .none:
+                query
+            case .ids:
+                query\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".id(\($0))"}
+                    .joined(separator: "\n    ")
+                )
+            case .fragments:
+                query\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(\($0))"}
+                    .joined(separator: "\n    ")
+                )
+            case .entities:
+                query\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0))"}
+                    .joined(separator: "\n    ")
+                )
+            case .nested:
+                query\(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0)) { $0.with(nested.next) }"}
+                    .joined(separator: "\n    ")
+                )
+            }
+        }
+        """
+        )
+    }
+    
+    
+    static func nestedQueryCollection(
+        _ type: some SwiftSyntax.TypeSyntaxProtocol,
+        _ accessAttributes: AccessAttribute,
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+        try FunctionDeclSyntax(
+        """
+        \(raw: accessAttributes.name) func with(_ nested: Nested)) -> [Query<Entity>] where Element == Query<Entity> {
+            map { $0.with(nested) }
+        }
+        """
+        )
+    }
+    
+    static func nestedQuery1(
         _ type: some SwiftSyntax.TypeSyntaxProtocol,
         _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
@@ -209,7 +292,7 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) func with(_ nested: Nested) -> Query<\(raw: type)> { {
+        \(raw: accessAttributes.name) func with(_ nested: Nested) -> Query<\(raw: type)> {
             return switch nested {
             case .none:
                 self
@@ -234,7 +317,7 @@ extension FunctionDeclSyntax {
             case .nested:
                 self\(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
-                    .map { ".with(\($0)) { $0.nested(depth.next) }"}
+                    .map { ".with(\($0)) { $0.with(nested.next) }"}
                     .joined(separator: "\n    ")
                 )
             }

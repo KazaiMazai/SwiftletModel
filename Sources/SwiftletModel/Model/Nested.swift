@@ -14,6 +14,19 @@ public enum Nested {
     case fragments
     case nested(depth: Int)
     
+    public var next: Nested {
+        switch self {
+        case .none:
+            return .none
+        case .ids:
+            return .none
+        case .entities, .fragments:
+            return .none
+        case .nested(let depth):
+            return Nested(depth - 1)
+        }
+    }
+    
     var depth: Int {
         switch self {
         case .none:
@@ -41,16 +54,4 @@ public enum Nested {
         self = .nested(depth: depth)
     }
     
-    public var next: Nested {
-        switch self {
-        case .none:
-            return .none
-        case .ids:
-            return .none
-        case .entities, .fragments:
-            return .none
-        case .nested(let depth):
-            return Nested(depth - 1)
-        }
-    }
 }

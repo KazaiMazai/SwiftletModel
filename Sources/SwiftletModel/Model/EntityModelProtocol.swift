@@ -34,6 +34,8 @@ public protocol EntityModelProtocol {
     static var fragmentMergeStrategy: MergeStrategy<Self> { get }
 
     static var patch: MergeStrategy<Self> { get }
+    
+    static func nested(_ nested: Nested, query: Query<Self>) -> Query<Self>
 }
 
 public extension EntityModelProtocol {

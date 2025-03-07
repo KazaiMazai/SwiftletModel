@@ -36,6 +36,7 @@ final class RelationEncodingTests: XCTestCase {
 
         let user = User
             .query(User.bob.id, in: context)
+            .with(.entities)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -45,7 +46,7 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$chat)
                 }
                 .id(\.$users)
-                .id(\.$admins)
+                .id(\.$admins) 
             }
             .resolve()
 

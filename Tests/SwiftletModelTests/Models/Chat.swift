@@ -25,23 +25,4 @@ struct Chat: Codable, Sendable {
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }
 }
- 
-//extension Query where Entity == Chat {
-//    func nested(_ depth: NestedQuery) -> Query<Chat> {
-//        switch depth {
-//        case .shallow:
-//            return self
-//        case .ids:
-//            return id(\.$users)
-//        case .nested:
-//            return with(\.$users) { $0.nested(depth: depth.next) }
-//        }
-//    }
-//}
-//
-//extension Query where Entity == User {
-//    func nested(depth: NestedQuery) -> Query<User> {
-//        self
-//    }
-//}
-// 
+  

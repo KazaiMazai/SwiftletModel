@@ -77,6 +77,30 @@ public extension Collection {
 
 public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
 
+extension Query {
+    func with(_ nested: Nested) -> Query<Entity> {
+        Entity.nested(nested, query: self)
+    }
+}
+
+public extension Query {
+    func nested(_ nested: Nested) -> Query<Entity> {
+        Entity.nested(nested, query: self)
+    }
+    
+    func ids() -> Query<Entity> {
+        with(.ids)
+    }
+    
+    func fragments() -> Query<Entity> {
+        with(.fragments)
+    }
+    
+    func withNestedEntities() -> Query<Entity> {
+        with(.fragments)
+    }
+}
+
 public extension Query {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
