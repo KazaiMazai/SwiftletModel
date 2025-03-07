@@ -61,23 +61,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 optionalProperties: optionalProperties,
                 accessAttribute: accessAttribute
             )
-            
-//            let queryExtension = try ExtensionDeclSyntax.queryExtension(
-//                type: type,
-//                conformingTo: protocols,
-//                relationshipAttributes: relationshipAttributes,
-//                optionalProperties: optionalProperties,
-//                accessAttribute: accessAttribute
-//            )
-//            
-//            let collectionExtension = try ExtensionDeclSyntax.collectionExtension(
-//                type: type,
-//                conformingTo: protocols,
-//                relationshipAttributes: relationshipAttributes,
-//                optionalProperties: optionalProperties,
-//                accessAttribute: accessAttribute
-//            )
-            
+
             return [entityModelProtocol]
         }
 }
@@ -258,64 +242,6 @@ extension FunctionDeclSyntax {
                 )
             case .nested:
                 query\(raw: attributes
-                    .map { "\\.$\($0.propertyName)" }
-                    .map { ".with(\($0)) { $0.with(nested.next) }"}
-                    .joined(separator: "\n    ")
-                )
-            }
-        }
-        """
-        )
-    }
-    
-    
-    static func nestedQueryCollection(
-        _ type: some SwiftSyntax.TypeSyntaxProtocol,
-        _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
-    ) throws -> FunctionDeclSyntax {
-        try FunctionDeclSyntax(
-        """
-        \(raw: accessAttributes.name) func with(_ nested: Nested)) -> [Query<Entity>] where Element == Query<Entity> {
-            map { $0.with(nested) }
-        }
-        """
-        )
-    }
-    
-    static func nestedQuery1(
-        _ type: some SwiftSyntax.TypeSyntaxProtocol,
-        _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
-    ) throws -> FunctionDeclSyntax {
-        
-        try FunctionDeclSyntax(
-        """
-            
-        \(raw: accessAttributes.name) func with(_ nested: Nested) -> Query<\(raw: type)> {
-            return switch nested {
-            case .none:
-                self
-            case .ids:
-                self\(raw: attributes
-                    .map { "\\.$\($0.propertyName)" }
-                    .map { ".id(\($0))"}
-                    .joined(separator: "\n    ")
-                )
-            case .fragments:
-                self\(raw: attributes
-                    .map { "\\.$\($0.propertyName)" }
-                    .map { ".fragment(\($0))"}
-                    .joined(separator: "\n    ")
-                )
-            case .entities:
-                self\(raw: attributes
-                    .map { "\\.$\($0.propertyName)" }
-                    .map { ".with(\($0))"}
-                    .joined(separator: "\n    ")
-                )
-            case .nested:
-                self\(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".with(\($0)) { $0.with(nested.next) }"}
                     .joined(separator: "\n    ")
