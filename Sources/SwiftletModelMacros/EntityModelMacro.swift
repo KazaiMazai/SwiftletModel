@@ -92,38 +92,6 @@ extension ExtensionDeclSyntax {
         """
         )
     }
-//    
-//    static func queryExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
-//                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
-//                                    relationshipAttributes: [RelationshipAttributes],
-//                                    optionalProperties: [PropertyAttributes],
-//                                    accessAttribute: AccessAttribute
-//                                            
-//    ) throws -> ExtensionDeclSyntax {
-//        return try ExtensionDeclSyntax(
-//        """
-//        extension Query where Entity == \(raw: type) {
-//            \(raw: FunctionDeclSyntax.nestedQuery(type, accessAttribute, relationshipAttributes))
-//        }
-//        """
-//        )
-//    }
-//    
-//    static func collectionExtension(type: some SwiftSyntax.TypeSyntaxProtocol,
-//                                    conformingTo protocols: [SwiftSyntax.TypeSyntax],
-//                                    relationshipAttributes: [RelationshipAttributes],
-//                                    optionalProperties: [PropertyAttributes],
-//                                    accessAttribute: AccessAttribute
-//                                            
-//    ) throws -> ExtensionDeclSyntax {
-//        return try ExtensionDeclSyntax(
-//        """
-//        extension Collection {
-//            \(raw: FunctionDeclSyntax.nestedQueryCollection(type, accessAttribute, relationshipAttributes))
-//        }
-//        """
-//        )
-//    }
 }
 
 extension FunctionDeclSyntax {
@@ -240,7 +208,7 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0))"}
                     .joined(separator: "\n    ")
                 )
-            case .nested:
+            case .depth:
                 query\(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".with(\($0)) { $0.with(nested.next) }"}
