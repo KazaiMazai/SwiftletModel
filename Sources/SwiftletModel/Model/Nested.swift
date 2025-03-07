@@ -12,7 +12,7 @@ public enum Nested {
     case ids
     case entities
     case fragments
-    case depth(depth: Int)
+    case depth(Int)
     
     public var next: Nested {
         switch self {
@@ -51,7 +51,7 @@ public enum Nested {
             return
         }
         
-        self = .depth(depth: depth)
+        self = .depth(depth)
     }
     
 }
