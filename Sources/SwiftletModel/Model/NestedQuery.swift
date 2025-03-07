@@ -7,14 +7,14 @@
 
 import Foundation
 
-public enum Nested {
+public enum NestedQuery {
     case none
     case ids
     case entities
     case fragments
     case depth(Int)
     
-    public var next: Nested {
+    public var next: NestedQuery {
         switch self {
         case .none:
             return .none
@@ -23,7 +23,7 @@ public enum Nested {
         case .entities, .fragments:
             return .none
         case .depth(let depth):
-            return Nested(depth - 1)
+            return NestedQuery(depth - 1)
         }
     }
     
@@ -53,5 +53,4 @@ public enum Nested {
         
         self = .depth(depth)
     }
-    
 }

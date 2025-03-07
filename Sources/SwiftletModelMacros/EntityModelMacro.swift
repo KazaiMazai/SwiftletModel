@@ -186,7 +186,7 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) static func nested(_ nested: Nested, query: Query<Self>) -> Query<Self> {
+        \(raw: accessAttributes.name) static func nestedQuery(_ nested: NestedQuery, query: Query<Self>) -> Query<Self> {
             return switch nested {
             case .none:
                 query
