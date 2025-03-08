@@ -84,10 +84,8 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
-            \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
-            \(raw: FunctionDeclSyntax.nestedQuery(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
-         
         }
         """
         )
@@ -162,23 +160,7 @@ extension FunctionDeclSyntax {
         )
     }
     
-    static func batchQuery(
-        _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
-    ) throws -> FunctionDeclSyntax {
-        
-        try FunctionDeclSyntax(
-        """
-        
-        \(raw: accessAttributes.name) static func batchQuery(in context: Context) -> [Query<Self>] {
-            Self.query(in: context)
-                .with(.ids)
-        }
-        """
-        )
-    }
-    
-    static func nestedQuery(
+    static func nestedQueryModifier(
         _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
@@ -186,33 +168,33 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) static func nestedQuery(_ nested: NestedQuery, query: Query<Self>) -> Query<Self> {
-            return switch nested {
-            case .none:
-                query
+        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self> {
+            guard let relation = nested.first else {
+                return query
+            }
+            
+            let next = Array(nested.dropFirst())
+            return switch relation {
             case .ids:
-                query\(raw: attributes
+                query
+                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".id(\($0))"}
-                    .joined(separator: "\n    ")
+                    .joined(separator: "\n")
                 )
             case .fragments:
-                query\(raw: attributes
+                query
+                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
-                    .map { ".fragment(\($0))"}
-                    .joined(separator: "\n    ")
+                    .map { ".fragment(\($0)) { $0.with(next) }"}
+                    .joined(separator: "\n")
                 )
             case .entities:
-                query\(raw: attributes
+                query
+                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
-                    .map { ".with(\($0))"}
-                    .joined(separator: "\n    ")
-                )
-            case .depth:
-                query\(raw: attributes
-                    .map { "\\.$\($0.propertyName)" }
-                    .map { ".with(\($0)) { $0.with(nested.next) }"}
-                    .joined(separator: "\n    ")
+                    .map { ".with(\($0)) { $0.with(next) }"}
+                    .joined(separator: "\n")
                 )
             }
         }
