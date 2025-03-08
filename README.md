@@ -9,7 +9,7 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 
 
-SwiftletModel offers an easy and efficient way to implement complex domain models in your iOS applications.
+SwiftletModel offers an easy and efficient way to implement complex domain model graph in your iOS applications.
 
 - **Entities as Plain Structs**: Define your entities using simple Swift structs.
 - **Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
@@ -271,6 +271,42 @@ Now we are querying things from another end, WTF?*
 
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according to the nested shape in denormalized form.
+
+### Batch nested models query
+
+Batch nested models query is s quick way to fetch related models graph up to a certain depth.
+It's possible to query all nested models at once in a single line: 
+
+```swift
+let user = User
+    .query("1", in: context)
+    .with(.entities)
+    .resolve()
+```
+
+It's also possible to query all nested models of the graph recursively up to a certain depth and specify, how do we want to resolve them at a certain depth: as a complete entity, as a fragment or only ids:
+
+```swift
+let user = User
+    .query("1", in: context)
+    .with(.entities, .fragments, .ids)
+    .resolve()
+```
+
+### Combining batch nested models with nested models query
+
+Batch nested queries can be combined with other queries to include all related models only for certain parts of the model graph
+
+*In the example below, user would be resovled with all chats and while each chat would include all related models.*
+
+```swift
+let user = User
+    .query("1", in: context)
+    .with(\.$chats) { chat in
+        chat.with(.entities)
+    }
+    .resolve()
+```
 
 ### Related models query
 
