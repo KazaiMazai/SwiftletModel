@@ -22,7 +22,8 @@ let package = Package(
              url: "https://github.com/apple/swift-collections.git",
              .upToNextMajor(from: "1.1.0")
            ),
-        .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0"..<"600.0.0")
+        .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0"..<"600.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.12.0"),
     ],
     targets: [
         .macro(
@@ -44,7 +45,9 @@ let package = Package(
         .testTarget(
             name: "SwiftletModelTests",
             dependencies: [
-                "SwiftletModel"
+                "SwiftletModel",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "SnapshotTestingCustomDump", package: "swift-snapshot-testing"),
             ]
         )
     ]
