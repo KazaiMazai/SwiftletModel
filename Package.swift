@@ -22,8 +22,10 @@ let package = Package(
              url: "https://github.com/apple/swift-collections.git",
              .upToNextMajor(from: "1.1.0")
            ),
+
         .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0"..<"600.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.12.0"),
+        .package(url: "https://github.com/attaswift/BTree", from: "4.0.0")
     ],
     targets: [
         .macro(
@@ -38,7 +40,8 @@ let package = Package(
           
             dependencies: [
                 "SwiftletModelMacros",
-                .product(name: "Collections", package: "swift-collections")
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "BTree", package: "BTree")
             ]
         ),
 
