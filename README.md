@@ -39,6 +39,8 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Relationship DeleteRule](#relationship-deleterule)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
+  * [Batch nested models query](#batch-nested-models-query)
+  * [Combining batch nested models with nested models query](#combining-batch-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
 - [Codable Conformance](#codable-conformance)
 - [Relationship Types](#relationship-types)
