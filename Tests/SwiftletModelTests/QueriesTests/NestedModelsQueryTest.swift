@@ -678,3 +678,4 @@ final class NestedModelsQueryTest: XCTestCase {
         XCTAssertEqual(json, expectedJSON)
     }
 }
+
