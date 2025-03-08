@@ -1,0 +1,245 @@
+[
+  {
+    "attachment" : null,
+    "author" : {
+      "object" : {
+        "adminOf" : null,
+        "chats" : null,
+        "id" : "4",
+        "name" : "Michael"
+      }
+    },
+    "chat" : {
+      "object" : {
+        "admins" : null,
+        "id" : "1",
+        "messages" : null,
+        "users" : null
+      }
+    },
+    "id" : "0",
+    "replies" : {
+      "objects" : [
+        {
+          "attachment" : null,
+          "author" : null,
+          "chat" : null,
+          "id" : "1",
+          "replies" : null,
+          "replyTo" : null,
+          "text" : "hello",
+          "viewedBy" : null
+        },
+        {
+          "attachment" : null,
+          "author" : null,
+          "chat" : null,
+          "id" : "2",
+          "replies" : null,
+          "replyTo" : null,
+          "text" : "howdy",
+          "viewedBy" : null
+        },
+        {
+          "attachment" : null,
+          "author" : null,
+          "chat" : null,
+          "id" : "3",
+          "replies" : null,
+          "replyTo" : null,
+          "text" : "yo!",
+          "viewedBy" : null
+        },
+        {
+          "attachment" : null,
+          "author" : null,
+          "chat" : null,
+          "id" : "4",
+          "replies" : null,
+          "replyTo" : null,
+          "text" : "wassap!",
+          "viewedBy" : null
+        }
+      ]
+    },
+    "replyTo" : null,
+    "text" : "hello, ya'll",
+    "viewedBy" : {
+      "objects" : [
+
+      ]
+    }
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "object" : {
+        "adminOf" : null,
+        "chats" : null,
+        "id" : "2",
+        "name" : "Alice"
+      }
+    },
+    "chat" : {
+      "object" : {
+        "admins" : null,
+        "id" : "1",
+        "messages" : null,
+        "users" : null
+      }
+    },
+    "id" : "1",
+    "replies" : {
+      "objects" : [
+
+      ]
+    },
+    "replyTo" : {
+      "object" : {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
+        "id" : "0",
+        "replies" : null,
+        "replyTo" : null,
+        "text" : "hello, ya'll",
+        "viewedBy" : null
+      }
+    },
+    "text" : "hello",
+    "viewedBy" : {
+      "objects" : [
+
+      ]
+    }
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "object" : {
+        "adminOf" : null,
+        "chats" : null,
+        "id" : "1",
+        "name" : "Bob"
+      }
+    },
+    "chat" : {
+      "object" : {
+        "admins" : null,
+        "id" : "1",
+        "messages" : null,
+        "users" : null
+      }
+    },
+    "id" : "2",
+    "replies" : {
+      "objects" : [
+
+      ]
+    },
+    "replyTo" : {
+      "object" : {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
+        "id" : "0",
+        "replies" : null,
+        "replyTo" : null,
+        "text" : "hello, ya'll",
+        "viewedBy" : null
+      }
+    },
+    "text" : "howdy",
+    "viewedBy" : {
+      "objects" : [
+
+      ]
+    }
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "object" : {
+        "adminOf" : null,
+        "chats" : null,
+        "id" : "5",
+        "name" : "Tom"
+      }
+    },
+    "chat" : {
+      "object" : {
+        "admins" : null,
+        "id" : "1",
+        "messages" : null,
+        "users" : null
+      }
+    },
+    "id" : "3",
+    "replies" : {
+      "objects" : [
+
+      ]
+    },
+    "replyTo" : {
+      "object" : {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
+        "id" : "0",
+        "replies" : null,
+        "replyTo" : null,
+        "text" : "hello, ya'll",
+        "viewedBy" : null
+      }
+    },
+    "text" : "yo!",
+    "viewedBy" : {
+      "objects" : [
+
+      ]
+    }
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "object" : {
+        "adminOf" : null,
+        "chats" : null,
+        "id" : "3",
+        "name" : "John"
+      }
+    },
+    "chat" : {
+      "object" : {
+        "admins" : null,
+        "id" : "1",
+        "messages" : null,
+        "users" : null
+      }
+    },
+    "id" : "4",
+    "replies" : {
+      "objects" : [
+
+      ]
+    },
+    "replyTo" : {
+      "object" : {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
+        "id" : "0",
+        "replies" : null,
+        "replyTo" : null,
+        "text" : "hello, ya'll",
+        "viewedBy" : null
+      }
+    },
+    "text" : "wassap!",
+    "viewedBy" : {
+      "objects" : [
+
+      ]
+    }
+  }
+]

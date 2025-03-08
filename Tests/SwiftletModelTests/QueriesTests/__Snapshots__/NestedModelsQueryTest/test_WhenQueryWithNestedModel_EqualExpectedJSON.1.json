@@ -1,0 +1,77 @@
+[
+  {
+    "attachment" : null,
+    "author" : {
+      "adminOf" : null,
+      "chats" : null,
+      "id" : "4",
+      "name" : "Michael"
+    },
+    "chat" : null,
+    "id" : "0",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "hello, ya'll",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "adminOf" : null,
+      "chats" : null,
+      "id" : "2",
+      "name" : "Alice"
+    },
+    "chat" : null,
+    "id" : "1",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "hello",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "adminOf" : null,
+      "chats" : null,
+      "id" : "1",
+      "name" : "Bob"
+    },
+    "chat" : null,
+    "id" : "2",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "howdy",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "adminOf" : null,
+      "chats" : null,
+      "id" : "5",
+      "name" : "Tom"
+    },
+    "chat" : null,
+    "id" : "3",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "yo!",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "adminOf" : null,
+      "chats" : null,
+      "id" : "3",
+      "name" : "John"
+    },
+    "chat" : null,
+    "id" : "4",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "wassap!",
+    "viewedBy" : null
+  }
+]
