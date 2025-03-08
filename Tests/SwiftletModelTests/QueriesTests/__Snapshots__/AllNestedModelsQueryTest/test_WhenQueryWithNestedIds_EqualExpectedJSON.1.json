@@ -1,0 +1,111 @@
+[
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "4"
+    },
+    "chat" : {
+      "id" : "1"
+    },
+    "id" : "0",
+    "replies" : [
+      {
+        "id" : "1"
+      },
+      {
+        "id" : "2"
+      },
+      {
+        "id" : "3"
+      },
+      {
+        "id" : "4"
+      }
+    ],
+    "replyTo" : null,
+    "text" : "hello, ya'll",
+    "viewedBy" : [
+
+    ]
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "2"
+    },
+    "chat" : {
+      "id" : "1"
+    },
+    "id" : "1",
+    "replies" : [
+
+    ],
+    "replyTo" : {
+      "id" : "0"
+    },
+    "text" : "hello",
+    "viewedBy" : [
+
+    ]
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "1"
+    },
+    "chat" : {
+      "id" : "1"
+    },
+    "id" : "2",
+    "replies" : [
+
+    ],
+    "replyTo" : {
+      "id" : "0"
+    },
+    "text" : "howdy",
+    "viewedBy" : [
+
+    ]
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "5"
+    },
+    "chat" : {
+      "id" : "1"
+    },
+    "id" : "3",
+    "replies" : [
+
+    ],
+    "replyTo" : {
+      "id" : "0"
+    },
+    "text" : "yo!",
+    "viewedBy" : [
+
+    ]
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "3"
+    },
+    "chat" : {
+      "id" : "1"
+    },
+    "id" : "4",
+    "replies" : [
+
+    ],
+    "replyTo" : {
+      "id" : "0"
+    },
+    "text" : "wassap!",
+    "viewedBy" : [
+
+    ]
+  }
+]

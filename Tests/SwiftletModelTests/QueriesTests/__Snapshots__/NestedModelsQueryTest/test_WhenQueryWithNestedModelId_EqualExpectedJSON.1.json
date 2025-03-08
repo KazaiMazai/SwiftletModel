@@ -1,0 +1,62 @@
+[
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "4"
+    },
+    "chat" : null,
+    "id" : "0",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "hello, ya'll",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "2"
+    },
+    "chat" : null,
+    "id" : "1",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "hello",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "1"
+    },
+    "chat" : null,
+    "id" : "2",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "howdy",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "5"
+    },
+    "chat" : null,
+    "id" : "3",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "yo!",
+    "viewedBy" : null
+  },
+  {
+    "attachment" : null,
+    "author" : {
+      "id" : "3"
+    },
+    "chat" : null,
+    "id" : "4",
+    "replies" : null,
+    "replyTo" : null,
+    "text" : "wassap!",
+    "viewedBy" : null
+  }
+]
