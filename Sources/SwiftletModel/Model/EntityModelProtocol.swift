@@ -74,15 +74,15 @@ public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
         Self.query(id, in: context)
     }
-
+    
     static func query(_ id: ID, in context: Context) -> Query<Self> {
         context.query(id)
     }
-
+    
     static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
         context.query(ids)
     }
-
+    
     static func query(in context: Context) -> [Query<Self>] {
         context.query()
     }
@@ -91,12 +91,17 @@ public extension EntityModelProtocol {
         Self.query(in: context)
             .with(nested)
     }
+}
+
+
+
+public extension EntityModelProtocol {
 
     static func query<T>(where keyPath: KeyPath<Self, T>,
                          equals value: T,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index = index(keyPath, in: context) else {
+        guard let index = context.index(keyPath) else {
             return query(in: context)
                 .resolve()
                 .filter { $0[keyPath: keyPath] == value }
@@ -110,7 +115,7 @@ public extension EntityModelProtocol {
                          in range: Range<T>,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index = index(keyPath, in: context) else {
+        guard let index = context.index(keyPath) else {
             return query(in: context)
                 .resolve()
                 .filter { range.contains($0[keyPath: keyPath]) }
