@@ -76,7 +76,27 @@ public extension Collection {
 }
 
 public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
-
+ 
+public extension Query {
+    func with(_ nested: Nested...) -> Query<Entity> {
+        with(nested)
+    }
+    
+    func with(_ nested: [Nested]) -> Query<Entity> {
+        Entity.nestedQueryModifier(self, nested: nested)
+    }
+}
+ 
+public extension Collection {
+    func with<Entity>(_ nested: Nested...) -> [Query<Entity>] where Element == Query<Entity> {
+        with(nested)
+    }
+    
+    func with<Entity>(_ nested: [Nested]) -> [Query<Entity>] where Element == Query<Entity> {
+        map { $0.with(nested) }
+    }
+}
+ 
 public extension Query {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
@@ -118,7 +138,6 @@ public extension Query {
 
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-
         nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
 
             with(keyPath, slice: true, fragment: true, nested: nested)

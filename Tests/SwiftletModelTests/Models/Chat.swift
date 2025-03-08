@@ -25,3 +25,4 @@ struct Chat: Codable, Sendable {
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }
 }
+   

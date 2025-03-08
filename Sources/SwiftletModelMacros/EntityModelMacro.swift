@@ -23,14 +23,13 @@ public struct EntityModelMacro: ExtensionMacro {
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
             
-            let syntax = try ExtensionDeclSyntax.entityModelMacro(
+            return try ExtensionDeclSyntax.entityModelMacro(
                 of: node,
                 attachedTo: declaration,
                 providingExtensionsOf: type,
                 conformingTo: protocols,
                 in: context
             )
-            return [syntax]
         }
 }
  
@@ -40,7 +39,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
         attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
-        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> SwiftSyntax.ExtensionDeclSyntax {
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
             
             let accessAttribute = declaration.accessAttribute()
             
@@ -55,15 +54,15 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
 
-            let syntax = try ExtensionDeclSyntax.entityModelProtocol(
+            let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties,
                 accessAttribute: accessAttribute
             )
-            
-            return syntax
+
+            return [entityModelProtocol]
         }
 }
 
@@ -85,7 +84,7 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
-            \(raw: FunctionDeclSyntax.batchQuery(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
         }
         """
@@ -161,26 +160,50 @@ extension FunctionDeclSyntax {
         )
     }
     
-    static func batchQuery(
+    static func nestedQueryModifier(
         _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-        
-        \(raw: accessAttributes.name) static func batchQuery(in context: Context) -> [Query<Self>] {
-            Self.query(in: context)
-               \(raw: attributes
+            
+        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self> {
+            guard let relation = nested.first else {
+                return query
+            }
+            
+            let next = Array(nested.dropFirst())
+            return switch relation {
+            case .ids:
+                query
+                \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".id(\($0))"}
                     .joined(separator: "\n")
                 )
+            case .fragments:
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(\($0)) { $0.with(next) }"}
+                    .joined(separator: "\n")
+                )
+            case .entities:
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0)) { $0.with(next) }"}
+                    .joined(separator: "\n")
+                )
+            }
         }
         """
         )
     }
 }
+
+
 
 extension VariableDeclSyntax {
     

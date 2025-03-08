@@ -9,8 +9,8 @@
 import Foundation
 
 @EntityModel
-struct Message: Codable, Sendable {
-    let id: String
+public struct Message: Codable, Sendable {
+    public let id: String
     let text: String
 
     @Relationship(.required)

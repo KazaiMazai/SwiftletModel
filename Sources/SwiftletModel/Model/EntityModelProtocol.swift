@@ -27,13 +27,15 @@ public protocol EntityModelProtocol {
 
     mutating func normalize()
 
-    static func batchQuery(in context: Context) -> [Query<Self>]
-
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
     static var fragmentMergeStrategy: MergeStrategy<Self> { get }
 
     static var patch: MergeStrategy<Self> { get }
+    
+    static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>]
+         
+    static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
 }
 
 public extension EntityModelProtocol {
@@ -83,6 +85,11 @@ public extension EntityModelProtocol {
 
     static func query(in context: Context) -> [Query<Self>] {
         context.query()
+    }
+    
+    static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>] {
+        Self.query(in: context)
+            .with(nested)
     }
 }
 

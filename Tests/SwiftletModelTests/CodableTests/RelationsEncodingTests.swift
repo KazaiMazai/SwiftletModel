@@ -45,7 +45,7 @@ final class RelationEncodingTests: XCTestCase {
                     .id(\.$chat)
                 }
                 .id(\.$users)
-                .id(\.$admins)
+                .id(\.$admins) 
             }
             .resolve()
 
@@ -132,6 +132,7 @@ final class RelationEncodingTests: XCTestCase {
                 .id(\.$admins)
             }
             .resolve()
+
 
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
