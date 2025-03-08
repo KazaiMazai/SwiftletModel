@@ -120,8 +120,19 @@ final class RelationEncodingTests: XCTestCase {
 
         let user = User
             .query(User.bob.id, in: context)
-            .with(.entities, .entities, .ids)
+            .with(\.$chats) {
+                $0.with(\.$messages) {
+                    $0.with(\.$attachment) {
+                        $0.id(\.$message)
+                    }
+                    .id(\.$author)
+                    .id(\.$chat)
+                }
+                .id(\.$users)
+                .id(\.$admins)
+            }
             .resolve()
+
 
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         let expectedJSON = """
