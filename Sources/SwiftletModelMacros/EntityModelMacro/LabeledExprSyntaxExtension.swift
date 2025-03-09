@@ -39,9 +39,8 @@ fileprivate extension String {
     }
 }
 
-
 extension DeclModifierListSyntax {
     var isStatic: Bool {
-        first?.name.text == "static"
+        contains(where: { $0.name.text == "static" })
     }
 }

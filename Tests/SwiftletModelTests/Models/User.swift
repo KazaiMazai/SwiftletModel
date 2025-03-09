@@ -33,29 +33,24 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
+    @Index<User>(\.age) static var ageIndex
+    @Unique<User>(duplicates: .upsert, \.username) static var username
+    @Index<User>(\.username, \.email) static var usernameIndex
+    
     let id: String
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-    
     private(set) var username: String = ""
     private(set) var email: String = ""
     private(set) var age: Int = 12
-    
-    @Index<User>(\.age)
-    static var ageIndex
-    
-    @Unique<User>(duplicates: .upsert, \.username)
-    static var username
-    
-    @Index<User>(\.username, \.email)
-    static var usernameIndex
     
     @Relationship(inverse: \.users)
     var chats: [Chat]?
 
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
+   
 }
 
 extension Query where Entity == User {

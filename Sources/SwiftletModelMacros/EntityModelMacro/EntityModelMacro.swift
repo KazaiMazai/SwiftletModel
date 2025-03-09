@@ -362,15 +362,12 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = IndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+                  let wrapperType = IndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  modifiers.isStatic
             else {
                 continue
             }
-            
-            guard modifiers.first?.name.text == "static" else {
-                return nil
-            }
-
+           
             guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
             else {
@@ -400,12 +397,11 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  modifiers.isStatic
             else {
                 continue
             }
-            
-            let isStatic = modifiers.isStatic
 
             guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
