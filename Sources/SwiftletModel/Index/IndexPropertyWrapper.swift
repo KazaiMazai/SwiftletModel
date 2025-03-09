@@ -9,12 +9,10 @@ import Foundation
 
 @propertyWrapper
 public struct Index<Entity>: Sendable, Codable {
-    public enum Types<T> {
-        
-    }
+    public enum Value<T> { }
     
-    public var wrappedValue: Types<Entity>.Type {
-        Types<Entity>.self
+    public var wrappedValue: Value<Entity>.Type {
+        Value<Entity>.self
     }
     
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
