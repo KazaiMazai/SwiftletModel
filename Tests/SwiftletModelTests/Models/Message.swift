@@ -32,7 +32,7 @@ public struct Message: Codable, Sendable {
     var viewedBy: [User]? = nil
 
 
-    func willDelete(from context: inout Context) throws {
+    public func willDelete(from context: inout Context) throws {
         try delete(\.$attachment, inverse: \.$message, from: &context)
     }
 }

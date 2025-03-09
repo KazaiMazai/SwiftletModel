@@ -14,6 +14,7 @@ public struct Index<Entity, T: Comparable>: Sendable, Codable {
     }
     
     public init(_ keyPath: KeyPath<Entity, T>) {
+        
     }
 
     public init<T0, T1>(
@@ -34,7 +35,7 @@ public struct Index<Entity, T: Comparable>: Sendable, Codable {
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
         _ kp3: KeyPath<Entity, T3>) where T == Quadruple<T0, T1, T2, T3> {
-        
+
     }
 }
 
