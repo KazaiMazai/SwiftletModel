@@ -86,9 +86,8 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes))
-            \(raw: FunctionDeclSyntax.addToIndex(accessAttribute, indexAttributes))
-            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes))
+            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
@@ -101,7 +100,8 @@ extension ExtensionDeclSyntax {
 extension FunctionDeclSyntax {
     static func save(
         _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
+        _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -110,7 +110,11 @@ extension FunctionDeclSyntax {
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
             try willSave(to: &context)
             context.insert(self, options: options)
-            \(raw: attributes
+            \(raw: indexAttributes
+                .map { "try addToIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: relationshipAttributes
                 .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
@@ -120,28 +124,11 @@ extension FunctionDeclSyntax {
         )
     }
     
-    static func addToIndex(
-        _ accessAttributes: AccessAttribute,
-        _ attributes: [IndexAttributes]
-    ) throws -> FunctionDeclSyntax {
-        
-        try FunctionDeclSyntax(
-        """
-         
-        \(raw: accessAttributes.name) func addToIndex(in context: inout Context) throws {
-            
-            \(raw: attributes
-                .map { "try addToIndex(\($0.keyPathAttributes.attribute), in: &context)" }
-                .joined(separator: "\n")
-            )
-        }
-        """
-        )
-    }
     
     static func delete(
         _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
+        _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -150,7 +137,11 @@ extension FunctionDeclSyntax {
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
             context.remove(Self.self, id: id)
-            \(raw: attributes
+            \(raw: indexAttributes
+                .map { "try removeFromIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: relationshipAttributes
                 .map {
                     switch $0.deleteRule {
                     case .nullify:
