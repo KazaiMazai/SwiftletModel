@@ -53,16 +53,20 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
-
+            
+            let uniqueAttributes = variableDeclarations
+                .compactMap { $0.uniqueAttributes() }
+            
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
-
+            
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties,
                 indexAttributes: indexAttributes,
+                uniqueAttributes: uniqueAttributes,
                 accessAttribute: accessAttribute
             )
 
@@ -76,6 +80,7 @@ extension ExtensionDeclSyntax {
                                     relationshipAttributes: [RelationshipAttributes],
                                     optionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
+                                    uniqueAttributes: [UniqueAttributes],
                                     accessAttribute: AccessAttribute
                                             
     ) throws -> ExtensionDeclSyntax {
@@ -86,8 +91,8 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes))
-            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
@@ -101,7 +106,8 @@ extension FunctionDeclSyntax {
     static func save(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
-        _ indexAttributes: [IndexAttributes]
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -112,6 +118,17 @@ extension FunctionDeclSyntax {
             context.insert(self, options: options)
             \(raw: indexAttributes
                 .map { "try addToIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: uniqueAttributes
+                .map {
+                    switch $0.resolveDuplicates {
+                    case .throw:
+                        "try addToIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
+                    case .upsert:
+                        "try addToIndex(.unique(.upsert),\($0.keyPathAttributes.attribute), in: &context)"
+                    }
+                 }
                 .joined(separator: "\n")
             )
             \(raw: relationshipAttributes
@@ -128,7 +145,8 @@ extension FunctionDeclSyntax {
     static func delete(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
-        _ indexAttributes: [IndexAttributes]
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -139,6 +157,17 @@ extension FunctionDeclSyntax {
             context.remove(Self.self, id: id)
             \(raw: indexAttributes
                 .map { "try removeFromIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: uniqueAttributes
+                .map {
+                    switch $0.resolveDuplicates {
+                    case .throw:
+                        "try removeFromIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
+                    case .upsert:
+                        "try removeFromIndex(.unique(.upsert),\($0.keyPathAttributes.attribute), in: &context)"
+                    }
+                 }
                 .joined(separator: "\n")
             )
             \(raw: relationshipAttributes
@@ -362,6 +391,50 @@ private extension VariableDeclSyntax {
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
                 )
+            )
+        }
+        return nil
+    }
+    
+    func uniqueAttributes() -> UniqueAttributes? {
+        for attribute in self.attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+            else {
+                continue
+            }
+            
+            let isStatic = modifiers.isStatic
+
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+                  let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+            else {
+                return nil
+            }
+            
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+                
+                   return UniqueAttributes(
+                        relationWrapperType: wrapperType,
+                        propertyName: property,
+                        keyPathAttributes: UniqueAttributes.KeyPathAttributes(
+                            propertyIdentifier: property
+                        ),
+                        resolveDuplicates: .upsert
+                    )
+            }
+            
+            return UniqueAttributes(
+                relationWrapperType: wrapperType,
+                propertyName: property,
+                keyPathAttributes: UniqueAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                ),
+                resolveDuplicates: UniqueAttributes.ResolveDuplicatesAttribute(labeledExprListSyntax: keyPathsExprList)
             )
         }
         return nil

@@ -37,12 +37,17 @@ struct User: Codable, Sendable {
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
+    
+    
     private(set) var username: String = ""
     private(set) var email: String = ""
     private(set) var age: Int = 12
     
     @Index<User>(\.age)
     static var ageIndex
+    
+    @Unique<User>(resolveDuplicates: .upsert, \.username)
+    static var username
     
     @Index<User>(\.username, \.email)
     static var usernameIndex
