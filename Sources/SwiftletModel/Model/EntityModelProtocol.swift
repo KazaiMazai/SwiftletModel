@@ -24,11 +24,7 @@ public protocol EntityModelProtocol {
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
-    
-//    func addToIndex(in context: inout Context) throws
-//    
-//    func removeFromIndex(in context: inout Context) throws
-
+  
     mutating func normalize()
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
