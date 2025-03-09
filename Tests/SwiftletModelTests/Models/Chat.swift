@@ -24,7 +24,5 @@ struct Chat: Codable, Sendable {
     func willDelete(from context: inout Context) throws {
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }
-    
-    
 }
    

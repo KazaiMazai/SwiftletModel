@@ -41,23 +41,17 @@ struct User: Codable, Sendable {
     private(set) var email: String = ""
     private(set) var age: Int = 12
     
-    @Index(\User.age)
+    @Index<User>(\.age)
     static var ageIndex
     
-    @Index(\Self.username, \.email)
+    @Index<User>(\.username, \.email)
     static var usernameIndex
-
+    
     @Relationship(inverse: \.users)
     var chats: [Chat]?
 
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
-    
-
-    func didSave(to context: inout Context) throws {
-        try addToIndex(\User.age, \.username, in: &context)
-        
-    }
 }
 
 extension Query where Entity == User {
