@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Pair<T0, T1> {
+struct Pair<T0, T1> {
     let t0: T0
     let t1: T1
 }
@@ -20,12 +20,12 @@ extension Pair: Equatable where T0: Equatable,
 extension Pair: Comparable where T0: Comparable,
                                  T1: Comparable {
     
-    public static func < (lhs: Pair<T0, T1>, rhs: Pair<T0, T1>) -> Bool {
+    static func < (lhs: Pair<T0, T1>, rhs: Pair<T0, T1>) -> Bool {
         (lhs.t0, lhs.t1) < (rhs.t0, rhs.t1)
     }
 }
 
-public struct Triplet<T0, T1, T2> {
+struct Triplet<T0, T1, T2> {
     let t0: T0
     let t1: T1
     let t2: T2
@@ -41,13 +41,13 @@ extension Triplet: Comparable where T0: Comparable,
                                     T1: Comparable,
                                     T2: Comparable {
     
-    public static func < (lhs: Triplet<T0, T1, T2>, rhs: Triplet<T0, T1, T2>) -> Bool {
+    static func < (lhs: Triplet<T0, T1, T2>, rhs: Triplet<T0, T1, T2>) -> Bool {
         (lhs.t0, lhs.t1, lhs.t2) < (rhs.t0, rhs.t1, rhs.t2)
     }
 }
 
 
-public struct Quadruple<T0, T1, T2, T3> {
+struct Quadruple<T0, T1, T2, T3> {
     let t0: T0
     let t1: T1
     let t2: T2
@@ -66,7 +66,7 @@ extension Quadruple: Comparable where T0: Comparable,
                                       T2: Comparable,
                                       T3: Comparable {
     
-    public static func < (lhs: Quadruple<T0, T1, T2, T3>, rhs: Quadruple<T0, T1, T2, T3>) -> Bool {
+    static func < (lhs: Quadruple<T0, T1, T2, T3>, rhs: Quadruple<T0, T1, T2, T3>) -> Bool {
         (lhs.t0, lhs.t1, lhs.t2, lhs.t3) < (rhs.t0, rhs.t1, rhs.t2, rhs.t3)
     }
 }
