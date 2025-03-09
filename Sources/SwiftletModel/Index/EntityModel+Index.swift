@@ -11,10 +11,10 @@ extension EntityModelProtocol {
     func addToIndex<T>(
         _ indexType: IndexType,
         _ keyPath: KeyPath<Self, T>,
-                       in context: inout Context) throws
+        in context: inout Context) throws
     
     where T: Comparable {
-        var index = context.index(keyPath) ?? IndexModel(name: .indexName(keyPath))
+        var index = context.index(indexType, keyPath) ?? IndexModel(name: .indexName(indexType, keyPath))
         index.add(self, value: self[keyPath: keyPath])
         try index.save(to: &context)
     }
@@ -27,7 +27,7 @@ extension EntityModelProtocol {
     where T0: Comparable,
           T1: Comparable
     {
-        var index = context.index(kp0, kp1) ?? IndexModel(name: .indexName(kp0, kp1))
+        var index = context.index(indexType, kp0, kp1) ?? IndexModel(name: .indexName(indexType, kp0, kp1))
         index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])))
         try index.save(to: &context)
     }
@@ -41,7 +41,7 @@ extension EntityModelProtocol {
           T1: Comparable,
           T2: Comparable
     {
-        var index = context.index(kp0, kp1, kp2) ?? IndexModel(name: .indexName(kp0, kp1, kp2))
+        var index = context.index(indexType, kp0, kp1, kp2) ?? IndexModel(name: .indexName(indexType, kp0, kp1, kp2))
         index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])))
         try index.save(to: &context)
     }
@@ -58,38 +58,37 @@ extension EntityModelProtocol {
           T3: Comparable
     {
 
-        var index = context.index(kp0, kp1, kp2, kp3) ?? IndexModel(name: .indexName(kp0, kp1, kp2, kp3))
+        var index = context.index(indexType, kp0, kp1, kp2, kp3) ?? IndexModel(name: .indexName(indexType, kp0, kp1, kp2, kp3))
         index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])))
         try index.save(to: &context)
     }
 }
 
 extension EntityModelProtocol {
-    func removeFromIndex<T>(_ indexType: IndexType,
-                            _ keyPath: KeyPath<Self, T>,
-                            in context: inout Context) throws
+    func removeFromIndex<T>(
+        _ indexType: IndexType,
+        _ keyPath: KeyPath<Self, T>,
+        in context: inout Context) throws
     
     where T: Comparable {
-        
-        guard var index = context.index(keyPath) else {
+        guard var index = context.index(indexType, keyPath) else {
             return
         }
-       
         index.remove(self)
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1>(_ indexType: IndexType,
-                                 _ kp0: KeyPath<Self, T0>,
-                                 _ kp1: KeyPath<Self, T1>,
-                                 in context: inout Context) throws
+    func removeFromIndex<T0, T1>(
+        _ indexType: IndexType,
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        in context: inout Context) throws
     where T0: Comparable,
           T1: Comparable
     {
-        guard var index = context.index(kp0, kp1) else {
+        guard var index = context.index(indexType, kp0, kp1) else {
             return
         }
-        
         index.remove(self)
         try index.save(to: &context)
     }
@@ -103,7 +102,7 @@ extension EntityModelProtocol {
           T1: Comparable,
           T2: Comparable
     {
-        guard var index = context.index(kp0, kp1, kp2) else {
+        guard var index = context.index(indexType, kp0, kp1, kp2) else {
             return
         }
         
@@ -122,7 +121,7 @@ extension EntityModelProtocol {
           T2: Comparable,
           T3: Comparable
     {
-        guard var index = context.index(kp0, kp1, kp2, kp3) else {
+        guard var index = context.index(indexType, kp0, kp1, kp2, kp3) else {
             return
         }
         
