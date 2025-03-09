@@ -20,7 +20,7 @@ struct UniqueAttributes {
     let relationWrapperType: WrapperType
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
-    let resolveDuplicates: ResolveDuplicatesAttribute
+    let duplicates: DuplicatesAttribute
 }
 
 extension UniqueAttributes {
@@ -68,8 +68,8 @@ extension UniqueAttributes {
         }
     }
     
-    enum ResolveDuplicatesAttribute: String, CaseIterable {
-        static let resolveDuplicates = "resolveDuplicates"
+    enum DuplicatesAttribute: String, CaseIterable {
+        static let duplicates = "duplicates"
         
         case upsert
         case `throw`
@@ -85,8 +85,8 @@ extension UniqueAttributes {
         
         init(labeledExprListSyntax: LabeledExprListSyntax) {
             self = labeledExprListSyntax
-                .filter { $0.labelString?.contains(ResolveDuplicatesAttribute.resolveDuplicates) ?? false }
-                .compactMap { ResolveDuplicatesAttribute($0.expressionString) }
+                .filter { $0.labelString?.contains(DuplicatesAttribute.duplicates) ?? false }
+                .compactMap { DuplicatesAttribute($0.expressionString) }
                 .first ?? .upsert
         }
     }

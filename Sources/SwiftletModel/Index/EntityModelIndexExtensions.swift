@@ -8,7 +8,9 @@
 import Foundation
 
 extension EntityModelProtocol {
-    func addToIndex<T>(_ keyPath: KeyPath<Self, T>,
+    func addToIndex<T>(
+        _ indexType: IndexType,
+        _ keyPath: KeyPath<Self, T>,
                        in context: inout Context) throws
     
     where T: Comparable {
@@ -17,9 +19,11 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func addToIndex<T0, T1>(_ kp0: KeyPath<Self, T0>,
-                            _ kp1: KeyPath<Self, T1>,
-                            in context: inout Context) throws
+    func addToIndex<T0, T1>(
+        _ indexType: IndexType,
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        in context: inout Context) throws
     where T0: Comparable,
           T1: Comparable
     {
@@ -28,7 +32,8 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func addToIndex<T0, T1, T2>(_ kp0: KeyPath<Self, T0>,
+    func addToIndex<T0, T1, T2>(_ indexType: IndexType,
+                                _ kp0: KeyPath<Self, T0>,
                                 _ kp1: KeyPath<Self, T1>,
                                 _ kp2: KeyPath<Self, T2>,
                                 in context: inout Context) throws
@@ -41,7 +46,8 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func addToIndex<T0, T1, T2, T3>(_ kp0: KeyPath<Self, T0>,
+    func addToIndex<T0, T1, T2, T3>(_ indexType: IndexType,
+                                    _ kp0: KeyPath<Self, T0>,
                                     _ kp1: KeyPath<Self, T1>,
                                     _ kp2: KeyPath<Self, T2>,
                                     _ kp3: KeyPath<Self, T3>,
@@ -59,7 +65,8 @@ extension EntityModelProtocol {
 }
 
 extension EntityModelProtocol {
-    func removeFromIndex<T>(_ keyPath: KeyPath<Self, T>,
+    func removeFromIndex<T>(_ indexType: IndexType,
+                            _ keyPath: KeyPath<Self, T>,
                             in context: inout Context) throws
     
     where T: Comparable {
@@ -72,7 +79,8 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1>(_ kp0: KeyPath<Self, T0>,
+    func removeFromIndex<T0, T1>(_ indexType: IndexType,
+                                 _ kp0: KeyPath<Self, T0>,
                                  _ kp1: KeyPath<Self, T1>,
                                  in context: inout Context) throws
     where T0: Comparable,
@@ -86,7 +94,8 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1, T2>(_ kp0: KeyPath<Self, T0>,
+    func removeFromIndex<T0, T1, T2>(_ indexType: IndexType,
+                                     _ kp0: KeyPath<Self, T0>,
                                      _ kp1: KeyPath<Self, T1>,
                                      _ kp2: KeyPath<Self, T2>,
                                      in context: inout Context) throws
@@ -102,7 +111,8 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1, T2, T3>(_ kp0: KeyPath<Self, T0>,
+    func removeFromIndex<T0, T1, T2, T3>(_ indexType: IndexType,
+                                         _ kp0: KeyPath<Self, T0>,
                                          _ kp1: KeyPath<Self, T1>,
                                          _ kp2: KeyPath<Self, T2>,
                                          _ kp3: KeyPath<Self, T3>,

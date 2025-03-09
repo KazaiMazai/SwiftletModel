@@ -11,17 +11,12 @@ import Foundation
 public struct Unique<Entity>: Sendable, Codable {
     public enum Value<T> { }
     
-    public enum ResolveDuplicates {
-        case upsert
-        case `throw`
-    }
-    
     public var wrappedValue: Value<Entity>.Type {
         Value<Entity>.self
     }
     
     public init<T0>(
-        resolveDuplicates: ResolveDuplicates = .upsert,
+        duplicates: ResolveDuplicates = .upsert,
         _ kp0: KeyPath<Entity, T0>)
     where
     T0: Comparable {
@@ -29,7 +24,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1>(
-        resolveDuplicates: ResolveDuplicates = .upsert,
+        duplicates: ResolveDuplicates = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>)
     where
@@ -39,7 +34,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1, T2>(
-        resolveDuplicates: ResolveDuplicates = .upsert,
+        duplicates: ResolveDuplicates = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>)
@@ -52,7 +47,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1, T2, T3>(
-        resolveDuplicates: ResolveDuplicates = .upsert,
+        duplicates: ResolveDuplicates = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,

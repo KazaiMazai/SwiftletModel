@@ -117,12 +117,12 @@ extension FunctionDeclSyntax {
             try willSave(to: &context)
             context.insert(self, options: options)
             \(raw: indexAttributes
-                .map { "try addToIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try addToIndex(.sort, \($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             \(raw: uniqueAttributes
                 .map {
-                    switch $0.resolveDuplicates {
+                    switch $0.duplicates {
                     case .throw:
                         "try addToIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
                     case .upsert:
@@ -156,12 +156,12 @@ extension FunctionDeclSyntax {
             try willDelete(from: &context)
             context.remove(Self.self, id: id)
             \(raw: indexAttributes
-                .map { "try removeFromIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try removeFromIndex(.sort, \($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             \(raw: uniqueAttributes
                 .map {
-                    switch $0.resolveDuplicates {
+                    switch $0.duplicates {
                     case .throw:
                         "try removeFromIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
                     case .upsert:
@@ -423,7 +423,7 @@ private extension VariableDeclSyntax {
                         keyPathAttributes: UniqueAttributes.KeyPathAttributes(
                             propertyIdentifier: property
                         ),
-                        resolveDuplicates: .upsert
+                        duplicates: .upsert
                     )
             }
             
@@ -434,7 +434,7 @@ private extension VariableDeclSyntax {
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
                 ),
-                resolveDuplicates: UniqueAttributes.ResolveDuplicatesAttribute(labeledExprListSyntax: keyPathsExprList)
+                duplicates: UniqueAttributes.DuplicatesAttribute(labeledExprListSyntax: keyPathsExprList)
             )
         }
         return nil
