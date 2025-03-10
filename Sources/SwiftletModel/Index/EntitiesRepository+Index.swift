@@ -9,14 +9,14 @@ import Foundation
 
 extension EntitiesRepository {
     func index<Entity, T>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ keyPath: KeyPath<Entity, T>) -> IndexModel<Entity, T>? {
         
             find(.indexName(indexType, keyPath))
     }
     
     func index<Entity, T0, T1>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> IndexModel<Entity, Pair<T0, T1>>? {
         
@@ -24,7 +24,7 @@ extension EntitiesRepository {
     }
     
     func index<Entity, T0, T1, T2>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>  ,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> IndexModel<Entity, Triplet<T0, T1, T2>>? {
@@ -33,7 +33,7 @@ extension EntitiesRepository {
     }
     
     func index<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
@@ -45,13 +45,13 @@ extension EntitiesRepository {
 
 extension String {
     static func indexName<Entity, T>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ keyPath: KeyPath<Entity, T>) -> String {
         "\(indexType.indexName)-\(keyPath.name)"
     }
     
     static func indexName<Entity, T0, T1>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> String {
         
@@ -63,7 +63,7 @@ extension String {
     }
     
     static func indexName<Entity, T0, T1, T2>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> String {
@@ -76,7 +76,7 @@ extension String {
     }
     
     static func indexName<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType,
+        _ indexType: IndexType<Entity>,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,

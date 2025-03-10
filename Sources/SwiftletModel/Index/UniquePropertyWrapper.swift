@@ -16,7 +16,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0>(
-        duplicates: ResolveDuplicates = .upsert,
+        duplicates: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>)
     where
     T0: Comparable {
@@ -24,7 +24,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1>(
-        duplicates: ResolveDuplicates = .upsert,
+        duplicates: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>)
     where
@@ -34,7 +34,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1, T2>(
-        duplicates: ResolveDuplicates = .upsert,
+        duplicates: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>)
@@ -47,7 +47,7 @@ public struct Unique<Entity>: Sendable, Codable {
     }
     
     public init<T0, T1, T2, T3>(
-        duplicates: ResolveDuplicates = .upsert,
+        duplicates: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,

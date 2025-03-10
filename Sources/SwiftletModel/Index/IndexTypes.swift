@@ -7,12 +7,12 @@
 
 import Foundation
 
-public enum ResolveDuplicates {
-    case upsert
-    case `throw`
-}
+//public enum ResolveDuplicates {
+//    case upsert
+//    case `throw`
+//}
 
-enum IndexType {
+enum IndexType<Entity: EntityModelProtocol> {
     case sort
-    case unique(ResolveDuplicates)
+    case unique(CollisionResolver<Entity>)
 }
