@@ -17,7 +17,7 @@ struct UniqueComparableValueIndex<Entity: EntityModelProtocol, Value: Comparable
     private var uniqueIndex: Map<Value, Entity.ID> = [:]
     private var indexedValues: [Entity.ID: Value] = [:]
     
-    init(name: String ) {
+    init(name: String, indexType: IndexType<Entity>) {
         self.name = name
     }
      
@@ -34,7 +34,7 @@ extension UniqueComparableValueIndex {
     mutating func add(_ entity: Entity,
                                    value: Value,
                                    in context: inout Context,
-                                   resolveDuplicates: CollisionResolver<Entity>) throws {
+                                   resolveCollisions resolver: CollisionResolver<Entity>) throws {
         let existingValue = indexedValues[entity.id]
         
         guard existingValue != value else {
@@ -52,7 +52,7 @@ extension UniqueComparableValueIndex {
         }
         
         if existingId != entity.id {
-            try resolveDuplicates.resolveCollision(id: existingId, in: &context)
+            try resolver.resolveCollision(id: existingId, in: &context)
         }
         
         indexedValues[existingId] = nil

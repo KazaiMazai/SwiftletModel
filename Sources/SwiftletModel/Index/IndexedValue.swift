@@ -12,6 +12,11 @@ struct Pair<T0, T1> {
     let t1: T1
 }
 
+extension Pair: Hashable where T0: Hashable,
+                                T1: Hashable {
+    
+}
+
 extension Pair: Equatable where T0: Equatable,
                                 T1: Equatable {
     
@@ -46,6 +51,10 @@ extension Triplet: Comparable where T0: Comparable,
     }
 }
 
+extension Triplet: Hashable where T0: Hashable,
+                                  T1: Hashable,
+                                  T2: Hashable {
+}
 
 struct Quadruple<T0, T1, T2, T3> {
     let t0: T0
@@ -71,6 +80,11 @@ extension Quadruple: Comparable where T0: Comparable,
     }
 }
 
+extension Quadruple: Hashable where T0: Hashable,
+                                    T1: Hashable,
+                                    T2: Hashable,
+                                    T3: Hashable {
+}
 
 func indexValue<T0, T1>(_ tuple: (T0, T1)) -> Pair<T0, T1> {
     Pair(t0: tuple.0, t1: tuple.1)
