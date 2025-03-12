@@ -20,7 +20,7 @@ struct UniqueAttributes {
     let relationWrapperType: WrapperType
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
-    let duplicates: DuplicatesAttribute
+    let collisions: CollisionsResolverAttribute
 }
 
 extension UniqueAttributes {
@@ -68,25 +68,41 @@ extension UniqueAttributes {
         }
     }
     
-    enum DuplicatesAttribute: String, CaseIterable {
-        static let duplicates = "duplicates"
+    struct CollisionsResolverAttribute {
+        static let collisions = "collisions"
+       
+        let attributes: String
+//        case upsert
+//        case `throw`
         
-        case upsert
-        case `throw`
+        static let upsert: CollisionsResolverAttribute = {
+            CollisionsResolverAttribute(attributes: ".upsert")
+        }()
+        
+        init(attributes: String) {
+            self.attributes = attributes
+//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
+//            guard let value else {
+//                return nil
+//            }
+//
+//            self = value
+        }
         
         init?(_ expressionString: String) {
-            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
-            guard let value else {
-                return nil
-            }
-            
-            self = value
+            attributes = expressionString
+//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
+//            guard let value else {
+//                return nil
+//            }
+//            
+//            self = value
         }
         
         init(labeledExprListSyntax: LabeledExprListSyntax) {
             self = labeledExprListSyntax
-                .filter { $0.labelString?.contains(DuplicatesAttribute.duplicates) ?? false }
-                .compactMap { DuplicatesAttribute($0.expressionString) }
+                .filter { $0.labelString?.contains(CollisionsResolverAttribute.collisions) ?? false }
+                .compactMap { CollisionsResolverAttribute($0.expressionString) }
                 .first ?? .upsert
         }
     }

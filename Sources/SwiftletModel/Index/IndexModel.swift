@@ -8,10 +8,34 @@
 import Foundation
 import BTree
 import Collections
+ 
+//@EntityModel
+//enum SortIndex<Entity: EntityModelProtocol, Value: Comparable>  {
+//    case sort(SortIndex<Entity, Value>)
+//    case unique(UniqueComparableValueIndex<Entity, Value>)
+//    
+//    var id: String {
+//        switch self {
+//        case .sort(let index):
+//            return index.id
+//        case .unique(let index):
+//            return index.id
+//        }
+//    }
+//    
+//    init(name: String, indexType: IndexType<Entity>) where Value: Hashable {
+//        switch indexType {
+//        case .sort:
+//            self = .sort(SortIndex<Entity, Value>(name: name))
+//        case .unique:
+//            self = .unique(UniqueComparableValueIndex<Entity, Value>(name: name))
+//        }
+//    }
+//}
 
-
+/*
 @EntityModel
-struct IndexModel<Entity: EntityModelProtocol, Value: Comparable> {
+struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
     var id: String { name }
     
     let name: String
@@ -36,13 +60,13 @@ struct IndexModel<Entity: EntityModelProtocol, Value: Comparable> {
     var sorted: [Entity.ID] { sortIndex.flatMap { $0.1.elements } }
 }
 
-extension IndexModel {
+extension SortIndex {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension IndexModel {
+extension SortIndex {
     mutating func add(_ entity: Entity, value: Value, in context: inout Context) throws {
         switch indexType {
         case .sort:
@@ -56,13 +80,13 @@ extension IndexModel {
         switch indexType {
         case .sort:
             removeFromSortIndex(entity)
-        case .unique(let resolveDuplicates):
+        case .unique:
             removeFromUnique(entity)
         }
     }
 }
 
-private extension IndexModel {
+private extension SortIndex {
     mutating func addToSortIndex(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
         
@@ -116,11 +140,9 @@ private extension IndexModel {
     }
     
     mutating func removeFromUnique(_ entity: Entity) {
-        guard let value = indexedValues[entity.id] else {
-            return
-        }
-        
-        guard var id = uniqueIndex[value] else {
+        guard let value = indexedValues[entity.id],
+              let id = uniqueIndex[value]
+        else {
             return
         }
         
@@ -142,7 +164,7 @@ private extension IndexModel {
     }
 }
 
-extension IndexModel {
+extension SortIndex {
     func filter(_ value: Value) -> [Entity.ID] {
         sortIndex[value]?.elements ?? []
     }
@@ -160,15 +182,5 @@ extension IndexModel {
             
     }
 }
-
-
-protocol DictionaryProtocol<Key, Value> {
-    associatedtype Key
-    associatedtype Value
-    subscript(key: Key) -> Value? { get set }
-}
-
-extension Map: DictionaryProtocol { }
-
-extension Dictionary: DictionaryProtocol { }
-    
+ 
+*/

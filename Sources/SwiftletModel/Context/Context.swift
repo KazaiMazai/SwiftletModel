@@ -80,13 +80,13 @@ extension Context {
 
 extension Context {
     func index<Entity, T>(_ indexType: IndexType<Entity>,
-                          _ keyPath: KeyPath<Entity, T>) -> IndexModel<Entity, T>? {
+                          _ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity, T>? {
         entitiesRepository.index(indexType, keyPath)
     }
     
     func index<Entity, T0, T1>(_ indexType: IndexType<Entity>,
                               _ kp0: KeyPath<Entity, T0>,
-                              _ kp1: KeyPath<Entity, T1>) -> IndexModel<Entity, Pair<T0, T1>>? {
+                              _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity, Pair<T0, T1>>? {
         
         entitiesRepository.index(indexType, kp0, kp1)
     }
@@ -94,7 +94,7 @@ extension Context {
     func index<Entity, T0, T1, T2>(_ indexType: IndexType<Entity>,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
-                                  _ kp2: KeyPath<Entity, T2>) -> IndexModel<Entity, Triplet<T0, T1, T2>>? {
+                                  _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity, Triplet<T0, T1, T2>>? {
        
         entitiesRepository.index(indexType, kp0, kp1, kp2)
     }
@@ -103,7 +103,7 @@ extension Context {
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,
-                                      _ kp3: KeyPath<Entity, T3>) -> IndexModel<Entity, Quadruple<T0, T1, T2, T3>>? {
+                                      _ kp3: KeyPath<Entity, T3>) -> SortIndex<Entity, Quadruple<T0, T1, T2, T3>>? {
         
         entitiesRepository.index(indexType, kp0, kp1, kp2, kp3)
     }

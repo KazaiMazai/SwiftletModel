@@ -115,22 +115,17 @@ extension FunctionDeclSyntax {
          
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
             try willSave(to: &context)
-            context.insert(self, options: options)
+            \(raw: uniqueAttributes
+                .map {
+                    "try addToIndex(.unique(\($0.collisions.attributes)),\($0.keyPathAttributes.attribute), in: &context)"
+                 }
+                .joined(separator: "\n")
+            )
             \(raw: indexAttributes
                 .map { "try addToIndex(.sort, \($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
-            \(raw: uniqueAttributes
-                .map {
-                    switch $0.duplicates {
-                    case .throw:
-                        "try addToIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
-                    case .upsert:
-                        "try addToIndex(.unique(.upsert),\($0.keyPathAttributes.attribute), in: &context)"
-                    }
-                 }
-                .joined(separator: "\n")
-            )
+            context.insert(self, options: options)
             \(raw: relationshipAttributes
                 .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
@@ -154,22 +149,17 @@ extension FunctionDeclSyntax {
         
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
-            context.remove(Self.self, id: id)
+            \(raw: uniqueAttributes
+                .map {
+                    "try removeFromIndex(.unique(\($0.collisions.attributes)),\($0.keyPathAttributes.attribute), in: &context)"
+                 }
+                .joined(separator: "\n")
+            )
             \(raw: indexAttributes
                 .map { "try removeFromIndex(.sort, \($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
-            \(raw: uniqueAttributes
-                .map {
-                    switch $0.duplicates {
-                    case .throw:
-                        "try removeFromIndex(.unique(.throw),\($0.keyPathAttributes.attribute), in: &context)"
-                    case .upsert:
-                        "try removeFromIndex(.unique(.upsert),\($0.keyPathAttributes.attribute), in: &context)"
-                    }
-                 }
-                .joined(separator: "\n")
-            )
+            context.remove(Self.self, id: id)
             \(raw: relationshipAttributes
                 .map {
                     switch $0.deleteRule {
@@ -419,7 +409,7 @@ private extension VariableDeclSyntax {
                         keyPathAttributes: UniqueAttributes.KeyPathAttributes(
                             propertyIdentifier: property
                         ),
-                        duplicates: .upsert
+                        collisions: .upsert
                     )
             }
             
@@ -430,7 +420,7 @@ private extension VariableDeclSyntax {
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
                 ),
-                duplicates: UniqueAttributes.DuplicatesAttribute(labeledExprListSyntax: keyPathsExprList)
+                collisions: UniqueAttributes.CollisionsResolverAttribute(labeledExprListSyntax: keyPathsExprList)
             )
         }
         return nil

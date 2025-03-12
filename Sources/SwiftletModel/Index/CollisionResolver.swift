@@ -13,6 +13,10 @@ public struct CollisionResolver<Entity: EntityModelProtocol> {
     func resolveCollision(id: Entity.ID, in context: inout Context) throws {
         try resolveCollisionHandler(id, &context)
     }
+    
+    public init(resolveCollisionHandler: @escaping (Entity.ID, inout Context) throws -> Void) {
+        self.resolveCollisionHandler = resolveCollisionHandler
+    }
 }
 
 public extension CollisionResolver {
