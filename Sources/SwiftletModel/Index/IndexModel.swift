@@ -23,7 +23,7 @@ import Collections
 //        }
 //    }
 //    
-//    init(name: String, indexType: IndexType<Entity>) where Value: Hashable {
+//    init(name: String, indexType: IndexType) where Value: Hashable {
 //        switch indexType {
 //        case .sort:
 //            self = .sort(SortIndex<Entity, Value>(name: name))
@@ -39,19 +39,19 @@ struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
     var id: String { name }
     
     let name: String
-    let indexType: IndexType<Entity>
+    let indexType: IndexType
     
     private var sortIndex: Map<Value, OrderedSet<Entity.ID>> = [:]
     private var uniqueIndex: any DictionaryProtocol<Value, Entity.ID>
     private var indexedValues: [Entity.ID: Value] = [:]
     
-    init(name: String, indexType: IndexType<Entity>) where Value: Hashable {
+    init(name: String, indexType: IndexType) where Value: Hashable {
         self.name = name
         self.indexType = indexType
         self.uniqueIndex = Dictionary()
     }
     
-    init(name: String, indexType: IndexType<Entity>) where Value: Comparable {
+    init(name: String, indexType: IndexType) where Value: Comparable {
         self.name = name
         self.indexType = indexType
         self.uniqueIndex = Map()

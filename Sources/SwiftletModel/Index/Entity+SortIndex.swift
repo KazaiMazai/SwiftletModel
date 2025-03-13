@@ -9,7 +9,7 @@ import Foundation
 
 extension EntityModelProtocol {
     func addToIndex<T>(
-        _ indexType: IndexType<Self>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     
@@ -21,7 +21,7 @@ extension EntityModelProtocol {
     }
     
     func addToIndex<T0, T1>(
-        _ indexType: IndexType<Self>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
@@ -36,7 +36,7 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func addToIndex<T0, T1, T2>(_ indexType: IndexType<Self>,
+    func addToIndex<T0, T1, T2>(_ indexType: IndexType,
                                 _ kp0: KeyPath<Self, T0>,
                                 _ kp1: KeyPath<Self, T1>,
                                 _ kp2: KeyPath<Self, T2>,
@@ -54,7 +54,7 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func addToIndex<T0, T1, T2, T3>(_ indexType: IndexType<Self>,
+    func addToIndex<T0, T1, T2, T3>(_ indexType: IndexType,
                                     _ kp0: KeyPath<Self, T0>,
                                     _ kp1: KeyPath<Self, T1>,
                                     _ kp2: KeyPath<Self, T2>,
@@ -74,7 +74,7 @@ extension EntityModelProtocol {
 
 extension EntityModelProtocol {
     func removeFromIndex<T>(
-        _ indexType: IndexType<Self>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     
@@ -87,7 +87,7 @@ extension EntityModelProtocol {
     }
     
     func removeFromIndex<T0, T1>(
-        _ indexType: IndexType<Self>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
@@ -101,7 +101,7 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1, T2>(_ indexType: IndexType<Self>,
+    func removeFromIndex<T0, T1, T2>(_ indexType: IndexType,
                                      _ kp0: KeyPath<Self, T0>,
                                      _ kp1: KeyPath<Self, T1>,
                                      _ kp2: KeyPath<Self, T2>,
@@ -118,7 +118,7 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromIndex<T0, T1, T2, T3>(_ indexType: IndexType<Self>,
+    func removeFromIndex<T0, T1, T2, T3>(_ indexType: IndexType,
                                          _ kp0: KeyPath<Self, T0>,
                                          _ kp1: KeyPath<Self, T1>,
                                          _ kp2: KeyPath<Self, T2>,

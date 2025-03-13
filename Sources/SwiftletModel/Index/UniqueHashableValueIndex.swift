@@ -16,7 +16,7 @@ struct UniqueHashableValueIndex<Entity: EntityModelProtocol, Value: Hashable> {
     private var uniqueIndex: [Value: Entity.ID] = [:]
     private var indexedValues: [Entity.ID: Value] = [:]
     
-    init(name: String, indexType: IndexType<Entity>) {
+    init(name: String, indexType: IndexType) {
         self.name = name
     }
      

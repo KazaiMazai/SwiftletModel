@@ -17,7 +17,7 @@ struct UniqueComparableValueIndex<Entity: EntityModelProtocol, Value: Comparable
     private var uniqueIndex: Map<Value, Entity.ID> = [:]
     private var indexedValues: [Entity.ID: Value] = [:]
     
-    init(name: String, indexType: IndexType<Entity>) {
+    init(name: String, indexType: IndexType) {
         self.name = name
     }
      

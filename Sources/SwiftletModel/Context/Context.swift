@@ -79,19 +79,19 @@ extension Context {
 }
 
 extension Context {
-    func index<Entity, T>(_ indexType: IndexType<Entity>,
+    func index<Entity, T>(_ indexType: IndexType,
                           _ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity, T>? {
         entitiesRepository.index(indexType, keyPath)
     }
     
-    func index<Entity, T0, T1>(_ indexType: IndexType<Entity>,
+    func index<Entity, T0, T1>(_ indexType: IndexType,
                               _ kp0: KeyPath<Entity, T0>,
                               _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity, Pair<T0, T1>>? {
         
         entitiesRepository.index(indexType, kp0, kp1)
     }
     
-    func index<Entity, T0, T1, T2>(_ indexType: IndexType<Entity>,
+    func index<Entity, T0, T1, T2>(_ indexType: IndexType,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
                                   _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity, Triplet<T0, T1, T2>>? {
@@ -99,7 +99,7 @@ extension Context {
         entitiesRepository.index(indexType, kp0, kp1, kp2)
     }
     
-    func index<Entity, T0, T1, T2, T3>(_ indexType: IndexType<Entity>,
+    func index<Entity, T0, T1, T2, T3>(_ indexType: IndexType,
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,
@@ -110,13 +110,13 @@ extension Context {
 }
 
 extension Context {
-    func uniqueIndex<Entity, T>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T>(_ indexType: IndexType,
                           _ keyPath: KeyPath<Entity, T>) -> UniqueComparableValueIndex<Entity, T>? 
                           where T: Comparable {
         entitiesRepository.uniqueIndex(indexType, keyPath)
     }
     
-    func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType,
                               _ kp0: KeyPath<Entity, T0>,
                               _ kp1: KeyPath<Entity, T1>) -> UniqueComparableValueIndex<Entity, Pair<T0, T1>>? 
                               where T0: Comparable, T1: Comparable {
@@ -124,7 +124,7 @@ extension Context {
         entitiesRepository.uniqueIndex(indexType, kp0, kp1)
     }
     
-    func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
                                   _ kp2: KeyPath<Entity, T2>) -> UniqueComparableValueIndex<Entity, Triplet<T0, T1, T2>>? 
@@ -133,7 +133,7 @@ extension Context {
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2)
     }
     
-    func uniqueIndex<Entity, T0, T1, T2, T3>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1, T2, T3>(_ indexType: IndexType,
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,
@@ -145,13 +145,13 @@ extension Context {
 }
 
 extension Context {
-    func uniqueIndex<Entity, T>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T>(_ indexType: IndexType,
                           _ keyPath: KeyPath<Entity, T>) -> UniqueHashableValueIndex<Entity, T>? 
                           where T: Hashable {
         entitiesRepository.uniqueIndex(indexType, keyPath)
     }
     
-    func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType,
                               _ kp0: KeyPath<Entity, T0>,
                               _ kp1: KeyPath<Entity, T1>) -> UniqueHashableValueIndex<Entity, Pair<T0, T1>>? 
                               where T0: Hashable, T1: Hashable {
@@ -159,7 +159,7 @@ extension Context {
         entitiesRepository.uniqueIndex(indexType, kp0, kp1)
     }
     
-    func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
                                   _ kp2: KeyPath<Entity, T2>) -> UniqueHashableValueIndex<Entity, Triplet<T0, T1, T2>>? 
@@ -168,7 +168,7 @@ extension Context {
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2)
     }
     
-    func uniqueIndex<Entity, T0, T1, T2, T3>(_ indexType: IndexType<Entity>,
+    func uniqueIndex<Entity, T0, T1, T2, T3>(_ indexType: IndexType,
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,

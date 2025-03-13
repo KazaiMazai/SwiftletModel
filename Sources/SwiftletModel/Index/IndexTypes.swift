@@ -7,8 +7,8 @@
 
 import Foundation
  
-enum IndexType<Entity: EntityModelProtocol> {
+enum IndexType {
     case sort
-    case unique(CollisionResolver<Entity>)
+    case unique
 }
  

@@ -9,14 +9,14 @@ import Foundation
 
 extension EntitiesRepository {
     func index<Entity, T>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity, T>? {
         
             find(.indexName(indexType, keyPath))
     }
     
     func index<Entity, T0, T1>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity, Pair<T0, T1>>? {
         
@@ -24,7 +24,7 @@ extension EntitiesRepository {
     }
     
     func index<Entity, T0, T1, T2>(
-        _ indexType: IndexType<Entity>  ,
+        _ indexType: IndexType  ,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity, Triplet<T0, T1, T2>>? {
@@ -33,7 +33,7 @@ extension EntitiesRepository {
     }
     
     func index<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
@@ -45,14 +45,14 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Entity, T>) -> UniqueHashableValueIndex<Entity, T>? where T: Hashable {
         
             find(.indexName(indexType, keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> UniqueHashableValueIndex<Entity, Pair<T0, T1>>? where T0: Hashable, T1: Hashable {
         
@@ -60,7 +60,7 @@ extension EntitiesRepository {
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> UniqueHashableValueIndex<Entity, Triplet<T0, T1, T2>>? where T0: Hashable, T1: Hashable, T2: Hashable {
@@ -69,7 +69,7 @@ extension EntitiesRepository {
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
@@ -81,14 +81,14 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Entity, T>) -> UniqueComparableValueIndex<Entity, T>? where T: Comparable {
         
             find(.indexName(indexType, keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> UniqueComparableValueIndex<Entity, Pair<T0, T1>>? where T0: Comparable, T1: Comparable {
         
@@ -96,7 +96,7 @@ extension EntitiesRepository {
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> UniqueComparableValueIndex<Entity, Triplet<T0, T1, T2>>? where T0: Comparable, T1: Comparable, T2: Comparable {
@@ -105,7 +105,7 @@ extension EntitiesRepository {
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
@@ -117,13 +117,13 @@ extension EntitiesRepository {
 
 extension String {
     static func indexName<Entity, T>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ keyPath: KeyPath<Entity, T>) -> String {
         "\(indexType.indexName)-\(keyPath.name)"
     }
     
     static func indexName<Entity, T0, T1>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> String {
         
@@ -135,7 +135,7 @@ extension String {
     }
     
     static func indexName<Entity, T0, T1, T2>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> String {
@@ -148,7 +148,7 @@ extension String {
     }
     
     static func indexName<Entity, T0, T1, T2, T3>(
-        _ indexType: IndexType<Entity>,
+        _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,

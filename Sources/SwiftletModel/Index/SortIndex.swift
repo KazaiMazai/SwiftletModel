@@ -22,7 +22,7 @@ struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
         self.name = name
     }
     
-    init(name: String, indexType: IndexType<Entity>) {
+    init(name: String, indexType: IndexType) {
         self.name = name
     }
     
