@@ -1,5 +1,5 @@
 //
-//  SortIndex.swift
+//  Index.ComparableValue.swift
 //  SwiftletModel
 //
 //  Created by Sergey Kazakov on 12/03/2025.
@@ -9,33 +9,35 @@ import Foundation
 import BTree
 import Collections
 
-@EntityModel
-struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
-    var id: String { name }
-    
-    let name: String
-    
-    private var sortIndex: Map<Value, OrderedSet<Entity.ID>> = [:]
-    private var indexedValues: [Entity.ID: Value] = [:]
-    
-    init(name: String){
-        self.name = name
+extension Index {
+    @EntityModel
+    struct ComparableValue<Value: Comparable> {
+        var id: String { name }
+        
+        let name: String
+        
+        private var sortIndex: Map<Value, OrderedSet<Entity.ID>> = [:]
+        private var indexedValues: [Entity.ID: Value] = [:]
+        
+        init(name: String){
+            self.name = name
+        }
+        
+        init(name: String, indexType: IndexType) {
+            self.name = name
+        }
+        
+        var sorted: [Entity.ID] { sortIndex.flatMap { $0.1.elements } }
     }
-    
-    init(name: String, indexType: IndexType) {
-        self.name = name
-    }
-    
-    var sorted: [Entity.ID] { sortIndex.flatMap { $0.1.elements } }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     mutating func add(_ entity: Entity, value: Value, in: inout Context) throws {
         let existingValue = indexedValues[entity.id]
         
@@ -72,7 +74,7 @@ extension SortIndex {
     }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     func filter(_ value: Value) -> [Entity.ID] {
         sortIndex[value]?.elements ?? []
     }

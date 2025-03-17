@@ -395,7 +395,7 @@ public extension Collection {
 }
 
 private extension Collection {
-    func resolve<Entity, T>(sortedUsing index: SortIndex<Entity, T>) -> [Entity]
+    func resolve<Entity, T>(sortedUsing index: Index.ComparableValue<Entity, T>) -> [Entity]
     
     where Element == Query<Entity>, T: Comparable {
         

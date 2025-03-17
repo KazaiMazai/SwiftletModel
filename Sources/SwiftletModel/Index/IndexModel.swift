@@ -10,8 +10,8 @@ import BTree
 import Collections
  
 //@EntityModel
-//enum SortIndex<Entity: EntityModelProtocol, Value: Comparable>  {
-//    case sort(SortIndex<Entity, Value>)
+//enum Index.ComparableValue<Entity: EntityModelProtocol, Value: Comparable>  {
+//    case sort(Index.ComparableValue<Entity, Value>)
 //    case unique(Unique.ComparableValueIndex<Entity, Value>)
 //    
 //    var id: String {
@@ -26,7 +26,7 @@ import Collections
 //    init(name: String, indexType: IndexType) where Value: Hashable {
 //        switch indexType {
 //        case .sort:
-//            self = .sort(SortIndex<Entity, Value>(name: name))
+//            self = .sort(Index.ComparableValue<Entity, Value>(name: name))
 //        case .unique:
 //            self = .unique(Unique.ComparableValueIndex<Entity, Value>(name: name))
 //        }
@@ -35,7 +35,7 @@ import Collections
 
 /*
 @EntityModel
-struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
+struct Index.ComparableValue<Entity: EntityModelProtocol, Value: Comparable> {
     var id: String { name }
     
     let name: String
@@ -60,17 +60,17 @@ struct SortIndex<Entity: EntityModelProtocol, Value: Comparable> {
     var sorted: [Entity.ID] { sortIndex.flatMap { $0.1.elements } }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     mutating func add(_ entity: Entity, value: Value, in context: inout Context) throws {
         switch indexType {
         case .sort:
-            addToSortIndex(entity, value: value)
+            addToIndex.ComparableValue(entity, value: value)
         case .unique(let resolveDuplicates):
             try addToUniqueIndex(entity, value: value, in: &context, resolveDuplicates: resolveDuplicates)
         }
@@ -79,15 +79,15 @@ extension SortIndex {
     mutating func remove(_ entity: Entity) {
         switch indexType {
         case .sort:
-            removeFromSortIndex(entity)
+            removeFromIndex.ComparableValue(entity)
         case .unique:
             removeFromUnique(entity)
         }
     }
 }
 
-private extension SortIndex {
-    mutating func addToSortIndex(_ entity: Entity, value: Value) {
+private extension Index.ComparableValue {
+    mutating func addToIndex.ComparableValue(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
         
         guard existingValue != value else {
@@ -151,7 +151,7 @@ private extension SortIndex {
     }
     
     
-    mutating func removeFromSortIndex(_ entity: Entity) {
+    mutating func removeFromIndex.ComparableValue(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
             var ids = sortIndex[value]
         else {
@@ -164,7 +164,7 @@ private extension SortIndex {
     }
 }
 
-extension SortIndex {
+extension Index.ComparableValue {
     func filter(_ value: Value) -> [Entity.ID] {
         sortIndex[value]?.elements ?? []
     }
