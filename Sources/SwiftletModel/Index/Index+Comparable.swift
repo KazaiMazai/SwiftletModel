@@ -16,7 +16,7 @@ extension Index {
         
         let name: String
         
-        private var sortIndex: Map<Value, OrderedSet<Entity.ID>> = [:]
+        private var index: Map<Value, OrderedSet<Entity.ID>> = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
         
         init(name: String){
@@ -27,7 +27,7 @@ extension Index {
             self.name = name
         }
         
-        var sorted: [Entity.ID] { sortIndex.flatMap { $0.1.elements } }
+        var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
     }
 }
 
@@ -45,49 +45,49 @@ extension Index.ComparableValue {
             return
         }
         
-        if let existingValue, var ids = sortIndex[existingValue] {
+        if let existingValue, var ids = index[existingValue] {
             ids.remove(entity.id)
-            sortIndex[existingValue] = ids.isEmpty ? nil : ids
+            index[existingValue] = ids.isEmpty ? nil : ids
         }
         
-        guard var ids = sortIndex[value] else {
-            sortIndex[value] = OrderedSet(arrayLiteral: entity.id)
+        guard var ids = index[value] else {
+            index[value] = OrderedSet(arrayLiteral: entity.id)
             indexedValues[entity.id] = value
             return
         }
         
         ids.append(entity.id)
-        sortIndex[value] = ids
+        index[value] = ids
         indexedValues[entity.id] = value
     }
     
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-            var ids = sortIndex[value]
+            var ids = index[value]
         else {
             return
         }
         
         indexedValues[entity.id] = nil
         ids.remove(entity.id)
-        sortIndex[value] = ids
+        index[value] = ids
     }
 }
 
 extension Index.ComparableValue {
     func filter(_ value: Value) -> [Entity.ID] {
-        sortIndex[value]?.elements ?? []
+        index[value]?.elements ?? []
     }
     
     func filter(range: Range<Value>) -> [Entity.ID] {
-        sortIndex
+        index
             .submap(from: range.lowerBound, to: range.upperBound)
             .map { $1.elements }
             .flatMap { $0 }
     }
     
     func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
-        Dictionary(sortIndex.map { ($0, $1.elements) },
+        Dictionary(index.map { ($0, $1.elements) },
                    uniquingKeysWith: { $1 })
             
     }

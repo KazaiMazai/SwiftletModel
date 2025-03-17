@@ -12,8 +12,7 @@ extension Unique {
         
         let name: String
         
-        
-        private var uniqueIndex: [Value: Entity.ID] = [:]
+        private var index: [Value: Entity.ID] = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
         
         init(name: String, indexType: IndexType) {
@@ -40,12 +39,12 @@ extension Unique.HashableValueIndex {
             return
         }
         
-        if let existingValue, let _ = uniqueIndex[existingValue] {
-            uniqueIndex[existingValue] = nil
+        if let existingValue, let _ = index[existingValue] {
+            index[existingValue] = nil
         }
         
-        guard let existingId = uniqueIndex[value] else {
-            uniqueIndex[value] = entity.id
+        guard let existingId = index[value] else {
+            index[value] = entity.id
             indexedValues[entity.id] = value
             return
         }
@@ -55,19 +54,19 @@ extension Unique.HashableValueIndex {
         }
         
         indexedValues[existingId] = nil
-        uniqueIndex[value] = entity.id
+        index[value] = entity.id
         indexedValues[entity.id] = value
     }
     
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-              let id = uniqueIndex[value]
+              let id = index[value]
         else {
             return
         }
         
         indexedValues[entity.id] = nil
-        uniqueIndex[value] = nil
+        index[value] = nil
     }
 }
  
