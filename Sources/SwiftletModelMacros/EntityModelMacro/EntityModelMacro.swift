@@ -117,7 +117,7 @@ extension FunctionDeclSyntax {
             try willSave(to: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try addToIndex(.unique(\($0.collisions.attributes)),\($0.keyPathAttributes.attribute), in: &context)"
+                    "try addToUniqueIndex(.unique,\($0.keyPathAttributes.attribute), \($0.collisions.attributes), in: &context)"
                  }
                 .joined(separator: "\n")
             )
@@ -151,7 +151,7 @@ extension FunctionDeclSyntax {
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try removeFromIndex(.unique(\($0.collisions.attributes)),\($0.keyPathAttributes.attribute), in: &context)"
+                    "try removeFromUniqueIndex(.unique, \($0.keyPathAttributes.attribute), in: &context)"
                  }
                 .joined(separator: "\n")
             )

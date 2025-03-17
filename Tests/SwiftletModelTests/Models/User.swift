@@ -33,8 +33,8 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
-    @Unique<User>(collisions: .throw, \.username) static var uniqueUsernameIndex
-    @Index<User>(\User.username) static var usernameIndex
+    @Unique<User>(collisions: .throw, \.username, \.email) static var uniqueUsernameIndex
+    @Index(\User.username) static var usernameIndex
     
     let id: String
     private(set) var name: String?
@@ -51,6 +51,8 @@ struct User: Codable, Sendable {
     var adminOf: [Chat]?
     
 }
+ 
+
 
 extension Query where Entity == User {
     var isMe: Bool {
