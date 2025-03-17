@@ -111,14 +111,14 @@ extension Context {
 
 extension Context {
     func uniqueIndex<Entity, T>(_ indexType: IndexType,
-                          _ keyPath: KeyPath<Entity, T>) -> UniqueComparableValueIndex<Entity, T>? 
+                          _ keyPath: KeyPath<Entity, T>) -> Unique.ComparableValueIndex<Entity, T>? 
                           where T: Comparable {
         entitiesRepository.uniqueIndex(indexType, keyPath)
     }
     
     func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType,
                               _ kp0: KeyPath<Entity, T0>,
-                              _ kp1: KeyPath<Entity, T1>) -> UniqueComparableValueIndex<Entity, Pair<T0, T1>>? 
+                              _ kp1: KeyPath<Entity, T1>) -> Unique.ComparableValueIndex<Entity, Pair<T0, T1>>? 
                               where T0: Comparable, T1: Comparable {
         
         entitiesRepository.uniqueIndex(indexType, kp0, kp1)
@@ -127,7 +127,7 @@ extension Context {
     func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
-                                  _ kp2: KeyPath<Entity, T2>) -> UniqueComparableValueIndex<Entity, Triplet<T0, T1, T2>>? 
+                                  _ kp2: KeyPath<Entity, T2>) -> Unique.ComparableValueIndex<Entity, Triplet<T0, T1, T2>>? 
                                   where T0: Comparable, T1: Comparable, T2: Comparable {
        
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2)
@@ -137,7 +137,7 @@ extension Context {
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,
-                                      _ kp3: KeyPath<Entity, T3>) -> UniqueComparableValueIndex<Entity, Quadruple<T0, T1, T2, T3>>? 
+                                      _ kp3: KeyPath<Entity, T3>) -> Unique.ComparableValueIndex<Entity, Quadruple<T0, T1, T2, T3>>? 
                                       where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
         
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2, kp3)
@@ -146,14 +146,14 @@ extension Context {
 
 extension Context {
     func uniqueIndex<Entity, T>(_ indexType: IndexType,
-                          _ keyPath: KeyPath<Entity, T>) -> UniqueHashableValueIndex<Entity, T>? 
+                          _ keyPath: KeyPath<Entity, T>) -> Unique.HashableValueIndex<Entity, T>? 
                           where T: Hashable {
         entitiesRepository.uniqueIndex(indexType, keyPath)
     }
     
     func uniqueIndex<Entity, T0, T1>(_ indexType: IndexType,
                               _ kp0: KeyPath<Entity, T0>,
-                              _ kp1: KeyPath<Entity, T1>) -> UniqueHashableValueIndex<Entity, Pair<T0, T1>>? 
+                              _ kp1: KeyPath<Entity, T1>) -> Unique.HashableValueIndex<Entity, Pair<T0, T1>>? 
                               where T0: Hashable, T1: Hashable {
         
         entitiesRepository.uniqueIndex(indexType, kp0, kp1)
@@ -162,7 +162,7 @@ extension Context {
     func uniqueIndex<Entity, T0, T1, T2>(_ indexType: IndexType,
                                   _ kp0: KeyPath<Entity, T0>,
                                   _ kp1: KeyPath<Entity, T1>,
-                                  _ kp2: KeyPath<Entity, T2>) -> UniqueHashableValueIndex<Entity, Triplet<T0, T1, T2>>? 
+                                  _ kp2: KeyPath<Entity, T2>) -> Unique.HashableValueIndex<Entity, Triplet<T0, T1, T2>>? 
                                   where T0: Hashable, T1: Hashable, T2: Hashable {
        
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2)
@@ -172,7 +172,7 @@ extension Context {
                                       _ kp0: KeyPath<Entity, T0>,
                                       _ kp1: KeyPath<Entity, T1>,
                                       _ kp2: KeyPath<Entity, T2>,
-                                      _ kp3: KeyPath<Entity, T3>) -> UniqueHashableValueIndex<Entity, Quadruple<T0, T1, T2, T3>>? 
+                                      _ kp3: KeyPath<Entity, T3>) -> Unique.HashableValueIndex<Entity, Quadruple<T0, T1, T2, T3>>? 
                                       where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable {
         
         entitiesRepository.uniqueIndex(indexType, kp0, kp1, kp2, kp3)

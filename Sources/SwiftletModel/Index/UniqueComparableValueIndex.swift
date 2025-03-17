@@ -8,28 +8,29 @@
 import Foundation
 import BTree
 
-@EntityModel
-struct UniqueComparableValueIndex<Entity: EntityModelProtocol, Value: Comparable> {
-    var id: String { name }
-    
-    let name: String
-     
-    private var uniqueIndex: Map<Value, Entity.ID> = [:]
-    private var indexedValues: [Entity.ID: Value] = [:]
-    
-    init(name: String, indexType: IndexType) {
-        self.name = name
+extension Unique {
+    @EntityModel
+    struct ComparableValueIndex<Value: Comparable> {
+        var id: String { name }
+        
+        let name: String
+        
+        private var uniqueIndex: Map<Value, Entity.ID> = [:]
+        private var indexedValues: [Entity.ID: Value] = [:]
+        
+        init(name: String, indexType: IndexType) {
+            self.name = name
+        }
     }
-     
 }
 
-extension UniqueComparableValueIndex {
+extension Unique.ComparableValueIndex {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension UniqueComparableValueIndex {
+extension Unique.ComparableValueIndex {
      
     mutating func add(_ entity: Entity,
                                    value: Value,

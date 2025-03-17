@@ -12,7 +12,7 @@ import Collections
 //@EntityModel
 //enum SortIndex<Entity: EntityModelProtocol, Value: Comparable>  {
 //    case sort(SortIndex<Entity, Value>)
-//    case unique(UniqueComparableValueIndex<Entity, Value>)
+//    case unique(Unique.ComparableValueIndex<Entity, Value>)
 //    
 //    var id: String {
 //        switch self {
@@ -28,7 +28,7 @@ import Collections
 //        case .sort:
 //            self = .sort(SortIndex<Entity, Value>(name: name))
 //        case .unique:
-//            self = .unique(UniqueComparableValueIndex<Entity, Value>(name: name))
+//            self = .unique(Unique.ComparableValueIndex<Entity, Value>(name: name))
 //        }
 //    }
 //}

@@ -8,7 +8,7 @@
 import Foundation
 
 @propertyWrapper
-public struct Unique<Entity>: Sendable, Codable {
+public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     public enum Value<T> { }
     
     public var wrappedValue: Value<Entity>.Type {

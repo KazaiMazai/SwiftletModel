@@ -1,34 +1,34 @@
 //
-//  UniqueComparableValueIndex 2.swift
+//  Unique.ComparableValueIndex 2.swift
 //  SwiftletModel
 //
 //  Created by Sergey Kazakov on 12/03/2025.
 //
 
-
-@EntityModel
-struct UniqueHashableValueIndex<Entity: EntityModelProtocol, Value: Hashable> {
-    var id: String { name }
-    
-    let name: String
-    
-     
-    private var uniqueIndex: [Value: Entity.ID] = [:]
-    private var indexedValues: [Entity.ID: Value] = [:]
-    
-    init(name: String, indexType: IndexType) {
-        self.name = name
+extension Unique {
+    @EntityModel
+    struct HashableValueIndex<Value: Hashable> {
+        var id: String { name }
+        
+        let name: String
+        
+        
+        private var uniqueIndex: [Value: Entity.ID] = [:]
+        private var indexedValues: [Entity.ID: Value] = [:]
+        
+        init(name: String, indexType: IndexType) {
+            self.name = name
+        }
     }
-     
 }
 
-extension UniqueHashableValueIndex {
+extension Unique.HashableValueIndex {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension UniqueHashableValueIndex {
+extension Unique.HashableValueIndex {
      
     mutating func add(_ entity: Entity,
                                    value: Value,
