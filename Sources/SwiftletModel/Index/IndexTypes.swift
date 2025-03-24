@@ -12,3 +12,6 @@ enum IndexType {
     case unique
 }
  
+public enum Indexed<T> {
+    
+}

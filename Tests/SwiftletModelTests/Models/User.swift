@@ -50,11 +50,16 @@ struct User: Codable, Sendable {
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
     
+    func foo() {
+        Self.uniqueUsernameIndex
+    }
+     
 }
  
 
 
 extension Query where Entity == User {
+    
     var isMe: Bool {
         CurrentUser
             .query(CurrentUser.id, in: context)

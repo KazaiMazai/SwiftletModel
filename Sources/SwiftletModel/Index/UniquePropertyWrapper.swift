@@ -9,10 +9,9 @@ import Foundation
 
 @propertyWrapper
 public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
-    public enum Value<T> { }
     
-    public var wrappedValue: Value<Entity>.Type {
-        Value<Entity>.self
+    public var wrappedValue: Indexed<Entity>.Type {
+        Indexed<Entity>.self
     }
  
     public init<T0>(

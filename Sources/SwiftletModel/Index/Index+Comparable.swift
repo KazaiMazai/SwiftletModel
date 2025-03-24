@@ -10,6 +10,7 @@ import BTree
 import Collections
 
 extension Index {
+    
     @EntityModel
     struct ComparableValue<Value: Comparable> {
         var id: String { name }
