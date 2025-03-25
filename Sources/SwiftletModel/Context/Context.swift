@@ -80,25 +80,25 @@ extension Context {
 
 extension Context {
     func sortIndex<Entity, T>(_ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity>.ComparableValue<T>? {
-        entitiesRepository.index(keyPath)
+        entitiesRepository.find(.indexName(keyPath))
     }
     
     func sortIndex<Entity, T0, T1>(_ kp0: KeyPath<Entity, T0>,
-                               _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity>.ComparableValue<Pair<T0, T1>>? {
-        entitiesRepository.index(kp0, kp1)
+                                   _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity>.ComparableValue<Pair<T0, T1>>? {
+        entitiesRepository.find(.indexName(kp0, kp1))
     }
     
     func sortIndex<Entity, T0, T1, T2>(_ kp0: KeyPath<Entity, T0>,
-                                   _ kp1: KeyPath<Entity, T1>,
-                                   _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>? {
-        entitiesRepository.index(kp0, kp1, kp2)
+                                       _ kp1: KeyPath<Entity, T1>,
+                                       _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>? {
+        entitiesRepository.find(.indexName(kp0, kp1, kp2))
     }
     
     func sortIndex<Entity, T0, T1, T2, T3>(_ kp0: KeyPath<Entity, T0>,
-                                       _ kp1: KeyPath<Entity, T1>,
-                                       _ kp2: KeyPath<Entity, T2>,
-                                       _ kp3: KeyPath<Entity, T3>) -> SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>? {
-        entitiesRepository.index(kp0, kp1, kp2, kp3)
+                                           _ kp1: KeyPath<Entity, T1>,
+                                           _ kp2: KeyPath<Entity, T2>,
+                                           _ kp3: KeyPath<Entity, T3>) -> SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>? {
+        entitiesRepository.find(.indexName(kp0, kp1, kp2, kp3))
     }
 }
 
@@ -107,7 +107,7 @@ extension Context {
         _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.ComparableValue<T>?
     where
     T: Comparable {
-        entitiesRepository.uniqueIndex(keyPath)
+        entitiesRepository.find(.indexName(keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
@@ -116,7 +116,7 @@ extension Context {
     where
     T0: Comparable,
     T1: Comparable {
-        entitiesRepository.uniqueIndex(kp0, kp1)
+        entitiesRepository.find(.indexName(kp0, kp1))
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
@@ -127,7 +127,7 @@ extension Context {
     T0: Comparable,
     T1: Comparable,
     T2: Comparable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2))
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
@@ -140,7 +140,7 @@ extension Context {
     T1: Comparable,
     T2: Comparable,
     T3: Comparable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2, kp3)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2, kp3))
     }
 }
 
@@ -149,7 +149,7 @@ extension Context {
         _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.HashableValue<T>?
     where
     T: Hashable {
-        entitiesRepository.uniqueIndex(keyPath)
+        entitiesRepository.find(.indexName(keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
@@ -158,7 +158,7 @@ extension Context {
     where
     T0: Hashable,
     T1: Hashable {
-        entitiesRepository.uniqueIndex(kp0, kp1)
+        entitiesRepository.find(.indexName(kp0, kp1))
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
@@ -169,7 +169,7 @@ extension Context {
     T0: Hashable,
     T1: Hashable,
     T2: Hashable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2))
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
@@ -182,7 +182,7 @@ extension Context {
     T1: Hashable,
     T2: Hashable,
     T3: Hashable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2, kp3)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2, kp3))
     }
 }
 
@@ -191,7 +191,7 @@ extension Context {
         _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.HashableValue<T>?
     where
     T: Hashable & Comparable {
-        entitiesRepository.uniqueIndex(keyPath)
+        entitiesRepository.find(.indexName(keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
@@ -200,7 +200,7 @@ extension Context {
     where
     T0: Hashable & Comparable,
     T1: Hashable & Comparable  {
-        entitiesRepository.uniqueIndex(kp0, kp1)
+        entitiesRepository.find(.indexName(kp0, kp1))
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
@@ -211,7 +211,7 @@ extension Context {
     T0: Hashable & Comparable,
     T1: Hashable & Comparable,
     T2: Hashable & Comparable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2))
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
@@ -224,6 +224,43 @@ extension Context {
     T1: Hashable & Comparable,
     T2: Hashable & Comparable,
     T3: Hashable & Comparable {
-        entitiesRepository.uniqueIndex(kp0, kp1, kp2, kp3)
+        entitiesRepository.find(.indexName(kp0, kp1, kp2, kp3))
+    }
+}
+
+
+extension Context {
+    func index<Entity, T, Index: EntityModelProtocol>(
+        _ keyPath: KeyPath<Entity, T>) -> Index?
+    where
+    Index.ID == String {
+        entitiesRepository.find(.indexName(keyPath))
+    }
+    
+    func index<Entity, T0, T1, Index: EntityModelProtocol>(
+        _ kp0: KeyPath<Entity, T0>,
+        _ kp1: KeyPath<Entity, T1>) -> Index?
+    where
+    Index.ID == String {
+        entitiesRepository.find(.indexName(kp0, kp1))
+    }
+    
+    func index<Entity, T0, T1, T2, Index: EntityModelProtocol>(
+        _ kp0: KeyPath<Entity, T0>,
+        _ kp1: KeyPath<Entity, T1>,
+        _ kp2: KeyPath<Entity, T2>) -> Index?
+    where
+    Index.ID == String {
+        entitiesRepository.find(.indexName(kp0, kp1, kp2))
+    }
+    
+    func index<Entity, T0, T1, T2, T3, Index: EntityModelProtocol>(
+        _ kp0: KeyPath<Entity, T0>,
+        _ kp1: KeyPath<Entity, T1>,
+        _ kp2: KeyPath<Entity, T2>,
+        _ kp3: KeyPath<Entity, T3>) -> Index?
+    where
+    Index.ID == String {
+        entitiesRepository.find(.indexName(kp0, kp1, kp2, kp3))
     }
 }

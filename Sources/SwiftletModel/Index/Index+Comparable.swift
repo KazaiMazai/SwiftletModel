@@ -29,6 +29,7 @@ extension SortIndex {
             self.name = name
         }
         
+        
         var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
     }
 }

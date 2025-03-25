@@ -11,9 +11,10 @@ extension EntityModelProtocol {
     func addToSortIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
-    where T: Comparable {
-        var index = context.sortIndex(keyPath) ??
-             SortIndex<Self>.ComparableValue(name: .indexName(keyPath))
+    where
+    T: Comparable {
+        var index = context.index(keyPath) ??
+        SortIndex<Self>.ComparableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context)
         try index.save(to: &context)
     }
@@ -22,13 +23,15 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable
-    {
-        var index = context.sortIndex(kp0, kp1) ??
-            SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1))
-         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
-         in: &context
+    where
+    T0: Comparable,
+    T1: Comparable {
+        var index = context.index(kp0, kp1) ??
+        SortIndex<Self>.ComparableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
+        try index.add(
+            self,
+            value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
+            in: &context
         )
         try index.save(to: &context)
     }
@@ -38,15 +41,15 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable,
-          T2: Comparable
-    {
-        var index = context.sortIndex(kp0, kp1, kp2) ??
-            SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1, kp2))
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
+        var index = context.index(kp0, kp1, kp2) ??
+        SortIndex<Self>.ComparableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(self,
-                value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])), 
-                in: &context
+                      value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
+                      in: &context
         )
         try index.save(to: &context)
     }
@@ -57,13 +60,13 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable,
-          T2: Comparable,
-          T3: Comparable
-    {
-        var index = context.sortIndex(kp0, kp1, kp2, kp3) ??
-                SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1, kp2, kp3))
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable,
+    T3: Comparable {
+        var index = context.index(kp0, kp1, kp2, kp3) ??
+        SortIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])), in: &context)
         try index.save(to: &context)
     }
@@ -73,8 +76,9 @@ extension EntityModelProtocol {
     func removeFromIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
-    where T: Comparable {
-        guard var index = context.sortIndex(keyPath) else {
+    where
+    T: Comparable {
+        guard var index: SortIndex<Self>.ComparableValue<T> = context.index(keyPath) else {
             return
         }
         index.remove(self)
@@ -85,10 +89,10 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable
-    {
-        guard var index = context.sortIndex(kp0, kp1) else {
+    where
+    T0: Comparable,
+    T1: Comparable {
+        guard var index: SortIndex<Self>.ComparableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return
         }
         index.remove(self)
@@ -100,11 +104,11 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable,
-          T2: Comparable
-    {
-        guard var index = context.sortIndex(kp0, kp1, kp2) else {
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
+        guard var index: SortIndex<Self>.ComparableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
         
@@ -118,12 +122,12 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
-    where T0: Comparable,
-          T1: Comparable,
-          T2: Comparable,
-          T3: Comparable
-    {
-        guard var index = context.sortIndex(kp0, kp1, kp2, kp3) else {
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable,
+    T3: Comparable {
+        guard var index: SortIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return
         }
         

@@ -13,8 +13,8 @@ extension EntityModelProtocol {
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
     where T: Hashable {
-        var index = context.uniqueIndex(keyPath) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(keyPath))
+        var index = context.index(keyPath) ??
+            UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -27,8 +27,8 @@ extension EntityModelProtocol {
     where T0: Hashable,
           T1: Hashable
     {
-        var index = context.uniqueIndex(kp0, kp1) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1))
+        var index = context.index(kp0, kp1) ??
+            UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -45,8 +45,8 @@ extension EntityModelProtocol {
           T1: Hashable,
           T2: Hashable
     {
-        var index = context.uniqueIndex(kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1, kp2))
+        var index = context.index(kp0, kp1, kp2) ??
+            UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -65,8 +65,8 @@ extension EntityModelProtocol {
           T2: Hashable,
           T3: Hashable
     {
-        var index = context.uniqueIndex(kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1, kp2, kp3))
+        var index = context.index(kp0, kp1, kp2, kp3) ??
+            UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -80,7 +80,7 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where T: Hashable {
-        guard var index = context.uniqueIndex(keyPath) else {
+        guard var index: UniqueIndex<Self>.HashableValue<T> = context.index(keyPath) else {
             return
         }
         index.remove(self)
@@ -94,7 +94,7 @@ extension EntityModelProtocol {
     where T0: Hashable,
           T1: Hashable
     {
-        guard var index = context.uniqueIndex(kp0, kp1) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return
         }
         index.remove(self)
@@ -109,7 +109,7 @@ extension EntityModelProtocol {
           T1: Hashable,
           T2: Hashable
     {
-        guard var index = context.uniqueIndex(kp0, kp1, kp2) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
         
@@ -127,7 +127,7 @@ extension EntityModelProtocol {
           T2: Hashable,
           T3: Hashable
     {
-        guard var index = context.uniqueIndex(kp0, kp1, kp2, kp3) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return
         }
         
@@ -142,8 +142,8 @@ extension EntityModelProtocol {
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
     where T: Hashable & Comparable {
-        var index = context.uniqueIndex(keyPath) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(keyPath))
+        var index = context.index(keyPath) ??
+            UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -156,8 +156,8 @@ extension EntityModelProtocol {
     where T0: Hashable & Comparable,
           T1: Hashable & Comparable
     {
-        var index = context.uniqueIndex(kp0, kp1) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1))
+        var index = context.index(kp0, kp1) ??
+            UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -174,8 +174,8 @@ extension EntityModelProtocol {
           T1: Hashable & Comparable,
           T2: Hashable & Comparable
     {
-        var index = context.uniqueIndex(kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1, kp2))
+        var index = context.index(kp0, kp1, kp2) ??
+            UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -194,8 +194,8 @@ extension EntityModelProtocol {
           T2: Hashable & Comparable,
           T3: Hashable & Comparable
     {
-        var index = context.uniqueIndex(kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValue(name: .indexName(kp0, kp1, kp2, kp3))
+        var index = context.index(kp0, kp1, kp2, kp3) ??
+            UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -209,7 +209,7 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where T: Hashable & Comparable {
-        guard var index = context.uniqueIndex(keyPath) else {
+        guard var index: UniqueIndex<Self>.HashableValue<T> = context.index(keyPath) else {
             return
         }
         index.remove(self)
@@ -223,7 +223,7 @@ extension EntityModelProtocol {
     where T0: Hashable & Comparable,
           T1: Hashable & Comparable
     {
-        guard var index = context.uniqueIndex(kp0, kp1) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return
         }
         index.remove(self)
@@ -238,7 +238,7 @@ extension EntityModelProtocol {
           T1: Hashable & Comparable,
           T2: Hashable & Comparable
     {
-        guard var index = context.uniqueIndex(kp0, kp1, kp2) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
         
@@ -256,7 +256,7 @@ extension EntityModelProtocol {
           T2: Hashable & Comparable,
           T3: Hashable & Comparable
     {
-        guard var index = context.uniqueIndex(kp0, kp1, kp2, kp3) else {
+        guard var index: UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return
         }
         
