@@ -322,7 +322,7 @@ public extension Collection {
             return resolve()
         }
         
-        guard let index = context.sortIndex(keyPath) else {
+        guard let index: SortIndex<Entity>.ComparableValue<T> = context.index(keyPath) else {
             return resolve().sorted(using: .keyPath(keyPath))
         }
         
@@ -342,7 +342,7 @@ public extension Collection {
             return resolve()
         }
         
-        guard let index = context.sortIndex(kp0, kp1) else {
+        guard let index: SortIndex<Entity>.ComparableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1))
         }
         
@@ -363,7 +363,7 @@ public extension Collection {
             return resolve()
         }
         
-        guard let index = context.sortIndex(kp0, kp1, kp2) else {
+        guard let index: SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2))
         }
         
@@ -386,7 +386,7 @@ public extension Collection {
             return resolve()
         }
         
-        guard let index = context.sortIndex(kp0, kp1, kp2, kp3) else {
+        guard let index: SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2), .keyPath(kp3))
         }
         
