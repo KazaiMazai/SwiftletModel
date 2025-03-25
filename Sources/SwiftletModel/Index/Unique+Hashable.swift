@@ -15,7 +15,7 @@ extension UniqueIndex {
         private var index: [Value: Entity.ID] = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
         
-        init(name: String, indexType: IndexType) {
+        init(name: String) {
             self.name = name
         }
     }

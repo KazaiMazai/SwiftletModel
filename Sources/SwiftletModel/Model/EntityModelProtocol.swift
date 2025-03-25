@@ -101,7 +101,7 @@ public extension EntityModelProtocol {
                          equals value: T,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index = context.index(.sort, keyPath) else {
+        guard let index = context.index(keyPath) else {
             return query(in: context)
                 .resolve()
                 .filter { $0[keyPath: keyPath] == value }
@@ -115,7 +115,7 @@ public extension EntityModelProtocol {
                          in range: Range<T>,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index = context.index(.sort, keyPath) else {
+        guard let index = context.index(keyPath) else {
             return query(in: context)
                 .resolve()
                 .filter { range.contains($0[keyPath: keyPath]) }
