@@ -7,7 +7,7 @@
 
 extension UniqueIndex {
     @EntityModel
-    struct HashableValueIndex<Value: Hashable> {
+    struct HashableValue<Value: Hashable> {
         var id: String { name }
         
         let name: String
@@ -21,13 +21,13 @@ extension UniqueIndex {
     }
 }
 
-extension UniqueIndex.HashableValueIndex {
+extension UniqueIndex.HashableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension UniqueIndex.HashableValueIndex {
+extension UniqueIndex.HashableValue {
      
     mutating func add(_ entity: Entity,
                                    value: Value,

@@ -14,7 +14,7 @@ enum UniqueIndex<Entity: EntityModelProtocol> {
 
 extension UniqueIndex {
     @EntityModel
-    struct ComparableValueIndex<Value: Comparable> {
+    struct ComparableValue<Value: Comparable> {
         var id: String { name }
         
         let name: String
@@ -22,19 +22,19 @@ extension UniqueIndex {
         private var index: Map<Value, Entity.ID> = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
         
-        init(name: String, indexType: IndexType) {
+        init(name: String) {
             self.name = name
         }
     }
 }
 
-extension UniqueIndex.ComparableValueIndex {
+extension UniqueIndex.ComparableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension UniqueIndex.ComparableValueIndex {
+extension UniqueIndex.ComparableValue {
      
     mutating func add(_ entity: Entity,
                                    value: Value,

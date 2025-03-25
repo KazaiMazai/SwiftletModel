@@ -15,7 +15,7 @@ extension EntityModelProtocol {
         in context: inout Context) throws
     where T: Hashable {
         var index = context.uniqueIndex(indexType, keyPath) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, keyPath), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, keyPath), indexType: indexType)
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -30,7 +30,7 @@ extension EntityModelProtocol {
           T1: Hashable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -49,7 +49,7 @@ extension EntityModelProtocol {
           T2: Hashable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -70,7 +70,7 @@ extension EntityModelProtocol {
           T3: Hashable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -153,7 +153,7 @@ extension EntityModelProtocol {
         in context: inout Context) throws
     where T: Hashable & Comparable {
         var index = context.uniqueIndex(indexType, keyPath) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, keyPath), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, keyPath), indexType: indexType)
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -168,7 +168,7 @@ extension EntityModelProtocol {
           T1: Hashable & Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -187,7 +187,7 @@ extension EntityModelProtocol {
           T2: Hashable & Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
@@ -208,7 +208,7 @@ extension EntityModelProtocol {
           T3: Hashable & Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValueIndex(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
+            UniqueIndex<Self>.HashableValue(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
                      in: &context,
                      resolveCollisions: resolveCollisions)
