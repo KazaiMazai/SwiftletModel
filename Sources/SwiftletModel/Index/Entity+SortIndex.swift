@@ -15,7 +15,11 @@ extension EntityModelProtocol {
     T: Comparable {
         var index = context.index(keyPath) ??
         SortIndex<Self>.ComparableValue<T>(name: .indexName(keyPath))
-        try index.add(self, value: self[keyPath: keyPath], in: &context)
+        try index.add(
+            self,
+            value: self[keyPath: keyPath],
+            in: &context
+        )
         try index.save(to: &context)
     }
     
@@ -47,7 +51,8 @@ extension EntityModelProtocol {
     T2: Comparable {
         var index = context.index(kp0, kp1, kp2) ??
         SortIndex<Self>.ComparableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
-        try index.add(self,
+        try index.add(
+            self,
                       value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                       in: &context
         )
@@ -67,7 +72,11 @@ extension EntityModelProtocol {
     T3: Comparable {
         var index = context.index(kp0, kp1, kp2, kp3) ??
         SortIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
-        try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])), in: &context)
+        try index.add(
+            self,
+            value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
+            in: &context
+        )
         try index.save(to: &context)
     }
 }
@@ -127,7 +136,8 @@ extension EntityModelProtocol {
     T1: Comparable,
     T2: Comparable,
     T3: Comparable {
-        guard var index: SortIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
+        guard var index: SortIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3)
+        else {
             return
         }
         

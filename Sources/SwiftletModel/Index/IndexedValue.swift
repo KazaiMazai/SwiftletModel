@@ -13,7 +13,7 @@ struct Pair<T0, T1> {
 }
 
 extension Pair: Hashable where T0: Hashable,
-                                T1: Hashable {
+                               T1: Hashable {
     
 }
 

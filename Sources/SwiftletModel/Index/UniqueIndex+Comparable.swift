@@ -35,11 +35,11 @@ extension UniqueIndex.ComparableValue {
 }
 
 extension UniqueIndex.ComparableValue {
-     
+    
     mutating func add(_ entity: Entity,
-                                   value: Value,
-                                   in context: inout Context,
-                                   resolveCollisions resolver: CollisionResolver<Entity>) throws {
+                      value: Value,
+                      in context: inout Context,
+                      resolveCollisions resolver: CollisionResolver<Entity>) throws {
         let existingValue = indexedValues[entity.id]
         
         guard existingValue != value else {
@@ -76,4 +76,4 @@ extension UniqueIndex.ComparableValue {
         index[value] = nil
     }
 }
- 
+

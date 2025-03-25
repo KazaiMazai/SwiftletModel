@@ -12,9 +12,10 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T: Hashable {
+    where
+    T: Hashable {
         var index = context.index(keyPath) ??
-            UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
+        UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -24,14 +25,14 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable
-    {
+    where
+    T0: Hashable,
+    T1: Hashable {
         var index = context.index(kp0, kp1) ??
-            UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
+        UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
     
@@ -41,15 +42,16 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable,
-          T2: Hashable
-    {
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable {
+        
         var index = context.index(kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
+        UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
     
@@ -60,16 +62,17 @@ extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable,
-          T2: Hashable,
-          T3: Hashable
-    {
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable,
+    T3: Hashable {
+        
         var index = context.index(kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
+        UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
 }
@@ -79,7 +82,9 @@ extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
-    where T: Hashable {
+    where
+    T: Hashable {
+        
         guard var index: UniqueIndex<Self>.HashableValue<T> = context.index(keyPath) else {
             return
         }
@@ -91,9 +96,10 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable
-    {
+    where
+    T0: Hashable,
+    T1: Hashable {
+        
         guard var index: UniqueIndex<Self>.HashableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return
         }
@@ -101,14 +107,15 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2>(_ kp0: KeyPath<Self, T0>,
-                                     _ kp1: KeyPath<Self, T1>,
-                                     _ kp2: KeyPath<Self, T2>,
-                                     in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable,
-          T2: Hashable
-    {
+    func removeFromUniqueIndex<T0, T1, T2>(
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        _ kp2: KeyPath<Self, T2>,
+        in context: inout Context) throws
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable {
         guard var index: UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
@@ -117,16 +124,18 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2, T3>(_ kp0: KeyPath<Self, T0>,
-                                         _ kp1: KeyPath<Self, T1>,
-                                         _ kp2: KeyPath<Self, T2>,
-                                         _ kp3: KeyPath<Self, T3>,
-                                         in context: inout Context) throws
-    where T0: Hashable,
-          T1: Hashable,
-          T2: Hashable,
-          T3: Hashable
-    {
+    func removeFromUniqueIndex<T0, T1, T2, T3>(
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        _ kp2: KeyPath<Self, T2>,
+        _ kp3: KeyPath<Self, T3>,
+        in context: inout Context) throws
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable,
+    T3: Hashable {
+        
         guard var index: UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return
         }
@@ -141,9 +150,10 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T: Hashable & Comparable {
+    where
+    T: Hashable & Comparable {
         var index = context.index(keyPath) ??
-            UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
+        UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -153,14 +163,14 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable
-    {
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable {
         var index = context.index(kp0, kp1) ??
-            UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
+        UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
     
@@ -170,15 +180,15 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable,
-          T2: Hashable & Comparable
-    {
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable {
         var index = context.index(kp0, kp1, kp2) ??
-            UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
+        UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
     
@@ -189,16 +199,17 @@ extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable,
-          T2: Hashable & Comparable,
-          T3: Hashable & Comparable
-    {
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable,
+    T3: Hashable & Comparable {
+        
         var index = context.index(kp0, kp1, kp2, kp3) ??
-            UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
+        UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
-                     in: &context,
-                     resolveCollisions: resolveCollisions)
+                      in: &context,
+                      resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
 }
@@ -208,7 +219,9 @@ extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
-    where T: Hashable & Comparable {
+    where
+    T: Hashable & Comparable {
+        
         guard var index: UniqueIndex<Self>.HashableValue<T> = context.index(keyPath) else {
             return
         }
@@ -220,9 +233,9 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable
-    {
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable {
         guard var index: UniqueIndex<Self>.HashableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
             return
         }
@@ -230,14 +243,15 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2>(_ kp0: KeyPath<Self, T0>,
-                                     _ kp1: KeyPath<Self, T1>,
-                                     _ kp2: KeyPath<Self, T2>,
-                                     in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable,
-          T2: Hashable & Comparable
-    {
+    func removeFromUniqueIndex<T0, T1, T2>(
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        _ kp2: KeyPath<Self, T2>,
+        in context: inout Context) throws
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable {
         guard var index: UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
@@ -246,16 +260,17 @@ extension EntityModelProtocol {
         try index.save(to: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2, T3>(_ kp0: KeyPath<Self, T0>,
-                                         _ kp1: KeyPath<Self, T1>,
-                                         _ kp2: KeyPath<Self, T2>,
-                                         _ kp3: KeyPath<Self, T3>,
-                                         in context: inout Context) throws
-    where T0: Hashable & Comparable,
-          T1: Hashable & Comparable,
-          T2: Hashable & Comparable,
-          T3: Hashable & Comparable
-    {
+    func removeFromUniqueIndex<T0, T1, T2, T3>(
+        _ kp0: KeyPath<Self, T0>,
+        _ kp1: KeyPath<Self, T1>,
+        _ kp2: KeyPath<Self, T2>,
+        _ kp3: KeyPath<Self, T3>,
+        in context: inout Context) throws
+    where
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable,
+    T3: Hashable & Comparable {
         guard var index: UniqueIndex<Self>.HashableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
             return
         }

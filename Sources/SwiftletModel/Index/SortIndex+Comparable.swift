@@ -11,7 +11,6 @@ import Collections
 
 enum SortIndex<Entity: EntityModelProtocol> {
     
-    
 }
 
 extension SortIndex {
@@ -28,7 +27,6 @@ extension SortIndex {
         init(name: String){
             self.name = name
         }
-        
         
         var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
     }
@@ -66,7 +64,7 @@ extension SortIndex.ComparableValue {
     
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-            var ids = index[value]
+              var ids = index[value]
         else {
             return
         }
@@ -92,8 +90,8 @@ extension SortIndex.ComparableValue {
     func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
         Dictionary(index.map { ($0, $1.elements) },
                    uniquingKeysWith: { $1 })
-            
+        
     }
 }
 
- 
+

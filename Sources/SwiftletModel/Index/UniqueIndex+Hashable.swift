@@ -28,11 +28,11 @@ extension UniqueIndex.HashableValue {
 }
 
 extension UniqueIndex.HashableValue {
-     
+    
     mutating func add(_ entity: Entity,
-                                   value: Value,
-                                   in context: inout Context,
-                                   resolveCollisions resolver: CollisionResolver<Entity>) throws {
+                      value: Value,
+                      in context: inout Context,
+                      resolveCollisions resolver: CollisionResolver<Entity>) throws {
         let existingValue = indexedValues[entity.id]
         
         guard existingValue != value else {
@@ -69,4 +69,4 @@ extension UniqueIndex.HashableValue {
         index[value] = nil
     }
 }
- 
+
