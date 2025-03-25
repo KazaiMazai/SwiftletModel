@@ -122,7 +122,7 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
             \(raw: indexAttributes
-                .map { "try addToIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try addToSortIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             context.insert(self, options: options)
