@@ -6,12 +6,7 @@
 //
 
 import Foundation
- 
-enum IndexType {
-    case sort
-    case unique
-}
- 
+
 public enum Indexed<T> {
     
 }

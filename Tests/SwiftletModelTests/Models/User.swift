@@ -34,7 +34,7 @@ extension User {
 @EntityModel
 struct User: Codable, Sendable {
     @Unique<User>(collisions: .throw, \.username, \.email) static var uniqueUsernameIndex
-    @Index(\User.username) static var usernameIndex
+    @Index<User>(\.username) static var usernameIndex
     
     let id: String
     private(set) var name: String?
