@@ -10,7 +10,7 @@ import Foundation
 extension EntitiesRepository {
     func index<Entity, T>(
         _ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity>.ComparableValue<T>? {
-        
+
             find(.indexName(keyPath))
     }
     
@@ -41,22 +41,31 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
-        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.HashableValue<T>? where T: Hashable {
+        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.HashableValue<T>?
+    where
+    T: Hashable {
         
-            find(.indexName(keyPath))
+        find(.indexName(keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.HashableValue<Pair<T0, T1>>? where T0: Hashable, T1: Hashable {
+        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.HashableValue<Pair<T0, T1>>?
+    where
+    T0: Hashable,
+    T1: Hashable {
         
-            find(.indexName(kp0, kp1))
+        find(.indexName(kp0, kp1))
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.HashableValue<Triplet<T0, T1, T2>>? where T0: Hashable, T1: Hashable, T2: Hashable {
+        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.HashableValue<Triplet<T0, T1, T2>>?
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable {
         
             find(.indexName(kp0, kp1, kp2))
     }
@@ -65,7 +74,12 @@ extension EntitiesRepository {
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.HashableValue<Quadruple<T0, T1, T2, T3>>? where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable {
+        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.HashableValue<Quadruple<T0, T1, T2, T3>>?
+    where
+    T0: Hashable,
+    T1: Hashable,
+    T2: Hashable,
+    T3: Hashable {
         
         find(.indexName(kp0, kp1, kp2, kp3))
     }
@@ -73,31 +87,46 @@ extension EntitiesRepository {
 
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
-        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.ComparableValue<T>? where T: Comparable {
+        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.ComparableValue<T>?
+    where
+    T: Comparable {
         
-            find(.indexName(keyPath))
+        find(.indexName(keyPath))
     }
     
     func uniqueIndex<Entity, T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.ComparableValue<Pair<T0, T1>>? where T0: Comparable, T1: Comparable {
+        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.ComparableValue<Pair<T0, T1>>?
+    where
+    T0: Comparable,
+    T1: Comparable {
         
-            find(.indexName(kp0, kp1))
+        find(.indexName(kp0, kp1))
     }
     
     func uniqueIndex<Entity, T0, T1, T2>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>? where T0: Comparable, T1: Comparable, T2: Comparable {
-        
-            find(.indexName(kp0, kp1, kp2))
+        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>?
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
+            
+        find(.indexName(kp0, kp1, kp2))
     }
     
     func uniqueIndex<Entity, T0, T1, T2, T3>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>? where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
+        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>?
+    
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable,
+    T3: Comparable {
         
         find(.indexName(kp0, kp1, kp2, kp3))
     }
