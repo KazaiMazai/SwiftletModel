@@ -12,7 +12,7 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where T: Comparable {
-        var index = context.index(keyPath) ??
+        var index = context.sortIndex(keyPath) ??
              SortIndex<Self>.ComparableValue(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context)
         try index.save(to: &context)
@@ -25,7 +25,7 @@ extension EntityModelProtocol {
     where T0: Comparable,
           T1: Comparable
     {
-        var index = context.index(kp0, kp1) ??
+        var index = context.sortIndex(kp0, kp1) ??
             SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1))
          try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
          in: &context
@@ -42,7 +42,7 @@ extension EntityModelProtocol {
           T1: Comparable,
           T2: Comparable
     {
-        var index = context.index(kp0, kp1, kp2) ??
+        var index = context.sortIndex(kp0, kp1, kp2) ??
             SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1, kp2))
         try index.add(self,
                 value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])), 
@@ -62,7 +62,7 @@ extension EntityModelProtocol {
           T2: Comparable,
           T3: Comparable
     {
-        var index = context.index(kp0, kp1, kp2, kp3) ??
+        var index = context.sortIndex(kp0, kp1, kp2, kp3) ??
                 SortIndex<Self>.ComparableValue(name: .indexName(kp0, kp1, kp2, kp3))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])), in: &context)
         try index.save(to: &context)
@@ -74,7 +74,7 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where T: Comparable {
-        guard var index = context.index(keyPath) else {
+        guard var index = context.sortIndex(keyPath) else {
             return
         }
         index.remove(self)
@@ -88,7 +88,7 @@ extension EntityModelProtocol {
     where T0: Comparable,
           T1: Comparable
     {
-        guard var index = context.index(kp0, kp1) else {
+        guard var index = context.sortIndex(kp0, kp1) else {
             return
         }
         index.remove(self)
@@ -104,7 +104,7 @@ extension EntityModelProtocol {
           T1: Comparable,
           T2: Comparable
     {
-        guard var index = context.index(kp0, kp1, kp2) else {
+        guard var index = context.sortIndex(kp0, kp1, kp2) else {
             return
         }
         
@@ -123,7 +123,7 @@ extension EntityModelProtocol {
           T2: Comparable,
           T3: Comparable
     {
-        guard var index = context.index(kp0, kp1, kp2, kp3) else {
+        guard var index = context.sortIndex(kp0, kp1, kp2, kp3) else {
             return
         }
         
