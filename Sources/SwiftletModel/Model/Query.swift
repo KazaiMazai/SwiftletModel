@@ -394,10 +394,9 @@ public extension Collection {
     }
 }
 
-fileprivate typealias EntityIndex = Index
 
 private extension Collection {
-    func resolve<Entity, T>(sortedUsing index: EntityIndex<Entity>.ComparableValue<T>) -> [Entity]
+    func resolve<Entity, T>(sortedUsing index: SortIndex<Entity>.ComparableValue<T>) -> [Entity]
     
     where Element == Query<Entity>, T: Comparable {
         

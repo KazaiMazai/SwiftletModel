@@ -9,7 +9,12 @@ import Foundation
 import BTree
 import Collections
 
-extension Index {
+enum SortIndex<Entity: EntityModelProtocol> {
+    
+    
+}
+
+extension SortIndex {
     
     @EntityModel
     struct ComparableValue<Value: Comparable> {
@@ -28,13 +33,13 @@ extension Index {
     }
 }
 
-extension Index.ComparableValue {
+extension SortIndex.ComparableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension Index.ComparableValue {
+extension SortIndex.ComparableValue {
     mutating func add(_ entity: Entity, value: Value, in: inout Context) throws {
         let existingValue = indexedValues[entity.id]
         
@@ -71,7 +76,7 @@ extension Index.ComparableValue {
     }
 }
 
-extension Index.ComparableValue {
+extension SortIndex.ComparableValue {
     func filter(_ value: Value) -> [Entity.ID] {
         index[value]?.elements ?? []
     }

@@ -10,7 +10,7 @@ import Foundation
 extension EntitiesRepository {
     func index<Entity, T>(
         _ indexType: IndexType,
-        _ keyPath: KeyPath<Entity, T>) -> Index<Entity>.ComparableValue<T>? {
+        _ keyPath: KeyPath<Entity, T>) -> SortIndex<Entity>.ComparableValue<T>? {
         
             find(.indexName(indexType, keyPath))
     }
@@ -18,7 +18,7 @@ extension EntitiesRepository {
     func index<Entity, T0, T1>(
         _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>) -> Index<Entity>.ComparableValue<Pair<T0, T1>>? {
+        _ kp1: KeyPath<Entity, T1>) -> SortIndex<Entity>.ComparableValue<Pair<T0, T1>>? {
         
             find(.indexName(indexType, kp0, kp1))
     }
@@ -27,7 +27,7 @@ extension EntitiesRepository {
         _ indexType: IndexType  ,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>) -> Index<Entity>.ComparableValue<Triplet<T0, T1, T2>>? {
+        _ kp2: KeyPath<Entity, T2>) -> SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>? {
         
             find(.indexName(indexType, kp0, kp1, kp2))
     }
@@ -37,7 +37,7 @@ extension EntitiesRepository {
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>) -> Index<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>? {
+        _ kp3: KeyPath<Entity, T3>) -> SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>? {
         
         find(.indexName(indexType, kp0, kp1, kp2, kp3))
     }
