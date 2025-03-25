@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 12/03/2025.
 //
 
-extension Unique {
+extension UniqueIndex {
     @EntityModel
     struct HashableValueIndex<Value: Hashable> {
         var id: String { name }
@@ -21,13 +21,13 @@ extension Unique {
     }
 }
 
-extension Unique.HashableValueIndex {
+extension UniqueIndex.HashableValueIndex {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension Unique.HashableValueIndex {
+extension UniqueIndex.HashableValueIndex {
      
     mutating func add(_ entity: Entity,
                                    value: Value,

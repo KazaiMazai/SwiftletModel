@@ -13,7 +13,7 @@ extension EntityModelProtocol {
         in context: inout Context) throws
     where T: Comparable {
         var index = context.uniqueIndex(indexType, keyPath) ??
-            Unique<Self>.ComparableValueIndex(name: .indexName(indexType, keyPath), indexType: indexType)
+            UniqueIndex<Self>.ComparableValueIndex(name: .indexName(indexType, keyPath), indexType: indexType)
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
         try index.save(to: &context)
     }
@@ -28,7 +28,7 @@ extension EntityModelProtocol {
           T1: Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1) ??
-            Unique<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1), indexType: indexType)
+            UniqueIndex<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1), indexType: indexType)
          try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
                       in: &context,
                       resolveCollisions: resolveCollisions)
@@ -46,7 +46,7 @@ extension EntityModelProtocol {
           T2: Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2) ??
-            Unique<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
+            UniqueIndex<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1, kp2), indexType: indexType)
         try index.add(self,
                 value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
                 in: &context,
@@ -67,7 +67,7 @@ extension EntityModelProtocol {
           T3: Comparable
     {
         var index = context.uniqueIndex(indexType, kp0, kp1, kp2, kp3) ??
-            Unique<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
+            UniqueIndex<Self>.ComparableValueIndex(name: .indexName(indexType, kp0, kp1, kp2, kp3), indexType: indexType)
         try index.add(self, 
                      value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])), 
                      in: &context,

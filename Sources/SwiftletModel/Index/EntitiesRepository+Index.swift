@@ -46,7 +46,7 @@ extension EntitiesRepository {
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
         _ indexType: IndexType,
-        _ keyPath: KeyPath<Entity, T>) -> Unique<Entity>.HashableValueIndex<T>? where T: Hashable {
+        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.HashableValueIndex<T>? where T: Hashable {
         
             find(.indexName(indexType, keyPath))
     }
@@ -54,7 +54,7 @@ extension EntitiesRepository {
     func uniqueIndex<Entity, T0, T1>(
         _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>) -> Unique<Entity>.HashableValueIndex<Pair<T0, T1>>? where T0: Hashable, T1: Hashable {
+        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.HashableValueIndex<Pair<T0, T1>>? where T0: Hashable, T1: Hashable {
         
             find(.indexName(indexType, kp0, kp1))
     }
@@ -63,7 +63,7 @@ extension EntitiesRepository {
         _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>) -> Unique<Entity>.HashableValueIndex<Triplet<T0, T1, T2>>? where T0: Hashable, T1: Hashable, T2: Hashable {
+        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.HashableValueIndex<Triplet<T0, T1, T2>>? where T0: Hashable, T1: Hashable, T2: Hashable {
         
             find(.indexName(indexType, kp0, kp1, kp2))
     }
@@ -73,7 +73,7 @@ extension EntitiesRepository {
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>) -> Unique<Entity>.HashableValueIndex<Quadruple<T0, T1, T2, T3>>? where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable {
+        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.HashableValueIndex<Quadruple<T0, T1, T2, T3>>? where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable {
         
         find(.indexName(indexType, kp0, kp1, kp2, kp3))
     }
@@ -82,7 +82,7 @@ extension EntitiesRepository {
 extension EntitiesRepository {
     func uniqueIndex<Entity, T>(
         _ indexType: IndexType,
-        _ keyPath: KeyPath<Entity, T>) -> Unique<Entity>.ComparableValueIndex<T>? where T: Comparable {
+        _ keyPath: KeyPath<Entity, T>) -> UniqueIndex<Entity>.ComparableValueIndex<T>? where T: Comparable {
         
             find(.indexName(indexType, keyPath))
     }
@@ -90,7 +90,7 @@ extension EntitiesRepository {
     func uniqueIndex<Entity, T0, T1>(
         _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>) -> Unique<Entity>.ComparableValueIndex<Pair<T0, T1>>? where T0: Comparable, T1: Comparable {
+        _ kp1: KeyPath<Entity, T1>) -> UniqueIndex<Entity>.ComparableValueIndex<Pair<T0, T1>>? where T0: Comparable, T1: Comparable {
         
             find(.indexName(indexType, kp0, kp1))
     }
@@ -99,7 +99,7 @@ extension EntitiesRepository {
         _ indexType: IndexType,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>) -> Unique<Entity>.ComparableValueIndex<Triplet<T0, T1, T2>>? where T0: Comparable, T1: Comparable, T2: Comparable {
+        _ kp2: KeyPath<Entity, T2>) -> UniqueIndex<Entity>.ComparableValueIndex<Triplet<T0, T1, T2>>? where T0: Comparable, T1: Comparable, T2: Comparable {
         
             find(.indexName(indexType, kp0, kp1, kp2))
     }
@@ -109,7 +109,7 @@ extension EntitiesRepository {
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>) -> Unique<Entity>.ComparableValueIndex<Quadruple<T0, T1, T2, T3>>? where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
+        _ kp3: KeyPath<Entity, T3>) -> UniqueIndex<Entity>.ComparableValueIndex<Quadruple<T0, T1, T2, T3>>? where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
         
         find(.indexName(indexType, kp0, kp1, kp2, kp3))
     }
