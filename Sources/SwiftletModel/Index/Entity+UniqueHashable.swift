@@ -12,8 +12,10 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
+    
     where
     T: Hashable {
+        
         var index = context.index(keyPath) ??
         UniqueIndex<Self>.HashableValue<T>(name: .indexName(keyPath))
         try index.add(self, value: self[keyPath: keyPath], in: &context, resolveCollisions: resolveCollisions)
@@ -25,9 +27,11 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable {
+        
         var index = context.index(kp0, kp1) ??
         UniqueIndex<Self>.HashableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
         try index.add(self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
@@ -42,6 +46,7 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable,
@@ -62,6 +67,7 @@ extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable,
@@ -82,6 +88,7 @@ extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
+    
     where
     T: Hashable {
         
@@ -96,6 +103,7 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable {
@@ -112,10 +120,12 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable,
     T2: Hashable {
+        
         guard var index: UniqueIndex<Self>.HashableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
             return
         }
@@ -130,6 +140,7 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
+    
     where
     T0: Hashable,
     T1: Hashable,
