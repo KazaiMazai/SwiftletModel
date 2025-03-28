@@ -53,8 +53,8 @@ extension EntityModelProtocol {
         SortIndex<Self>.ComparableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
         try index.add(
             self,
-                      value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
-                      in: &context
+            value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
+            in: &context
         )
         try index.save(to: &context)
     }
