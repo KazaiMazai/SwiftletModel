@@ -8,7 +8,7 @@
 import Foundation
 
 extension EntityModelProtocol {
-    func updateUniqueIndex<T>(
+    func updateIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
@@ -25,7 +25,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1>(
+    func updateIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
@@ -44,7 +44,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1, T2>(
+    func updateIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -65,7 +65,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1, T2, T3>(
+    func updateIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -91,7 +91,7 @@ extension EntityModelProtocol {
 
 
 extension EntityModelProtocol {
-    func removeFromUniqueIndex<T>(
+    func removeFromIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     
@@ -101,7 +101,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1>(
+    func removeFromIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
@@ -113,7 +113,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2>(
+    func removeFromIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -127,7 +127,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2, T3>(
+    func removeFromIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -145,7 +145,7 @@ extension EntityModelProtocol {
 }
 
 extension EntityModelProtocol {
-    func updateUniqueIndex<T>(
+    func updateIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
@@ -160,7 +160,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1>(
+    func updateIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
@@ -177,7 +177,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1, T2>(
+    func updateIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -196,7 +196,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateUniqueIndex<T0, T1, T2, T3>(
+    func updateIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -221,7 +221,7 @@ extension EntityModelProtocol {
 
 
 extension EntityModelProtocol {
-    func removeFromUniqueIndex<T>(
+    func removeFromIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
@@ -231,7 +231,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1>(
+    func removeFromIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
@@ -242,7 +242,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2>(
+    func removeFromIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -255,7 +255,7 @@ extension EntityModelProtocol {
         try UniqueIndex.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
-    func removeFromUniqueIndex<T0, T1, T2, T3>(
+    func removeFromIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
