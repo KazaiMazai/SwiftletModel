@@ -62,6 +62,29 @@ extension SortIndex.ComparableValue {
         indexedValues[entity.id] = value
     }
     
+    mutating func update(_ entity: Entity, value: Value, in: inout Context) throws {
+        let existingValue = indexedValues[entity.id]
+        
+        guard existingValue != value else {
+            return
+        }
+        
+        if let existingValue, var ids = index[existingValue] {
+            ids.remove(entity.id)
+            index[existingValue] = ids.isEmpty ? nil : ids
+        }
+        
+        guard var ids = index[value] else {
+            index[value] = OrderedSet(arrayLiteral: entity.id)
+            indexedValues[entity.id] = value
+            return
+        }
+        
+        ids.append(entity.id)
+        index[value] = ids
+        indexedValues[entity.id] = value
+    }
+    
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
               var ids = index[value]
@@ -95,3 +118,27 @@ extension SortIndex.ComparableValue {
 }
 
 
+extension SortIndex.ComparableValue {
+    static func updateIndex(indexName: String,
+                            _ entity: Entity,
+                            value: Value,
+                            in context: inout Context) throws {
+        
+        var index = Query(context: context, id: indexName).resolve() ?? Self(name: indexName)
+        index = index.query(in: context).resolve() ?? index
+        try index.update(entity, value: value, in: &context)
+        try index.save(to: &context)
+    }
+    
+    static func removeFromIndex(indexName: String,
+                                _ entity: Entity,
+                                in context: inout Context) throws {
+        
+        guard var index = Query<Self>(context: context, id: indexName).resolve() else {
+            return
+        }
+         
+        index.remove(entity)
+        try index.save(to: &context)
+    }
+}
