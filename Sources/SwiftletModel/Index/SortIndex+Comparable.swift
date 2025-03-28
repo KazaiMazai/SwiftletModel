@@ -14,7 +14,6 @@ enum SortIndex<Entity: EntityModelProtocol> {
 }
 
 extension SortIndex {
-    
     @EntityModel
     struct ComparableValue<Value: Comparable> {
         var id: String { name }
@@ -39,30 +38,50 @@ extension SortIndex.ComparableValue {
 }
 
 extension SortIndex.ComparableValue {
-    mutating func add(_ entity: Entity, value: Value, in: inout Context) throws {
-        let existingValue = indexedValues[entity.id]
+    static func updateIndex(indexName: String,
+                            _ entity: Entity,
+                            value: Value,
+                            in context: inout Context) throws {
         
-        guard existingValue != value else {
-            return
-        }
-        
-        if let existingValue, var ids = index[existingValue] {
-            ids.remove(entity.id)
-            index[existingValue] = ids.isEmpty ? nil : ids
-        }
-        
-        guard var ids = index[value] else {
-            index[value] = OrderedSet(arrayLiteral: entity.id)
-            indexedValues[entity.id] = value
-            return
-        }
-        
-        ids.append(entity.id)
-        index[value] = ids
-        indexedValues[entity.id] = value
+        var index = Query(context: context, id: indexName).resolve() ?? Self(name: indexName)
+        index.update(entity, value: value)
+        try index.save(to: &context)
     }
     
-    mutating func update(_ entity: Entity, value: Value, in: inout Context) throws {
+    static func removeFromIndex(indexName: String,
+                                _ entity: Entity,
+                                in context: inout Context) throws {
+        
+        guard var index = Query<Self>(context: context, id: indexName).resolve() else {
+            return
+        }
+         
+        index.remove(entity)
+        try index.save(to: &context)
+    }
+}
+
+extension SortIndex.ComparableValue {
+    func filter(_ value: Value) -> [Entity.ID] {
+        index[value]?.elements ?? []
+    }
+    
+    func filter(range: Range<Value>) -> [Entity.ID] {
+        index
+            .submap(from: range.lowerBound, to: range.upperBound)
+            .map { $1.elements }
+            .flatMap { $0 }
+    }
+    
+    func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
+        Dictionary(index.map { ($0, $1.elements) },
+                   uniquingKeysWith: { $1 })
+        
+    }
+}
+
+private  extension SortIndex.ComparableValue {
+    mutating func update(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
         
         guard existingValue != value else {
@@ -95,49 +114,5 @@ extension SortIndex.ComparableValue {
         indexedValues[entity.id] = nil
         ids.remove(entity.id)
         index[value] = ids
-    }
-}
-
-extension SortIndex.ComparableValue {
-    func filter(_ value: Value) -> [Entity.ID] {
-        index[value]?.elements ?? []
-    }
-    
-    func filter(range: Range<Value>) -> [Entity.ID] {
-        index
-            .submap(from: range.lowerBound, to: range.upperBound)
-            .map { $1.elements }
-            .flatMap { $0 }
-    }
-    
-    func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
-        Dictionary(index.map { ($0, $1.elements) },
-                   uniquingKeysWith: { $1 })
-        
-    }
-}
-
-extension SortIndex.ComparableValue {
-    static func updateIndex(indexName: String,
-                            _ entity: Entity,
-                            value: Value,
-                            in context: inout Context) throws {
-        
-        var index = Query(context: context, id: indexName).resolve() ?? Self(name: indexName)
-        index = index.query(in: context).resolve() ?? index
-        try index.update(entity, value: value, in: &context)
-        try index.save(to: &context)
-    }
-    
-    static func removeFromIndex(indexName: String,
-                                _ entity: Entity,
-                                in context: inout Context) throws {
-        
-        guard var index = Query<Self>(context: context, id: indexName).resolve() else {
-            return
-        }
-         
-        index.remove(entity)
-        try index.save(to: &context)
     }
 }

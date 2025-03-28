@@ -17,7 +17,7 @@ extension String {
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> String {
         
-        return [kp0, kp1]
+        [kp0, kp1]
             .map { $0.name }
             .joined(separator: "-")
     }
@@ -27,7 +27,7 @@ extension String {
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>) -> String {
         
-        return [kp0, kp1, kp2]  
+        [kp0, kp1, kp2]
             .map { $0.name }
             .joined(separator: "-")
     }
@@ -38,7 +38,7 @@ extension String {
         _ kp2: KeyPath<Entity, T2>,
         _ kp3: KeyPath<Entity, T3>) -> String {
         
-        return [kp0, kp1, kp2, kp3]
+        [kp0, kp1, kp2, kp3]
             .map { $0.name }
             .joined(separator: "-")
     }
