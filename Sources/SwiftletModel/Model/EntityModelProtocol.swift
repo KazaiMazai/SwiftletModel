@@ -70,6 +70,7 @@ public extension EntityModelProtocol {
     }
 }
 
+
 public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
         Self.query(id, in: context)
@@ -101,7 +102,10 @@ public extension EntityModelProtocol {
                          equals value: T,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index: SortIndex<Self>.ComparableValue<T> = context.index(keyPath) else {
+        guard let index = SortIndex<Self>.ComparableValue<T>
+            .query(.indexName(keyPath), in: context)
+            .resolve()
+        else {
             return query(in: context)
                 .resolve()
                 .filter { $0[keyPath: keyPath] == value }
@@ -115,7 +119,10 @@ public extension EntityModelProtocol {
                          in range: Range<T>,
                          in context: Context) -> [Self] where T: Comparable {
         
-        guard let index: SortIndex<Self>.ComparableValue<T> = context.index(keyPath) else {
+        guard let index = SortIndex<Self>.ComparableValue<T>
+            .query(.indexName(keyPath), in: context)
+            .resolve()
+        else {
             return query(in: context)
                 .resolve()
                 .filter { range.contains($0[keyPath: keyPath]) }

@@ -52,6 +52,8 @@ struct User: Codable, Sendable {
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
     
+    
+    
      
      
 }

@@ -322,7 +322,10 @@ public extension Collection {
             return resolve()
         }
         
-        guard let index: SortIndex<Entity>.ComparableValue<T> = context.index(keyPath) else {
+        guard let index = SortIndex<Entity>.ComparableValue<T>
+            .query(.indexName(keyPath), in: context)
+            .resolve()
+        else {
             return resolve().sorted(using: .keyPath(keyPath))
         }
         
@@ -341,8 +344,11 @@ public extension Collection {
         guard let context = first?.context else {
             return resolve()
         }
-        
-        guard let index: SortIndex<Entity>.ComparableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
+
+        guard let index = SortIndex<Entity>.ComparableValue<Pair<T0, T1>>
+            .query(.indexName(kp0, kp1), in: context)
+            .resolve()
+        else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1))
         }
         
@@ -353,17 +359,20 @@ public extension Collection {
                                      kp0: KeyPath<Entity, T0>,
                                      kp1: KeyPath<Entity, T1>,
                                      kp2: KeyPath<Entity, T2>) -> [Entity]
-    where Element == Query<Entity>,
-          T0: Comparable,
-          T1: Comparable,
-          T2: Comparable
-    {
+    where
+    Element == Query<Entity>,
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
         
         guard let context = first?.context else {
             return resolve()
         }
         
-        guard let index: SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
+        guard let index = SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>
+            .query(.indexName(kp0, kp1, kp2), in: context)
+            .resolve()
+        else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2))
         }
         
@@ -385,8 +394,10 @@ public extension Collection {
         guard let context = first?.context else {
             return resolve()
         }
-        
-        guard let index: SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
+        guard let index = SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>
+            .query(.indexName(kp0, kp1, kp2, kp3), in: context)
+            .resolve() 
+        else {
             return resolve().sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2), .keyPath(kp3))
         }
         

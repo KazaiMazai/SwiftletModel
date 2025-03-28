@@ -117,7 +117,6 @@ extension SortIndex.ComparableValue {
     }
 }
 
-
 extension SortIndex.ComparableValue {
     static func updateIndex(indexName: String,
                             _ entity: Entity,
