@@ -117,12 +117,12 @@ extension FunctionDeclSyntax {
             try willSave(to: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try addToUniqueIndex(\($0.keyPathAttributes.attribute), \($0.collisions.attributes), in: &context)"
+                    "try updateUniqueIndex(\($0.keyPathAttributes.attribute), \($0.collisions.attributes), in: &context)"
                  }
                 .joined(separator: "\n")
             )
             \(raw: indexAttributes
-                .map { "try addToSortIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try updateSortIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             context.insert(self, options: options)

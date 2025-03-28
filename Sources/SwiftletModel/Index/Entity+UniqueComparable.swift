@@ -6,7 +6,7 @@
 //
 
 extension EntityModelProtocol {
-    func addToUniqueIndex<T>(
+    func updateUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         _ resolveCollisions: CollisionResolver<Self>,
         in context: inout Context) throws
@@ -23,7 +23,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func addToUniqueIndex<T0, T1>(
+    func updateUniqueIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ resolveCollisions: CollisionResolver<Self>,
@@ -42,7 +42,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func addToUniqueIndex<T0, T1, T2>(
+    func updateUniqueIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -63,7 +63,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func addToUniqueIndex<T0, T1, T2, T3>(
+    func updateUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
