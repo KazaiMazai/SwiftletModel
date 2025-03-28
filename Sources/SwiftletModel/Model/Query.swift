@@ -315,9 +315,9 @@ public extension Collection {
     
     func resolve<Entity, T>(sortedBy keyPath: KeyPath<Entity, T>) -> [Entity]
     
-    where Element == Query<Entity>,
-          T: Comparable 
-    {
+    where 
+    Element == Query<Entity>,
+    T: Comparable {
         guard let context = first?.context else {
             return resolve()
         }
@@ -336,11 +336,11 @@ public extension Collection {
                                  kp0: KeyPath<Entity, T0>,
                                  kp1: KeyPath<Entity, T1>) -> [Entity]
     
-    where Element == Query<Entity>,
-          T0: Comparable,
-          T1: Comparable
-    {
-        
+    where 
+    Element == Query<Entity>,
+    T0: Comparable,
+    T1: Comparable {
+            
         guard let context = first?.context else {
             return resolve()
         }
@@ -389,8 +389,8 @@ public extension Collection {
           T0: Comparable,
           T1: Comparable,
           T2: Comparable,
-          T3: Comparable
-    {
+          T3: Comparable {
+
         guard let context = first?.context else {
             return resolve()
         }
