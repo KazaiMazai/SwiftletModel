@@ -15,17 +15,17 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
  
     public init<T0>(
-        collisions: CollisionResolver<Entity> = .upsert,
-        _ kp0: KeyPath<Entity, T0>)
+         _ kp0: KeyPath<Entity, T0>, 
+         collisions: CollisionResolver<Entity> = .upsert)
     where
     T0: Comparable {
         
     }
     
     public init<T0, T1>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>)
+        _ kp1: KeyPath<Entity, T1>,
+        collisions: CollisionResolver<Entity> = .upsert)
     where
     T0: Comparable,
     T1: Comparable {
@@ -33,10 +33,10 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
     
     public init<T0, T1, T2>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>)
+        _ kp2: KeyPath<Entity, T2>,
+        collisions: CollisionResolver<Entity> = .upsert)
     
     where
     T0: Comparable,
@@ -46,11 +46,11 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
     
     public init<T0, T1, T2, T3>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>)
+        _ kp3: KeyPath<Entity, T3>,
+        collisions: CollisionResolver<Entity> = .upsert)
     
     where
     T0: Comparable,
@@ -61,17 +61,17 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
  
     public init<T0>(
-        collisions: CollisionResolver<Entity> = .upsert,
-        _ kp0: KeyPath<Entity, T0>)
+        _ kp0: KeyPath<Entity, T0>,
+        collisions: CollisionResolver<Entity> = .upsert)
     where
     T0: Equatable {
         
     }
     
     public init<T0, T1>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
-        _ kp1: KeyPath<Entity, T1>)
+        _ kp1: KeyPath<Entity, T1>,
+        collisions: CollisionResolver<Entity> = .upsert)
     where
     T0: Equatable,
     T1: Equatable {
@@ -79,10 +79,10 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
     
     public init<T0, T1, T2>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
-        _ kp2: KeyPath<Entity, T2>)
+        _ kp2: KeyPath<Entity, T2>,
+        collisions: CollisionResolver<Entity> = .upsert)
     
     where
     T0: Equatable,
@@ -92,11 +92,11 @@ public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     }
     
     public init<T0, T1, T2, T3>(
-        collisions: CollisionResolver<Entity> = .upsert,
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
-        _ kp3: KeyPath<Entity, T3>)
+        _ kp3: KeyPath<Entity, T3>,
+        collisions: CollisionResolver<Entity> = .upsert)
     
     where
     T0: Equatable,

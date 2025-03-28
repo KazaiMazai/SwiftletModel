@@ -33,9 +33,9 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
-    @Unique<User>(collisions: .throw, \.username, \.email) static var uniqueUsernameIndex
+    @Unique<User>(\.username, \.email, collisions: .throw) static var uniqueUsernameIndex
     @Index<User>(\.username) static var usernameIndex
-    @Unique<User>(collisions: .currentUser, \.isCurrent) static var currentUserIndex
+    @Unique<User>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
     
     let id: String
     private(set) var name: String?
@@ -57,7 +57,7 @@ struct User: Codable, Sendable {
 }
  
 extension CollisionResolver where Entity == User {
-    static var currentUser: Self {
+    static var updateCurrentUser: Self {
         CollisionResolver { id, context in
             guard var user = Query<Entity>(context: context, id: id).resolve(),
                 user.isCurrent
