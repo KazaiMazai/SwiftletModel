@@ -35,6 +35,7 @@ extension User {
 struct User: Codable, Sendable {
     @Unique<User>(collisions: .throw, \.username, \.email) static var uniqueUsernameIndex
     @Index<User>(\.username) static var usernameIndex
+    @Unique<User>(collisions: .currentUser, \.isCurrent) static var currentUserIndex
     
     let id: String
     private(set) var name: String?
@@ -43,6 +44,7 @@ struct User: Codable, Sendable {
     private(set) var username: String
     private(set) var email: String = ""
     private(set) var age: Int = 12
+    var isCurrent: Bool = false
     
     @Relationship(inverse: \.users)
     var chats: [Chat]?
@@ -50,13 +52,24 @@ struct User: Codable, Sendable {
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
     
-    func foo() {
-        Self.uniqueUsernameIndex
-    }
+     
      
 }
  
-
+extension CollisionResolver where Entity == User {
+    static var currentUser: Self {
+        CollisionResolver { id, context in
+            guard var user = Query<Entity>(context: context, id: id).resolve(),
+                user.isCurrent
+            else {
+                return
+            }
+               
+            user.isCurrent = false
+            try user.save(to: &context)
+        }
+    }
+}
 
 extension Query where Entity == User {
     

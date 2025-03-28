@@ -14,15 +14,13 @@ extension EntityModelProtocol {
     where
     T: Comparable {
         
-        var index = context.index(keyPath) ??
-        UniqueIndex<Self>.ComparableValue<T>(name: .indexName(keyPath))
-        try index.add(
+        try UniqueIndex.ComparableValue.updateIndex(
+            indexName: .indexName(keyPath),
             self,
             value: self[keyPath: keyPath],
             in: &context,
             resolveCollisions: resolveCollisions
         )
-        try index.save(to: &context)
     }
     
     func addToUniqueIndex<T0, T1>(
@@ -35,14 +33,13 @@ extension EntityModelProtocol {
     T0: Comparable,
     T1: Comparable  {
         
-        var index = context.index(kp0, kp1) ??
-        UniqueIndex<Self>.ComparableValue<Pair<T0, T1>>(name: .indexName(kp0, kp1))
-        try index.add(
-            self, value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
+        try UniqueIndex.ComparableValue.updateIndex(
+            indexName: .indexName(kp0, kp1),
+            self,
+            value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
             in: &context,
             resolveCollisions: resolveCollisions
         )
-        try index.save(to: &context)
     }
     
     func addToUniqueIndex<T0, T1, T2>(
@@ -57,15 +54,13 @@ extension EntityModelProtocol {
     T1: Comparable,
     T2: Comparable {
         
-        var index = context.index(kp0, kp1, kp2) ??
-        UniqueIndex<Self>.ComparableValue<Triplet<T0, T1, T2>>(name: .indexName(kp0, kp1, kp2))
-        try index.add(
+        try UniqueIndex.ComparableValue.updateIndex(
+            indexName: .indexName(kp0, kp1, kp2),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
             in: &context,
             resolveCollisions: resolveCollisions
         )
-        try index.save(to: &context)
     }
     
     func addToUniqueIndex<T0, T1, T2, T3>(
@@ -82,15 +77,13 @@ extension EntityModelProtocol {
     T2: Comparable,
     T3: Comparable {
         
-        var index = context.index(kp0, kp1, kp2, kp3) ??
-        UniqueIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>>(name: .indexName(kp0, kp1, kp2, kp3))
-        try index.add(
+        try UniqueIndex.ComparableValue.updateIndex(
+            indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
             in: &context,
             resolveCollisions: resolveCollisions
         )
-        try index.save(to: &context)
     }
 }
 
@@ -102,11 +95,7 @@ extension EntityModelProtocol {
     where
     T: Comparable {
         
-        guard var index: UniqueIndex<Self>.ComparableValue<T> = context.index(keyPath) else {
-            return
-        }
-        index.remove(self)
-        try index.save(to: &context)
+        try UniqueIndex.ComparableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
     
     func removeFromUniqueIndex<T0, T1>(
@@ -118,11 +107,7 @@ extension EntityModelProtocol {
     T0: Comparable,
     T1: Comparable {
         
-        guard var index: UniqueIndex<Self>.ComparableValue<Pair<T0, T1>> = context.index(kp0, kp1) else {
-            return
-        }
-        index.remove(self)
-        try index.save(to: &context)
+        try UniqueIndex.ComparableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
     func removeFromUniqueIndex<T0, T1, T2>(
@@ -136,12 +121,7 @@ extension EntityModelProtocol {
     T1: Comparable,
     T2: Comparable {
         
-        guard var index: UniqueIndex<Self>.ComparableValue<Triplet<T0, T1, T2>> = context.index(kp0, kp1, kp2) else {
-            return
-        }
-        
-        index.remove(self)
-        try index.save(to: &context)
+        try UniqueIndex.ComparableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
     func removeFromUniqueIndex<T0, T1, T2, T3>(
@@ -157,12 +137,7 @@ extension EntityModelProtocol {
     T2: Comparable,
     T3: Comparable {
         
-        guard var index: UniqueIndex<Self>.ComparableValue<Quadruple<T0, T1, T2, T3>> = context.index(kp0, kp1, kp2, kp3) else {
-            return
-        }
-        
-        index.remove(self)
-        try index.save(to: &context)
+        try UniqueIndex.ComparableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }
 
