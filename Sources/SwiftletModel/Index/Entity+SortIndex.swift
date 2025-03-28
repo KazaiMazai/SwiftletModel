@@ -8,7 +8,7 @@
 import Foundation
 
 extension EntityModelProtocol {
-    func updateSortIndex<T>(
+    func updateIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
@@ -22,7 +22,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSortIndex<T0, T1>(
+    func updateIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
@@ -37,7 +37,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSortIndex<T0, T1, T2>(
+    func updateIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -54,7 +54,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSortIndex<T0, T1, T2, T3>(
+    func updateIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
