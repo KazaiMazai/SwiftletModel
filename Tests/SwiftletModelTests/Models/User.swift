@@ -33,7 +33,7 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
-    @Unique<User>(\.username, \.email, collisions: .throw) static var uniqueUsername
+    @Unique<User>(\.username, collisions: .throw) static var uniqueUsername
     @Unique<User>(\.email, collisions: .throw) static var uniqueEmail
     
     @Index<User>(\.username) static var usernameIndex

@@ -9,14 +9,16 @@ import Foundation
 
 @propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
-    public var wrappedValue: Index<Entity>.Type {
-        Index<Entity>.self
+    let indexName: String
+   
+    public var wrappedValue: Index<Entity> {
+        self
     }
     
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
     where
     T0: Comparable {
-        
+        indexName = .indexName(kp0)
     }
     
     public init<T0, T1>(
@@ -25,7 +27,7 @@ public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
     where
     T0: Comparable,
     T1: Comparable {
-        
+        indexName = .indexName(kp0, kp1)
     }
     
     public init<T0, T1, T2>(
@@ -37,7 +39,7 @@ public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
     T0: Comparable,
     T1: Comparable,
     T2: Comparable {
-        
+        indexName = .indexName(kp0, kp1, kp2)
     }
     
     public init<T0, T1, T2, T3>(
@@ -51,7 +53,7 @@ public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
     T1: Comparable,
     T2: Comparable,
     T3: Comparable {
-        
+        indexName = .indexName(kp0, kp1, kp2, kp3)
     }
 }
 
