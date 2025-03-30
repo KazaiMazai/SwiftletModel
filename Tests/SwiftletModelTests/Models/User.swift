@@ -31,6 +31,8 @@ extension User {
     }
 }
 
+ 
+
 @EntityModel
 struct User: Codable, Sendable {
     @Unique<User>(\.username, collisions: .throw) static var uniqueUsername
@@ -38,7 +40,7 @@ struct User: Codable, Sendable {
     
     @Index<User>(\.username) static var usernameIndex
     @Unique<User>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
-    
+     
     let id: String
     private(set) var name: String?
     private(set) var avatar: Avatar?
@@ -54,7 +56,6 @@ struct User: Codable, Sendable {
 
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
-    
 }
  
 extension CollisionResolver where Entity == User {
