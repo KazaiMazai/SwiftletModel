@@ -94,6 +94,55 @@ public extension EntityModelProtocol {
     }
 }
 
+// MARK: - Filter Query
+
+public extension EntityModelProtocol {
+    static func filter<T>(
+        _ keyPath: KeyPath<Self, T>,
+        value: T,
+        in context: Context) -> [Query<Self>]
+    where 
+    T: Comparable {
+        Query<Self>.filter(keyPath, value: value, in: context)
+    }
+    
+    static func filter<T0, T1>(
+        _ kp0: (KeyPath<Self, T0>, T0),
+        _ kp1: (KeyPath<Self, T1>, T1),
+        in context: Context) -> [Query<Self>]
+    where
+    T0: Comparable,
+    T1: Comparable {
+        Query<Self>.filter(kp0, kp1, in: context)
+    }
+    
+    static func filter<T0, T1, T2>(
+        _ kp0: (KeyPath<Self, T0>, T0),
+        _ kp1: (KeyPath<Self, T1>, T1),
+        _ kp2: (KeyPath<Self, T2>, T2),
+        in context: Context) -> [Query<Self>]
+    where 
+    T0: Comparable, 
+    T1: Comparable, 
+    T2: Comparable {
+        Query<Self>.filter(kp0, kp1, kp2, in: context)
+    }
+    
+    static func filter<T0, T1, T2, T3>(
+        _ kp0: (KeyPath<Self, T0>, T0),
+        _ kp1: (KeyPath<Self, T1>, T1),
+        _ kp2: (KeyPath<Self, T2>, T2),
+        _ kp3: (KeyPath<Self, T3>, T3),
+        in context: Context) -> [Query<Self>]
+    where 
+    T0: Comparable, 
+    T1: Comparable, 
+    T2: Comparable, 
+    T3: Comparable {
+        Query<Self>.filter(kp0, kp1, kp2, kp3, in: context)
+    }
+}
+
 public extension Collection {
     func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
         map { $0.query(in: context) }
