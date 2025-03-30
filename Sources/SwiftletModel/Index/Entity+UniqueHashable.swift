@@ -93,6 +93,7 @@ extension EntityModelProtocol {
 extension EntityModelProtocol {
     func removeFromIndex<T>(
         _ keyPath: KeyPath<Self, T>,
+        collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     
     where
@@ -104,6 +105,7 @@ extension EntityModelProtocol {
     func removeFromIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
+        collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     
     where
@@ -117,6 +119,7 @@ extension EntityModelProtocol {
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
+        collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     
     where
@@ -132,6 +135,7 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         _ kp3: KeyPath<Self, T3>,
+        collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     
     where
