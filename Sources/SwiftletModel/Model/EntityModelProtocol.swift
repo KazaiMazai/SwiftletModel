@@ -94,7 +94,11 @@ public extension EntityModelProtocol {
     }
 }
 
-
+public extension Collection {
+    func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
+        map { $0.query(in: context) }
+    }
+}
 
 public extension EntityModelProtocol {
 

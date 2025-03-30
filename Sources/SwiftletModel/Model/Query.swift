@@ -356,9 +356,10 @@ public extension Collection {
             .query(.indexName(keyPath), in: context)
             .resolve()
         else {
-            return resolve()
+            return self
+                .resolve()
                 .sorted(using: .keyPath(keyPath))
-                .map { $0.query(in: context) }
+                .query(in: context) 
         }
         
         return sorted(using: index)
@@ -380,9 +381,10 @@ public extension Collection {
             .query(.indexName(kp0, kp1), in: context)
             .resolve()
         else {
-            return resolve()
+            return self
+                .resolve()
                 .sorted(using: .keyPath(kp0), .keyPath(kp1))
-                .map { $0.query(in: context) }
+                .query(in: context) 
         }
         
         return sorted(using: index)
@@ -405,9 +407,10 @@ public extension Collection {
             .query(.indexName(kp0, kp1, kp2), in: context)
             .resolve()
         else {
-            return resolve()
+            return self
+                .resolve()
                 .sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2))
-                .map { $0.query(in: context) }
+                .query(in: context) 
         }
         
         return sorted(using: index)
@@ -432,9 +435,10 @@ public extension Collection {
             .query(.indexName(kp0, kp1, kp2, kp3), in: context)
             .resolve()
         else {
-            return resolve()
+            return self
+                .resolve()
                 .sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2), .keyPath(kp3))
-                .map { $0.query(in: context) }
+                .query(in: context) 
         }
         
         return sorted(using: index)
