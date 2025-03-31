@@ -343,8 +343,8 @@ public extension Collection {
 //MARK: - Sorting
 
 public extension Collection {
-    func sorted<Entity, T>(by keyPath: KeyPath<Entity, T>) -> [Query<Entity>]
-    
+    func sorted<Entity, T>(
+        by keyPath: KeyPath<Entity, T>) -> [Query<Entity>]
     where
     Element == Query<Entity>,
     T: Comparable {
@@ -358,8 +358,10 @@ public extension Collection {
         else {
             return self
                 .resolve()
-                .sorted(using: .keyPath(keyPath))
-                .query(in: context) 
+                .sorted { lhs, rhs in
+                    lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
+                }
+                .query(in: context)
         }
         
         return sorted(using: index)
@@ -383,8 +385,11 @@ public extension Collection {
         else {
             return self
                 .resolve()
-                .sorted(using: .keyPath(kp0), .keyPath(kp1))
-                .query(in: context) 
+                .sorted { lhs, rhs in
+                    (lhs[keyPath: kp0], lhs[keyPath: kp1]) <
+                    (rhs[keyPath: kp0], rhs[keyPath: kp1])
+                }
+                .query(in: context)
         }
         
         return sorted(using: index)
@@ -409,8 +414,11 @@ public extension Collection {
         else {
             return self
                 .resolve()
-                .sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2))
-                .query(in: context) 
+                .sorted { lhs, rhs in
+                    (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2]) <
+                    (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2])
+                }
+                .query(in: context)
         }
         
         return sorted(using: index)
@@ -437,8 +445,11 @@ public extension Collection {
         else {
             return self
                 .resolve()
-                .sorted(using: .keyPath(kp0), .keyPath(kp1), .keyPath(kp2), .keyPath(kp3))
-                .query(in: context) 
+                .sorted { lhs, rhs in
+                    (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2], lhs[keyPath: kp3]) <
+                    (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2], rhs[keyPath: kp3])
+                }
+                .query(in: context)
         }
         
         return sorted(using: index)
