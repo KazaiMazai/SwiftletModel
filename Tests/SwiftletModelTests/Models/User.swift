@@ -31,7 +31,6 @@ extension User {
     }
 }
 
- 
 
 @EntityModel
 struct User: Codable, Sendable {

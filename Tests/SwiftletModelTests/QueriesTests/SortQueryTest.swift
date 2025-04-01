@@ -8,80 +8,81 @@
 @testable import SwiftletModel
 import Foundation
 import XCTest
- 
+
 class SortByOnePathQueryTests: XCTestCase {
     let count = 10
+    var context = Context()
     
     lazy var notIndexedModels = {
-        (0..<count)
-            .map { idx in TestModel(id: "\(idx)", value: idx) }
+        TestingModels.NotIndexed.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        (0..<count)
-            .map { idx in TestIndexedModel(id: "\(idx)", value: idx) }
+        TestingModels.SingleValueIndexed.shuffled(count)
     }()
     
+    lazy var evalPropertyIndexedModels = {
+        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
+    }()
+    
+    override func setUp() async throws {
+        context = Context()
+        try notIndexedModels
+            .forEach { try $0.save(to: &context) }
+        
+        try indexedModels
+            .forEach { try $0.save(to: &context) }
+        
+        try evalPropertyIndexedModels
+            .forEach { try $0.save(to: &context) }
+    }
+    
     func test_WhenSortNoIndex_ThenEqualPlainSort() throws {
-        let models = notIndexedModels
+        let expected = notIndexedModels
             .sorted { $0.value < $1.value }
        
-        var context = Context()
-        try models.forEach {  try $0.save(to: &context) }
-        
-        let queriedModels = TestModel
+        let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.value)
             .resolve()
         
-        XCTAssertEqual(models.map { $0.id }, queriedModels.map { $0.id })
-        
+        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
     
     func test_WhenSortIndexed_ThenEqualPlainSort() throws {
-        let models = indexedModels
+        let expected = indexedModels
             .sorted { $0.value < $1.value }
        
-        var context = Context()
-        try models.forEach {  try $0.save(to: &context) }
-        
-        let queriedModels = TestIndexedModel
+        let sortResult = TestingModels.SingleValueIndexed
             .query(in: context)
             .sorted(by: \.value)
             .resolve()
         
-        XCTAssertEqual(models.map { $0.id }, queriedModels.map { $0.id })
+        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
     
     func test_WhenDescSortNoIndex_ThenEqualPlainSort() throws {
-        let models = notIndexedModels
+        let expected = notIndexedModels
             .sorted { $0.value > $1.value }
        
-        var context = Context()
-        try models.forEach {  try $0.save(to: &context) }
-        
-        let queriedModels = TestModel
+        let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.value.desc)
             .resolve()
         
-        XCTAssertEqual(models.map { $0.id }, queriedModels.map { $0.id })
-        
+        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
     
     func test_WhenDescSortIndexed_ThenEqualPlainSort() throws {
-        let models = indexedModels
+        let expected = evalPropertyIndexedModels
             .sorted { $0.value > $1.value }
        
-        var context = Context()
-        try models.forEach {  try $0.save(to: &context) }
-        
-        let queriedModels = TestIndexedModel
+        let sortResult = TestingModels.EvaluatedPropertyDescIndexed
             .query(in: context)
             .sorted(by: \.value.desc)
             .resolve()
         
-        XCTAssertEqual(models.map { $0.id }, queriedModels.map { $0.id })
+        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
 }
 
