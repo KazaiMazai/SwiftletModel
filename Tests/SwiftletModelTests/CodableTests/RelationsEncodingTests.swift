@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 @testable import SwiftletModel
+import SnapshotTesting
 
 final class RelationEncodingTests: XCTestCase {
     var context = Context()
@@ -52,6 +53,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 12,
           "chats" : [
             {
               "admins" : [
@@ -105,13 +107,17 @@ final class RelationEncodingTests: XCTestCase {
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         let userJSON = user.prettyDescription(with: encoder) ?? ""
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 
     func test_WhenExplicitEncoding_EqualExpectedJSON() {
@@ -138,6 +144,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -189,12 +196,16 @@ final class RelationEncodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 
     func test_WhenExactEncoding_EqualExpectedJSON() {
@@ -220,6 +231,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -271,12 +283,16 @@ final class RelationEncodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 
     func test_WhenExactEncodingSlice_EqualExpectedJSON() {
@@ -302,6 +318,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -353,12 +370,16 @@ final class RelationEncodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 
     func test_WhenExplicitEncodingSlice_EqualExpectedJSON() {
@@ -385,6 +406,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -436,12 +458,16 @@ final class RelationEncodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 
     func test_WhenDefaultEncodingSlice_EqualExpectedJSON() {
@@ -467,6 +493,7 @@ final class RelationEncodingTests: XCTestCase {
         let expectedJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : [
             {
               "admins" : [
@@ -520,11 +547,15 @@ final class RelationEncodingTests: XCTestCase {
               ]
             }
           ],
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
         XCTAssertEqual(userJSON, expectedJSON)
+        assertSnapshot(of: user, as: .json(encoder))
     }
 }
