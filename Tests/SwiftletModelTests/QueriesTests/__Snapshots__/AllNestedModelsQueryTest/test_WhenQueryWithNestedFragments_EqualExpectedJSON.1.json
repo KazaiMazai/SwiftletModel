@@ -4,9 +4,13 @@
     "author" : {
       "object" : {
         "adminOf" : null,
+        "age" : 12,
         "chats" : null,
+        "email" : "michael@gmail.com",
         "id" : "4",
-        "name" : "Michael"
+        "isCurrent" : false,
+        "name" : "Michael",
+        "username" : "@michael"
       }
     },
     "chat" : {
@@ -75,9 +79,13 @@
     "author" : {
       "object" : {
         "adminOf" : null,
+        "age" : 12,
         "chats" : null,
+        "email" : "alice@gmail.com",
         "id" : "2",
-        "name" : "Alice"
+        "isCurrent" : false,
+        "name" : "Alice",
+        "username" : "@alice"
       }
     },
     "chat" : {
@@ -118,9 +126,13 @@
     "author" : {
       "object" : {
         "adminOf" : null,
+        "age" : 12,
         "chats" : null,
+        "email" : "bob@gmail.com",
         "id" : "1",
-        "name" : "Bob"
+        "isCurrent" : false,
+        "name" : "Bob",
+        "username" : "@bob"
       }
     },
     "chat" : {
@@ -161,9 +173,13 @@
     "author" : {
       "object" : {
         "adminOf" : null,
+        "age" : 12,
         "chats" : null,
+        "email" : "tom@gmail.com",
         "id" : "5",
-        "name" : "Tom"
+        "isCurrent" : false,
+        "name" : "Tom",
+        "username" : "@tom"
       }
     },
     "chat" : {
@@ -204,9 +220,13 @@
     "author" : {
       "object" : {
         "adminOf" : null,
+        "age" : 12,
         "chats" : null,
+        "email" : "john@gmail.com",
         "id" : "3",
-        "name" : "John"
+        "isCurrent" : false,
+        "name" : "John",
+        "username" : "@john"
       }
     },
     "chat" : {

@@ -10,9 +10,10 @@ import XCTest
 @testable import SwiftletModel
 import SnapshotTesting
 
+
 final class NestedModelsQueryTest: XCTestCase {
     var context = Context()
-
+    
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",
@@ -61,7 +62,7 @@ final class NestedModelsQueryTest: XCTestCase {
     func test_WhenQueryWithNestedModel_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-
+        
         let messages = Message
             .query(in: context)
             .with(\.$author)

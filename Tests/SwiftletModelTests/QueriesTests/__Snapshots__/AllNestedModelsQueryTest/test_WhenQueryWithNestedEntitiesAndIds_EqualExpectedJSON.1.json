@@ -5,13 +5,17 @@
       "adminOf" : [
 
       ],
+      "age" : 12,
       "chats" : [
         {
           "id" : "1"
         }
       ],
+      "email" : "michael@gmail.com",
       "id" : "4",
-      "name" : "Michael"
+      "isCurrent" : false,
+      "name" : "Michael",
+      "username" : "@michael"
     },
     "chat" : {
       "admins" : [
@@ -150,13 +154,17 @@
       "adminOf" : [
 
       ],
+      "age" : 12,
       "chats" : [
         {
           "id" : "1"
         }
       ],
+      "email" : "alice@gmail.com",
       "id" : "2",
-      "name" : "Alice"
+      "isCurrent" : false,
+      "name" : "Alice",
+      "username" : "@alice"
     },
     "chat" : {
       "admins" : [
@@ -246,13 +254,17 @@
           "id" : "1"
         }
       ],
+      "age" : 12,
       "chats" : [
         {
           "id" : "1"
         }
       ],
+      "email" : "bob@gmail.com",
       "id" : "1",
-      "name" : "Bob"
+      "isCurrent" : false,
+      "name" : "Bob",
+      "username" : "@bob"
     },
     "chat" : {
       "admins" : [
@@ -340,13 +352,17 @@
       "adminOf" : [
 
       ],
+      "age" : 12,
       "chats" : [
         {
           "id" : "1"
         }
       ],
+      "email" : "tom@gmail.com",
       "id" : "5",
-      "name" : "Tom"
+      "isCurrent" : false,
+      "name" : "Tom",
+      "username" : "@tom"
     },
     "chat" : {
       "admins" : [
@@ -434,13 +450,17 @@
       "adminOf" : [
 
       ],
+      "age" : 12,
       "chats" : [
         {
           "id" : "1"
         }
       ],
+      "email" : "john@gmail.com",
       "id" : "3",
-      "name" : "John"
+      "isCurrent" : false,
+      "name" : "John",
+      "username" : "@john"
     },
     "chat" : {
       "admins" : [

@@ -13,7 +13,7 @@ import SnapshotTestingCustomDump
 
 final class AllNestedModelsQueryTest: XCTestCase {
     var context = Context()
-
+     
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",
