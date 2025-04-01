@@ -14,6 +14,7 @@ final class RelationDecodingTests: XCTestCase {
         let userInputJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : [
             {
               "admins" : [
@@ -67,8 +68,11 @@ final class RelationDecodingTests: XCTestCase {
               ]
             }
           ],
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
@@ -83,12 +87,15 @@ final class RelationDecodingTests: XCTestCase {
 
         let userJSON = user.prettyDescription(with: encoder)!
         XCTAssertEqual(userJSON, userInputJSON)
+        
+        
     }
 
     func test_WhenExplicitDecoding_EqualExpectedJSON() {
         let userInputJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -162,6 +169,7 @@ final class RelationDecodingTests: XCTestCase {
         let userInputJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -213,8 +221,11 @@ final class RelationDecodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
@@ -235,6 +246,7 @@ final class RelationDecodingTests: XCTestCase {
         let userInputJSON = """
         {
           "adminOf" : null,
+          "age" : 33,
           "chats" : {
             "objects" : [
               {
@@ -286,8 +298,11 @@ final class RelationDecodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
