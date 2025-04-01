@@ -41,7 +41,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         let queries = TestingModels.NotIndexed.query(in: context)
         measure {
             let _ = queries
-                .sorted(by: \.value)
+                .sorted(by: \.numOf1)
                 .resolve()
         }
     }
@@ -50,7 +50,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         let queries = TestingModels.SingleValueIndexed.query(in: context)
         measure {
             let _ = queries
-                .sorted(by: \.value)
+                .sorted(by: \.numOf1)
                 .resolve()
         }
     }
@@ -59,7 +59,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         let queries = TestingModels.EvaluatedPropertyDescIndexed.query(in: context)
         measure {
             let _ = queries
-                .sorted(by: \.value.desc)
+                .sorted(by: \.numOf1.desc)
                 .resolve()
         }
     }
