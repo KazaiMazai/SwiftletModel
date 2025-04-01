@@ -147,8 +147,11 @@ final class RelationDecodingTests: XCTestCase {
               }
             ]
           },
+          "email" : "bob@mail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
         """
 
