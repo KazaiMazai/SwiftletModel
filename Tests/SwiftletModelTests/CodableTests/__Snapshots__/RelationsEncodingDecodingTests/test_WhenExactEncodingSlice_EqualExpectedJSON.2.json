@@ -1,6 +1,6 @@
 {
   "adminOf" : null,
-  "age" : 33,
+  "age" : 12,
   "chats" : {
     "objects" : [
       {
@@ -11,7 +11,7 @@
         },
         "id" : "1",
         "messages" : {
-          "objects" : [
+          "slice" : [
             {
               "attachment" : {
                 "object" : {
@@ -41,7 +41,7 @@
           ]
         },
         "users" : {
-          "ids" : [
+          "slice_ids" : [
             "1",
             "2",
             "5",
@@ -52,7 +52,7 @@
       }
     ]
   },
-  "email" : "bob@mail.com",
+  "email" : "bob@gmail.com",
   "id" : "1",
   "isCurrent" : false,
   "name" : "Bob",

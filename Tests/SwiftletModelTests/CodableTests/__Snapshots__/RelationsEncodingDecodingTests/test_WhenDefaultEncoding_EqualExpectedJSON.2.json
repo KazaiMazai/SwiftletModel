@@ -1,0 +1,62 @@
+{
+  "adminOf" : null,
+  "age" : 12,
+  "chats" : [
+    {
+      "admins" : [
+        {
+          "id" : "1"
+        }
+      ],
+      "id" : "1",
+      "messages" : [
+        {
+          "attachment" : {
+            "id" : "1",
+            "kind" : {
+              "file" : {
+                "url" : "http://google.com/image-1.jpg"
+              }
+            },
+            "message" : {
+              "id" : "1"
+            }
+          },
+          "author" : {
+            "id" : "2"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "1",
+          "replies" : null,
+          "replyTo" : null,
+          "text" : "hello",
+          "viewedBy" : null
+        }
+      ],
+      "users" : [
+        {
+          "id" : "1"
+        },
+        {
+          "id" : "2"
+        },
+        {
+          "id" : "5"
+        },
+        {
+          "id" : "3"
+        },
+        {
+          "id" : "4"
+        }
+      ]
+    }
+  ],
+  "email" : "bob@gmail.com",
+  "id" : "1",
+  "isCurrent" : false,
+  "name" : "Bob",
+  "username" : "@bob"
+}
