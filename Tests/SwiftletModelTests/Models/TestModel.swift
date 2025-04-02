@@ -95,6 +95,20 @@ extension TestingModels {
             self.numOf10 = value / 10
         }
     }
+    
+    @EntityModel
+    struct UniquelyIndexed {
+        @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
+        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
+        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
+        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
+        
+        let id: String
+        let numOf1: Int
+        let numOf10: Int
+        let numOf100: Int
+        let numOf1000: Int
+    }
 }
 
 extension TestingModels.NotIndexed {

@@ -45,3 +45,112 @@ final class UniqueIndexTests: XCTestCase {
         XCTAssertFalse(user1.query(in: context).resolve()!.isCurrent)
     }
 }
+
+final class CompoundUniqueIndexTests: XCTestCase {
+    
+    func test_WhenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+        var context = Context()
+        let model1 = TestingModels.UniquelyIndexed(
+            id: "0",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        try model1.save(to: &context)
+       
+        let model2 = TestingModels.UniquelyIndexed(
+            id: "1",
+            numOf1: 1,
+            numOf10: 20,
+            numOf100: 30,
+            numOf1000: 40
+        )
+        XCTAssertThrowsError(try model2.save(to: &context))
+    }
+    
+    func test_WhenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+        var context = Context()
+        let model1 = TestingModels.UniquelyIndexed(
+            id: "0",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        try model1.save(to: &context)
+       
+        let model2 = TestingModels.UniquelyIndexed(
+            id: "1",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 30,
+            numOf1000: 40
+        )
+        XCTAssertThrowsError(try model2.save(to: &context))
+    }
+
+    func test_WhenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+        var context = Context()
+        let model1 = TestingModels.UniquelyIndexed(
+            id: "0",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 40
+        )
+        try model1.save(to: &context)
+       
+        let model2 = TestingModels.UniquelyIndexed(
+            id: "1",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 40
+        )
+        XCTAssertThrowsError(try model2.save(to: &context))
+    }
+
+    func test_WhenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+        var context = Context()
+        let model1 = TestingModels.UniquelyIndexed(
+            id: "0",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        try model1.save(to: &context)
+       
+        let model2 = TestingModels.UniquelyIndexed(
+            id: "1",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        XCTAssertThrowsError(try model2.save(to: &context))
+    }
+
+    func test_WhenNoIndexUniqueIndexCollision_ThenNoError() throws {
+        var context = Context()
+        let model1 = TestingModels.UniquelyIndexed(
+            id: "0",
+            numOf1: 1,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        try model1.save(to: &context)
+       
+        let model2 = TestingModels.UniquelyIndexed(
+            id: "1",
+            numOf1: 10,
+            numOf10: 2,
+            numOf100: 3,
+            numOf1000: 4
+        )
+        
+        XCTAssertNoThrow(try model2.save(to: &context))
+    }
+}
