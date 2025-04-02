@@ -31,13 +31,11 @@ extension User {
     }
 }
 
-
 @EntityModel
 struct User: Codable, Sendable {
-    @Unique<User>(\.username, collisions: .throw) static var uniqueUsername
+    @Unique<User>(\.username, collisions: .upsert) static var uniqueUsername
     @Unique<User>(\.email, collisions: .throw) static var uniqueEmail
     
-    @Index<User>(\.username) static var usernameIndex
     @Unique<User>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
      
     let id: String
@@ -45,10 +43,9 @@ struct User: Codable, Sendable {
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
     private(set) var username: String
-    private(set) var email: String = ""
+    private(set) var email: String
     private(set) var age: Int = 12
     var isCurrent: Bool = false
-    var isCurrentValue: String { isCurrent ? "isCurrent" : ""}
     
     @Relationship(inverse: \.users)
     var chats: [Chat]?
