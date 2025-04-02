@@ -4,7 +4,6 @@
     "author" : {
       "object" : {
         "adminOf" : null,
-        "age" : 12,
         "chats" : null,
         "email" : "michael@gmail.com",
         "id" : "4",
@@ -79,7 +78,6 @@
     "author" : {
       "object" : {
         "adminOf" : null,
-        "age" : 12,
         "chats" : null,
         "email" : "alice@gmail.com",
         "id" : "2",
@@ -126,7 +124,6 @@
     "author" : {
       "object" : {
         "adminOf" : null,
-        "age" : 12,
         "chats" : null,
         "email" : "bob@gmail.com",
         "id" : "1",
@@ -173,7 +170,6 @@
     "author" : {
       "object" : {
         "adminOf" : null,
-        "age" : 12,
         "chats" : null,
         "email" : "tom@gmail.com",
         "id" : "5",
@@ -220,7 +216,6 @@
     "author" : {
       "object" : {
         "adminOf" : null,
-        "age" : 12,
         "chats" : null,
         "email" : "john@gmail.com",
         "id" : "3",

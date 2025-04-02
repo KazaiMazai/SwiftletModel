@@ -44,7 +44,7 @@ struct User: Codable, Sendable {
     private(set) var profile: Profile?
     private(set) var username: String
     private(set) var email: String
-    private(set) var age: Int = 12
+     
     var isCurrent: Bool = false
     
     @Relationship(inverse: \.users)

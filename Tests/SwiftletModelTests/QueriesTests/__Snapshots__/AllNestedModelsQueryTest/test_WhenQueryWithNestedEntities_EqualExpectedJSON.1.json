@@ -3,7 +3,6 @@
     "attachment" : null,
     "author" : {
       "adminOf" : null,
-      "age" : 12,
       "chats" : null,
       "email" : "michael@gmail.com",
       "id" : "4",
@@ -70,7 +69,6 @@
     "attachment" : null,
     "author" : {
       "adminOf" : null,
-      "age" : 12,
       "chats" : null,
       "email" : "alice@gmail.com",
       "id" : "2",
@@ -107,7 +105,6 @@
     "attachment" : null,
     "author" : {
       "adminOf" : null,
-      "age" : 12,
       "chats" : null,
       "email" : "bob@gmail.com",
       "id" : "1",
@@ -144,7 +141,6 @@
     "attachment" : null,
     "author" : {
       "adminOf" : null,
-      "age" : 12,
       "chats" : null,
       "email" : "tom@gmail.com",
       "id" : "5",
@@ -181,7 +177,6 @@
     "attachment" : null,
     "author" : {
       "adminOf" : null,
-      "age" : 12,
       "chats" : null,
       "email" : "john@gmail.com",
       "id" : "3",
