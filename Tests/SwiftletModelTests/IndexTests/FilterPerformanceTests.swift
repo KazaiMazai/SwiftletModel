@@ -33,7 +33,7 @@ class FilterByOnePathQueryPerformanceTests: XCTestCase {
     func test_NoIndex_FilterPerformance() throws {
         measure {
             let _ = TestingModels.NotIndexed
-                .filter(\.numOf1, value: 1, in: context)
+                .filter(\.numOf1, equals: 1, in: context)
                 .resolve()
         }
     }
@@ -41,7 +41,7 @@ class FilterByOnePathQueryPerformanceTests: XCTestCase {
     func test_Indexed_FilterPerformance() throws {
         measure {
             let _ = TestingModels.ExtensivelyIndexed
-                .filter(\.numOf1, value: 1, in: context)
+                .filter(\.numOf1, equals: 1, in: context)
                 .resolve()
         }
     }

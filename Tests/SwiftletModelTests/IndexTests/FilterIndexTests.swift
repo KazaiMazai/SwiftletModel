@@ -35,7 +35,7 @@ class FilterByOnePathQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
        
         let filterResult = TestingModels.NotIndexed
-            .filter(\.numOf1, value: 1, in: context)
+            .filter(\.numOf1, equals: 1, in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -47,7 +47,7 @@ class FilterByOnePathQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
        
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1, value: 1, in: context)
+            .filter(\.numOf1, equals: 1, in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),

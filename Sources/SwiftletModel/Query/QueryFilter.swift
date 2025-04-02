@@ -8,7 +8,7 @@
 public extension Query {
     static func filter<T>(
         _ keyPath: KeyPath<Entity, T>,
-        value: T,
+        equals value: T,
         in context: Context) -> [Query<Entity>]
     
     where
