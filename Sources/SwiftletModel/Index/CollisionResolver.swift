@@ -22,7 +22,7 @@ public struct CollisionResolver<Entity: EntityModelProtocol> {
 public extension CollisionResolver {
     static var `throw`: Self {
         CollisionResolver { id, _ in
-            throw Errors.uniqueValueIndexViolation(id)
+            throw Errors.uniqueValueIndexViolation(id: id)
         }
     }
     
@@ -38,6 +38,6 @@ public extension CollisionResolver {
  
 public extension CollisionResolver {
     enum Errors: Error {
-        case uniqueValueIndexViolation(Entity.ID)
+        case uniqueValueIndexViolation(id: Entity.ID)
     }
 }
