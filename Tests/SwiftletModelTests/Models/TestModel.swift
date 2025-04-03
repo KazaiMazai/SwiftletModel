@@ -34,7 +34,11 @@ extension TestingModels {
     
     @EntityModel
     struct ExtensivelyIndexed {
-        @Index<Self>(\.numOf1) private static var valueIndex
+        @Index<Self>(\.numOf1) private static var numOf1Index
+        @Index<Self>(\.numOf10) private static var numOf10Index
+        @Index<Self>(\.numOf100) private static var numOf100Index
+        @Index<Self>(\.numOf1000) private static var numOf1000Index
+        
         @Index<Self>(\.numOf10, \.numOf1) private static var valueIndex2
         @Index<Self>(\.numOf10.desc, \.numOf1) private static var valueIndexDesc2
         
