@@ -8,26 +8,34 @@
 import Foundation
 
 public extension KeyPath where Value: Comparable {
-    func equal(_ value: Value) -> Predicate<Root, Value> {
-        Predicate(method: .equal, keyPath: self, value: value)
+    static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .equal, value: rhs)
     }
 
-    func lessThan(_ value: Value) -> Predicate<Root, Value> {
-        Predicate(method: .lessThan, keyPath: self, value: value)
+    static func < (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .lessThan, value: rhs)
     }
 
-    func greaterThan(_ value: Value) -> Predicate<Root, Value> {
-        Predicate(method: .greaterThan, keyPath: self, value: value)
+    static func > (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .greaterThan, value: rhs)
+    }   
+
+    static func != (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .notEqual, value: rhs)
     }
 
-    func notEqual(_ value: Value) -> Predicate<Root, Value> {
-        Predicate(method: .notEqual, keyPath: self, value: value)
+    static func <= (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .lessThanOrEqual, value: rhs)
     }
+
+    static func >= (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
+        Predicate(keyPath: lhs, method: .greaterThanOrEqual, value: rhs)
+    }   
 }
 
 public struct Predicate<Entity, Value: Comparable> {
-    let method: Method
     let keyPath: KeyPath<Entity, Value>
+    let method: Method
     let value: Value
  
     func isIncluded(_ entity: Entity) -> Bool {
@@ -40,13 +48,19 @@ public struct Predicate<Entity, Value: Comparable> {
             entity[keyPath: keyPath] > value
         case .notEqual:
             entity[keyPath: keyPath] != value
+        case .lessThanOrEqual:
+            entity[keyPath: keyPath] <= value
+        case .greaterThanOrEqual:
+            entity[keyPath: keyPath] >= value   
         }
     }
     
     enum Method {
         case equal
         case lessThan
+        case lessThanOrEqual
         case greaterThan
+        case greaterThanOrEqual
         case notEqual
     }
 }
