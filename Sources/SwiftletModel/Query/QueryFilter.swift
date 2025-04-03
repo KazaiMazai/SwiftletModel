@@ -13,6 +13,26 @@ public enum FilterGroup {
 }
 
 public extension Collection {
+    static func filter<Entity, T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Comparable {
+        Query.filter(predicate, in: context)
+    }
+    
+    func and<Entity, T>(
+        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Comparable {
+        
+        filter(predicate)
+    }
+    
+    
+    
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
     where
@@ -33,21 +53,8 @@ public extension Collection {
                 .query(in: context)
         }
         
-        let filterResult = OrderedSet(index.filter(with: predicate))
+        let filterResult = Set(index.filter(with: predicate))
         return filter { filterResult.contains($0.id) }
-    }
-    
-    func group<Entity>(_ filterGroup: FilterGroup,
-                       query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
-    where
-    Element == Query<Entity> {
-        
-        return switch filterGroup {
-        case .and:
-            query(self)
-        case .or:
-            or(query: query)
-        }
     }
 }
 
@@ -79,28 +86,52 @@ public extension Query {
 //MARK: - Private Filtering
 
 extension Collection {
-    func or<Entity>(query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
+   
+    func or<Entity>(query: () -> [Query<Entity>]) -> [Query<Entity>]
     where
     Element == Query<Entity> {
-        
-        guard let context = first?.context else {
-            return query(self)
-        }
-        
-        let current = map { $0.id }
-        let result = query(self).map { $0.id }
-        return OrderedSet(
-            [current, result]
-            .flatMap { $0 })
-            .map { Query(context: context, id: $0) }
+        [Array(self), query()].flatMap { $0 }
+            .removingDuplicates(by: { $0.id })
     }
     
-    func and<Entity>(query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
+//    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
+//    where
+//    Element == Query<Entity> {
+//        or(query: query)
+//    }
+//    
+    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
     where
     Element == Query<Entity> {
-        query(self)
+        or(query: query)
     }
+    
      
+    
+//    func and<Entity>(query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
+//    where
+//    Element == Query<Entity> {
+//        query(self)
+//    }
+//    
+//    func and<Entity, T>(filter predicate: Predicate<Entity, T>) -> [Query<Entity>]
+//    where
+//    Element == Query<Entity> {
+//        guard let context = first?.context else {
+//            return []
+//        }
+//        
+//        return filter(predicate)
+//    }
 }
 
 
+extension Array {
+    func removingDuplicates<Key: Hashable>(by key: (Element) -> Key) -> [Element] {
+        var addedDict = [Key: Bool]()
+
+        return filter {
+            addedDict.updateValue(true, forKey: key($0)) == nil
+        }
+    }
+}
