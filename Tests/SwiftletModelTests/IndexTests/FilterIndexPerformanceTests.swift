@@ -92,5 +92,30 @@ final class FilterPerformanceTests: XCTestCase {
                 }
         }
     }
+    
+    func test_IndexedComplexComparisonFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.ExtensivelyIndexed
+                .filter(\.numOf1 >= 1, in: context)
+                .filter(\.numOf10 <= 5)
+                .filter(\.numOf100 > 4)
+                .filter(\.numOf1000 < 2)
+                .resolve()
+        }
+    }
+    
+    func test_RawComplexComparisonFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.ExtensivelyIndexed
+                .query(in: context)
+                .resolve()
+                .filter {
+                    $0.numOf1 >= 1
+                    && $0.numOf10 <= 5
+                    && $0.numOf100 > 4
+                    && $0.numOf1000 < 2
+                }
+        }
+    }
 }
  
