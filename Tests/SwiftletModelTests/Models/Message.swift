@@ -10,9 +10,12 @@ import Foundation
 
 @EntityModel
 public struct Message: Codable, Sendable {
+    @Index<Self>(\.timestamp) private static var timestampIndex
+    
     public let id: String
     let text: String
-
+    var timestamp: Date = .distantPast
+ 
     @Relationship(.required)
     var author: User?
 

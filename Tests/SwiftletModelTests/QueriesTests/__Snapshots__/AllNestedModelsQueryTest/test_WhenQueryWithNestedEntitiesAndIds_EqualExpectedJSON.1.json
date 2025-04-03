@@ -76,6 +76,7 @@
           "id" : "0"
         },
         "text" : "hello",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -96,6 +97,7 @@
           "id" : "0"
         },
         "text" : "howdy",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -116,6 +118,7 @@
           "id" : "0"
         },
         "text" : "yo!",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -136,6 +139,7 @@
           "id" : "0"
         },
         "text" : "wassap!",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -143,6 +147,7 @@
     ],
     "replyTo" : null,
     "text" : "hello, ya'll",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -235,11 +240,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "hello",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -334,11 +341,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "howdy",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -431,11 +440,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "yo!",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -528,11 +539,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "wassap!",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]

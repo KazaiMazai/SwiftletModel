@@ -12,7 +12,7 @@ import SnapshotTesting
 
 final class RelationsEncodingDecodingTests: XCTestCase {
     var context = Context()
-
+ 
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",

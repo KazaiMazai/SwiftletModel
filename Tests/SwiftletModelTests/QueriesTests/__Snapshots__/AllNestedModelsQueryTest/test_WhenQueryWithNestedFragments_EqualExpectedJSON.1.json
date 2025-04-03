@@ -31,6 +31,7 @@
           "replies" : null,
           "replyTo" : null,
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : null
         },
         {
@@ -41,6 +42,7 @@
           "replies" : null,
           "replyTo" : null,
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : null
         },
         {
@@ -51,6 +53,7 @@
           "replies" : null,
           "replyTo" : null,
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : null
         },
         {
@@ -61,12 +64,14 @@
           "replies" : null,
           "replyTo" : null,
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : null
         }
       ]
     },
     "replyTo" : null,
     "text" : "hello, ya'll",
+    "timestamp" : -63114076800,
     "viewedBy" : {
       "objects" : [
 
@@ -109,10 +114,12 @@
         "replies" : null,
         "replyTo" : null,
         "text" : "hello, ya'll",
+        "timestamp" : -63114076800,
         "viewedBy" : null
       }
     },
     "text" : "hello",
+    "timestamp" : -63114076800,
     "viewedBy" : {
       "objects" : [
 
@@ -155,10 +162,12 @@
         "replies" : null,
         "replyTo" : null,
         "text" : "hello, ya'll",
+        "timestamp" : -63114076800,
         "viewedBy" : null
       }
     },
     "text" : "howdy",
+    "timestamp" : -63114076800,
     "viewedBy" : {
       "objects" : [
 
@@ -201,10 +210,12 @@
         "replies" : null,
         "replyTo" : null,
         "text" : "hello, ya'll",
+        "timestamp" : -63114076800,
         "viewedBy" : null
       }
     },
     "text" : "yo!",
+    "timestamp" : -63114076800,
     "viewedBy" : {
       "objects" : [
 
@@ -247,10 +258,12 @@
         "replies" : null,
         "replyTo" : null,
         "text" : "hello, ya'll",
+        "timestamp" : -63114076800,
         "viewedBy" : null
       }
     },
     "text" : "wassap!",
+    "timestamp" : -63114076800,
     "viewedBy" : {
       "objects" : [
 

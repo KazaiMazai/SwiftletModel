@@ -63,7 +63,6 @@ extension SortIndex.ComparableValue {
         switch predicate.method {
         case .equal:
             return index[predicate.value]?.elements ?? []
-            
         case .lessThan:
             guard let first = index.keys.first else {
                 return []
@@ -80,7 +79,6 @@ extension SortIndex.ComparableValue {
             return index
                 .submap(from: first, through: predicate.value)
                 .flatMap { $1.elements }
-            
         case .greaterThan:
             guard let last = index.keys.last else {
                 return []
@@ -104,11 +102,7 @@ extension SortIndex.ComparableValue {
                 .flatMap { $1.elements }
         }
     }
-    
-    func filter(_ value: Value) -> [Entity.ID] {
-        index[value]?.elements ?? []
-    }
-    
+ 
     func filter(range: Range<Value>) -> [Entity.ID] {
         index
             .submap(from: range.lowerBound, to: range.upperBound)
