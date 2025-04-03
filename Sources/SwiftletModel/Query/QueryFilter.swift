@@ -93,12 +93,3 @@ extension Collection {
     }
 }
 
-extension Array {
-    func removingDuplicates<Key: Hashable>(by key: (Element) -> Key) -> [Element] {
-        var addedDict = [Key: Bool]()
-
-        return filter {
-            addedDict.updateValue(true, forKey: key($0)) == nil
-        }
-    }
-}
