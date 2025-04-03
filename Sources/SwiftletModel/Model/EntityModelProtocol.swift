@@ -107,8 +107,8 @@ public extension EntityModelProtocol {
     }
     
     static func filter<T0, T1>(
-        _ kp0: (KeyPath<Self, T0>, equals: T0),
-        _ kp1: (KeyPath<Self, T1>, equals: T1),
+        and kp0: (KeyPath<Self, T0>, equals: T0),
+        and kp1: (KeyPath<Self, T1>, equals: T1),
         in context: Context) -> [Query<Self>]
     where
     T0: Comparable,
@@ -117,9 +117,9 @@ public extension EntityModelProtocol {
     }
     
     static func filter<T0, T1, T2>(
-        _ kp0: (KeyPath<Self, T0>, equals: T0),
-        _ kp1: (KeyPath<Self, T1>, equals: T1),
-        _ kp2: (KeyPath<Self, T2>, equals: T2),
+        and kp0: (KeyPath<Self, T0>, equals: T0),
+        and kp1: (KeyPath<Self, T1>, equals: T1),
+        and kp2: (KeyPath<Self, T2>, equals: T2),
         in context: Context) -> [Query<Self>]
     where 
     T0: Comparable, 
@@ -129,10 +129,10 @@ public extension EntityModelProtocol {
     }
     
     static func filter<T0, T1, T2, T3>(
-        _ kp0: (KeyPath<Self, T0>, equals: T0),
-        _ kp1: (KeyPath<Self, T1>, equals: T1),
-        _ kp2: (KeyPath<Self, T2>, equals: T2),
-        _ kp3: (KeyPath<Self, T3>, equals: T3),
+        and kp0: (KeyPath<Self, T0>, equals: T0),
+        and kp1: (KeyPath<Self, T1>, equals: T1),
+        and kp2: (KeyPath<Self, T2>, equals: T2),
+        and kp3: (KeyPath<Self, T3>, equals: T3),
         in context: Context) -> [Query<Self>]
     where 
     T0: Comparable, 

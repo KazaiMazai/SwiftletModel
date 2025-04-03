@@ -5,7 +5,79 @@
 //  Created by Sergey Kazakov on 02/04/2025.
 //
 
+import Collections
+
+
+public enum FilterGroup {
+    case or
+    case and
+}
+
+public extension Collection {
+    func filter<Entity, T>(
+        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Comparable {
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        guard let index = SortIndex<Entity>.ComparableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve()
+        else {
+            return self
+                .resolve()
+                .filter { predicate.isIncluded($0) }
+                .query(in: context)
+        }
+        
+        let filterResult = OrderedSet(index.filter(predicate))
+        
+        return filter { filterResult.contains($0.id) }
+    }
+    
+    func group<Entity>(_ filterGroup: FilterGroup,
+                       query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
+    where
+    Element == Query<Entity> {
+        
+        return switch filterGroup {
+        case .and:
+            query(self)
+        case .or:
+            or(query: query)
+        }
+    }
+}
+
+
+
 public extension Query {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
+    T: Comparable {
+        
+        guard let index = SortIndex<Entity>.ComparableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve()
+        else {
+            return Entity
+                .query(in: context)
+                .resolve()
+                .filter { predicate.isIncluded($0) }
+                .query(in: context)
+        }
+        
+        return index
+            .filter(predicate)
+            .map { Query<Entity>(context: context, id: $0) }
+    }
+    
     static func filter<T>(
         _ keyPath: KeyPath<Entity, T>,
         equals value: T,
@@ -83,10 +155,10 @@ public extension Query {
     }
 
     static func filter<T0, T1, T2, T3>(
-            _ kp0: (KeyPath<Entity, T0>, T0),
-            _ kp1: (KeyPath<Entity, T1>, T1),
-            _ kp2: (KeyPath<Entity, T2>, T2),
-            _ kp3: (KeyPath<Entity, T3>, T3),
+            and kp0: (KeyPath<Entity, T0>, equals: T0),
+            and kp1: (KeyPath<Entity, T1>, equals: T1),
+            and kp2: (KeyPath<Entity, T2>, equals: T2),
+            and kp3: (KeyPath<Entity, T3>, equals: T3),
             in context: Context) -> [Query<Entity>]  
     
     where 
@@ -133,4 +205,26 @@ private extension Collection {
             .filter(value)
             .compactMap { queries[$0] }
     }
+}
+
+extension Collection {
+    func or<Entity>(query: (Self) -> [Query<Entity>]
+    
+    ) -> [Query<Entity>]
+    where
+    Element == Query<Entity> {
+        
+        guard let context = first?.context else {
+            return query(self)
+        }
+        
+        let current = map { $0.id }
+        let result = query(self).map { $0.id }
+        return OrderedSet(
+            [current, result]
+            .flatMap { $0 })
+            .map { Query(context: context, id: $0) }
+    }
+    
+     
 }
