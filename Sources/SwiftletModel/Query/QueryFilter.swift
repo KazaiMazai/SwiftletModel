@@ -27,11 +27,8 @@ public extension Collection {
     where
     Element == Query<Entity>,
     T: Comparable {
-        
         filter(predicate)
     }
-    
-    
     
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
@@ -49,12 +46,12 @@ public extension Collection {
         else {
             return self
                 .resolve()
-                .filter { predicate.isIncluded($0) }
+                .filter(predicate.isIncluded)
                 .query(in: context)
         }
         
         let filterResult = Set(index.filter(with: predicate))
-        return filter { filterResult.contains($0.id) }
+        return filter( { filterResult.contains($0.id) })
     }
 }
 
@@ -73,7 +70,7 @@ public extension Query {
             return Entity
                 .query(in: context)
                 .resolve()
-                .filter { predicate.isIncluded($0) }
+                .filter(predicate.isIncluded)
                 .query(in: context)
         }
         
@@ -93,38 +90,13 @@ extension Collection {
         [Array(self), query()].flatMap { $0 }
             .removingDuplicates(by: { $0.id })
     }
-    
-//    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
-//    where
-//    Element == Query<Entity> {
-//        or(query: query)
-//    }
-//    
+  
     func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
     where
     Element == Query<Entity> {
         or(query: query)
     }
-    
-     
-    
-//    func and<Entity>(query: (Self) -> [Query<Entity>]) -> [Query<Entity>]
-//    where
-//    Element == Query<Entity> {
-//        query(self)
-//    }
-//    
-//    func and<Entity, T>(filter predicate: Predicate<Entity, T>) -> [Query<Entity>]
-//    where
-//    Element == Query<Entity> {
-//        guard let context = first?.context else {
-//            return []
-//        }
-//        
-//        return filter(predicate)
-//    }
 }
-
 
 extension Array {
     func removingDuplicates<Key: Hashable>(by key: (Element) -> Key) -> [Element] {

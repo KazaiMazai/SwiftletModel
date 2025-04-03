@@ -9,8 +9,8 @@
 import Foundation
 import XCTest
 
-class FilterByOnePathQueryPerformanceTests: XCTestCase {
-    let count = 3000
+final class FilterPerformanceTests: XCTestCase {
+    let count = 5000
     var context = Context()
     
     lazy var notIndexedModels = {
@@ -34,10 +34,6 @@ class FilterByOnePathQueryPerformanceTests: XCTestCase {
         measure {
             let _ = TestingModels.NotIndexed
                 .filter(\.numOf1 == 1, in: context)
-                .and {
-                    $0.filter(\.numOf1 == 10)
-                      .or { $0.filter(\.numOf1 == 10) }
-                }
                 .resolve()
         }
     }
@@ -47,6 +43,53 @@ class FilterByOnePathQueryPerformanceTests: XCTestCase {
             let _ = TestingModels.ExtensivelyIndexed
                 .filter(\.numOf1 == 1, in: context)
                 .resolve()
+        }
+    }
+    
+    func test_RawFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.ExtensivelyIndexed
+                .query(in: context)
+                .resolve()
+                .filter {
+                    $0.numOf1 == 1
+                }
+        }
+    }
+
+    func test_NotIndexedComplexFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.NotIndexed
+                .filter(\.numOf1 == 1, in: context)
+                .filter(\.numOf10 != 5)
+                .filter(\.numOf100 == 4)
+                .filter(\.numOf1000 == 2)
+                .resolve()
+        }
+    }
+
+    func test_IndexedComplexFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.ExtensivelyIndexed
+                .filter(\.numOf1 == 1, in: context)
+                .filter(\.numOf10 != 5)
+                .filter(\.numOf100 == 4)
+                .filter(\.numOf1000 == 2)
+                .resolve()
+        }
+    }
+    
+    func test_RawComplexFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.ExtensivelyIndexed
+                .query(in: context)
+                .resolve()
+                .filter {
+                    $0.numOf1 == 1
+                    && $0.numOf10 != 5
+                    && $0.numOf100 == 4
+                    && $0.numOf1000 == 2
+                }
         }
     }
 }

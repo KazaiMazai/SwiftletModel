@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class FilterQueryTests: XCTestCase {
+final class FilterQueryTests: XCTestCase {
     let count = 100
     var context = Context()
     
@@ -56,11 +56,14 @@ class FilterQueryTests: XCTestCase {
     
     func test_WhenSequencedFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = indexedModels
-            .filter { $0.numOf1 == 1 && $0.numOf10 == 2 }
+            .filter {
+                $0.numOf1 == 1
+                && $0.numOf10 == 2
+            }
        
         let filterResult = TestingModels.ExtensivelyIndexed
             .filter(\.numOf1 == 1, in: context)
-            .filter(\.numOf10 == 10)
+            .filter(\.numOf10 == 2)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -69,11 +72,14 @@ class FilterQueryTests: XCTestCase {
     
     func test_WhenAndPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = indexedModels
-            .filter { $0.numOf1 == 1 && $0.numOf10 == 2 }
+            .filter {
+                $0.numOf1 == 1
+                && $0.numOf10 == 2
+            }
        
         let filterResult = TestingModels.ExtensivelyIndexed
             .filter(\.numOf1 == 1, in: context)
-            .and { $0.filter(\.numOf10 == 10) }
+            .filter(\.numOf10 == 2)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -82,36 +88,53 @@ class FilterQueryTests: XCTestCase {
     
     func test_WhenOrPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = indexedModels
-            .filter { $0.numOf1 == 1 || $0.numOf10 == 2 }
+            .filter {
+                $0.numOf1 == 1
+                || $0.numOf10 == 2
+            }
        
         let filterResult = TestingModels.ExtensivelyIndexed
             .filter(\.numOf1 == 1, in: context)
-            .or { $0.filter(\.numOf10 == 2) }
+            .or(.filter(\.numOf10 == 2, in: context))
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+   
+    func test_WhenComplexFilterIndexed_ThenEqualPlainFiltering() throws {
+        let expected = indexedModels
+            .filter {
+                $0.numOf1 == 1
+                ||  $0.numOf10 != 5
+                || ($0.numOf1 > 1 && $0.numOf10 <= 4)
+            }
+       
+        let filterResult = TestingModels.ExtensivelyIndexed
+            .filter(\.numOf1 == 1, in: context)
+            .or(.filter(\.numOf10 != 5, in: context))
+            .or(.filter(\.numOf1 > 1, in: context).and(\.numOf10 <= 4))
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
-    func test_WhenCompoundFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    func test_WhenComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
+        let expected = notIndexedModels
             .filter {
-                $0.numOf1 == 1 ||
-                $0.numOf10 == 5
-//                ($0.numOf1 == 1 && $0.numOf10 == 4)
+                $0.numOf1 == 1
+                || $0.numOf10 != 5
+                || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
        
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.NotIndexed
             .filter(\.numOf1 == 1, in: context)
-            .or { $0.filter(\.numOf10 == 5) }
-//            .or {
-//                $0.filter(\.numOf1 == 1)
-//                .filter(\.numOf10 == 4)
-//            }
+            .or(.filter(\.numOf10 != 5, in: context))
+            .or(.filter(\.numOf1 > 1, in: context).and(\.numOf10 <= 4))
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
 }
- 
