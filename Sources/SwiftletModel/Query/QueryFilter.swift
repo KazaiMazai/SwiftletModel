@@ -7,6 +7,7 @@
 
 import Collections
 
+
 public extension Collection {
     static func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>,
@@ -16,15 +17,7 @@ public extension Collection {
     T: Comparable {
         Query.filter(predicate, in: context)
     }
-    
-    func and<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
-    where
-    Element == Query<Entity>,
-    T: Comparable {
-        filter(predicate)
-    }
-    
+     
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
     where
@@ -75,21 +68,19 @@ public extension Query {
     }
 }
 
-//MARK: - Private Filtering
-
-extension Collection {
-   
-    func or<Entity>(query: () -> [Query<Entity>]) -> [Query<Entity>]
+public extension Collection {
+    func and<Entity, T>(
+        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Comparable {
+        filter(predicate)
+    }
+    
+    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
     where
     Element == Query<Entity> {
         [Array(self), query()].flatMap { $0 }
             .removingDuplicates(by: { $0.id })
     }
-  
-    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
-    where
-    Element == Query<Entity> {
-        or(query: query)
-    }
 }
-

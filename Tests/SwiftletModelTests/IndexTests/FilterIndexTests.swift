@@ -137,4 +137,40 @@ final class FilterQueryTests: XCTestCase {
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
+    
+    func test_WhenCompareComplexFilterIndexed_ThenEqualPlainFiltering() throws {
+        let expected = indexedModels
+            .filter {
+                $0.numOf1 == 1
+                ||  $0.numOf10 != 5
+                || ($0.numOf1 >= 2 && $0.numOf10 < 4)
+            }
+       
+        let filterResult = TestingModels.NotIndexed
+            .filter(\.numOf1 == 1, in: context)
+            .or(.filter(\.numOf10 != 5, in: context))
+            .or(.filter(\.numOf1 >= 2, in: context).and(\.numOf10 < 4))
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
+    func test_WhenCompareComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
+        let expected = indexedModels
+            .filter {
+                $0.numOf1 == 1
+                ||  $0.numOf10 != 5
+                || ($0.numOf1 >= 2 && $0.numOf10 < 4)
+            }
+       
+        let filterResult = TestingModels.NotIndexed
+            .filter(\.numOf1 == 1, in: context)
+            .or(.filter(\.numOf10 != 5, in: context))
+            .or(.filter(\.numOf1 >= 2, in: context).and(\.numOf10 < 4))
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
 }

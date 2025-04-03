@@ -52,12 +52,9 @@ extension SortIndex.ComparableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
         
-        guard var index = Query<Self>(context: context, id: indexName).resolve() else {
-            return
-        }
-         
-        index.remove(entity)
-        try index.save(to: &context)
+        var index = Query<Self>(context: context, id: indexName).resolve()
+        index?.remove(entity)
+        try index?.save(to: &context)
     }
 }
 
@@ -74,8 +71,7 @@ extension SortIndex.ComparableValue {
             
             return index
                 .submap(from: first, to: predicate.value)
-                .map { $1.elements }
-                .flatMap { $0 }
+                .flatMap { $1.elements }
         case .lessThanOrEqual:
             guard let first = index.keys.first else {
                 return []
@@ -83,8 +79,7 @@ extension SortIndex.ComparableValue {
             
             return index
                 .submap(from: first, through: predicate.value)
-                .map { $1.elements }
-                .flatMap { $0 }
+                .flatMap { $1.elements }
             
         case .greaterThan:
             guard let last = index.keys.last else {
@@ -94,8 +89,7 @@ extension SortIndex.ComparableValue {
             return index
                 .submap(from: predicate.value, through: last)
                 .excluding(SortedSet(arrayLiteral: predicate.value))
-                .map { $1.elements }
-                .flatMap { $0 }
+                .flatMap { $1.elements }
         case .greaterThanOrEqual:
             guard let last = index.keys.last else {
                 return []
@@ -103,13 +97,11 @@ extension SortIndex.ComparableValue {
             
             return index
                 .submap(from: predicate.value, through: last)
-                .map { $1.elements }
-                .flatMap { $0 }
+                .flatMap { $1.elements }
         case .notEqual:
             return index
                 .excluding(SortedSet(arrayLiteral: predicate.value))
-                .map { $1.elements }
-                .flatMap { $0 }
+                .flatMap { $1.elements }
         }
     }
     
