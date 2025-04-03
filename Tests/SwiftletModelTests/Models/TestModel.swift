@@ -113,6 +113,45 @@ extension TestingModels {
         let numOf100: Int
         let numOf1000: Int
     }
+    
+    @EntityModel
+    struct UniquelyIndexedComparable {
+        @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
+        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
+        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
+        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
+        
+        let id: String
+        let numOf1: ComparableBox<Int>
+        let numOf10: ComparableBox<Int>
+        let numOf100: ComparableBox<Int>
+        let numOf1000: ComparableBox<Int>
+
+        init(id: String, numOf1: Int, numOf10: Int, numOf100: Int, numOf1000: Int) {
+            self.id = id
+            self.numOf1 = ComparableBox(value: numOf1)
+            self.numOf10 = ComparableBox(value: numOf10)
+            self.numOf100 = ComparableBox(value: numOf100)
+            self.numOf1000 = ComparableBox(value: numOf1000)
+        }
+    }
+
+    @EntityModel
+    struct NotIndexedComparable {
+        let id: String
+        let numOf1: ComparableBox<Int>
+        let numOf10: ComparableBox<Int>
+        let numOf100: ComparableBox<Int>
+        let numOf1000: ComparableBox<Int>
+    }
+
+     struct ComparableBox<T: Comparable>: Comparable {
+        let value: T
+
+        static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.value < rhs.value
+        } 
+    }
 }
 
 extension TestingModels.NotIndexed {

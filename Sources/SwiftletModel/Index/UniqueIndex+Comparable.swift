@@ -52,12 +52,9 @@ extension UniqueIndex.ComparableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
         
-        guard var index = Query<Self>(context: context, id: indexName).resolve() else {
-            return
-        }
-        
-        index.remove(entity)
-        try index.save(to: &context)
+        var index = Query<Self>(context: context, id: indexName).resolve()
+        index?.remove(entity)
+        try index?.save(to: &context)
     }
 }
 
