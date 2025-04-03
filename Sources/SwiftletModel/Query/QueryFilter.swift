@@ -7,11 +7,6 @@
 
 import Collections
 
-public enum FilterGroup {
-    case or
-    case and
-}
-
 public extension Collection {
     static func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>,
