@@ -50,7 +50,7 @@ public extension Collection {
                 .query(in: context)
         }
         
-        let filterResult = Set(index.filter(with: predicate))
+        let filterResult = Set(index.filter(predicate))
         return filter( { filterResult.contains($0.id) })
     }
 }
@@ -75,7 +75,7 @@ public extension Query {
         }
         
         return index
-            .filter(with: predicate)
+            .filter(predicate)
             .map { Query<Entity>(context: context, id: $0) }
     }
 }

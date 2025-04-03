@@ -62,10 +62,10 @@ extension SortIndex.ComparableValue {
 }
 
 extension SortIndex.ComparableValue {
-    func filter(with valueFilter: Predicate<Entity, Value>) -> [Entity.ID] {
-        switch valueFilter.method {
+    func filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
+        switch predicate.method {
         case .equal:
-            return index[valueFilter.value]?.elements ?? []
+            return index[predicate.value]?.elements ?? []
             
         case .lessThan:
             guard let first = index.keys.first else {
@@ -73,7 +73,7 @@ extension SortIndex.ComparableValue {
             }
             
             return index
-                .submap(from: first, to: valueFilter.value)
+                .submap(from: first, to: predicate.value)
                 .map { $1.elements }
                 .flatMap { $0 }
         case .lessThanOrEqual:
@@ -82,7 +82,7 @@ extension SortIndex.ComparableValue {
             }
             
             return index
-                .submap(from: first, through: valueFilter.value)
+                .submap(from: first, through: predicate.value)
                 .map { $1.elements }
                 .flatMap { $0 }
             
@@ -92,8 +92,8 @@ extension SortIndex.ComparableValue {
             }
             
             return index
-                .submap(from: valueFilter.value, through: last)
-                .excluding(SortedSet(arrayLiteral: valueFilter.value))
+                .submap(from: predicate.value, through: last)
+                .excluding(SortedSet(arrayLiteral: predicate.value))
                 .map { $1.elements }
                 .flatMap { $0 }
         case .greaterThanOrEqual:
@@ -102,12 +102,12 @@ extension SortIndex.ComparableValue {
             }
             
             return index
-                .submap(from: valueFilter.value, through: last)
+                .submap(from: predicate.value, through: last)
                 .map { $1.elements }
                 .flatMap { $0 }
         case .notEqual:
             return index
-                .excluding(SortedSet(arrayLiteral: valueFilter.value))
+                .excluding(SortedSet(arrayLiteral: predicate.value))
                 .map { $1.elements }
                 .flatMap { $0 }
         }
