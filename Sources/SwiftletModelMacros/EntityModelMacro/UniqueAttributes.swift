@@ -15,7 +15,6 @@ import SwiftSyntaxMacros
   import SwiftSyntaxMacroExpansion
 #endif
 
-
 struct UniqueAttributes {
     let relationWrapperType: WrapperType
     let propertyName: String
@@ -72,31 +71,17 @@ extension UniqueAttributes {
         static let collisions = "collisions"
        
         let attributes: String
-//        case upsert
-//        case `throw`
-        
+
         static let upsert: CollisionsResolverAttribute = {
             CollisionsResolverAttribute(attributes: ".upsert")
         }()
         
         init(attributes: String) {
             self.attributes = attributes
-//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
-//            guard let value else {
-//                return nil
-//            }
-//
-//            self = value
         }
         
         init?(_ expressionString: String) {
             attributes = expressionString
-//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
-//            guard let value else {
-//                return nil
-//            }
-//            
-//            self = value
         }
         
         init(labeledExprListSyntax: LabeledExprListSyntax) {
