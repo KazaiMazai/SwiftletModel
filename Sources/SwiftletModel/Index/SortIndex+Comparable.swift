@@ -117,7 +117,7 @@ extension SortIndex.ComparableValue {
     }
 }
 
-private  extension SortIndex.ComparableValue {
+private extension SortIndex.ComparableValue {
     mutating func update(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
         
