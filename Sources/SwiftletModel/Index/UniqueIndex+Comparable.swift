@@ -67,7 +67,7 @@ private extension UniqueIndex.ComparableValue {
             return
         }
         
-        try resolver.resolveCollision(id: existingId, in: &context)
+        try resolver.resolveCollision(existing: existingId, new: entity.id, indexName: name, in: &context)
     }
     
     mutating func update(_ entity: Entity,

@@ -56,7 +56,7 @@ struct User: Codable, Sendable {
  
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
-        CollisionResolver { existingId, context in
+        CollisionResolver { existingId, _, _, context in
             guard var user = Query<Entity>(context: context, id: existingId).resolve(),
                 user.isCurrent
             else {
