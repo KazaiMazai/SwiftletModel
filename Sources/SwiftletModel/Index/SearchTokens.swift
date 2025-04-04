@@ -55,7 +55,33 @@ public extension SearchTokens where Value == String {
     }
 }
 
-fileprivate extension String {
+extension String {
+    func searchTokens(with nGramLength: Int) -> [String] {
+        let words = self.words()
+        let nGrams = words
+            .flatMap { $0.windows(ofLength: nGramLength) }
+            .map { String($0) }
+
+        return words + nGrams
+    }
+    
+    func words() -> [String] {
+        self.lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .map { String($0) }
+    }
+
+    func nGrams(of length: Int) -> [String] {
+        guard length > 0 else { return [] }
+        return self
+                .lowercased()
+                .components(separatedBy: CharacterSet.alphanumerics.inverted)
+                .flatMap { $0.windows(ofLength: length) }
+                .map { String($0) }
+        }
+    }
+    
     func windows(ofLength length: Int) -> [SubSequence] {
         guard length > 0 else {
             return []
