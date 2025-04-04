@@ -42,7 +42,7 @@ extension UniqueIndex.ComparableValue {
                             resolveCollisions resolver: CollisionResolver<Entity>) throws {
         
         var index = Query(context: context, id: indexName).resolve() ?? Self(name: indexName)
-        try index.resolveCollisions(entity, value: value, in: &context, resolveCollisions: resolver)
+        try index.checkForCollisions(entity, value: value, in: &context, resolveCollisions: resolver)
         index = index.query(in: context).resolve() ?? index
         index.update(entity, value: value)
         try index.save(to: &context)
@@ -59,7 +59,7 @@ extension UniqueIndex.ComparableValue {
 }
 
 private extension UniqueIndex.ComparableValue {
-    func resolveCollisions(_ entity: Entity,
+    func checkForCollisions(_ entity: Entity,
                            value: Value,
                            in context: inout Context,
                            resolveCollisions resolver: CollisionResolver<Entity>) throws {

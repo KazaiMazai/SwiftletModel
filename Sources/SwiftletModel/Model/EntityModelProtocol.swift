@@ -112,43 +112,6 @@ public extension Collection {
     }
 }
 
-public extension EntityModelProtocol {
-
-    static func query<T>(where keyPath: KeyPath<Self, T>,
-                         equals value: T,
-                         in context: Context) -> [Self] where T: Comparable {
-        
-        guard let index = SortIndex<Self>.ComparableValue<T>
-            .query(.indexName(keyPath), in: context)
-            .resolve()
-        else {
-            return query(in: context)
-                .resolve()
-                .filter { $0[keyPath: keyPath] == value }
-        }
-        
-        return query(index.filter(value), in: context)
-            .resolve()
-    }
-    
-    static func query<T>(where keyPath: KeyPath<Self, T>,
-                         in range: Range<T>,
-                         in context: Context) -> [Self] where T: Comparable {
-        
-        guard let index = SortIndex<Self>.ComparableValue<T>
-            .query(.indexName(keyPath), in: context)
-            .resolve()
-        else {
-            return query(in: context)
-                .resolve()
-                .filter { range.contains($0[keyPath: keyPath]) }
-        }
-        
-        return query(index.filter(range: range), in: context)
-            .resolve()
-    }
-}
-
 extension EntityModelProtocol {
     func normalized() -> Self {
         var copy = self
