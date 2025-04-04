@@ -14,16 +14,18 @@ enum SearchIndex<Entity: EntityModelProtocol> {
 extension SearchIndex {
     @EntityModel
     struct HashableValue<Value: Hashable> {
+        typealias Token = Value
+        
         var id: String { name }
         
         let name: String
         
         private var index: [Value: Set<Entity.ID>] = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
-        private var indexedValuesTokens: [Entity.ID: Set<Value>] = [:]
-        private var indexedValuesTokensFrequency: [Entity.ID: [Value: Int]] = [:]
-        private var lengths: [Entity.ID: Int] = [:]
-        private var avgDocLength: Double = 0.0
+        private var tokensForEntities: [Entity.ID: Set<Token>] = [:]
+        private var tokenFrequenciesForEntities: [Entity.ID: [Token: Int]] = [:]
+        private var valueLenghtsForEntities: [Entity.ID: Int] = [:]
+        private var averageValueLength: Double = 0.0
 
         private let k1: Double = 1.2  // term frequency saturation parameter
         private let b: Double = 0.75  // length normalization parameter
@@ -45,19 +47,19 @@ extension SearchIndex.HashableValue {
             guard let matchingDocs = index[token] else { continue }
             
             // Calculate IDF
-            let N = Double(indexedValuesTokens.count) // total number of documents
+            let N = Double(tokensForEntities.count) // total number of documents
             let n = Double(matchingDocs.count) // number of documents containing the term
             let idf = log((N - n + 0.5) / (n + 0.5) + 1.0)
             
             for entityId in matchingDocs {
                 // Calculate term frequency
-                let docTokens = indexedValuesTokens[entityId] ?? []
+                let docTokens = tokensForEntities[entityId] ?? []
                 let tf = Double(docTokens.filter { $0 == token }.count)
                 let docLength = Double(docTokens.count)
                 
                 // BM25 score calculation
                 let numerator = tf * (k1 + 1.0)
-                let denominator = tf + k1 * (1.0 - b + b * docLength / avgDocLength)
+                let denominator = tf + k1 * (1.0 - b + b * docLength / averageValueLength)
                 let score = idf * numerator / denominator
                 
                 scores[entityId, default: 0] += score
@@ -99,16 +101,16 @@ private  extension SearchIndex.HashableValue {
             return
         }
         
-         if let existingValue, let existingValueTokens = indexedValuesTokens[entity.id] {
+         if let existingValue, let existingValueTokens = tokensForEntities[entity.id] {
             existingValueTokens.forEach { token in
                 var ids = index[token] ?? []
                 ids.remove(entity.id)
                 index[token] = ids.isEmpty ? nil : ids
             }
             indexedValues[entity.id] = nil
-            indexedValuesTokens[entity.id] = nil
-            indexedValuesTokensFrequency[entity.id] = nil
-            lengths[entity.id] = nil
+            tokensForEntities[entity.id] = nil
+            tokenFrequenciesForEntities[entity.id] = nil
+            valueLenghtsForEntities[entity.id] = nil
         }
 
         let tokens = makeTokens(for: value)
@@ -119,18 +121,18 @@ private  extension SearchIndex.HashableValue {
         }
      
         indexedValues[entity.id] = value
-        indexedValuesTokens[entity.id] = Set(tokens)
-        indexedValuesTokensFrequency[entity.id] = tokens.reduce(into: [:]) { $0[$1, default: 0] += 1 }
-        lengths[entity.id] = tokens.count
+        tokensForEntities[entity.id] = Set(tokens)
+        tokenFrequenciesForEntities[entity.id] = tokens.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+        valueLenghtsForEntities[entity.id] = tokens.count
         
         // Update avgDocLength after modifying lengths
-        let totalTokens = lengths.values.reduce(0, +)
-        avgDocLength = Double(totalTokens) / Double(max(1, lengths.count))
+        let totalTokens = valueLenghtsForEntities.values.reduce(0, +)
+        averageValueLength = Double(totalTokens) / Double(max(1, valueLenghtsForEntities.count))
     }
     
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-                let tokens = indexedValuesTokens[entity.id] 
+                let tokens = tokensForEntities[entity.id] 
          else {
             return
         }
@@ -141,19 +143,19 @@ private  extension SearchIndex.HashableValue {
         }
 
         indexedValues[entity.id] = nil
-        indexedValuesTokens[entity.id] = nil
-        indexedValuesTokensFrequency[entity.id] = nil
-        lengths[entity.id] = nil
+        tokensForEntities[entity.id] = nil
+        tokenFrequenciesForEntities[entity.id] = nil
+        valueLenghtsForEntities[entity.id] = nil
         
         // Update avgDocLength after modifying lengths
-        let totalTokens = lengths.values.reduce(0, +)
-        avgDocLength = Double(totalTokens) / Double(max(1, lengths.count))
+        let totalTokens = valueLenghtsForEntities.values.reduce(0, +)
+        averageValueLength = Double(totalTokens) / Double(max(1, valueLenghtsForEntities.count))
     }
 }
  
 extension SearchIndex.HashableValue where Value == String {
     func makeTokens(for value: String) -> [String] {
-        value.searchTokens(with: 3)
+        value.nGrams(of: 3)
     }
 }
 
