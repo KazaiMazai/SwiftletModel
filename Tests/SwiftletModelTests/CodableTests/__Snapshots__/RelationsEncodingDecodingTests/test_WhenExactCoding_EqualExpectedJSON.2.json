@@ -1,0 +1,60 @@
+{
+  "adminOf" : null,
+  "chats" : {
+    "objects" : [
+      {
+        "admins" : {
+          "ids" : [
+            "1"
+          ]
+        },
+        "id" : "1",
+        "messages" : {
+          "objects" : [
+            {
+              "attachment" : {
+                "object" : {
+                  "id" : "1",
+                  "kind" : {
+                    "file" : {
+                      "url" : "http://google.com/image-1.jpg"
+                    }
+                  },
+                  "message" : {
+                    "id" : "1"
+                  }
+                }
+              },
+              "author" : {
+                "id" : "2"
+              },
+              "chat" : {
+                "id" : "1"
+              },
+              "id" : "1",
+              "replies" : null,
+              "replyTo" : null,
+              "text" : "hello",
+              "timestamp" : -63114076800,
+              "viewedBy" : null
+            }
+          ]
+        },
+        "users" : {
+          "ids" : [
+            "1",
+            "2",
+            "5",
+            "3",
+            "4"
+          ]
+        }
+      }
+    ]
+  },
+  "email" : "bob@gmail.com",
+  "id" : "1",
+  "isCurrent" : false,
+  "name" : "Bob",
+  "username" : "@bob"
+}

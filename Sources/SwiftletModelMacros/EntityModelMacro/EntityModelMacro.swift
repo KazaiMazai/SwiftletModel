@@ -50,15 +50,23 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             
             let relationshipAttributes = variableDeclarations
                 .compactMap { $0.relationshipAttributes() }
-
+            
+            let indexAttributes = variableDeclarations
+                .compactMap { $0.indexAttributes() }
+            
+            let uniqueAttributes = variableDeclarations
+                .compactMap { $0.uniqueAttributes() }
+            
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
-
+            
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties,
+                indexAttributes: indexAttributes,
+                uniqueAttributes: uniqueAttributes,
                 accessAttribute: accessAttribute
             )
 
@@ -71,6 +79,8 @@ extension ExtensionDeclSyntax {
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
                                     relationshipAttributes: [RelationshipAttributes],
                                     optionalProperties: [PropertyAttributes],
+                                    indexAttributes: [IndexAttributes],
+                                    uniqueAttributes: [UniqueAttributes],
                                     accessAttribute: AccessAttribute
                                             
     ) throws -> ExtensionDeclSyntax {
@@ -81,8 +91,8 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes))
-            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
@@ -95,7 +105,9 @@ extension ExtensionDeclSyntax {
 extension FunctionDeclSyntax {
     static func save(
         _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
+        _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -103,8 +115,18 @@ extension FunctionDeclSyntax {
          
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
             try willSave(to: &context)
+            \(raw: uniqueAttributes
+                .map {
+                    "try updateIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                 }
+                .joined(separator: "\n")
+            )
+            \(raw: indexAttributes
+                .map { "try updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
             context.insert(self, options: options)
-            \(raw: attributes
+            \(raw: relationshipAttributes
                 .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
@@ -114,9 +136,12 @@ extension FunctionDeclSyntax {
         )
     }
     
+    
     static func delete(
         _ accessAttributes: AccessAttribute,
-        _ attributes: [RelationshipAttributes]
+        _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -124,8 +149,18 @@ extension FunctionDeclSyntax {
         
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
+            \(raw: uniqueAttributes
+                .map {
+                    "try removeFromIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                 }
+                .joined(separator: "\n")
+            )
+            \(raw: indexAttributes
+                .map { "try removeFromIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
             context.remove(Self.self, id: id)
-            \(raw: attributes
+            \(raw: relationshipAttributes
                 .map {
                     switch $0.deleteRule {
                     case .nullify:
@@ -293,6 +328,115 @@ private extension VariableDeclSyntax {
         }
 
         guard modifiers.first?.name.text != "static" else {
+            return nil
+        }
+
+        for binding in bindings {
+            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+                  let typeAnnotation = binding.typeAnnotation?.type else {
+                continue
+            }
+
+            let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
+            guard isOptional else {
+                continue
+            }
+
+            return PropertyAttributes(propertyName: propertyName)
+
+        }
+        return nil
+    }
+    
+    func indexAttributes() -> IndexAttributes? {
+        for attribute in self.attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = IndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  modifiers.isStatic
+            else {
+                continue
+            }
+           
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+                  let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+            else {
+                return nil
+            }
+            
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+                
+                return nil
+            }
+            
+            return IndexAttributes(
+                relationWrapperType: wrapperType,
+                propertyName: property,
+                keyPathAttributes: IndexAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                )
+            )
+        }
+        return nil
+    }
+    
+    func uniqueAttributes() -> UniqueAttributes? {
+        for attribute in self.attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  modifiers.isStatic
+            else {
+                continue
+            }
+
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+                  let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+            else {
+                return nil
+            }
+            
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+                
+                   return UniqueAttributes(
+                        relationWrapperType: wrapperType,
+                        propertyName: property,
+                        keyPathAttributes: UniqueAttributes.KeyPathAttributes(
+                            propertyIdentifier: property
+                        ),
+                        collisions: .upsert
+                    )
+            }
+            
+            return UniqueAttributes(
+                relationWrapperType: wrapperType,
+                propertyName: property,
+                keyPathAttributes: UniqueAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                ),
+                collisions: UniqueAttributes.CollisionsResolverAttribute(labeledExprListSyntax: keyPathsExprList)
+            )
+        }
+        return nil
+    }
+    
+    func staticPropertiesAttributes() -> PropertyAttributes? {
+        for attribute in attributes {
+
+            if let customAttribute = attribute.as(AttributeSyntax.self),
+               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+                return nil
+            }
+        }
+
+        guard modifiers.first?.name.text == "static" else {
             return nil
         }
 

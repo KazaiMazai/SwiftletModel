@@ -10,9 +10,12 @@ import Foundation
 
 @EntityModel
 public struct Message: Codable, Sendable {
+    @Index<Self>(\.timestamp) private static var timestampIndex
+    
     public let id: String
     let text: String
-
+    var timestamp: Date = .distantPast
+ 
     @Relationship(.required)
     var author: User?
 
@@ -30,6 +33,10 @@ public struct Message: Codable, Sendable {
 
     @Relationship
     var viewedBy: [User]? = nil
+
+    public func willDelete(from context: inout Context) throws {
+        try delete(\.$attachment, inverse: \.$message, from: &context)
+    }
 }
 
 extension Query where Entity == Message {

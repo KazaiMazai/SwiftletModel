@@ -15,7 +15,7 @@ struct Chat: Codable, Sendable {
     @Relationship(inverse: \.chats)
     var users: [User]?
 
-    @Relationship(inverse: \.chat)
+    @Relationship(deleteRule: .cascade, inverse: \.chat)
     var messages: [Message]?
 
     @Relationship(inverse: \.adminOf)
@@ -24,5 +24,7 @@ struct Chat: Codable, Sendable {
     func willDelete(from context: inout Context) throws {
         try delete(\.$messages, inverse: \.$chat, from: &context)
     }
+    
+
 }
    

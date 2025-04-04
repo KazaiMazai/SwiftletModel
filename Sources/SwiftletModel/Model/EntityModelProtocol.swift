@@ -24,7 +24,7 @@ public protocol EntityModelProtocol {
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
-
+  
     mutating func normalize()
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
@@ -70,19 +70,20 @@ public extension EntityModelProtocol {
     }
 }
 
+
 public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
         Self.query(id, in: context)
     }
-
+    
     static func query(_ id: ID, in context: Context) -> Query<Self> {
         context.query(id)
     }
-
+    
     static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
         context.query(ids)
     }
-
+    
     static func query(in context: Context) -> [Query<Self>] {
         context.query()
     }
@@ -90,6 +91,24 @@ public extension EntityModelProtocol {
     static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>] {
         Self.query(in: context)
             .with(nested)
+    }
+}
+
+// MARK: - Filter Query
+
+public extension EntityModelProtocol {
+    static func filter<T>(
+        _ predicate: Predicate<Self, T>,
+        in context: Context) -> [Query<Self>]
+    where
+    T: Comparable {
+        Query<Self>.filter(predicate, in: context)
+    }
+}
+
+public extension Collection {
+    func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
+        map { $0.query(in: context) }
     }
 }
 
@@ -101,7 +120,7 @@ extension EntityModelProtocol {
     }
 }
 
-extension KeyPath {
+extension PartialKeyPath {
     var name: String {
         String(describing: self)
     }

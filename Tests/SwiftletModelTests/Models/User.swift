@@ -33,19 +33,44 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
+    @Unique<User>(\.username, collisions: .upsert) static var uniqueUsername
+    @Unique<User>(\.email, collisions: .throw) static var uniqueEmail
+    
+    @Unique<User>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
+     
     let id: String
     private(set) var name: String?
     private(set) var avatar: Avatar?
     private(set) var profile: Profile?
-
+    private(set) var username: String
+    private(set) var email: String
+     
+    var isCurrent: Bool = false
+    
     @Relationship(inverse: \.users)
     var chats: [Chat]?
 
     @Relationship(inverse: \.admins)
     var adminOf: [Chat]?
 }
+ 
+extension CollisionResolver where Entity == User {
+    static var updateCurrentUser: Self {
+        CollisionResolver { existingId, _, _, context in
+            guard var user = Query<Entity>(context: context, id: existingId).resolve(),
+                user.isCurrent
+            else {
+                return
+            }
+               
+            user.isCurrent = false
+            try user.save(to: &context)
+        }
+    }
+}
 
 extension Query where Entity == User {
+    
     var isMe: Bool {
         CurrentUser
             .query(CurrentUser.id, in: context)

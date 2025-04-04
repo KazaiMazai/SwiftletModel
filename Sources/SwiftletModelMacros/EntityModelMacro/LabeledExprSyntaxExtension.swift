@@ -38,3 +38,9 @@ fileprivate extension String {
         range(of: String.keyPathRegEx, options: .regularExpression) != nil
     }
 }
+
+extension DeclModifierListSyntax {
+    var isStatic: Bool {
+        contains(where: { $0.name.text == "static" })
+    }
+}

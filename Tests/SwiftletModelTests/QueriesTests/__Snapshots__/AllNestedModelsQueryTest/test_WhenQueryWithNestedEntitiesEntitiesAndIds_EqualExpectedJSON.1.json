@@ -19,8 +19,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -50,6 +53,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -70,6 +74,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -90,6 +95,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -110,6 +116,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -130,6 +137,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -147,8 +155,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -159,8 +170,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -171,8 +185,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -183,8 +200,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -195,14 +215,20 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
       ],
+      "email" : "michael@gmail.com",
       "id" : "4",
-      "name" : "Michael"
+      "isCurrent" : false,
+      "name" : "Michael",
+      "username" : "@michael"
     },
     "chat" : {
       "admins" : [
@@ -295,8 +321,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
       ],
       "id" : "1",
@@ -312,8 +341,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -375,6 +407,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -395,6 +428,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -415,6 +449,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -435,6 +470,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -442,6 +478,7 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -457,8 +494,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -531,11 +571,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -553,8 +595,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -627,11 +672,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -647,8 +694,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -721,11 +771,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -741,8 +793,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -815,11 +870,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -915,8 +972,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         {
           "adminOf" : [
@@ -966,8 +1026,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         {
           "adminOf" : [
@@ -1017,8 +1080,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         {
           "adminOf" : [
@@ -1068,8 +1134,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         {
           "adminOf" : [
@@ -1119,8 +1188,11 @@
               ]
             }
           ],
+          "email" : "michael@gmail.com",
           "id" : "4",
-          "name" : "Michael"
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
         }
       ]
     },
@@ -1176,8 +1248,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         "chat" : {
           "admins" : [
@@ -1192,8 +1267,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -1223,6 +1301,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1243,6 +1322,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1263,6 +1343,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1283,6 +1364,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1303,6 +1385,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1320,8 +1403,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -1332,8 +1418,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -1344,8 +1433,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -1356,8 +1448,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -1368,8 +1463,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         },
@@ -1388,8 +1486,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -1451,6 +1552,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1471,6 +1573,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1491,6 +1594,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1511,6 +1615,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1518,11 +1623,13 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
         },
         "text" : "hello",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -1618,8 +1725,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         "chat" : {
           "admins" : [
@@ -1634,8 +1744,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -1665,6 +1778,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1685,6 +1799,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1705,6 +1820,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1725,6 +1841,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1745,6 +1862,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1762,8 +1880,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -1774,8 +1895,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -1786,8 +1910,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -1798,8 +1925,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -1810,8 +1940,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         },
@@ -1830,8 +1963,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -1893,6 +2029,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1913,6 +2050,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1933,6 +2071,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1953,6 +2092,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -1960,11 +2100,13 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
         },
         "text" : "howdy",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -2019,8 +2161,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         "chat" : {
           "admins" : [
@@ -2035,8 +2180,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -2066,6 +2214,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2086,6 +2235,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2106,6 +2256,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2126,6 +2277,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2146,6 +2298,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2163,8 +2316,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -2175,8 +2331,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -2187,8 +2346,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -2199,8 +2361,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -2211,8 +2376,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         },
@@ -2231,8 +2399,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -2294,6 +2465,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2314,6 +2486,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2334,6 +2507,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2354,6 +2528,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2361,11 +2536,13 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
         },
         "text" : "yo!",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -2420,8 +2597,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         "chat" : {
           "admins" : [
@@ -2436,8 +2616,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -2467,6 +2650,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2487,6 +2671,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2507,6 +2692,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2527,6 +2713,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2547,6 +2734,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2564,8 +2752,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -2576,8 +2767,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -2588,8 +2782,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -2600,8 +2797,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -2612,8 +2812,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         },
@@ -2632,8 +2835,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -2695,6 +2901,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2715,6 +2922,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2735,6 +2943,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2755,6 +2964,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2762,11 +2972,13 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
         },
         "text" : "wassap!",
+        "timestamp" : -63114076800,
         "viewedBy" : [
 
         ]
@@ -2774,6 +2986,7 @@
     ],
     "replyTo" : null,
     "text" : "hello, ya'll",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -2798,8 +3011,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -2829,6 +3045,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2849,6 +3066,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2869,6 +3087,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2889,6 +3108,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2909,6 +3129,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -2926,8 +3147,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -2938,8 +3162,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -2950,8 +3177,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -2962,8 +3192,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -2974,14 +3207,20 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
       ],
+      "email" : "alice@gmail.com",
       "id" : "2",
-      "name" : "Alice"
+      "isCurrent" : false,
+      "name" : "Alice",
+      "username" : "@alice"
     },
     "chat" : {
       "admins" : [
@@ -3074,8 +3313,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
       ],
       "id" : "1",
@@ -3091,8 +3333,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -3154,6 +3399,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -3174,6 +3420,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -3194,6 +3441,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -3214,6 +3462,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -3221,6 +3470,7 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -3236,8 +3486,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -3310,11 +3563,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -3332,8 +3587,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -3406,11 +3664,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -3426,8 +3686,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -3500,11 +3763,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -3520,8 +3785,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -3594,11 +3862,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -3694,8 +3964,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         {
           "adminOf" : [
@@ -3745,8 +4018,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         {
           "adminOf" : [
@@ -3796,8 +4072,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         {
           "adminOf" : [
@@ -3847,8 +4126,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         {
           "adminOf" : [
@@ -3898,8 +4180,11 @@
               ]
             }
           ],
+          "email" : "michael@gmail.com",
           "id" : "4",
-          "name" : "Michael"
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
         }
       ]
     },
@@ -3957,8 +4242,11 @@
             ]
           }
         ],
+        "email" : "michael@gmail.com",
         "id" : "4",
-        "name" : "Michael"
+        "isCurrent" : false,
+        "name" : "Michael",
+        "username" : "@michael"
       },
       "chat" : {
         "admins" : [
@@ -3973,8 +4261,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           }
         ],
         "id" : "1",
@@ -4004,6 +4295,7 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -4024,6 +4316,7 @@
               "id" : "0"
             },
             "text" : "hello",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -4044,6 +4337,7 @@
               "id" : "0"
             },
             "text" : "howdy",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -4064,6 +4358,7 @@
               "id" : "0"
             },
             "text" : "yo!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -4084,6 +4379,7 @@
               "id" : "0"
             },
             "text" : "wassap!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -4101,8 +4397,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           {
             "adminOf" : [
@@ -4113,8 +4412,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           {
             "adminOf" : [
@@ -4125,8 +4427,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           {
             "adminOf" : [
@@ -4137,8 +4442,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           {
             "adminOf" : [
@@ -4149,8 +4457,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           }
         ]
       },
@@ -4167,8 +4478,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -4241,11 +4555,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -4263,8 +4579,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -4337,11 +4656,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -4357,8 +4678,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -4431,11 +4755,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -4451,8 +4777,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -4525,11 +4854,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -4537,11 +4868,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "hello",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -4563,8 +4896,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -4594,6 +4930,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4614,6 +4951,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4634,6 +4972,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4654,6 +4993,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4674,6 +5014,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4691,8 +5032,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -4703,8 +5047,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -4715,8 +5062,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -4727,8 +5077,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -4739,8 +5092,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
@@ -4759,8 +5115,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -4790,6 +5149,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4810,6 +5170,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4830,6 +5191,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4850,6 +5212,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4870,6 +5233,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -4887,8 +5251,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -4899,8 +5266,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -4911,8 +5281,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -4923,8 +5296,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -4935,14 +5311,20 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
       ],
+      "email" : "bob@gmail.com",
       "id" : "1",
-      "name" : "Bob"
+      "isCurrent" : false,
+      "name" : "Bob",
+      "username" : "@bob"
     },
     "chat" : {
       "admins" : [
@@ -5035,8 +5417,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
       ],
       "id" : "1",
@@ -5052,8 +5437,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -5115,6 +5503,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -5135,6 +5524,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -5155,6 +5545,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -5175,6 +5566,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -5182,6 +5574,7 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -5197,8 +5590,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -5271,11 +5667,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -5293,8 +5691,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -5367,11 +5768,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -5387,8 +5790,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -5461,11 +5867,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -5481,8 +5889,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -5555,11 +5966,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -5655,8 +6068,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         {
           "adminOf" : [
@@ -5706,8 +6122,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         {
           "adminOf" : [
@@ -5757,8 +6176,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         {
           "adminOf" : [
@@ -5808,8 +6230,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         {
           "adminOf" : [
@@ -5859,8 +6284,11 @@
               ]
             }
           ],
+          "email" : "michael@gmail.com",
           "id" : "4",
-          "name" : "Michael"
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
         }
       ]
     },
@@ -5918,8 +6346,11 @@
             ]
           }
         ],
+        "email" : "michael@gmail.com",
         "id" : "4",
-        "name" : "Michael"
+        "isCurrent" : false,
+        "name" : "Michael",
+        "username" : "@michael"
       },
       "chat" : {
         "admins" : [
@@ -5934,8 +6365,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           }
         ],
         "id" : "1",
@@ -5965,6 +6399,7 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -5985,6 +6420,7 @@
               "id" : "0"
             },
             "text" : "hello",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -6005,6 +6441,7 @@
               "id" : "0"
             },
             "text" : "howdy",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -6025,6 +6462,7 @@
               "id" : "0"
             },
             "text" : "yo!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -6045,6 +6483,7 @@
               "id" : "0"
             },
             "text" : "wassap!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -6062,8 +6501,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           {
             "adminOf" : [
@@ -6074,8 +6516,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           {
             "adminOf" : [
@@ -6086,8 +6531,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           {
             "adminOf" : [
@@ -6098,8 +6546,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           {
             "adminOf" : [
@@ -6110,8 +6561,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           }
         ]
       },
@@ -6128,8 +6582,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -6202,11 +6659,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -6224,8 +6683,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -6298,11 +6760,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -6318,8 +6782,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -6392,11 +6859,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -6412,8 +6881,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -6486,11 +6958,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -6498,11 +6972,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "howdy",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -6527,8 +7003,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -6558,6 +7037,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6578,6 +7058,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6598,6 +7079,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6618,6 +7100,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6638,6 +7121,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6655,8 +7139,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -6667,8 +7154,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -6679,8 +7169,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -6691,8 +7184,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -6703,14 +7199,20 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
       ],
+      "email" : "tom@gmail.com",
       "id" : "5",
-      "name" : "Tom"
+      "isCurrent" : false,
+      "name" : "Tom",
+      "username" : "@tom"
     },
     "chat" : {
       "admins" : [
@@ -6803,8 +7305,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
       ],
       "id" : "1",
@@ -6820,8 +7325,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -6883,6 +7391,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6903,6 +7412,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6923,6 +7433,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6943,6 +7454,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -6950,6 +7462,7 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -6965,8 +7478,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -7039,11 +7555,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -7061,8 +7579,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -7135,11 +7656,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -7155,8 +7678,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -7229,11 +7755,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -7249,8 +7777,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -7323,11 +7854,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -7423,8 +7956,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         {
           "adminOf" : [
@@ -7474,8 +8010,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         {
           "adminOf" : [
@@ -7525,8 +8064,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         {
           "adminOf" : [
@@ -7576,8 +8118,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         {
           "adminOf" : [
@@ -7627,8 +8172,11 @@
               ]
             }
           ],
+          "email" : "michael@gmail.com",
           "id" : "4",
-          "name" : "Michael"
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
         }
       ]
     },
@@ -7686,8 +8234,11 @@
             ]
           }
         ],
+        "email" : "michael@gmail.com",
         "id" : "4",
-        "name" : "Michael"
+        "isCurrent" : false,
+        "name" : "Michael",
+        "username" : "@michael"
       },
       "chat" : {
         "admins" : [
@@ -7702,8 +8253,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           }
         ],
         "id" : "1",
@@ -7733,6 +8287,7 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -7753,6 +8308,7 @@
               "id" : "0"
             },
             "text" : "hello",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -7773,6 +8329,7 @@
               "id" : "0"
             },
             "text" : "howdy",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -7793,6 +8350,7 @@
               "id" : "0"
             },
             "text" : "yo!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -7813,6 +8371,7 @@
               "id" : "0"
             },
             "text" : "wassap!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -7830,8 +8389,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           {
             "adminOf" : [
@@ -7842,8 +8404,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           {
             "adminOf" : [
@@ -7854,8 +8419,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           {
             "adminOf" : [
@@ -7866,8 +8434,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           {
             "adminOf" : [
@@ -7878,8 +8449,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           }
         ]
       },
@@ -7896,8 +8470,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -7970,11 +8547,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -7992,8 +8571,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -8066,11 +8648,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8086,8 +8670,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -8160,11 +8747,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8180,8 +8769,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -8254,11 +8846,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8266,11 +8860,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "yo!",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
@@ -8295,8 +8891,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             }
           ],
           "id" : "1",
@@ -8326,6 +8925,7 @@
               ],
               "replyTo" : null,
               "text" : "hello, ya'll",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8346,6 +8946,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8366,6 +8967,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8386,6 +8988,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8406,6 +9009,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8423,8 +9027,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "bob@gmail.com",
               "id" : "1",
-              "name" : "Bob"
+              "isCurrent" : false,
+              "name" : "Bob",
+              "username" : "@bob"
             },
             {
               "adminOf" : [
@@ -8435,8 +9042,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "alice@gmail.com",
               "id" : "2",
-              "name" : "Alice"
+              "isCurrent" : false,
+              "name" : "Alice",
+              "username" : "@alice"
             },
             {
               "adminOf" : [
@@ -8447,8 +9057,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "tom@gmail.com",
               "id" : "5",
-              "name" : "Tom"
+              "isCurrent" : false,
+              "name" : "Tom",
+              "username" : "@tom"
             },
             {
               "adminOf" : [
@@ -8459,8 +9072,11 @@
                   "id" : "1"
                 }
               ],
+              "email" : "john@gmail.com",
               "id" : "3",
-              "name" : "John"
+              "isCurrent" : false,
+              "name" : "John",
+              "username" : "@john"
             },
             {
               "adminOf" : [
@@ -8471,14 +9087,20 @@
                   "id" : "1"
                 }
               ],
+              "email" : "michael@gmail.com",
               "id" : "4",
-              "name" : "Michael"
+              "isCurrent" : false,
+              "name" : "Michael",
+              "username" : "@michael"
             }
           ]
         }
       ],
+      "email" : "john@gmail.com",
       "id" : "3",
-      "name" : "John"
+      "isCurrent" : false,
+      "name" : "John",
+      "username" : "@john"
     },
     "chat" : {
       "admins" : [
@@ -8571,8 +9193,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         }
       ],
       "id" : "1",
@@ -8588,8 +9213,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           },
           "chat" : {
             "admins" : [
@@ -8651,6 +9279,7 @@
                 "id" : "0"
               },
               "text" : "hello",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8671,6 +9300,7 @@
                 "id" : "0"
               },
               "text" : "howdy",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8691,6 +9321,7 @@
                 "id" : "0"
               },
               "text" : "yo!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8711,6 +9342,7 @@
                 "id" : "0"
               },
               "text" : "wassap!",
+              "timestamp" : -63114076800,
               "viewedBy" : [
 
               ]
@@ -8718,6 +9350,7 @@
           ],
           "replyTo" : null,
           "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8733,8 +9366,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -8807,11 +9443,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8829,8 +9467,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -8903,11 +9544,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -8923,8 +9566,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -8997,11 +9643,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -9017,8 +9665,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -9091,11 +9742,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -9191,8 +9844,11 @@
               ]
             }
           ],
+          "email" : "bob@gmail.com",
           "id" : "1",
-          "name" : "Bob"
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
         },
         {
           "adminOf" : [
@@ -9242,8 +9898,11 @@
               ]
             }
           ],
+          "email" : "alice@gmail.com",
           "id" : "2",
-          "name" : "Alice"
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
         },
         {
           "adminOf" : [
@@ -9293,8 +9952,11 @@
               ]
             }
           ],
+          "email" : "tom@gmail.com",
           "id" : "5",
-          "name" : "Tom"
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
         },
         {
           "adminOf" : [
@@ -9344,8 +10006,11 @@
               ]
             }
           ],
+          "email" : "john@gmail.com",
           "id" : "3",
-          "name" : "John"
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
         },
         {
           "adminOf" : [
@@ -9395,8 +10060,11 @@
               ]
             }
           ],
+          "email" : "michael@gmail.com",
           "id" : "4",
-          "name" : "Michael"
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
         }
       ]
     },
@@ -9454,8 +10122,11 @@
             ]
           }
         ],
+        "email" : "michael@gmail.com",
         "id" : "4",
-        "name" : "Michael"
+        "isCurrent" : false,
+        "name" : "Michael",
+        "username" : "@michael"
       },
       "chat" : {
         "admins" : [
@@ -9470,8 +10141,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           }
         ],
         "id" : "1",
@@ -9501,6 +10175,7 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -9521,6 +10196,7 @@
               "id" : "0"
             },
             "text" : "hello",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -9541,6 +10217,7 @@
               "id" : "0"
             },
             "text" : "howdy",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -9561,6 +10238,7 @@
               "id" : "0"
             },
             "text" : "yo!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -9581,6 +10259,7 @@
               "id" : "0"
             },
             "text" : "wassap!",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
@@ -9598,8 +10277,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           {
             "adminOf" : [
@@ -9610,8 +10292,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           {
             "adminOf" : [
@@ -9622,8 +10307,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           {
             "adminOf" : [
@@ -9634,8 +10322,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           {
             "adminOf" : [
@@ -9646,8 +10337,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "michael@gmail.com",
             "id" : "4",
-            "name" : "Michael"
+            "isCurrent" : false,
+            "name" : "Michael",
+            "username" : "@michael"
           }
         ]
       },
@@ -9664,8 +10358,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "alice@gmail.com",
             "id" : "2",
-            "name" : "Alice"
+            "isCurrent" : false,
+            "name" : "Alice",
+            "username" : "@alice"
           },
           "chat" : {
             "admins" : [
@@ -9738,11 +10435,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "hello",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -9760,8 +10459,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "bob@gmail.com",
             "id" : "1",
-            "name" : "Bob"
+            "isCurrent" : false,
+            "name" : "Bob",
+            "username" : "@bob"
           },
           "chat" : {
             "admins" : [
@@ -9834,11 +10536,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "howdy",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -9854,8 +10558,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "tom@gmail.com",
             "id" : "5",
-            "name" : "Tom"
+            "isCurrent" : false,
+            "name" : "Tom",
+            "username" : "@tom"
           },
           "chat" : {
             "admins" : [
@@ -9928,11 +10635,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "yo!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -9948,8 +10657,11 @@
                 "id" : "1"
               }
             ],
+            "email" : "john@gmail.com",
             "id" : "3",
-            "name" : "John"
+            "isCurrent" : false,
+            "name" : "John",
+            "username" : "@john"
           },
           "chat" : {
             "admins" : [
@@ -10022,11 +10734,13 @@
             ],
             "replyTo" : null,
             "text" : "hello, ya'll",
+            "timestamp" : -63114076800,
             "viewedBy" : [
 
             ]
           },
           "text" : "wassap!",
+          "timestamp" : -63114076800,
           "viewedBy" : [
 
           ]
@@ -10034,11 +10748,13 @@
       ],
       "replyTo" : null,
       "text" : "hello, ya'll",
+      "timestamp" : -63114076800,
       "viewedBy" : [
 
       ]
     },
     "text" : "wassap!",
+    "timestamp" : -63114076800,
     "viewedBy" : [
 
     ]
