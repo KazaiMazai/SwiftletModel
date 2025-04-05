@@ -4,6 +4,9 @@
 //
 //  Created by Sergey Kazakov on 02/04/2025.
 //
+import Foundation
+
+typealias SortIndex = Index
 
 public extension Collection {
     func sorted<Entity, T>(
@@ -15,7 +18,7 @@ public extension Collection {
             return Array(self)
         }
         
-        guard let index = Index<Entity>.ComparableValue<T>
+        guard let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(keyPath), in: context)
             .resolve()
         else {
@@ -42,7 +45,7 @@ public extension Collection {
             return Array(self)
         }
         
-        guard let index = Index<Entity>.ComparableValue<Pair<T0, T1>>
+        guard let index = SortIndex<Entity>.ComparableValue<Pair<T0, T1>>
             .query(.indexName(kp0, kp1), in: context)
             .resolve()
         else {
@@ -71,7 +74,7 @@ public extension Collection {
             return Array(self)
         }
         
-        guard let index = Index<Entity>.ComparableValue<Triplet<T0, T1, T2>>
+        guard let index = SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>
             .query(.indexName(kp0, kp1, kp2), in: context)
             .resolve()
         else {
@@ -102,7 +105,7 @@ public extension Collection {
         guard let context = first?.context else {
             return Array(self)
         }
-        guard let index = Index<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>
+        guard let index = SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>
             .query(.indexName(kp0, kp1, kp2, kp3), in: context)
             .resolve()
         else {
@@ -123,7 +126,7 @@ public extension Collection {
 
 private extension Collection {
 
-    func sorted<Entity, T>(using index: Index<Entity>.ComparableValue<T>) -> [Query<Entity>]
+    func sorted<Entity, T>(using index: SortIndex<Entity>.ComparableValue<T>) -> [Query<Entity>]
     
     where
     Element == Query<Entity>,

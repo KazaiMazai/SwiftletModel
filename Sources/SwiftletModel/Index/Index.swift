@@ -56,3 +56,4 @@ public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
         indexName = .indexName(kp0, kp1, kp2, kp3)
     }
 }
+
