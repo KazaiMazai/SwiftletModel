@@ -43,6 +43,24 @@ public extension KeyPath where Value: Equatable {
     }
 }
 
+public extension KeyPath where Value == String {
+    static func contains(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
+        SearchPredicate(keyPath: lhs, method: .contains, value: rhs)
+    }
+
+    static func startsWith(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
+        SearchPredicate(keyPath: lhs, method: .startsWith, value: rhs)
+    }
+    
+    static func endsWith(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
+        SearchPredicate(keyPath: lhs, method: .endsWith, value: rhs)
+    }
+    
+    static func matches(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
+        SearchPredicate(keyPath: lhs, method: .matches, value: rhs)
+    }
+}
+
 public struct Predicate<Entity, Value: Comparable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
@@ -95,3 +113,28 @@ public struct EqualityPredicate<Entity, Value: Equatable> {
     }
 }
 
+public struct SearchPredicate<Entity> {
+    let keyPath: KeyPath<Entity, String>
+    let method: Method
+    let value: String
+    
+    func isIncluded(_ entity: Entity) -> Bool {
+        switch method {
+        case .contains:
+            entity[keyPath: keyPath].contains(value)
+        case .startsWith:
+            entity[keyPath: keyPath].hasPrefix(value)
+        case .endsWith:
+            entity[keyPath: keyPath].hasSuffix(value)
+        case .matches:
+            entity[keyPath: keyPath].fuzzyMatches(value)
+        }
+    }
+    
+    enum Method {
+        case contains
+        case startsWith
+        case endsWith
+        case matches
+    }
+}
