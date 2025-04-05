@@ -8,9 +8,9 @@
 import Foundation
 
 @propertyWrapper
-public struct SearchIndex<Entity: EntityModelProtocol>: Sendable, Codable {
+public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, Codable {
    
-    public var wrappedValue: SearchIndex<Entity> {
+    public var wrappedValue: FullTextIndex<Entity> {
         self
     }
     

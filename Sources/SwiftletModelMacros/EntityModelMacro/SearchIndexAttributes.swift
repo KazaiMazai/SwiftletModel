@@ -16,16 +16,16 @@ import SwiftSyntaxMacros
 #endif
 
 
-struct SearchIndexAttributes {
+struct FullTextIndexAttributes {
     let relationWrapperType: WrapperType
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
 }
 
-extension SearchIndexAttributes {
+extension FullTextIndexAttributes {
    
     enum WrapperType: String, CaseIterable {
-        case relationship = "SearchIndex"
+        case relationship = "FullTextIndex"
         
         var title: String {
             rawValue

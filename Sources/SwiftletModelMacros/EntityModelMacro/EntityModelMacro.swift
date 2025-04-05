@@ -54,8 +54,8 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
             
-            let searchIndexAttributes = variableDeclarations
-                .compactMap { $0.searchIndexAttributes() }
+            let fullTextIndexAttributes = variableDeclarations
+                .compactMap { $0.fullTextIndexAttributes() }
             
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
@@ -70,7 +70,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 optionalProperties: optionalProperties,
                 indexAttributes: indexAttributes,
                 uniqueAttributes: uniqueAttributes,
-                searchIndexAttributes: searchIndexAttributes,
+                fullTextIndexAttributes: fullTextIndexAttributes,
                 accessAttribute: accessAttribute
             )
 
@@ -85,7 +85,7 @@ extension ExtensionDeclSyntax {
                                     optionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
                                     uniqueAttributes: [UniqueAttributes],
-                                    searchIndexAttributes: [SearchIndexAttributes],
+                                    fullTextIndexAttributes: [FullTextIndexAttributes],
                                     accessAttribute: AccessAttribute
                                             
     ) throws -> ExtensionDeclSyntax {
@@ -96,7 +96,7 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, searchIndexAttributes))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, fullTextIndexAttributes))
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
@@ -113,7 +113,7 @@ extension FunctionDeclSyntax {
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes],
-        _ searchIndexAttributes:  [SearchIndexAttributes]
+        _ fullTextIndexAttributes:  [FullTextIndexAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -131,8 +131,8 @@ extension FunctionDeclSyntax {
                 .map { "try updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
-            \(raw: searchIndexAttributes
-                .map { "try updateSearchIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+            \(raw: fullTextIndexAttributes
+                .map { "try updateFullTextIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             context.insert(self, options: options)
@@ -436,11 +436,11 @@ private extension VariableDeclSyntax {
         return nil
     }
     
-    func searchIndexAttributes() -> SearchIndexAttributes? {
+    func fullTextIndexAttributes() -> FullTextIndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = SearchIndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  let wrapperType = FullTextIndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
                   modifiers.isStatic
             else {
                 continue
@@ -459,10 +459,10 @@ private extension VariableDeclSyntax {
                 return nil
             }
             
-            return SearchIndexAttributes(
+            return FullTextIndexAttributes(
                 relationWrapperType: wrapperType,
                 propertyName: property,
-                keyPathAttributes: SearchIndexAttributes.KeyPathAttributes(
+                keyPathAttributes: FullTextIndexAttributes.KeyPathAttributes(
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
                 )

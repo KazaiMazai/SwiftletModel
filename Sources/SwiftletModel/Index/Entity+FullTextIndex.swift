@@ -8,13 +8,13 @@
 import Foundation
 
 extension EntityModelProtocol {
-    func updateSearchIndex<T>(
+    func updateFullTextIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
     T: Hashable {
         
-        try SearchIndex.HashableValue.updateIndex(
+        try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(keyPath),
             self,
             value: self[keyPath: keyPath],
@@ -22,14 +22,14 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSearchIndex<T0, T1>(
+    func updateFullTextIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
     where
     T0: Hashable,
     T1: Hashable {
-        try SearchIndex.HashableValue.updateIndex(
+        try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
@@ -37,7 +37,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSearchIndex<T0, T1, T2>(
+    func updateFullTextIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -46,7 +46,7 @@ extension EntityModelProtocol {
     T0: Hashable,
     T1: Hashable,
     T2: Hashable {
-        try SearchIndex.HashableValue.updateIndex(
+        try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
@@ -54,7 +54,7 @@ extension EntityModelProtocol {
         )
     }
     
-    func updateSearchIndex<T0, T1, T2, T3>(
+    func updateFullTextIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -65,7 +65,7 @@ extension EntityModelProtocol {
     T1: Hashable,
     T2: Hashable,
     T3: Hashable {
-        try SearchIndex.HashableValue.updateIndex(
+        try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
@@ -75,25 +75,25 @@ extension EntityModelProtocol {
 }
 
 extension EntityModelProtocol {
-    func removeFromSearchIndex<T>(
+    func removeFromFullTextIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
     T: Hashable {
-        try SearchIndex.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
+        try FullTextIndex.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
     
-    func removeFromSearchIndex<T0, T1>(
+    func removeFromFullTextIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
     where
     T0: Hashable,
     T1: Hashable {
-        try SearchIndex.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
+        try FullTextIndex.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
-    func removeFromSearchIndex<T0, T1, T2>(
+    func removeFromFullTextIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -102,10 +102,10 @@ extension EntityModelProtocol {
     T0: Hashable,
     T1: Hashable,
     T2: Hashable {
-        try SearchIndex.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
+        try FullTextIndex.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
-    func removeFromSearchIndex<T0, T1, T2, T3>(
+    func removeFromFullTextIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
@@ -116,6 +116,6 @@ extension EntityModelProtocol {
     T1: Hashable,
     T2: Hashable,
     T3: Hashable {
-        try SearchIndex.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
+        try FullTextIndex.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

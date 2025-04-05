@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension SearchIndex {
+extension FullTextIndex {
     @EntityModel
     struct HashableValue<Value: Hashable> {
         typealias Token = String
@@ -36,7 +36,7 @@ extension SearchIndex {
     }
 }
 
-extension SearchIndex.HashableValue {
+extension FullTextIndex.HashableValue {
     // Constants for BM25 ranking
    
     func search(_ value: String) -> [Entity.ID] {
@@ -70,7 +70,7 @@ extension SearchIndex.HashableValue {
     }
 }
 
-extension SearchIndex.HashableValue {
+extension FullTextIndex.HashableValue {
     static func updateIndex(indexName: String,
                             _ entity: Entity,
                             value: Value,
@@ -91,7 +91,7 @@ extension SearchIndex.HashableValue {
     }
 }
 
-private  extension SearchIndex.HashableValue {
+private  extension FullTextIndex.HashableValue {
     mutating func update(_ entity: Entity, 
                         value: Value) {
 
@@ -143,40 +143,35 @@ private  extension SearchIndex.HashableValue {
     }
 }
  
-extension SearchIndex.HashableValue where Value == String {
+extension FullTextIndex.HashableValue where Value == String {
     func makeTokens(for value: Value) -> [String] {
         value.makeTokens()
     }
 }
 
-extension String {
-    func makeTokens() -> [String] {
-        self.nGrams(of: 3)
-    }
-}
 
-extension SearchIndex.HashableValue where Value == Pair<String, String> {
+extension FullTextIndex.HashableValue where Value == Pair<String, String> {
     func makeTokens(for value: Value) -> [String] {
         [value.t0, value.t1]
             .flatMap { $0.makeTokens() }
     }
 }
 
-extension SearchIndex.HashableValue where Value == Triplet<String, String, String> {
+extension FullTextIndex.HashableValue where Value == Triplet<String, String, String> {
     func makeTokens(for value: Value) -> [String] {
         [value.t0, value.t1, value.t2]
             .flatMap { $0.makeTokens() }
     }
 }
 
-extension SearchIndex.HashableValue where Value == Quadruple<String, String, String, String> {
+extension FullTextIndex.HashableValue where Value == Quadruple<String, String, String, String> {
     func makeTokens(for value: Value) -> [String] {
         [value.t0, value.t1, value.t2, value.t3]
             .flatMap { $0.makeTokens() }
     }
 }
 
-extension SearchIndex.HashableValue where Value: Hashable {
+extension FullTextIndex.HashableValue where Value: Hashable {
     func makeTokens(for value: Value) -> [String] {
         String(describing: value).makeTokens()
     }
