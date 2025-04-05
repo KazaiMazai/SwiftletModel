@@ -105,7 +105,7 @@ private  extension SearchIndex.HashableValue {
             return
         }
         
-        if let existingValue {
+        if existingValue != nil {
             remove(entity)
         }
 

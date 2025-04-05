@@ -4,7 +4,7 @@
 //
 //  Created by Sergey Kazakov on 12/03/2025.
 //
-extension SortIndex {
+extension Index {
     @EntityModel
     struct HashableValue<Value: Hashable> {
         var id: String { name }
@@ -20,13 +20,7 @@ extension SortIndex {
     }
 }
 
-extension SortIndex.HashableValue {
-    enum Errors: Error {
-        case uniqueValueViolation(Entity.ID, Value)
-    }
-}
-
-extension SortIndex.HashableValue {
+extension Index.HashableValue {
     static func updateIndex(indexName: String,
                             _ entity: Entity,
                             value: Value,
@@ -50,7 +44,7 @@ extension SortIndex.HashableValue {
     }
 }
 
-private extension SortIndex.HashableValue {
+private extension Index.HashableValue {
      
     mutating func update(_ entity: Entity,
                          value: Value) {

@@ -28,7 +28,7 @@ public extension Collection {
             return Array(self)
         }
         
-        guard let index = SortIndex<Entity>.ComparableValue<T>
+        guard let index = Index<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
             .resolve()
         else {
@@ -51,7 +51,7 @@ public extension Query {
     where
     T: Comparable {
         
-        guard let index = SortIndex<Entity>.ComparableValue<T>
+        guard let index = Index<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
             .resolve()
         else {

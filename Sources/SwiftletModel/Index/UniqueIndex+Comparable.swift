@@ -8,11 +8,7 @@
 import Foundation
 import BTree
 
-enum UniqueIndex<Entity: EntityModelProtocol> {
-    
-}
-
-extension UniqueIndex {
+extension Unique {
     @EntityModel
     struct ComparableValue<Value: Comparable> {
         var id: String { name }
@@ -28,13 +24,13 @@ extension UniqueIndex {
     }
 }
 
-extension UniqueIndex.ComparableValue {
+extension Unique.ComparableValue {
     enum Errors: Error {
         case uniqueValueViolation(Entity.ID, Value)
     }
 }
 
-extension UniqueIndex.ComparableValue {
+extension Unique.ComparableValue {
     static func updateIndex(indexName: String,
                             _ entity: Entity,
                             value: Value,
@@ -58,7 +54,7 @@ extension UniqueIndex.ComparableValue {
     }
 }
 
-private extension UniqueIndex.ComparableValue {
+private extension Unique.ComparableValue {
     func checkForCollisions(_ entity: Entity,
                            value: Value,
                            in context: inout Context,
