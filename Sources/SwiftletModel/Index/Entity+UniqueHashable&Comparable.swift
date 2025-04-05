@@ -7,16 +7,15 @@
 
 import Foundation
 
+
 extension EntityModelProtocol {
     func updateIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T: Hashable {
-        
-        try Unique.HashableValue.updateIndex(
+    T: Hashable & Comparable {
+        try Unique.HashableValue<T>.updateIndex(
             indexName: .indexName(keyPath),
             self,
             value: self[keyPath: keyPath],
@@ -30,12 +29,10 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable {
-        
-        try Unique.HashableValue.updateIndex(
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable {
+        try Unique.HashableValue<Pair<T0, T1>>.updateIndex(
             indexName: .indexName(kp0, kp1),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1])),
@@ -50,13 +47,11 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable,
-    T2: Hashable {
-        
-        try Unique.HashableValue.updateIndex(
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable {
+        try Unique.HashableValue<Triplet<T0, T1, T2>>.updateIndex(
             indexName: .indexName(kp0, kp1, kp2),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2])),
@@ -72,14 +67,13 @@ extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable,
-    T2: Hashable,
-    T3: Hashable {
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable,
+    T3: Hashable & Comparable {
         
-        try Unique.HashableValue.updateIndex(
+        try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
             value: indexValue((self[keyPath: kp0], self[keyPath: kp1], self[keyPath: kp2], self[keyPath: kp3])),
@@ -95,9 +89,8 @@ extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T: Hashable {
+    T: Hashable & Comparable {
         
         try Unique.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
@@ -107,11 +100,9 @@ extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable {
-        
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable {
         try Unique.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
@@ -121,12 +112,10 @@ extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable,
-    T2: Hashable {
-        
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable {
         try Unique.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
@@ -137,13 +126,11 @@ extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
     where
-    T0: Hashable,
-    T1: Hashable,
-    T2: Hashable,
-    T3: Hashable {
-        
+    T0: Hashable & Comparable,
+    T1: Hashable & Comparable,
+    T2: Hashable & Comparable,
+    T3: Hashable & Comparable {
         try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }
