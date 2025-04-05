@@ -10,7 +10,7 @@ import Foundation
 extension SearchIndex {
     @EntityModel
     struct HashableValue<Value: Hashable> {
-        typealias Token = Value
+        typealias Token = String
         
         var id: String { name }
         
@@ -39,8 +39,8 @@ extension SearchIndex {
 extension SearchIndex.HashableValue {
     // Constants for BM25 ranking
    
-    func search(for value: Value) -> [Entity.ID] {
-        let tokens = makeTokens(for: value)
+    func search(_ value: String) -> [Entity.ID] {
+        let tokens = value.makeTokens()
         var scores: [Entity.ID: Double] = [:]
         
         for token in tokens {
@@ -140,20 +140,45 @@ private  extension SearchIndex.HashableValue {
         tokensForEntities[entity.id] = nil
         tokenFrequenciesForEntities[entity.id] = nil
         valueLenghtsForEntities[entity.id] = nil
-        
-        
     }
 }
  
 extension SearchIndex.HashableValue where Value == String {
-    func makeTokens(for value: String) -> [String] {
-        value.nGrams(of: 3)
+    func makeTokens(for value: Value) -> [String] {
+        value.makeTokens()
     }
 }
 
+extension String {
+    func makeTokens() -> [String] {
+        self.nGrams(of: 3)
+    }
+}
+
+extension SearchIndex.HashableValue where Value == Pair<String, String> {
+    func makeTokens(for value: Value) -> [String] {
+        [value.t0, value.t1]
+            .flatMap { $0.makeTokens() }
+    }
+}
+
+extension SearchIndex.HashableValue where Value == Triplet<String, String, String> {
+    func makeTokens(for value: Value) -> [String] {
+        [value.t0, value.t1, value.t2]
+            .flatMap { $0.makeTokens() }
+    }
+}
+
+extension SearchIndex.HashableValue where Value == Quadruple<String, String, String, String> {
+    func makeTokens(for value: Value) -> [String] {
+        [value.t0, value.t1, value.t2, value.t3]
+            .flatMap { $0.makeTokens() }
+    }
+}
 
 extension SearchIndex.HashableValue where Value: Hashable {
-    func makeTokens(for value: Value) -> [Value] {
-        [value]
+    func makeTokens(for value: Value) -> [String] {
+        String(describing: value).makeTokens()
     }
 }
+
