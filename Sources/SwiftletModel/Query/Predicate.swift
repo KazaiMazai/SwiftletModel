@@ -33,14 +33,14 @@ public extension KeyPath where Value: Comparable {
     }   
 }
 
-
-enum Method {
-    case equal
-    case lessThan
-    case lessThanOrEqual
-    case greaterThan
-    case greaterThanOrEqual
-    case notEqual
+public extension KeyPath where Value: Equatable {
+    static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> EqualityPredicate<Root, Value> {
+        EqualityPredicate(keyPath: lhs, method: .equal, value: rhs)
+    }
+    
+    static func != (lhs: KeyPath<Root, Value>, rhs: Value) -> EqualityPredicate<Root, Value> {
+        EqualityPredicate(keyPath: lhs, method: .notEqual, value: rhs)
+    }
 }
 
 public struct Predicate<Entity, Value: Comparable> {
@@ -64,4 +64,34 @@ public struct Predicate<Entity, Value: Comparable> {
             entity[keyPath: keyPath] >= value   
         }
     }
+    
+    enum Method {
+        case equal
+        case lessThan
+        case lessThanOrEqual
+        case greaterThan
+        case greaterThanOrEqual
+        case notEqual
+    }
 }
+
+public struct EqualityPredicate<Entity, Value: Equatable> {
+    let keyPath: KeyPath<Entity, Value>
+    let method: Method
+    let value: Value
+ 
+    func isIncluded(_ entity: Entity) -> Bool {
+        switch method {
+        case .equal:
+            entity[keyPath: keyPath] == value
+        case .notEqual:
+            entity[keyPath: keyPath] != value
+        }
+    }
+    
+    enum Method {
+        case equal
+        case notEqual
+    }
+}
+

@@ -7,7 +7,6 @@
 
 import Collections
 
-
 public extension Collection {
     static func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>,
@@ -34,6 +33,22 @@ public extension Collection {
 
             let filterResult = Set(index.filter(predicate))
             return filter( { filterResult.contains($0.id) })
+        }
+        
+        return self
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    func filter<Entity, T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Equatable {
+        
+        guard let context = first?.context else {
+            return Array(self)
         }
         
         return self
@@ -72,6 +87,38 @@ public extension Query {
         in context: Context) -> [Query<Entity>]
     
     where
+    T: Comparable & Hashable {
+
+        if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+                .find(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+
+        if let index = Index<Entity>.ComparableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+                .filter(predicate)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+        
+        return Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
     T: Hashable {
 
         if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
@@ -89,38 +136,20 @@ public extension Query {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-//
-//    static func filter<T>(
-//        _ predicate: Predicate<Entity, T>,
-//        in context: Context) -> [Query<Entity>]
-//    
-//    where
-//    T: Comparable & Hashable {
-//
-//        if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
-//            .query(.indexName(predicate.keyPath), in: context)
-//            .resolve() {
-//
-//            return index
-//                .find(predicate.value)
-//                .map { Query<Entity>(context: context, id: $0) }
-//        }
-//
-//        if let index = Index<Entity>.ComparableValue<T>
-//            .query(.indexName(predicate.keyPath), in: context)
-//            .resolve() {
-//
-//            return index
-//                .filter(predicate)
-//                .map { Query<Entity>(context: context, id: $0) }
-//        }
-//        
-//        return Entity
-//            .query(in: context)
-//            .resolve()
-//            .filter(predicate.isIncluded)
-//            .query(in: context)
-//    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
+    T: Equatable {
+
+        Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
 }
 
 public extension Collection {
@@ -133,20 +162,28 @@ public extension Collection {
     }
 
     func and<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
     where
     Element == Query<Entity>,
     T: Hashable {
         filter(predicate)
     }
+    
+    func and<Entity, T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Equatable {
+        filter(predicate)
+    }
 
-//    func and<Entity, T>(
-//        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
-//    where
-//    Element == Query<Entity>,
-//    T: Hashable & Comparable  {
-//        filter(predicate)
-//    }
+    func and<Entity, T>(
+        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Hashable & Comparable  {
+        filter(predicate)
+    }
     
     func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
     where
