@@ -44,20 +44,20 @@ public extension KeyPath where Value: Equatable {
 }
 
 public extension KeyPath where Value == String {
-    static func contains(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
-        SearchPredicate(keyPath: lhs, method: .contains, value: rhs)
+    static func contains(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .contains, value: rhs)
     }
 
-    static func startsWith(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
-        SearchPredicate(keyPath: lhs, method: .startsWith, value: rhs)
+    static func startsWith(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .startsWith, value: rhs)
     }
     
-    static func endsWith(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
-        SearchPredicate(keyPath: lhs, method: .endsWith, value: rhs)
+    static func endsWith(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .endsWith, value: rhs)
     }
     
-    static func matches(lhs: KeyPath<Root, Value>, rhs: String) -> SearchPredicate<Root> {
-        SearchPredicate(keyPath: lhs, method: .matches, value: rhs)
+    static func matches(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .matches, value: rhs)
     }
 }
 
@@ -113,7 +113,7 @@ public struct EqualityPredicate<Entity, Value: Equatable> {
     }
 }
 
-public struct SearchPredicate<Entity> {
+public struct StringPredicate<Entity> {
     let keyPath: KeyPath<Entity, String>
     let method: Method
     let value: String

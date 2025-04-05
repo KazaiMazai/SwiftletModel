@@ -104,7 +104,7 @@ public extension Query {
 
 public extension Query {
     static func filter(
-        _ predicate: SearchPredicate<Entity>,
+        _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
         
         if predicate.method == .matches,

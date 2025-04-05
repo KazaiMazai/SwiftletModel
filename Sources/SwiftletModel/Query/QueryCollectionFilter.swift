@@ -59,7 +59,7 @@ public extension Collection {
 
 public extension Collection {
     static func filter<Entity>(
-        _ predicate: SearchPredicate<Entity>,
+        _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>]
     where
     Element == Query<Entity>  {
@@ -67,7 +67,7 @@ public extension Collection {
     }
      
     func filter<Entity>(
-        _ predicate: SearchPredicate<Entity>) -> [Query<Entity>]
+        _ predicate: StringPredicate<Entity>) -> [Query<Entity>]
     where
     Element == Query<Entity> {
         
