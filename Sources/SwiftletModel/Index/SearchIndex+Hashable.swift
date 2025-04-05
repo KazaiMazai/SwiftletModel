@@ -7,10 +7,6 @@
 
 import Foundation
 
-enum SearchIndex<Entity: EntityModelProtocol> {
-    
-}
-
 extension SearchIndex {
     @EntityModel
     struct HashableValue<Value: Hashable> {
