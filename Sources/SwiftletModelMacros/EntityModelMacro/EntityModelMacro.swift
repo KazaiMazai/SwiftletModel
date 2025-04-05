@@ -54,6 +54,9 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
             
+            let searchIndexAttributes = variableDeclarations
+                .compactMap { $0.searchIndexAttributes() }
+            
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
             
@@ -67,6 +70,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 optionalProperties: optionalProperties,
                 indexAttributes: indexAttributes,
                 uniqueAttributes: uniqueAttributes,
+                searchIndexAttributes: searchIndexAttributes,
                 accessAttribute: accessAttribute
             )
 
@@ -81,6 +85,7 @@ extension ExtensionDeclSyntax {
                                     optionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
                                     uniqueAttributes: [UniqueAttributes],
+                                    searchIndexAttributes: [SearchIndexAttributes],
                                     accessAttribute: AccessAttribute
                                             
     ) throws -> ExtensionDeclSyntax {
@@ -91,7 +96,7 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, searchIndexAttributes))
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
@@ -107,7 +112,8 @@ extension FunctionDeclSyntax {
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
-        _ uniqueAttributes: [UniqueAttributes]
+        _ uniqueAttributes: [UniqueAttributes],
+        _ searchIndexAttributes:  [SearchIndexAttributes]
     ) throws -> FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
@@ -123,6 +129,10 @@ extension FunctionDeclSyntax {
             )
             \(raw: indexAttributes
                 .map { "try updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: searchIndexAttributes
+                .map { "try updateSearchIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             context.insert(self, options: options)
@@ -421,6 +431,41 @@ private extension VariableDeclSyntax {
                     labeledExprListSyntax: keyPathsExprList
                 ),
                 collisions: UniqueAttributes.CollisionsResolverAttribute(labeledExprListSyntax: keyPathsExprList)
+            )
+        }
+        return nil
+    }
+    
+    func searchIndexAttributes() -> SearchIndexAttributes? {
+        for attribute in self.attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = SearchIndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  modifiers.isStatic
+            else {
+                continue
+            }
+           
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+                  let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+            else {
+                return nil
+            }
+            
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+                
+                return nil
+            }
+            
+            return SearchIndexAttributes(
+                relationWrapperType: wrapperType,
+                propertyName: property,
+                keyPathAttributes: SearchIndexAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                )
             )
         }
         return nil
