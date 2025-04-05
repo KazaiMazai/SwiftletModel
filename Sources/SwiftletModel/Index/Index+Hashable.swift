@@ -42,6 +42,10 @@ extension Index.HashableValue {
         index.remove(entity)
         try index.save(to: &context)
     }
+    
+    func find(_ value: Value) -> Set<Entity.ID> {
+        index[value] ?? []
+    }
 }
 
 private extension Index.HashableValue {

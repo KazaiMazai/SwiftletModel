@@ -33,6 +33,16 @@ public extension KeyPath where Value: Comparable {
     }   
 }
 
+
+enum Method {
+    case equal
+    case lessThan
+    case lessThanOrEqual
+    case greaterThan
+    case greaterThanOrEqual
+    case notEqual
+}
+
 public struct Predicate<Entity, Value: Comparable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
@@ -53,14 +63,5 @@ public struct Predicate<Entity, Value: Comparable> {
         case .greaterThanOrEqual:
             entity[keyPath: keyPath] >= value   
         }
-    }
-    
-    enum Method {
-        case equal
-        case lessThan
-        case lessThanOrEqual
-        case greaterThan
-        case greaterThanOrEqual
-        case notEqual
     }
 }
