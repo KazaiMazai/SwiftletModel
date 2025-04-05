@@ -29,7 +29,7 @@ extension SearchIndex {
        
         private var averageValueLength: Double = 0.0
         private var totalLengthSum: Int = 0
-        private var enitiesCount: Int = 0
+        private var entitiesCount: Int = 0
 
         private let k1: Double = 1.2  // term frequency saturation parameter
         private let b: Double = 0.75  // length normalization parameter
@@ -117,13 +117,13 @@ private  extension SearchIndex.HashableValue {
         }
      
         totalLengthSum += tokens.count
-        enitiesCount += 1
+        entitiesCount += 1
         indexedValues[entity.id] = value
         tokensForEntities[entity.id] = Set(tokens)
         tokenFrequenciesForEntities[entity.id] = tokens.reduce(into: [:]) { $0[$1, default: 0] += 1 }
         valueLenghtsForEntities[entity.id] = tokens.count
         
-        averageValueLength = Double(totalLengthSum) / Double(max(1, enitiesCount))
+        averageValueLength = Double(totalLengthSum) / Double(max(1, entitiesCount))
     }
     
     mutating func remove(_ entity: Entity) {
@@ -137,8 +137,8 @@ private  extension SearchIndex.HashableValue {
             index[token] = ids.isEmpty ? nil : ids
         }
         totalLengthSum -= valueLenghtsForEntities[entity.id] ?? 0
-        enitiesCount -= 1
-        averageValueLength = Double(totalLengthSum) / Double(max(1, enitiesCount))
+        entitiesCount -= 1
+        averageValueLength = Double(totalLengthSum) / Double(max(1, entitiesCount))
         
         indexedValues[entity.id] = nil
         tokensForEntities[entity.id] = nil
