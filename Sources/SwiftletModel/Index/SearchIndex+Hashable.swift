@@ -21,13 +21,15 @@ extension SearchIndex {
         let name: String
         
         private var index: [Token: Set<Entity.ID>] = [:]
+        
         private var indexedValues: [Entity.ID: Value] = [:]
         private var tokensForEntities: [Entity.ID: Set<Token>] = [:]
         private var tokenFrequenciesForEntities: [Entity.ID: [Token: Int]] = [:]
         private var valueLenghtsForEntities: [Entity.ID: Int] = [:]
+       
         private var averageValueLength: Double = 0.0
         private var totalLengthSum: Int = 0
-        private var docCount: Int = 0
+        private var enitiesCount: Int = 0
 
         private let k1: Double = 1.2  // term frequency saturation parameter
         private let b: Double = 0.75  // length normalization parameter
@@ -115,18 +117,17 @@ private  extension SearchIndex.HashableValue {
         }
      
         totalLengthSum += tokens.count
-        docCount += 1
+        enitiesCount += 1
         indexedValues[entity.id] = value
         tokensForEntities[entity.id] = Set(tokens)
         tokenFrequenciesForEntities[entity.id] = tokens.reduce(into: [:]) { $0[$1, default: 0] += 1 }
         valueLenghtsForEntities[entity.id] = tokens.count
         
-        averageValueLength = Double(totalLengthSum) / Double(max(1, docCount))
+        averageValueLength = Double(totalLengthSum) / Double(max(1, enitiesCount))
     }
     
     mutating func remove(_ entity: Entity) {
-        guard let value = indexedValues[entity.id],
-                let tokens = tokensForEntities[entity.id] 
+        guard let tokens = tokensForEntities[entity.id]
          else {
             return
         }
@@ -136,14 +137,15 @@ private  extension SearchIndex.HashableValue {
             index[token] = ids.isEmpty ? nil : ids
         }
         totalLengthSum -= valueLenghtsForEntities[entity.id] ?? 0
-        docCount -= 1
-
+        enitiesCount -= 1
+        averageValueLength = Double(totalLengthSum) / Double(max(1, enitiesCount))
+        
         indexedValues[entity.id] = nil
         tokensForEntities[entity.id] = nil
         tokenFrequenciesForEntities[entity.id] = nil
         valueLenghtsForEntities[entity.id] = nil
         
-        averageValueLength = Double(totalLengthSum) / Double(max(1, docCount))
+        
     }
 }
  
