@@ -100,8 +100,6 @@ public struct StringPredicate<Entity> {
     let method: Method
     let value: String
     
-    var isComposition: Bool { keyPaths.isComposition() }
-    
     func isIncluded(_ entity: Entity) -> Bool {
         switch method {
         case .contains:
@@ -164,12 +162,3 @@ public extension StringPredicate {
     }
 }
 
-extension Collection {
-    func isComposition<Root, Value>() -> Bool where Element == KeyPath<Root, Value> {
-        count > 1
-    }
-    
-    func isSingle<Root, Value>() -> Bool where Element == KeyPath<Root, Value> {
-        count == 1
-    }
-}

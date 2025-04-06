@@ -14,22 +14,10 @@ extension EntityModelProtocol {
     where
     T: Hashable {
         
-        guard !keyPaths.isComposition(),
-              let keyPath = keyPaths.first
-        else {
-            try FullTextIndex.HashableValue.updateIndex(
-                indexName: .indexName(keyPaths),
-                self,
-                value: keyPaths.map { self[keyPath: $0] },
-                in: &context
-            )
-            return
-        }
-        
         try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(keyPaths),
             self,
-            value: self[keyPath: keyPath],
+            value: keyPaths.map { self[keyPath: $0] },
             in: &context
         )
     }
@@ -42,13 +30,6 @@ extension EntityModelProtocol {
     where
     T: Hashable {
         
-        guard !keyPaths.isComposition(), let keyPath = keyPaths.first else {
-            try FullTextIndex.HashableValue<[T]>.removeFromIndex(indexName: .indexName(keyPaths), self, in: &context)
-            return
-        }
-        
-        try FullTextIndex.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPaths), self, in: &context)
-
-        
+        try FullTextIndex.HashableValue<[T]>.removeFromIndex(indexName: .indexName(keyPaths), self, in: &context)
     }
 }

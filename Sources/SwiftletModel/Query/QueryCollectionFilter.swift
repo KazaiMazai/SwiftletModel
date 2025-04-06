@@ -78,8 +78,7 @@ public extension Collection {
             return Array(self)
         }
         
-        if predicate.method.isMatching, predicate.isComposition,
-            let index = FullTextIndex<Entity>
+        if predicate.method.isMatching, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
@@ -87,17 +86,7 @@ public extension Collection {
             let filterResult = Set(index.search(predicate.value))
             return filter( { filterResult.contains($0.id) })
         }
-        
-        if predicate.method.isMatching, !predicate.isComposition,
-            let index = FullTextIndex<Entity>
-            .HashableValue<String>
-            .query(.indexName(predicate.keyPaths), in: context)
-            .resolve() {
-
-            let filterResult = Set(index.search(predicate.value))
-            return filter( { filterResult.contains($0.id) })
-        }
-        
+         
         return self
             .resolve()
             .filter(predicate.isIncluded)
