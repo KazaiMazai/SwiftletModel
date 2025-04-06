@@ -153,27 +153,6 @@ extension FullTextIndex.HashableValue where Value == [String] {
     }
 }
 
-extension FullTextIndex.HashableValue where Value == Pair<String, String> {
-    func makeTokens(for value: Value) -> [String] {
-        [value.t0, value.t1]
-            .flatMap { $0.makeTokens() }
-    }
-}
-
-extension FullTextIndex.HashableValue where Value == Triplet<String, String, String> {
-    func makeTokens(for value: Value) -> [String] {
-        [value.t0, value.t1, value.t2]
-            .flatMap { $0.makeTokens() }
-    }
-}
-
-extension FullTextIndex.HashableValue where Value == Quadruple<String, String, String, String> {
-    func makeTokens(for value: Value) -> [String] {
-        [value.t0, value.t1, value.t2, value.t3]
-            .flatMap { $0.makeTokens() }
-    }
-}
-
 extension FullTextIndex.HashableValue where Value: Hashable {
     func makeTokens(for value: Value) -> [String] {
         String(describing: value).makeTokens()
