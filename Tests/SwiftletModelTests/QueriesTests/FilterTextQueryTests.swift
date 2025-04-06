@@ -53,7 +53,7 @@ final class FilterTextQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
 
-    func test_WhenStartsWithFilterNoIndex_ThenEqualPlainFiltering() throws {
+    func test_WhenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
             .filter { $0.text.hasPrefix("bananas") }
        
@@ -65,7 +65,7 @@ final class FilterTextQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
     
-    func test_WhenStartsWithFilterIndexed_ThenEqualPlainFiltering() throws {
+    func test_WhenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
             .filter { $0.text.starts(with: "bananas") }
        
@@ -77,7 +77,7 @@ final class FilterTextQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
     
-    func test_WhenEndsWithFilterNoIndex_ThenEqualPlainFiltering() throws {
+    func test_WhenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
             .filter { $0.text.hasSuffix("bananas") }
        
@@ -89,7 +89,7 @@ final class FilterTextQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
     
-    func test_WhenEndsWithFilterIndexed_ThenEqualPlainFiltering() throws {
+    func test_WhenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
             .filter { $0.text.hasSuffix("bananas") }
        
