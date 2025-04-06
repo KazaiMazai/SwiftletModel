@@ -57,11 +57,11 @@ public extension KeyPath where Value == String {
     }
     
     static func ~^ (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
-        StringPredicate(keyPath: lhs, method: .endsWith, value: rhs)
+        StringPredicate(keyPath: lhs, method: .hasSuffix, value: rhs)
     }
     
     static func ^~ (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
-        StringPredicate(keyPath: lhs, method: .startsWith, value: rhs)
+        StringPredicate(keyPath: lhs, method: .hasPrefix, value: rhs)
     }
 }
  
@@ -126,9 +126,9 @@ public struct StringPredicate<Entity> {
         switch method {
         case .contains:
             entity[keyPath: keyPath].contains(value)
-        case .startsWith:
+        case .hasPrefix:
             entity[keyPath: keyPath].hasPrefix(value)
-        case .endsWith:
+        case .hasSuffix:
             entity[keyPath: keyPath].hasSuffix(value)
         case .matches:
             entity[keyPath: keyPath].fuzzyMatches(value)
@@ -137,8 +137,8 @@ public struct StringPredicate<Entity> {
     
     public enum Method {
         case contains
-        case startsWith
-        case endsWith
+        case hasPrefix
+        case hasSuffix
         case matches
     }
 }
@@ -148,12 +148,12 @@ public extension StringPredicate {
         StringPredicate(keyPath: keyPath, method: .contains, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, startsWith value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .startsWith, value: value)
+    static func string(_ keyPath: KeyPath<Entity, String>, hasPrefix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .hasPrefix, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, endsWith value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .endsWith, value: value)
+    static func string(_ keyPath: KeyPath<Entity, String>, hasSuffix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .hasSuffix, value: value)
     }
 
     static func string(_ keyPath: KeyPath<Entity, String>, matches value: String) -> StringPredicate<Entity> {

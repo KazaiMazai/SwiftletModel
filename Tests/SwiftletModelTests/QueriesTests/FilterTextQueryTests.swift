@@ -58,7 +58,7 @@ final class FilterTextQueryTests: XCTestCase {
             .filter { $0.text.hasPrefix("bananas") }
        
         let filterResult = TestingModels.StringNotIndexed
-            .filter(.string(\.text, startsWith: "bananas"), in: context)
+            .filter(.string(\.text, hasPrefix: "bananas"), in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -70,7 +70,7 @@ final class FilterTextQueryTests: XCTestCase {
             .filter { $0.text.starts(with: "bananas") }
        
         let filterResult = TestingModels.StringFullTextIndexed
-            .filter(.string(\.text, startsWith: "bananas"), in: context)
+            .filter(.string(\.text, hasPrefix: "bananas"), in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -82,7 +82,7 @@ final class FilterTextQueryTests: XCTestCase {
             .filter { $0.text.hasSuffix("bananas") }
        
         let filterResult = TestingModels.StringNotIndexed
-            .filter(.string(\.text, endsWith: "bananas"), in: context)
+            .filter(.string(\.text, hasSuffix: "bananas"), in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -94,7 +94,7 @@ final class FilterTextQueryTests: XCTestCase {
             .filter { $0.text.hasSuffix("bananas") }
        
         let filterResult = TestingModels.StringFullTextIndexed
-            .filter(.string(\.text, endsWith: "bananas"), in: context)
+            .filter(.string(\.text, hasSuffix: "bananas"), in: context)
             .resolve()
         
         XCTAssertEqual(Set(filterResult.map { $0.id }),
