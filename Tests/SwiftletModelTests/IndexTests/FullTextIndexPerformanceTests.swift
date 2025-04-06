@@ -36,7 +36,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
                 .query(in: context)
                 .resolve()
                 .filter {
-                    $0.text.contains("banan")
+                    $0.text.contains("banan", caseSensitive: false)
                 }
         }
     }
