@@ -65,6 +65,9 @@ public extension Collection {
     Element == Query<Entity>  {
         Query.filter(predicate, in: context)
     }
+}
+
+public extension Collection {
      
     func filter<Entity>(
         _ predicate: StringPredicate<Entity>) -> [Query<Entity>]
@@ -90,5 +93,4 @@ public extension Collection {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
 }

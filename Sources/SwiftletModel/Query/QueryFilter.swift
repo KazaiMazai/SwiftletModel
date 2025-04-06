@@ -124,5 +124,4 @@ public extension Query {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
 }

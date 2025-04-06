@@ -120,6 +120,12 @@ public extension EntityModelProtocol {
     T: Hashable & Comparable {
         Query<Self>.filter(predicate, in: context)
     }
+    
+    static func filter(
+        _ predicate: StringPredicate<Self>,
+        in context: Context) -> [Query<Self>] {
+        Query<Self>.filter(predicate, in: context)
+    }
 }
 
 public extension Collection {

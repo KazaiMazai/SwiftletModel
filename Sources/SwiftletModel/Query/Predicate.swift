@@ -43,24 +43,28 @@ public extension KeyPath where Value: Equatable {
     }
 }
 
+infix operator ~~ : ComparisonPrecedence   // contains
+infix operator ^~ : ComparisonPrecedence   // starts with
+infix operator ~^ : ComparisonPrecedence   // ends with
+infix operator ~= : ComparisonPrecedence   // fuzzy matches
 public extension KeyPath where Value == String {
-    static func contains(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
-        StringPredicate(keyPath: lhs, method: .contains, value: rhs)
+    static func ~= (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .matches, value: rhs)
     }
 
-    static func startsWith(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
-        StringPredicate(keyPath: lhs, method: .startsWith, value: rhs)
+    static func ~~ (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .contains, value: rhs)
     }
     
-    static func endsWith(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
+    static func ~^ (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
         StringPredicate(keyPath: lhs, method: .endsWith, value: rhs)
     }
     
-    static func matches(lhs: KeyPath<Root, Value>, rhs: String) -> StringPredicate<Root> {
-        StringPredicate(keyPath: lhs, method: .matches, value: rhs)
+    static func ^~ (lhs: KeyPath<Root, String>, rhs: String) -> StringPredicate<Root> {
+        StringPredicate(keyPath: lhs, method: .startsWith, value: rhs)
     }
 }
-
+ 
 public struct Predicate<Entity, Value: Comparable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
@@ -131,10 +135,28 @@ public struct StringPredicate<Entity> {
         }
     }
     
-    enum Method {
+    public enum Method {
         case contains
         case startsWith
         case endsWith
         case matches
+    }
+}
+
+public extension StringPredicate {
+    static func string(_ keyPath: KeyPath<Entity, String>, contains value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .contains, value: value)
+    }
+
+    static func string(_ keyPath: KeyPath<Entity, String>, startsWith value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .startsWith, value: value)
+    }
+
+    static func string(_ keyPath: KeyPath<Entity, String>, endsWith value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .endsWith, value: value)
+    }
+
+    static func string(_ keyPath: KeyPath<Entity, String>, matches value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPath: keyPath, method: .matches, value: value)
     }
 }
