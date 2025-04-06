@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-final class FilterTextQueryTests: XCTestCase {
+final class FilterStringQueryTests: XCTestCase {
     var context = Context()
     
     lazy var notIndexedModels = {
