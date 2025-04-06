@@ -133,6 +133,15 @@ public struct StringPredicate<Entity> {
                 return false
             }
         }
+        
+        var isIncluding: Bool {
+            switch self {
+            case .contains, .hasPrefix, .hasSuffix:
+                return true
+            default:
+                return false
+            }
+        }
     }
 }
 

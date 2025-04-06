@@ -76,8 +76,8 @@ public extension Query {
             .resolve() {
 
             return index
-            .find(predicate.value)
-            .map { Query<Entity>(context: context, id: $0) }
+                .find(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
         }
         
         return Entity
@@ -115,6 +115,19 @@ public extension Query {
             return index
                 .search(predicate.value)
                 .map { Query<Entity>(context: context, id: $0) }
+        }
+
+         if predicate.method.isIncluding, let index = FullTextIndex<Entity>
+            .HashableValue<[String]>
+            .query(.indexName(predicate.keyPaths), in: context)
+            .resolve() {
+            
+            return index
+                .search(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+                .resolve()
+                .filter(predicate.isIncluded)
+                .query(in: context)
         }
         
         return Entity

@@ -36,7 +36,7 @@ final class FilterStringQueryTests: XCTestCase {
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, matches: "ananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
@@ -48,7 +48,7 @@ final class FilterStringQueryTests: XCTestCase {
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, matches: "ananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
@@ -60,67 +60,68 @@ final class FilterStringQueryTests: XCTestCase {
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, contains: "ananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+        let expected = indexedModels
             .filter { $0.text.contains("ananas") }
        
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, contains: "ananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
 
     func test_WhenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
-            .filter { $0.text.hasPrefix("bananas") }
+            .filter { $0.text.hasPrefix("Sweet") }
        
         let filterResult = TestingModels.StringNotIndexed
-            .filter(.string(\.text, hasPrefix: "bananas"), in: context)
+            .filter(.string(\.text, hasPrefix: "Sweet"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
-            .filter { $0.text.starts(with: "bananas") }
+        let expected = indexedModels
+            .filter { $0.text.hasPrefix("Sweet") }
        
         let filterResult = TestingModels.StringFullTextIndexed
-            .filter(.string(\.text, hasPrefix: "bananas"), in: context)
+            .filter(.string(\.text, hasPrefix: "Sweet"), in: context)
             .resolve()
         
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let expected = notIndexedModels
-            .filter { $0.text.hasSuffix("bananas") }
+            .filter { $0.text.hasSuffix("selection") }
        
         let filterResult = TestingModels.StringNotIndexed
-            .filter(.string(\.text, hasSuffix: "bananas"), in: context)
+            .filter(.string(\.text, hasSuffix: "selection"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
-            .filter { $0.text.hasSuffix("bananas") }
+        let expected = indexedModels
+            .filter { $0.text.hasSuffix("selection") }
        
         let filterResult = TestingModels.StringFullTextIndexed
-            .filter(.string(\.text, hasSuffix: "bananas"), in: context)
+            .filter(.string(\.text, hasSuffix: "selection"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
@@ -132,19 +133,19 @@ final class FilterStringQueryTests: XCTestCase {
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+        let expected = indexedModels
             .filter { !$0.text.starts(with: "bananas") }
        
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
@@ -156,19 +157,20 @@ final class FilterStringQueryTests: XCTestCase {
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas"), in: context)
             .resolve()
-        
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }
     
     func test_WhenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+        let expected = indexedModels
             .filter { !$0.text.hasSuffix("bananas") }
        
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas"), in: context)
             .resolve()
         
+        XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
     }

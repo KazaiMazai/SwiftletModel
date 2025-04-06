@@ -214,16 +214,18 @@ extension TestingModels.ExtensivelyIndexed {
 extension TestingModels.StringFullTextIndexed {
     static func shuffled() -> [TestingModels.StringFullTextIndexed] {
        Array.fruitTexts
-        .map { text in TestingModels.StringFullTextIndexed(id: text, text: text) }
-        .shuffled() 
+        .enumerated()
+        .map { idx, text in TestingModels.StringFullTextIndexed(id: "\(idx)", text: text) }
+        .shuffled()
     }
 }
 
 extension TestingModels.StringNotIndexed {
     static func shuffled() -> [TestingModels.StringNotIndexed] {
        Array.fruitTexts
-        .map { text in TestingModels.StringNotIndexed(id: text, text: text) }
-        .shuffled() 
+        .enumerated()
+        .map { idx, text in TestingModels.StringNotIndexed(id: "\(idx)", text: text) }
+        .shuffled()
     }
 }
 

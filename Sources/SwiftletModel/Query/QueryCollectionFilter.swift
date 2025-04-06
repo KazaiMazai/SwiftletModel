@@ -86,6 +86,19 @@ public extension Collection {
             let filterResult = Set(index.search(predicate.value))
             return filter( { filterResult.contains($0.id) })
         }
+
+         if predicate.method.isIncluding, let index = FullTextIndex<Entity>
+            .HashableValue<[String]>
+            .query(.indexName(predicate.keyPaths), in: context)
+            .resolve() {
+
+            let filterResult = Set(index.search(predicate.value))
+            return self
+                .filter( { filterResult.contains($0.id) })
+                .resolve()
+                .filter(predicate.isIncluded)
+                .query(in: context)
+        }
          
         return self
             .resolve()
