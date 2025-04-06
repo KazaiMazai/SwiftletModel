@@ -75,11 +75,12 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     
     func test_RawMatchTextFilter_FilterPerformance() throws {
         measure {
+            let tokens = "banan".makeTokens()
             let _ = TestingModels.StringNotIndexed
                 .query(in: context)
                 .resolve()
                 .filter {
-                    $0.text.matches(fuzzy: "banan")
+                    $0.text.matches(tokens: tokens)
                 }
         }
     }

@@ -108,8 +108,8 @@ public struct StringPredicate<Entity> {
             entity[keyPath: keyPath].hasPrefix(value)
         case .hasSuffix:
             entity[keyPath: keyPath].hasSuffix(value)
-        case .matches:
-            entity[keyPath: keyPath].matches(fuzzy: value)
+        case .matches(let tokens):
+            entity[keyPath: keyPath].matches(tokens: tokens)
         case .notHasPrefix:
             !entity[keyPath: keyPath].hasPrefix(value)
         case .notHasSuffix:
@@ -121,9 +121,18 @@ public struct StringPredicate<Entity> {
         case contains
         case hasPrefix
         case hasSuffix
-        case matches
+        case matches(tokens: [String])
         case notHasPrefix
         case notHasSuffix
+
+        var isMatching: Bool {
+            switch self {
+            case .matches:
+                return true
+            default:
+                return false
+            }
+        }
     }
 }
 
@@ -141,7 +150,7 @@ public extension StringPredicate {
     }
 
     static func string(_ keyPath: KeyPath<Entity, String>, matches value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .matches, value: value)
+        StringPredicate(keyPath: keyPath, method: .matches(tokens: value.makeTokens()), value: value)
     }
 
     static func string(_ keyPath: KeyPath<Entity, String>, notHavingPrefix value: String) -> StringPredicate<Entity> {

@@ -14,7 +14,6 @@ extension String {
 }
 
 extension String {
-    
     func nGrams(of length: Int) -> [String] {
         guard length > 0 else { return [] }
         return self

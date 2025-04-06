@@ -107,7 +107,7 @@ public extension Query {
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
         
-        if predicate.method == .matches,
+        if predicate.method.isMatching,
             let index = FullTextIndex<Entity>
             .HashableValue<String>
             .query(.indexName(predicate.keyPath), in: context)

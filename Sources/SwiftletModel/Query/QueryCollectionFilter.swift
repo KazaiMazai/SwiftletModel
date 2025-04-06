@@ -78,7 +78,7 @@ public extension Collection {
             return Array(self)
         }
         
-        if predicate.method == .matches,
+        if predicate.method.isMatching,
             let index = FullTextIndex<Entity>
             .HashableValue<String>
             .query(.indexName(predicate.keyPath), in: context)
