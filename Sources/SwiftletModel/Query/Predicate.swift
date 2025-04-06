@@ -146,53 +146,59 @@ public struct StringPredicate<Entity> {
 }
 
 public extension StringPredicate {
-    static func string(_ keyPaths: KeyPath<Entity, String>..., contains value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       contains value: String,
+                       caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .contains(caseSensitive: caseSensitive), value: value)
     }
 
-    static func string(_ keyPaths: KeyPath<Entity, String>..., hasPrefix value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity,
+                       String>...,
+                       hasPrefix value: String,
+                       caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .hasPrefix(caseSensitive: caseSensitive), value: value)
     }
 
-    static func string(_ keyPaths: KeyPath<Entity, String>..., hasSuffix value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       hasSuffix value: String,
+                       caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .hasSuffix(caseSensitive: caseSensitive), value: value)
     }
 
-    static func string(_ keyPaths: KeyPath<Entity, String>..., matches value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       matches value: String) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .matches(tokens: value.makeTokens()), value: value)
     }
 
-    static func string(_ keyPaths: KeyPath<Entity, String>..., notHavingPrefix value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       notHavingPrefix value: String,
+                       caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .notHavingPrefix(caseSensitive: caseSensitive), value: value)
     }
 
-    static func string(_ keyPaths: KeyPath<Entity, String>..., notHavingSuffix value: String, caseSensitive: Bool = false) -> StringPredicate<Entity> {
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       notHavingSuffix value: String,
+                       caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .notHavingSuffix(caseSensitive: caseSensitive), value: value)
     }
 }
 
 extension String {
     func contains(_ value: String, caseSensitive: Bool) -> Bool {
-        if caseSensitive {
-            return self.contains(value)
-        } else {
-            return self.lowercased().contains(value.lowercased())
-        }
+        caseSensitive ?
+            contains(value) :
+            lowercased().contains(value.lowercased())
     }
 
     func hasPrefix(_ value: String, caseSensitive: Bool) -> Bool {
-        if caseSensitive {
-            return self.hasPrefix(value)
-        } else {
-            return self.lowercased().hasPrefix(value.lowercased())
-        }
+        caseSensitive ?
+            hasPrefix(value) :
+            lowercased().hasPrefix(value.lowercased())
     }
 
     func hasSuffix(_ value: String, caseSensitive: Bool) -> Bool {
-        if caseSensitive {
-            return self.hasSuffix(value)
-        } else {
-            return self.lowercased().hasSuffix(value.lowercased())
-        }
+        caseSensitive ?
+            hasSuffix(value) :
+            lowercased().hasSuffix(value.lowercased())
     }
 }
