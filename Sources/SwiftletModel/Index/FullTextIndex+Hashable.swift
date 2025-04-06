@@ -147,6 +147,12 @@ extension FullTextIndex.HashableValue where Value == String {
     }
 }
 
+extension FullTextIndex.HashableValue where Value == [String] {
+    func makeTokens(for value: Value) -> [String] {
+        value.flatMap { $0.makeTokens() }
+    }
+}
+
 extension FullTextIndex.HashableValue where Value == Pair<String, String> {
     func makeTokens(for value: Value) -> [String] {
         [value.t0, value.t1]

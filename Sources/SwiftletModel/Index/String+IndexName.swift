@@ -13,6 +13,13 @@ extension String {
         keyPath.name
     }
     
+    static func indexName<Entity, T>(
+        _ keyPaths: [KeyPath<Entity, T>]) -> String {
+            keyPaths
+                .map { $0.name }
+                .joined(separator: "-")
+    }
+    
     static func indexName<Entity, T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>) -> String {

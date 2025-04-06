@@ -96,24 +96,26 @@ public struct EqualityPredicate<Entity, Value: Equatable> {
 }
 
 public struct StringPredicate<Entity> {
-    let keyPath: KeyPath<Entity, String>
+    let keyPaths: [KeyPath<Entity, String>]
     let method: Method
     let value: String
+    
+    var isComposition: Bool { keyPaths.isComposition() }
     
     func isIncluded(_ entity: Entity) -> Bool {
         switch method {
         case .contains:
-            entity[keyPath: keyPath].contains(value)
+            keyPaths.contains { entity[keyPath: $0].contains(value) }
         case .hasPrefix:
-            entity[keyPath: keyPath].hasPrefix(value)
+            keyPaths.contains { entity[keyPath: $0].hasPrefix(value) }
         case .hasSuffix:
-            entity[keyPath: keyPath].hasSuffix(value)
+            keyPaths.contains { entity[keyPath: $0].hasSuffix(value) }
         case .matches(let tokens):
-            entity[keyPath: keyPath].matches(tokens: tokens)
+            keyPaths.contains { entity[keyPath: $0].matches(tokens: tokens) }
         case .notHasPrefix:
-            !entity[keyPath: keyPath].hasPrefix(value)
+            !keyPaths.contains { entity[keyPath: $0].hasPrefix(value) }
         case .notHasSuffix:
-            !entity[keyPath: keyPath].hasSuffix(value)
+            !keyPaths.contains { entity[keyPath: $0].hasSuffix(value) }
         }
     }
     
@@ -137,27 +139,37 @@ public struct StringPredicate<Entity> {
 }
 
 public extension StringPredicate {
-    static func string(_ keyPath: KeyPath<Entity, String>, contains value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .contains, value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., contains value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .contains, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, hasPrefix value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .hasPrefix, value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., hasPrefix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .hasPrefix, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, hasSuffix value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .hasSuffix, value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., hasSuffix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .hasSuffix, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, matches value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .matches(tokens: value.makeTokens()), value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., matches value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .matches(tokens: value.makeTokens()), value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, notHavingPrefix value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .notHasPrefix, value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., notHavingPrefix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .notHasPrefix, value: value)
     }
 
-    static func string(_ keyPath: KeyPath<Entity, String>, notHavingSuffix value: String) -> StringPredicate<Entity> {
-        StringPredicate(keyPath: keyPath, method: .notHasSuffix, value: value)
+    static func string(_ keyPaths: KeyPath<Entity, String>..., notHavingSuffix value: String) -> StringPredicate<Entity> {
+        StringPredicate(keyPaths: keyPaths, method: .notHasSuffix, value: value)
+    }
+}
+
+extension Collection {
+    func isComposition<Root, Value>() -> Bool where Element == KeyPath<Root, Value> {
+        count > 1
+    }
+    
+    func isSingle<Root, Value>() -> Bool where Element == KeyPath<Root, Value> {
+        count == 1
     }
 }

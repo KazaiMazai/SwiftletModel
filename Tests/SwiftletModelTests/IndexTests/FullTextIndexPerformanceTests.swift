@@ -60,7 +60,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_IndexedMatchTextFilter_FilterPerformance() throws {
         measure {
             let _ = TestingModels.StringFullTextIndexed
-                .filter(.string(\.text, matches: "banan"), in: context)
+                .filter(.string(\.text  , matches: "banan"), in: context)
                 .resolve()
         }
     }

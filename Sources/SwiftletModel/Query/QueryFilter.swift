@@ -107,11 +107,22 @@ public extension Query {
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
         
-        if predicate.method.isMatching,
+        if predicate.method.isMatching, predicate.isComposition,
             let index = FullTextIndex<Entity>
-            .HashableValue<String>
-            .query(.indexName(predicate.keyPath), in: context)
+            .HashableValue<[String]>
+            .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
+            
+            return index
+                .search(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+            
+        if predicate.method.isMatching, !predicate.isComposition,
+            let index = FullTextIndex<Entity>
+                .HashableValue<String>
+                .query(.indexName(predicate.keyPaths), in: context)
+                .resolve() {
             
             return index
                 .search(predicate.value)
