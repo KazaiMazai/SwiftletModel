@@ -109,7 +109,7 @@ public struct StringPredicate<Entity> {
         case .hasSuffix:
             entity[keyPath: keyPath].hasSuffix(value)
         case .matches:
-            entity[keyPath: keyPath].fuzzyMatches(value)
+            entity[keyPath: keyPath].matches(fuzzy: value)
         case .notHasPrefix:
             !entity[keyPath: keyPath].hasPrefix(value)
         case .notHasSuffix:
@@ -117,7 +117,7 @@ public struct StringPredicate<Entity> {
         }
     }
     
-    public enum Method {
+    enum Method {
         case contains
         case hasPrefix
         case hasSuffix

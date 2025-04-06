@@ -8,7 +8,7 @@
 import Foundation
 
 extension String {
-    func fuzzyMatches(_ pattern: String) -> Bool {
+    func matches(fuzzy pattern: String) -> Bool {
         let patternTokens = Set(pattern.makeTokens())
         return patternTokens.first { token in self.contains(token) } != nil
     }

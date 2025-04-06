@@ -29,6 +29,30 @@ final class FilterStringQueryTests: XCTestCase {
             .forEach { try $0.save(to: &context) }
     }
     
+    func test_WhenMatchFilterNoIndex_ThenEqualPlainFitlering() throws {
+        let expected = notIndexedModels
+            .filter { $0.text.matches(fuzzy: "ananas") }
+       
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, matches: "ananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
+    func test_WhenMatchFilterIndexed_ThenEqualPlainFiltering() throws {
+        let expected = indexedModels
+            .filter { $0.text.matches(fuzzy: "ananas") }
+       
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, matches: "ananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
     func test_WhenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
         let expected = notIndexedModels
             .filter { $0.text.contains("ananas") }

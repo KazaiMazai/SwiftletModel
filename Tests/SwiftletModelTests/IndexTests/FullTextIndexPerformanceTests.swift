@@ -73,6 +73,17 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         }
     }
     
+    func test_RawMatchTextFilter_FilterPerformance() throws {
+        measure {
+            let _ = TestingModels.StringNotIndexed
+                .query(in: context)
+                .resolve()
+                .filter {
+                    $0.text.matches(fuzzy: "banan")
+                }
+        }
+    }
+    
     func test_NoIndex_SavePerformance() throws {
         let models = notIndexeddModels
        
