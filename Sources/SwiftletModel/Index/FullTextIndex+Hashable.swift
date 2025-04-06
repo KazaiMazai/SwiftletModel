@@ -52,9 +52,7 @@ extension FullTextIndex.HashableValue {
             let idf = log((N - n + 0.5) / (n + 0.5) + 1.0)
             
             for entityId in matchingDocs {
-                // Use tokenFrequenciesForEntities for term frequency
                 let tf = Double(tokenFrequenciesForEntities[entityId]?[token] ?? 0)
-                // Use valueLenghtsForEntities for document length
                 let docLength = Double(valueLenghtsForEntities[entityId] ?? 0)
                 
                 // BM25 score calculation
@@ -148,7 +146,6 @@ extension FullTextIndex.HashableValue where Value == String {
         value.makeTokens()
     }
 }
-
 
 extension FullTextIndex.HashableValue where Value == Pair<String, String> {
     func makeTokens(for value: Value) -> [String] {

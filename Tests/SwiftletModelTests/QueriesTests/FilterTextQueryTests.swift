@@ -101,4 +101,52 @@ final class FilterTextQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
 
+    func test_WhenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let expected = notIndexedModels
+            .filter { !$0.text.hasPrefix("bananas") }
+       
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, notHavingPrefix: "bananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
+    func test_WhenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let expected = notIndexedModels
+            .filter { !$0.text.starts(with: "bananas") }
+       
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, notHavingPrefix: "bananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
+    func test_WhenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let expected = notIndexedModels
+            .filter { !$0.text.hasSuffix("bananas") }
+       
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, notHavingSuffix: "bananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+    
+    func test_WhenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let expected = notIndexedModels
+            .filter { !$0.text.hasSuffix("bananas") }
+       
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, notHavingSuffix: "bananas"), in: context)
+            .resolve()
+        
+        XCTAssertEqual(Set(filterResult.map { $0.id }),
+                       Set(expected.map { $0.id }))
+    }
+
 }
