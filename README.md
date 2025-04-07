@@ -323,6 +323,195 @@ let userChats: [Chat] = User
     
 ```
 
+## How to use Filter Queries
+
+SwiftletModel provides a powerful and flexible filtering system that supports both indexed and non-indexed queries. 
+The filtering API offers various comparison methods and can leverage indexes for improved performance.
+
+### Basic Filtering
+
+#### Equality Filters
+
+```swift
+// Single property equality
+let users = User
+        .filter(\.age == 25, in: context)
+        .resolve()
+        
+// Multiple property equality chain.
+let results = User
+    .filter(\.age == 25, in: context)
+    .filter(\.status == .active)
+    .resolve()
+```
+
+#### Comparison Filters
+
+```swift
+// Greater than
+let adults = User
+    .filter(\.age > 18, in: context)
+    .resolve()  
+
+// Less than or equal
+let juniors = User
+        .filter(\.age <= 21, in: context)
+        .resolve()
+
+// Range combination
+let youngAdults = User
+    .filter(\.age >= 18, in: context)
+    .filter(\.age < 30)
+    .resolve()
+```
+
+### Complex Filters
+
+#### Logical Operators
+
+```swift
+// OR operation
+let results = User.filter(\.age == 25, in: context)
+    .or(.filter(\.age == 30, in: context))
+    .resolve()
+
+// AND operation
+let results = User.filter(\.age > 18, in: context)
+    .and(\.status == .active)
+    .resolve()
+
+// Complex combinations
+let results = User.filter(\.age == 25, in: context)
+    .or(.filter(\.status == .active, in: context))
+    .or(.filter(\.age > 30, in: context).and(\.level <= 4))
+    .resolve()
+```
+### Text Filtering
+#### String Operations
+
+```swift
+// Contains
+let results = Message
+    .filter(.string(\.text, contains: "hello"), in: context)
+    .resolve()
+    
+// Prefix/Suffix
+let results = Message
+    .filter(.string(\.text, hasPrefix: "Re:"), in: context)
+    .resolve()
+    
+let results = Message
+    .filter(.string(\.text, hasSuffix: "regards"), in: context)
+    .resolve()
+
+// Case sensitivity
+let results = Message
+    .filter(.string(\.text, contains: "Hello", caseSensitive: true), in: context)
+    .resolve()
+
+
+```
+
+#### Full-Text Search
+When using FullTextIndex, you can perform more sophisticated fuzzy mathc text searches:
+
+```swift
+// Fuzzy matching
+let results = Article.filter(.string(\.content, matches: "search terms"), in: context)
+    .resolve()
+// Multiple field search
+let results = Article
+    .filter(.string(\.title, \.content, matches: "search terms"), in: context)
+    .resolve()
+
+```
+
+### Performance Optimization
+
+#### Index Usage
+The filtering system automatically utilizes available indexes when possible:
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    @Index<Self>(\.status) private static var statusLevelIndex
+    
+    let id: String
+    let age: Int
+    let status: UserStatus
+    let level: Int
+}
+
+// This query will use the age index
+let results = User
+    .filter(\.age > 18, in: context)
+    .resolve()
+
+// This query will use both the age and status indexes 
+let results = User
+    .filter(\.status == .active, in: context)
+    .filter(\.level == 3)
+```
+
+Non Indexed queries are significantly slower because they require full collection scan. 
+Indexed property queries are insanely fast. 
+ 
+| Operation Type | Value Type | Indexed | Not Indexed | Notes |
+|---------------|------------|----------|-------------|--------|
+| Equality (==) | Hashable | O(1) | O(n) | Uses hash-based lookup for indexed values |
+| Equality (==) | Comparable | O(log n) | O(n) | Uses B-tree for indexed comparable values |
+| Comparison (>, <, >=, <=) | Hashable | O(n) | O(n) | Hash indexes don't help with range queries |
+| Comparison (>, <, >=, <=) | Comparable | O(log n) | O(n) | B-tree enables efficient range queries |
+
+### Filters Best Practices
+1. Index Selection:
+- Add indexes for frequently filtered properties
+- Balance between query performance and memory usage
+- Balance between read query and index update performance
+2. Query Optimization:
+- Place indexed property or most selective filters first
+3. Text Search:
+- Use FullTextIndex for better text search performance
+- Consider case sensitivity requirements
+- Test search relevance with representative data
+
+
+### Filter Method Reference
+```swift
+// Comparison Methods
+// == : Equal to
+// != : Not equal to
+// > : Greater than
+// >= : Greater than or equal to
+// < : Less than
+// <= : Less than or equal to
+
+// String Methods
+// contains: Substring matching
+// hasPrefix: Starts with
+// hasSuffix: Ends with
+// matches: Full-text fuzzy search matching
+
+// Logical Operators
+// and: Combines filters with AND logic
+// or: Combines filters with OR logic 
+ 
+// Complex filter combining multiple conditions
+let results = User
+    .filter(\.age >= 18, in: context)
+    .and(\.status == .active)
+    .or(.filter(\.role == .admin, in: context))
+    .and(\.lastLogin > oneWeekAgo)
+    .resolve()
+
+// Text search with multiple fields
+let articles = Article
+    .filter(.string(\.title, \.content, matches: "swift database"), in: context)
+    .filter(\.status == .published)
+    .resolve()
+```
+
 ## Codable Conformance
 
 Since models are implemented as plain structs we can get `Codable` out of the box:
