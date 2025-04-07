@@ -58,23 +58,20 @@ extension UniqueAttributes {
         }
     }
     
-    enum CollisionsResolverAttributes: String, CaseIterable {
+    struct CollisionsResolverAttributes {
         static let collisions = "collisions"
-       
-        case upsert
-        case `throw` = "throw"
         
-        var attributes : String {
-            ".\(rawValue)"
+        let attributes : String
+        static let upsert: CollisionsResolverAttributes = {
+            CollisionsResolverAttributes(attributes: ".upsert")
+        }()
+        
+        init(attributes: String) {
+            self.attributes = attributes
         }
         
         init?(_ expressionString: String) {
-            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
-            guard let value else {
-                return nil
-            }
-            
-            self = value
+            attributes = expressionString
         }
         
         init(labeledExprListSyntax: LabeledExprListSyntax) {
@@ -83,5 +80,22 @@ extension UniqueAttributes {
                 .compactMap { CollisionsResolverAttributes($0.expressionString) }
                 .first ?? .upsert
         }
+
+//        //
+//        init?(_ expressionString: String) {
+//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
+//            guard let value else {
+//                return nil
+//            }
+//            
+//            self = value
+//        }
+//        
+//        init(labeledExprListSyntax: LabeledExprListSyntax) {
+//            self = labeledExprListSyntax
+//                .filter { $0.labelString?.contains(CollisionsResolverAttributes.collisions) ?? false }
+//                .compactMap { CollisionsResolverAttributes($0.expressionString) }
+//                .first ?? .upsert
+//        }
     }
 }
