@@ -323,6 +323,138 @@ let userChats: [Chat] = User
     
 ```
 
+## How to use Sort Queries
+
+SwiftletModel provides a flexible sorting system that can leverage indexes for improved performance. 
+The sorting API supports both single and multi-property sorting, with options for ascending and descending order.
+
+### Basic Sorting
+#### Single Property Sorting
+
+```swift
+// Ascending sort (default)
+let users = User.query(in: context)
+    .sorted(by: \.age)
+    .resolve()
+
+// Descending sort
+let users = User.query(in: context)
+    .sorted(by: \.age.desc)
+    .resolve()
+```
+#### Multi-Property Sorting
+
+```swift
+// Sort by multiple properties
+let users = User.query(in: context)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+
+// Mixed ascending/descending
+let users = User.query(in: context)
+    .sorted(by: \.age.desc, \.lastName)
+    .resolve()
+```
+
+### Using Indexes for Sorting
+#### Single Property Index
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    
+    let id: String
+    let age: Int
+    let name: String
+}
+
+// This sort will use the index
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.age)
+    .resolve()
+    
+// Not indexed property sort
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.name)
+    .resolve()
+```
+#### Compound Index
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    
+    let id: String
+    let firstName: String
+    let lastName: String
+    let age: Int
+}
+
+// This sort will use the compound index
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+    
+// Not indexed property sort. Compound index won't be used:
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName)
+    .resolve()
+    
+// Not indexed property sort. Compound index won't be used:
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName, \.age)
+    .resolve()    
+    
+```
+
+#### Combining Sort and Filter
+```swift
+// Efficient when using indexes
+let results = User.query(in: context)
+    .filter(\.age > 18)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+
+// Complex sorting with filters
+let results = User.query(in: context)
+    .filter(\.status == .active)
+    .sorted(by: \.age.desc, \.lastName)
+    .resolve()
+
+```
+
+#### Best Practises and Performance Considerations
+
+| Operation | Indexed | Not Indexed | Notes |
+|-----------|---------|-------------|--------|
+| Single Property Sort | O(n) | O(n log n) | Indexed uses pre-sorted data |
+| Multi-Property Sort | O(n) | O(n log n) | With compound index |
+| Sort + Filter | O(m) | O(n log n) | m = filtered result size |
+| Descending Sort | O(n) | O(n log n) | Same complexity as ascending |
+
+Important to note: `Desc` sort indexing performance is lower than plain ascending. 
+
+
+1. Index Selection:
+- Add indexes for frequently sorted properties
+- Use compound indexes for common sort combinations
+- Consider memory usage, index build performance vs. performance trade-offs
+2. Sort Order:
+- Choose appropriate sort direction (ascending/descending)
+- Consider default sorting needs
+- Use compound sorts when necessary
+3. Performance Optimization:
+- Leverage indexes for better performance
+- Filter before sorting may be beneficial
+Consider result set size
+4. Memory Considerations:
+- Indexes increase memory usage
+- Each compound index requires additional storage
+- Balance between query performance and resource usage
+
+
 ## How to use Filter Queries
 
 SwiftletModel provides a powerful and flexible filtering system that supports both indexed and non-indexed queries. 
