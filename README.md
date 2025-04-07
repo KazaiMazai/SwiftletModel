@@ -954,6 +954,137 @@ try message.save(to: &context)
 
 ```
 
+## Indexing
+SwiftletModel provides three types of indexes to optimize data access and enforce uniqueness constraints: `Index`, `Unique`, and `FullTextIndex`. Each serves a different purpose and offers specific functionality.
+
+### Index
+The Index property wrapper enables efficient querying and sorting of entity properties.
+
+```swift
+@Index<Entity>(\.propertyName)
+private static var propertyIndex
+```
+
+Features:
+- Supports both Comparable and Hashable types
+- Allows compound indexes up to 4 properties
+- Maintains sorted order for Comparable types
+- Enables fast lookups for Hashable types
+
+Example:
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    
+    let id: String
+    let firstName: String
+    let lastName: String
+    let age: Int
+}
+```
+### Unique
+The Unique property wrapper enforces uniqueness constraints on entity properties.
+
+```swift
+@Unique<Entity>(\.propertyName, collisions: .throw)
+private static var uniqueIndex
+```
+
+Features:
+- Enforces uniqueness constraints
+- Supports compound unique constraints up to 4 properties
+- Configurable collision handling:
+    - .throw: Throws error on violation
+    - .upsert: Replaces existing entity
+- Works with both Comparable and Hashable types
+
+
+Example:
+
+```swift
+@EntityModel
+struct User {
+    @Unique<Self>(\.email, collisions: .throw) private static var emailIndex
+    @Unique<Self>(\.countryCode, \.phoneNumber, collisions: .upsert) private static var phoneIndex
+    
+    let id: String
+    let email: String
+    let phoneNumber: String
+    let countryCode: String
+}
+```
+
+###FullTextIndex
+
+The FullTextIndex property wrapper implements full-text search capabilities using the BM25 ranking algorithm.
+
+```swift
+@FullTextIndex<Entity>(\.propertyName)
+private static var searchIndex
+```
+
+Features:
+- Full-text search with relevance ranking
+- BM25 scoring algorithm for better search results
+- Token frequency tracking & Document length normalization
+- Supports multiple text fields
+- Automatic tokenization and indexing
+- Optimized for search performance
+- Used for `match`, `contains`, `prefix`, `suffix` text search queries
+
+Example:
+
+```swift
+@EntityModel
+struct Article {
+    @FullTextIndex<Self>(\.title, \.content) private static var contentIndex
+    
+    let id: String
+    let title: String
+    let content: String
+}
+
+// Usage
+let articles = Article
+    .query(in: context)
+    .filter(.matching(\.title, \.content, "search terms"))
+    .resolve()
+```
+
+### Index Performance Considerations
+1. Index Selection:
+    - Use Index for general querying and sorting
+    - Use Unique when uniqueness must be enforced
+    - Use FullTextIndex for text search functionality
+2. Compound Indexes:
+    - Limited to 4 properties for performance reasons
+    - Consider the order of properties in compound indexes
+    - More indexes increase write overhead
+3. Memory Usage:
+    - Each index type maintains its own data structures
+    - Full-text indexes require more memory for token storage
+    - Consider the trade-off between query performance and memory usage
+4. Performance
+    - Each index requires time to build and update that is executed when model is saved
+    - Consider the trade-off between query read performance and index update performance
+
+Best Practices
+1. Index Sparingly:
+- Only index properties that need to be queried or sorted
+- Avoid redundant indexes
+- Consider query patterns when designing indexes
+2. Collision Handling:
+    - Use .throw for strict uniqueness enforcement
+    - Use .upsert when replacing existing records is acceptable
+    - Use collistion resolver for custom replacement logic
+3. Full-Text Search:
+    - Index only text fields that need to be searched
+    -  Consider the length of indexed content
+    -  Test search relevance with representative data
+
 ## Type Safety
 
 Relations rely heavily on principles of Type-Driven design under the hood.
