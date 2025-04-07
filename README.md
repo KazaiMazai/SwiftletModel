@@ -1434,7 +1434,7 @@ struct Article {
 // Usage
 let articles = Article
     .query(in: context)
-    .filter(.matching(\.title, \.content, "search terms"))
+    .filter(.string(\.title, \.content, matches: "search terms"))
     .resolve()
 ```
 
