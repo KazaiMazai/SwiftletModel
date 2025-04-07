@@ -16,17 +16,19 @@ SwiftletModel offers an easy and efficient way to implement complex domain model
 - **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
+- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search with B-tree, Unique, and Full-Text indexes.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
  
 ## Why
 
 SwiftletModel excels in the following scenarios:
 
-- **Complex Domain Model**s: Ideal for apps with intricate domain models that require a robust and flexible solution.
-- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management.
+- **Complex Domain Models**: Ideal for apps with intricate domain models with multiple interconnected entity types.
 - **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
+- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management and fully fledged local db is not needed.
 
 SwiftletModel offers a streamlined, in-memory alternative to CoreData and SwiftData. It is designed for applications that need a straightforward local data management system without the complexity of a full-fledged database.
+ 
 
 Although primarily in-memory, SwiftletModel’s data model is Codable, allowing for straightforward data persistence if required.
 
@@ -42,6 +44,28 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Batch nested models query](#batch-nested-models-query)
   * [Combining batch nested models with nested models query](#combining-batch-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
+- [How to use Sort Queries](#how-to-use-sort-queries)
+  * [Basic Sorting](#basic-sorting)
+    + [Single Property Sorting](#single-property-sorting)
+    + [Multi-Property Sorting](#multi-property-sorting)
+  * [Using Indexes for Sorting](#using-indexes-for-sorting)
+    + [Single Property Index](#single-property-index)
+    + [Compound Index](#compound-index)
+    + [Combining Sort and Filter](#combining-sort-and-filter)
+    + [Best Practises and Performance Considerations](#best-practises-and-performance-considerations)
+- [How to use Filter Queries](#how-to-use-filter-queries)
+  * [Basic Filtering](#basic-filtering)
+    + [Equality Filters](#equality-filters)
+    + [Comparison Filters](#comparison-filters)
+  * [Complex Filters](#complex-filters)
+    + [Logical Operators](#logical-operators)
+  * [Text Filtering](#text-filtering)
+    + [String Operations](#string-operations)
+    + [Full-Text Search](#full-text-search)
+  * [Performance Optimization](#performance-optimization)
+    + [Index Usage](#index-usage)
+  * [Filters Best Practices](#filters-best-practices)
+  * [Filter Method Reference](#filter-method-reference)
 - [Codable Conformance](#codable-conformance)
 - [Relationship Types](#relationship-types)
   * [Optional to-one Relationship](#optional-to-one-relationship)
@@ -60,10 +84,15 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Handling incomplete Related Entity Models](#handling-incomplete-related-entity-models)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+- [Indexing](#indexing)
+  * [Index](#index)
+  * [Unique](#unique)
+  * [Index Performance Considerations](#index-performance-considerations)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Licensing](#licensing)
+
 
 ## Getting Started
 
@@ -321,6 +350,327 @@ let userChats: [Chat] = User
     .related(\.$chats)
     .resolve()
     
+```
+
+## How to use Sort Queries
+
+SwiftletModel provides a flexible sorting system that can leverage indexes for improved performance. 
+The sorting API supports both single and multi-property sorting, with options for ascending and descending order.
+
+### Basic Sorting
+#### Single Property Sorting
+
+```swift
+// Ascending sort (default)
+let users = User.query(in: context)
+    .sorted(by: \.age)
+    .resolve()
+
+// Descending sort
+let users = User.query(in: context)
+    .sorted(by: \.age.desc)
+    .resolve()
+```
+#### Multi-Property Sorting
+
+```swift
+// Sort by multiple properties
+let users = User.query(in: context)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+
+// Mixed ascending/descending
+let users = User.query(in: context)
+    .sorted(by: \.age.desc, \.lastName)
+    .resolve()
+```
+
+### Using Indexes for Sorting
+#### Single Property Index
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    
+    let id: String
+    let age: Int
+    let name: String
+}
+
+// This sort will use the index
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.age)
+    .resolve()
+    
+// Not indexed property sort
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.name)
+    .resolve()
+```
+#### Compound Index
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    
+    let id: String
+    let firstName: String
+    let lastName: String
+    let age: Int
+}
+
+// This sort will use the compound index
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+    
+// Not indexed property sort. Compound index won't be used:
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName)
+    .resolve()
+    
+// Not indexed property sort. Compound index won't be used:
+let sortedUsers = User.query(in: context)
+    .sorted(by: \.lastName, \.age)
+    .resolve()    
+    
+```
+
+#### Combining Sort and Filter
+```swift
+// Efficient when using indexes
+let results = User.query(in: context)
+    .filter(\.age > 18)
+    .sorted(by: \.lastName, \.firstName)
+    .resolve()
+
+// Complex sorting with filters
+let results = User.query(in: context)
+    .filter(\.status == .active)
+    .sorted(by: \.age.desc, \.lastName)
+    .resolve()
+
+```
+
+#### Best Practises and Performance Considerations
+
+| Operation | Indexed | Not Indexed | Notes |
+|-----------|---------|-------------|--------|
+| Single Property Sort | O(n) | O(n log n) | Indexed uses pre-sorted data |
+| Multi-Property Sort | O(n) | O(n log n) | With compound index |
+| Sort + Filter | O(m) | O(n log n) | m = filtered result size |
+| Descending Sort | O(n) | O(n log n) | Same complexity as ascending |
+
+Important to note: `Desc` sort indexing performance is lower than plain ascending. 
+
+
+1. Index Selection:
+- Add indexes for frequently sorted properties
+- Use compound indexes for common sort combinations
+- Consider memory usage, index build performance vs. performance trade-offs
+2. Sort Order:
+- Choose appropriate sort direction (ascending/descending)
+- Consider default sorting needs
+- Use compound sorts when necessary
+3. Performance Optimization:
+- Leverage indexes for better performance
+- Filter before sorting may be beneficial
+Consider result set size
+4. Memory Considerations:
+- Indexes increase memory usage
+- Each compound index requires additional storage
+- Balance between query performance and resource usage
+
+
+## How to use Filter Queries
+
+SwiftletModel provides a powerful and flexible filtering system that supports both indexed and non-indexed queries. 
+The filtering API offers various comparison methods and can leverage indexes for improved performance.
+
+### Basic Filtering
+
+#### Equality Filters
+
+```swift
+// Single property equality
+let users = User
+        .filter(\.age == 25, in: context)
+        .resolve()
+        
+// Multiple property equality chain.
+let results = User
+    .filter(\.age == 25, in: context)
+    .filter(\.status == .active)
+    .resolve()
+```
+
+#### Comparison Filters
+
+```swift
+// Greater than
+let adults = User
+    .filter(\.age > 18, in: context)
+    .resolve()  
+
+// Less than or equal
+let juniors = User
+        .filter(\.age <= 21, in: context)
+        .resolve()
+
+// Range combination
+let youngAdults = User
+    .filter(\.age >= 18, in: context)
+    .filter(\.age < 30)
+    .resolve()
+```
+
+### Complex Filters
+
+#### Logical Operators
+
+```swift
+// OR operation
+let results = User.filter(\.age == 25, in: context)
+    .or(.filter(\.age == 30, in: context))
+    .resolve()
+
+// AND operation
+let results = User.filter(\.age > 18, in: context)
+    .and(\.status == .active)
+    .resolve()
+
+// Complex combinations
+let results = User.filter(\.age == 25, in: context)
+    .or(.filter(\.status == .active, in: context))
+    .or(.filter(\.age > 30, in: context).and(\.level <= 4))
+    .resolve()
+```
+### Text Filtering
+#### String Operations
+
+```swift
+// Contains
+let results = Message
+    .filter(.string(\.text, contains: "hello"), in: context)
+    .resolve()
+    
+// Prefix/Suffix
+let results = Message
+    .filter(.string(\.text, hasPrefix: "Re:"), in: context)
+    .resolve()
+    
+let results = Message
+    .filter(.string(\.text, hasSuffix: "regards"), in: context)
+    .resolve()
+
+// Case sensitivity
+let results = Message
+    .filter(.string(\.text, contains: "Hello", caseSensitive: true), in: context)
+    .resolve()
+
+
+```
+
+#### Full-Text Search
+When using FullTextIndex, you can perform more sophisticated fuzzy mathc text searches:
+
+```swift
+// Fuzzy matching
+let results = Article.filter(.string(\.content, matches: "search terms"), in: context)
+    .resolve()
+// Multiple field search
+let results = Article
+    .filter(.string(\.title, \.content, matches: "search terms"), in: context)
+    .resolve()
+
+```
+
+### Performance Optimization
+
+#### Index Usage
+The filtering system automatically utilizes available indexes when possible:
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    @Index<Self>(\.status) private static var statusLevelIndex
+    
+    let id: String
+    let age: Int
+    let status: UserStatus
+    let level: Int
+}
+
+// This query will use the age index
+let results = User
+    .filter(\.age > 18, in: context)
+    .resolve()
+
+// This query will use both the age and status indexes 
+let results = User
+    .filter(\.status == .active, in: context)
+    .filter(\.level == 3)
+```
+
+Non Indexed queries are significantly slower because they require full collection scan. 
+Indexed property queries are insanely fast. 
+ 
+| Operation Type | Value Type | Indexed | Not Indexed | Notes |
+|---------------|------------|----------|-------------|--------|
+| Equality (==) | Hashable | O(1) | O(n) | Uses hash-based lookup for indexed values |
+| Equality (==) | Comparable | O(log n) | O(n) | Uses B-tree for indexed comparable values |
+| Comparison (>, <, >=, <=) | Hashable | O(n) | O(n) | Hash indexes don't help with range queries |
+| Comparison (>, <, >=, <=) | Comparable | O(log n) | O(n) | B-tree enables efficient range queries |
+
+### Filters Best Practices
+1. Index Selection:
+- Add indexes for frequently filtered properties
+- Balance between query performance and memory usage
+- Balance between read query and index update performance
+2. Query Optimization:
+- Place indexed property or most selective filters first
+3. Text Search:
+- Use FullTextIndex for better text search performance
+- Consider case sensitivity requirements
+- Test search relevance with representative data
+
+
+### Filter Method Reference
+```swift
+// Comparison Methods
+// == : Equal to
+// != : Not equal to
+// > : Greater than
+// >= : Greater than or equal to
+// < : Less than
+// <= : Less than or equal to
+
+// String Methods
+// contains: Substring matching
+// hasPrefix: Starts with
+// hasSuffix: Ends with
+// matches: Full-text fuzzy search matching
+
+// Logical Operators
+// and: Combines filters with AND logic
+// or: Combines filters with OR logic 
+ 
+// Complex filter combining multiple conditions
+let results = User
+    .filter(\.age >= 18, in: context)
+    .and(\.status == .active)
+    .or(.filter(\.role == .admin, in: context))
+    .and(\.lastLogin > oneWeekAgo)
+    .resolve()
+
+// Text search with multiple fields
+let articles = Article
+    .filter(.string(\.title, \.content, matches: "swift database"), in: context)
+    .filter(\.status == .published)
+    .resolve()
 ```
 
 ## Codable Conformance
@@ -953,6 +1303,171 @@ let message = Message(
 try message.save(to: &context)
 
 ```
+
+## Indexing
+SwiftletModel provides three types of indexes to optimize data access and enforce uniqueness constraints: `Index`, `Unique`, and `FullTextIndex`. Each serves a different purpose and offers specific functionality.
+
+### Index
+The Index property wrapper enables efficient querying and sorting of entity properties.
+
+```swift
+@Index<Entity>(\.propertyName)
+private static var propertyIndex
+```
+
+Features:
+- Supports both Comparable and Hashable types
+- Allows compound indexes up to 4 properties
+- Maintains sorted order for Comparable types
+- Enables fast lookups for Hashable types
+
+Example:
+
+```swift
+@EntityModel
+struct User {
+    @Index<Self>(\.age) private static var ageIndex
+    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    
+    let id: String
+    let firstName: String
+    let lastName: String
+    let age: Int
+}
+```
+### Unique
+The Unique property wrapper enforces uniqueness constraints on entity properties.
+
+```swift
+@Unique<Entity>(\.propertyName, collisions: .throw)
+private static var uniqueIndex
+```
+
+Features:
+- Enforces uniqueness constraints
+- Supports compound unique constraints up to 4 properties
+- Configurable collision handling:
+    - throw: Throws error on violation
+    - upsert: Replaces existing entity
+    - custom collision handling
+- Works with both Comparable and Hashable types
+
+
+Example:
+
+```swift
+@EntityModel
+struct User {
+    // Unique username with upsert on collision
+    @Unique<Self>(\.username, collisions: .upsert) 
+    private static var uniqueUsername
+    
+    // Unique email that throws on collision
+    @Unique<Self>(\.email, collisions: .throw) 
+    private static var uniqueEmail
+    
+    // Custom collision handling for current user
+    @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) 
+    private static var currentUserIndex
+    
+    let id: String
+    let username: String
+    let email: String
+    var isCurrent: Bool
+}
+
+// Custom collision resolver implementation
+extension CollisionResolver where Entity == User {
+    static var updateCurrentUser: Self {
+        CollisionResolver { existingId, _, _, context in
+            guard var user = Query<Entity>(context: context, id: existingId).resolve(),
+                user.isCurrent
+            else {
+                return
+            }
+               
+            user.isCurrent = false
+            try user.save(to: &context)
+        }
+    }
+}
+```
+
+This example demonstrates three different collision handling strategies:
+1. `.upsert` - Automatically replaces existing entity when username conflicts
+2. `.throw` - Throws an error when email conflicts
+3. `.updateCurrentUser` - Custom logic to handle "current user" status:
+   - When a new user is marked as current, automatically updates the existing current user not being current anymore
+   - Ensures only one user can be marked as current at a time
+
+
+### FullTextIndex
+
+The FullTextIndex property wrapper implements full-text search capabilities using the BM25 ranking algorithm.
+
+```swift
+@FullTextIndex<Entity>(\.propertyName)
+private static var searchIndex
+```
+
+Features:
+- Full-text search with relevance ranking
+- BM25 scoring algorithm for better search results
+- Token frequency tracking & Document length normalization
+- Supports multiple text fields
+- Automatic tokenization and indexing
+- Optimized for search performance
+- Used for `match`, `contains`, `prefix`, `suffix` text search queries
+
+Example:
+
+```swift
+@EntityModel
+struct Article {
+    @FullTextIndex<Self>(\.title, \.content) private static var contentIndex
+    
+    let id: String
+    let title: String
+    let content: String
+}
+
+// Usage
+let articles = Article
+    .query(in: context)
+    .filter(.matching(\.title, \.content, "search terms"))
+    .resolve()
+```
+
+### Index Performance Considerations
+1. Index Selection:
+    - Use Index for general querying and sorting
+    - Use Unique when uniqueness must be enforced
+    - Use FullTextIndex for text search functionality
+2. Compound Indexes:
+    - Limited to 4 properties for performance reasons
+    - Consider the order of properties in compound indexes
+    - More indexes increase write overhead
+3. Memory Usage:
+    - Each index type maintains its own data structures
+    - Full-text indexes require more memory for token storage
+    - Consider the trade-off between query performance and memory usage
+4. Performance
+    - Each index requires time to build and update that is executed when model is saved
+    - Consider the trade-off between query read performance and index update performance
+
+Best Practices
+1. Index Sparingly:
+- Only index properties that need to be queried or sorted
+- Avoid redundant indexes
+- Consider query patterns when designing indexes
+2. Collision Handling:
+    - Use .throw for strict uniqueness enforcement
+    - Use .upsert when replacing existing records is acceptable
+    - Use collistion resolver for custom replacement logic
+3. Full-Text Search:
+    - Index only text fields that need to be searched
+    -  Consider the length of indexed content
+    -  Test search relevance with representative data
 
 ## Type Safety
 
