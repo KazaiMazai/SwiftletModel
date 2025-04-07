@@ -7,7 +7,6 @@
 
 import Collections
 
-
 public extension Query {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
