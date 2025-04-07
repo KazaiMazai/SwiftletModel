@@ -1347,8 +1347,9 @@ Features:
 - Enforces uniqueness constraints
 - Supports compound unique constraints up to 4 properties
 - Configurable collision handling:
-    - .throw: Throws error on violation
-    - .upsert: Replaces existing entity
+    - throw: Throws error on violation
+    - upsert: Replaces existing entity
+    - custom collision handling
 - Works with both Comparable and Hashable types
 
 
@@ -1357,17 +1358,50 @@ Example:
 ```swift
 @EntityModel
 struct User {
-    @Unique<Self>(\.email, collisions: .throw) private static var emailIndex
-    @Unique<Self>(\.countryCode, \.phoneNumber, collisions: .upsert) private static var phoneIndex
+    // Unique username with upsert on collision
+    @Unique<Self>(\.username, collisions: .upsert) 
+    private static var uniqueUsername
+    
+    // Unique email that throws on collision
+    @Unique<Self>(\.email, collisions: .throw) 
+    private static var uniqueEmail
+    
+    // Custom collision handling for current user
+    @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) 
+    private static var currentUserIndex
     
     let id: String
+    let username: String
     let email: String
-    let phoneNumber: String
-    let countryCode: String
+    var isCurrent: Bool
+}
+
+// Custom collision resolver implementation
+extension CollisionResolver where Entity == User {
+    static var updateCurrentUser: Self {
+        CollisionResolver { existingId, _, _, context in
+            guard var user = Query<Entity>(context: context, id: existingId).resolve(),
+                user.isCurrent
+            else {
+                return
+            }
+               
+            user.isCurrent = false
+            try user.save(to: &context)
+        }
+    }
 }
 ```
 
-###FullTextIndex
+This example demonstrates three different collision handling strategies:
+1. `.upsert` - Automatically replaces existing entity when username conflicts
+2. `.throw` - Throws an error when email conflicts
+3. `.updateCurrentUser` - Custom logic to handle "current user" status:
+   - When a new user is marked as current, automatically updates the existing current user not being current anymore
+   - Ensures only one user can be marked as current at a time
+
+
+### FullTextIndex
 
 The FullTextIndex property wrapper implements full-text search capabilities using the BM25 ranking algorithm.
 
