@@ -54,7 +54,7 @@ final class FilterQueryTests: XCTestCase {
                        Set(expected.map { $0.id }))
     }
     
-    func test_WhenSequencedFilterIndexed_ThenEqualPlainFiltering() throws {
+    func test_WhenChainedFilterIndexed_ThenEqualPlainFiltering() throws {
         let expected = indexedModels
             .filter {
                 $0.numOf1 == 1

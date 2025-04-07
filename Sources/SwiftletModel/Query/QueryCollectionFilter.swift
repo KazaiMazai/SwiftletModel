@@ -40,6 +40,62 @@ public extension Collection {
     }
     
     func filter<Entity, T>(
+        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Comparable & Hashable {
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        if predicate.method == .equal, let index = SortIndex<Entity>.HashableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            let filterResult = Set(index.find(predicate.value))
+            return filter( { filterResult.contains($0.id) })
+        }
+        
+        if let index = SortIndex<Entity>.ComparableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            let filterResult = Set(index.filter(predicate))
+            return filter( { filterResult.contains($0.id) })
+        }
+        
+        return self
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    func filter<Entity, T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
+    where
+    Element == Query<Entity>,
+    T: Hashable {
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        if predicate.method == .equal, let index = SortIndex<Entity>.HashableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            let filterResult = Set(index.find(predicate.value))
+            return filter( { filterResult.contains($0.id) })
+        }
+        
+        return self
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    func filter<Entity, T>(
         _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
     where
     Element == Query<Entity>,
@@ -48,6 +104,7 @@ public extension Collection {
         guard let context = first?.context else {
             return Array(self)
         }
+        
         
         return self
             .resolve()
