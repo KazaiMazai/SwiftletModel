@@ -122,7 +122,7 @@ extension FunctionDeclSyntax {
             try willSave(to: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try updateIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                    "try updateUniqueIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
                  }
                 .joined(separator: "\n")
             )
@@ -155,12 +155,11 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-        
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try removeFromIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                    "try removeFromUniqueIndex(\($0.keyPathAttributes.attribute), in: &context)"
                  }
                 .joined(separator: "\n")
             )
@@ -193,7 +192,6 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-        
         \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }

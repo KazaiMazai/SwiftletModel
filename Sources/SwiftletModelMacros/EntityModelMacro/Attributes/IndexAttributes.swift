@@ -23,16 +23,6 @@ struct IndexAttributes {
 }
 
 extension IndexAttributes {
-   
-//    enum WrapperType: String, CaseIterable {
-//        case relationship = "Index"
-//        
-//        var title: String {
-//            rawValue
-//        }
-//    }
-    
-    
     enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
