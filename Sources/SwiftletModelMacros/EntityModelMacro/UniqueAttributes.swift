@@ -24,13 +24,13 @@ struct UniqueAttributes {
 
 extension UniqueAttributes {
    
-    enum WrapperType: String, CaseIterable {
-        case unique = "Unique"
-        
-        var title: String {
-            rawValue
-        }
-    }
+//    enum WrapperType: String, CaseIterable {
+//        case unique = "Unique"
+//        
+//        var title: String {
+//            rawValue
+//        }
+//    }
     
     enum KeyPathAttributes {
         case labeledExpressionList(String)

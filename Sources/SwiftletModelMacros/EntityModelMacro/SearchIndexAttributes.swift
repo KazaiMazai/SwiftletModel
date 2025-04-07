@@ -24,13 +24,7 @@ struct FullTextIndexAttributes {
 
 extension FullTextIndexAttributes {
    
-    enum WrapperType: String, CaseIterable {
-        case relationship = "FullTextIndex"
-        
-        var title: String {
-            rawValue
-        }
-    }
+   
     
     
     enum KeyPathAttributes {

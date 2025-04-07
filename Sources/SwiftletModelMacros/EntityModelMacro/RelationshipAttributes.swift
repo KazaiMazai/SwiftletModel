@@ -24,13 +24,13 @@ struct RelationshipAttributes {
 
 extension RelationshipAttributes {
    
-    enum WrapperType: String, CaseIterable {
-        case relationship = "Relationship"
-        
-        var title: String {
-            rawValue
-        }
-    }
+//    enum WrapperType: String, CaseIterable {
+//        case relationship = "Relationship"
+//        
+//        var title: String {
+//            rawValue
+//        }
+//    }
     
      enum DeleteRuleAttribute: String, CaseIterable {
          static let deleteRule = "deleteRule"

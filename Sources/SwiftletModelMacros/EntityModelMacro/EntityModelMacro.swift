@@ -289,7 +289,8 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                let wrapperType = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+                let wrapperType = WrapperType(rawValue: identifierTypeSyntax.name.text),
+                wrapperType == .relationship
             else {
                 continue
             }
@@ -332,7 +333,7 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+               let wrapperType = WrapperType(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
@@ -362,7 +363,8 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = IndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  let wrapperType = WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .index,
                   modifiers.isStatic
             else {
                 continue
@@ -396,8 +398,9 @@ private extension VariableDeclSyntax {
     func uniqueAttributes() -> UniqueAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
-                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .unique,
                   modifiers.isStatic
             else {
                 continue
@@ -439,8 +442,9 @@ private extension VariableDeclSyntax {
     func fullTextIndexAttributes() -> FullTextIndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
-                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = FullTextIndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = WrapperType(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .fullTextIndex,
                   modifiers.isStatic
             else {
                 continue
@@ -476,7 +480,7 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+               let _ = WrapperType(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
