@@ -16,18 +16,19 @@ SwiftletModel offers an easy and efficient way to implement complex domain model
 - **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
-- **B-tree, Full-Text, Unique Indexes**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search.
+- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search with B-tree, Unique, and Full-Text indexes.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
  
 ## Why
 
 SwiftletModel excels in the following scenarios:
 
-- **Complex Domain Model**s: Ideal for apps with intricate domain models that require a robust and flexible solution.
-- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management.
+- **Complex Domain Models**: Ideal for apps with intricate domain models with multiple interconnected entity types.
 - **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
+- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management and fully fledged local db is not needed.
 
 SwiftletModel offers a streamlined, in-memory alternative to CoreData and SwiftData. It is designed for applications that need a straightforward local data management system without the complexity of a full-fledged database.
+ 
 
 Although primarily in-memory, SwiftletModel’s data model is Codable, allowing for straightforward data persistence if required.
 
