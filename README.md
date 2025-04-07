@@ -16,6 +16,7 @@ SwiftletModel offers an easy and efficient way to implement complex domain model
 - **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
+- **B-tree, Full-Text, Unique Indexes**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
  
 ## Why
@@ -42,6 +43,28 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Batch nested models query](#batch-nested-models-query)
   * [Combining batch nested models with nested models query](#combining-batch-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
+- [How to use Sort Queries](#how-to-use-sort-queries)
+  * [Basic Sorting](#basic-sorting)
+    + [Single Property Sorting](#single-property-sorting)
+    + [Multi-Property Sorting](#multi-property-sorting)
+  * [Using Indexes for Sorting](#using-indexes-for-sorting)
+    + [Single Property Index](#single-property-index)
+    + [Compound Index](#compound-index)
+    + [Combining Sort and Filter](#combining-sort-and-filter)
+    + [Best Practises and Performance Considerations](#best-practises-and-performance-considerations)
+- [How to use Filter Queries](#how-to-use-filter-queries)
+  * [Basic Filtering](#basic-filtering)
+    + [Equality Filters](#equality-filters)
+    + [Comparison Filters](#comparison-filters)
+  * [Complex Filters](#complex-filters)
+    + [Logical Operators](#logical-operators)
+  * [Text Filtering](#text-filtering)
+    + [String Operations](#string-operations)
+    + [Full-Text Search](#full-text-search)
+  * [Performance Optimization](#performance-optimization)
+    + [Index Usage](#index-usage)
+  * [Filters Best Practices](#filters-best-practices)
+  * [Filter Method Reference](#filter-method-reference)
 - [Codable Conformance](#codable-conformance)
 - [Relationship Types](#relationship-types)
   * [Optional to-one Relationship](#optional-to-one-relationship)
@@ -60,10 +83,15 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Handling incomplete Related Entity Models](#handling-incomplete-related-entity-models)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+- [Indexing](#indexing)
+  * [Index](#index)
+  * [Unique](#unique)
+  * [Index Performance Considerations](#index-performance-considerations)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Licensing](#licensing)
+
 
 ## Getting Started
 
