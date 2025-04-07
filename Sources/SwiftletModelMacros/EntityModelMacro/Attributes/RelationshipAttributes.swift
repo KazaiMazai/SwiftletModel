@@ -16,23 +16,14 @@ import SwiftSyntaxMacros
 #endif
 
 struct RelationshipAttributes {
-    let relationWrapperType: WrapperType
+    let propertyWrapperType: PropertyWrapperAttributes
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
     let deleteRule: DeleteRuleAttribute
 }
 
 extension RelationshipAttributes {
-   
-    enum WrapperType: String, CaseIterable {
-        case relationship = "Relationship"
-        
-        var title: String {
-            rawValue
-        }
-    }
-    
-     enum DeleteRuleAttribute: String, CaseIterable {
+   enum DeleteRuleAttribute: String, CaseIterable {
          static let deleteRule = "deleteRule"
          
          case cascade

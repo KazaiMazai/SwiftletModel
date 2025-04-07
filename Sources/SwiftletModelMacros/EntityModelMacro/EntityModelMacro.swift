@@ -118,12 +118,11 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-         
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
             try willSave(to: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try updateIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                    "try updateUniqueIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
                  }
                 .joined(separator: "\n")
             )
@@ -146,7 +145,6 @@ extension FunctionDeclSyntax {
         )
     }
     
-    
     static func delete(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
@@ -156,12 +154,11 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-        
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try removeFromIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                    "try removeFromUniqueIndex(\($0.keyPathAttributes.attribute), in: &context)"
                  }
                 .joined(separator: "\n")
             )
@@ -194,7 +191,6 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
-        
         \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }
@@ -289,7 +285,8 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                let wrapperType = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text)
+                let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                wrapperType == .relationship
             else {
                 continue
             }
@@ -305,7 +302,7 @@ private extension VariableDeclSyntax {
                 .as(LabeledExprListSyntax.self) else {
                 
                 return RelationshipAttributes(
-                    relationWrapperType: wrapperType,
+                    propertyWrapperType: wrapperType,
                     propertyName: property,
                     keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
                         propertyIdentifier: property
@@ -315,7 +312,7 @@ private extension VariableDeclSyntax {
             }
             
             return RelationshipAttributes(
-                relationWrapperType: wrapperType,
+                propertyWrapperType: wrapperType,
                 propertyName: property,
                 keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
                     propertyIdentifier: property,
@@ -332,7 +329,7 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+               let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
@@ -362,8 +359,9 @@ private extension VariableDeclSyntax {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = IndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
-                  modifiers.isStatic
+                  let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .index,
+                  modifiers.isStaticProperty
             else {
                 continue
             }
@@ -396,9 +394,10 @@ private extension VariableDeclSyntax {
     func uniqueAttributes() -> UniqueAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
-                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = UniqueAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
-                  modifiers.isStatic
+                  let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .unique,
+                  modifiers.isStaticProperty
             else {
                 continue
             }
@@ -414,7 +413,7 @@ private extension VariableDeclSyntax {
                 .as(LabeledExprListSyntax.self) else {
                 
                    return UniqueAttributes(
-                        relationWrapperType: wrapperType,
+                        propertyWrapper: wrapperType,
                         propertyName: property,
                         keyPathAttributes: UniqueAttributes.KeyPathAttributes(
                             propertyIdentifier: property
@@ -424,13 +423,13 @@ private extension VariableDeclSyntax {
             }
             
             return UniqueAttributes(
-                relationWrapperType: wrapperType,
+                propertyWrapper: wrapperType,
                 propertyName: property,
                 keyPathAttributes: UniqueAttributes.KeyPathAttributes(
                     propertyIdentifier: property,
                     labeledExprListSyntax: keyPathsExprList
                 ),
-                collisions: UniqueAttributes.CollisionsResolverAttribute(labeledExprListSyntax: keyPathsExprList)
+                collisions: UniqueAttributes.CollisionsResolverAttributes(labeledExprListSyntax: keyPathsExprList)
             )
         }
         return nil
@@ -439,9 +438,10 @@ private extension VariableDeclSyntax {
     func fullTextIndexAttributes() -> FullTextIndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
-                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-                  let wrapperType = FullTextIndexAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text),
-                  modifiers.isStatic
+                  let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .fullTextIndex,
+                  modifiers.isStaticProperty
             else {
                 continue
             }
@@ -460,7 +460,7 @@ private extension VariableDeclSyntax {
             }
             
             return FullTextIndexAttributes(
-                relationWrapperType: wrapperType,
+                propertyWrapper: wrapperType,
                 propertyName: property,
                 keyPathAttributes: FullTextIndexAttributes.KeyPathAttributes(
                     propertyIdentifier: property,
@@ -476,12 +476,12 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let _ = RelationshipAttributes.WrapperType(rawValue: identifierTypeSyntax.name.text) {
+               let _ = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
 
-        guard modifiers.first?.name.text == "static" else {
+        guard modifiers.isStaticProperty else {
             return nil
         }
 

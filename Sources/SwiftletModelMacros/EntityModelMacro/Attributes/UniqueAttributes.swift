@@ -16,23 +16,14 @@ import SwiftSyntaxMacros
 #endif
 
 struct UniqueAttributes {
-    let relationWrapperType: WrapperType
+    let propertyWrapper: PropertyWrapperAttributes
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
-    let collisions: CollisionsResolverAttribute
+    let collisions: CollisionsResolverAttributes
 }
 
 extension UniqueAttributes {
-   
-    enum WrapperType: String, CaseIterable {
-        case unique = "Unique"
-        
-        var title: String {
-            rawValue
-        }
-    }
-    
-    enum KeyPathAttributes {
+   enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
         
@@ -67,13 +58,12 @@ extension UniqueAttributes {
         }
     }
     
-    struct CollisionsResolverAttribute {
+    struct CollisionsResolverAttributes {
         static let collisions = "collisions"
-       
-        let attributes: String
-
-        static let upsert: CollisionsResolverAttribute = {
-            CollisionsResolverAttribute(attributes: ".upsert")
+        
+        let attributes : String
+        static let upsert: CollisionsResolverAttributes = {
+            CollisionsResolverAttributes(attributes: ".upsert")
         }()
         
         init(attributes: String) {
@@ -86,9 +76,26 @@ extension UniqueAttributes {
         
         init(labeledExprListSyntax: LabeledExprListSyntax) {
             self = labeledExprListSyntax
-                .filter { $0.labelString?.contains(CollisionsResolverAttribute.collisions) ?? false }
-                .compactMap { CollisionsResolverAttribute($0.expressionString) }
+                .filter { $0.labelString?.contains(CollisionsResolverAttributes.collisions) ?? false }
+                .compactMap { CollisionsResolverAttributes($0.expressionString) }
                 .first ?? .upsert
         }
+
+//        //
+//        init?(_ expressionString: String) {
+//            let value = Self.allCases.first { expressionString.contains($0.rawValue) }
+//            guard let value else {
+//                return nil
+//            }
+//            
+//            self = value
+//        }
+//        
+//        init(labeledExprListSyntax: LabeledExprListSyntax) {
+//            self = labeledExprListSyntax
+//                .filter { $0.labelString?.contains(CollisionsResolverAttributes.collisions) ?? false }
+//                .compactMap { CollisionsResolverAttributes($0.expressionString) }
+//                .first ?? .upsert
+//        }
     }
 }

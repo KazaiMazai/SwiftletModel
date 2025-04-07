@@ -16,24 +16,14 @@ import SwiftSyntaxMacros
 #endif
 
 
-struct IndexAttributes {
-    let relationWrapperType: WrapperType
+struct FullTextIndexAttributes {
+    let propertyWrapper: PropertyWrapperAttributes
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
 }
 
-extension IndexAttributes {
-   
-    enum WrapperType: String, CaseIterable {
-        case relationship = "Index"
-        
-        var title: String {
-            rawValue
-        }
-    }
-    
-    
-    enum KeyPathAttributes {
+extension FullTextIndexAttributes {
+   enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
         
