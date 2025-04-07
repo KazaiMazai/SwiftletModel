@@ -145,7 +145,6 @@ extension FunctionDeclSyntax {
         )
     }
     
-    
     static func delete(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
