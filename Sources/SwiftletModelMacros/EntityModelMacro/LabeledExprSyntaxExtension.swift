@@ -40,7 +40,7 @@ fileprivate extension String {
 }
 
 extension DeclModifierListSyntax {
-    var isStatic: Bool {
+    var isStaticProperty: Bool {
         contains(where: { $0.name.text == "static" })
     }
 }

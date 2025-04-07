@@ -17,17 +17,13 @@ import SwiftSyntaxMacros
 
 
 struct FullTextIndexAttributes {
-    let relationWrapperType: WrapperType
+    let propertyWrapper: PropertyWrapperAttributes
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
 }
 
 extension FullTextIndexAttributes {
-   
-   
-    
-    
-    enum KeyPathAttributes {
+   enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
         

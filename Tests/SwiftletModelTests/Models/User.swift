@@ -33,8 +33,8 @@ extension User {
 
 @EntityModel
 struct User: Codable, Sendable {
-    @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
-    @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
+    @Unique<Self>(\.username, collisions: CollisionResolver.upsert) static var uniqueUsername
+    @Unique<Self>(\.email, collisions: CollisionResolver.throw) static var uniqueEmail
     
     @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
     

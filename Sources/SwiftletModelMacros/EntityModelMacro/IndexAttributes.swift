@@ -17,7 +17,7 @@ import SwiftSyntaxMacros
 
 
 struct IndexAttributes {
-    let relationWrapperType: WrapperType
+    let relationWrapperType: PropertyWrapperAttributes
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
 }
