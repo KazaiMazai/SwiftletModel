@@ -7,10 +7,11 @@
 
 @testable import SwiftletModel
 import Foundation
-
+ 
 @EntityModel
 public struct Message: Codable, Sendable {
     @Index<Self>(\.timestamp) private static var timestampIndex
+    @FullTextIndex<Self>(\.text) static var textSearchIndex1
     
     public let id: String
     let text: String

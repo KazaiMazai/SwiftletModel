@@ -4,6 +4,9 @@
 //
 //  Created by Sergey Kazakov on 02/04/2025.
 //
+import Foundation
+
+typealias SortIndex = Index
 
 public extension Collection {
     func sorted<Entity, T>(

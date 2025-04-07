@@ -8,41 +8,6 @@
 import Collections
 
 
-public extension Collection {
-    static func filter<Entity, T>(
-        _ predicate: Predicate<Entity, T>,
-        in context: Context) -> [Query<Entity>]
-    where
-    Element == Query<Entity>,
-    T: Comparable {
-        Query.filter(predicate, in: context)
-    }
-     
-    func filter<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
-    where
-    Element == Query<Entity>,
-    T: Comparable {
-        
-        guard let context = first?.context else {
-            return Array(self)
-        }
-        
-        guard let index = SortIndex<Entity>.ComparableValue<T>
-            .query(.indexName(predicate.keyPath), in: context)
-            .resolve()
-        else {
-            return self
-                .resolve()
-                .filter(predicate.isIncluded)
-                .query(in: context)
-        }
-        
-        let filterResult = Set(index.filter(predicate))
-        return filter( { filterResult.contains($0.id) })
-    }
-}
-
 public extension Query {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
@@ -50,37 +15,125 @@ public extension Query {
     
     where
     T: Comparable {
-        
-        guard let index = SortIndex<Entity>.ComparableValue<T>
+
+        if let index = Index<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+            .filter(predicate)
+            .map { Query<Entity>(context: context, id: $0) }
+        }
+        
+        return Entity
+            .query(in: context)
             .resolve()
-        else {
-            return Entity
-                .query(in: context)
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
+    T: Comparable & Hashable {
+
+        if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+                .find(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+
+        if let index = Index<Entity>.ComparableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+                .filter(predicate)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+        
+        return Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
+    T: Hashable {
+
+        if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
+            .query(.indexName(predicate.keyPath), in: context)
+            .resolve() {
+
+            return index
+                .find(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+        
+        return Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> [Query<Entity>]
+    
+    where
+    T: Equatable {
+
+        Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
+    }
+}
+
+public extension Query {
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> [Query<Entity>] {
+        
+        if predicate.method.isMatching, let index = FullTextIndex<Entity>
+            .HashableValue<[String]>
+            .query(.indexName(predicate.keyPaths), in: context)
+            .resolve() {
+            
+            return index
+                .search(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
+        }
+
+         if predicate.method.isIncluding, let index = FullTextIndex<Entity>
+            .HashableValue<[String]>
+            .query(.indexName(predicate.keyPaths), in: context)
+            .resolve() {
+            
+            return index
+                .search(predicate.value)
+                .map { Query<Entity>(context: context, id: $0) }
                 .resolve()
                 .filter(predicate.isIncluded)
                 .query(in: context)
         }
         
-        return index
-            .filter(predicate)
-            .map { Query<Entity>(context: context, id: $0) }
-    }
-}
-
-public extension Collection {
-    func and<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
-    where
-    Element == Query<Entity>,
-    T: Comparable {
-        filter(predicate)
-    }
-    
-    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
-    where
-    Element == Query<Entity> {
-        [Array(self), query()].flatMap { $0 }
-            .removingDuplicates(by: { $0.id })
+        return Entity
+            .query(in: context)
+            .resolve()
+            .filter(predicate.isIncluded)
+            .query(in: context)
     }
 }

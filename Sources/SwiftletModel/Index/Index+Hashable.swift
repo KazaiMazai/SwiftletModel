@@ -4,14 +4,14 @@
 //
 //  Created by Sergey Kazakov on 12/03/2025.
 //
-extension Unique {
+extension Index {
     @EntityModel
     struct HashableValue<Value: Hashable> {
         var id: String { name }
         
         let name: String
         
-        private var index: [Value: Entity.ID] = [:]
+        private var index: [Value: Set<Entity.ID>] = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
         
         init(name: String) {
@@ -20,22 +20,13 @@ extension Unique {
     }
 }
 
-extension Unique.HashableValue {
-    enum Errors: Error {
-        case uniqueValueViolation(Entity.ID, Value)
-    }
-}
-
-extension Unique.HashableValue {
+extension Index.HashableValue {
     static func updateIndex(indexName: String,
                             _ entity: Entity,
                             value: Value,
-                            in context: inout Context,
-                            resolveCollisions resolver: CollisionResolver<Entity>) throws {
+                            in context: inout Context) throws {
         
         var index = Query(context: context, id: indexName).resolve() ?? Self(name: indexName)
-        try index.checkForCollisions(entity, value: value, in: &context, resolveCollisions: resolver)
-        index = index.query(in: context).resolve() ?? index
         index.update(entity, value: value)
         try index.save(to: &context)
     }
@@ -51,20 +42,14 @@ extension Unique.HashableValue {
         index.remove(entity)
         try index.save(to: &context)
     }
+    
+    func find(_ value: Value) -> Set<Entity.ID> {
+        index[value] ?? []
+    }
 }
 
-private extension Unique.HashableValue {
-    func checkForCollisions(_ entity: Entity,
-                           value: Value,
-                           in context: inout Context,
-                           resolveCollisions resolver: CollisionResolver<Entity>) throws {
-        guard let existingId = index[value], existingId != entity.id else {
-            return
-        }
-        
-        try resolver.resolveCollision(existing: existingId, new: entity.id, indexName: name, in: &context)
-    }
-    
+private extension Index.HashableValue {
+     
     mutating func update(_ entity: Entity,
                          value: Value) {
         let existingValue = indexedValues[entity.id]
@@ -74,10 +59,12 @@ private extension Unique.HashableValue {
         }
         
         if let existingValue, let _ = index[existingValue] {
-            index[existingValue] = nil
+            remove(entity)
         }
         
-        index[value] = entity.id
+        var entities = index[value] ?? []
+        entities.insert(entity.id)
+        index[value] = entities
         indexedValues[entity.id] = value
     }
     
