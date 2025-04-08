@@ -11,10 +11,10 @@ public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
 
 //MARK: - Nested Entity Query
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, fragment: false, nested: nested)
         }
@@ -22,14 +22,14 @@ public extension Query {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: false, fragment: false, nested: nested)
         }
     
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: true, fragment: false, nested: nested)
         }
@@ -37,24 +37,24 @@ public extension Query {
 
 //MARK: - Nested Fragment Query
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, fragment: true, nested: nested)
         }
     
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Queries<Entity> {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: false, fragment: true, nested: nested)
         }
     
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: true, fragment: true, nested: nested)
         }
@@ -62,9 +62,9 @@ public extension Query {
 
 //MARK: - Query Nested Ids
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     func id<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Query {
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Self {
             
             whenResolved {
                 var entity = $0
@@ -75,13 +75,13 @@ public extension Query {
         }
     
     func id<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Self {
             
             id(keyPath, slice: false)
         }
     
     func id<Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Query {
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Self {
             
             id(keyPath, slice: true)
         }
@@ -90,11 +90,11 @@ public extension Query {
 
 //MARK: - Private Nested Queries
 
-extension Query {
+extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         fragment: Bool,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
             
             whenResolved {
                 var entity = $0
@@ -111,7 +111,7 @@ extension Query {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool,
         fragment: Bool,
-        nested: @escaping QueryModifier<Child>) -> Query {
+        nested: @escaping QueryModifier<Child>) -> Self {
             
             whenResolved {
                 var entity = $0
@@ -128,7 +128,7 @@ extension Query {
     
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        slice: Bool) -> Query {
+        slice: Bool) -> Self {
             
             whenResolved {
                 var entity = $0

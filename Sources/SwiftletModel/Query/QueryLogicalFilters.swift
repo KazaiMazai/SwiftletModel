@@ -46,7 +46,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func and<T>(
         _ predicate: Predicate<Entity, T>) -> Queries<Entity>
     where

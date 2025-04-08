@@ -8,7 +8,7 @@
 
 //MARK: - Nested Entities Batch Query
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     func with(_ nested: Nested...) -> Query<Entity> {
         with(nested)
     }
@@ -30,7 +30,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func with(_ nested: Nested...) -> Queries<Entity> {
         with(nested)
     }

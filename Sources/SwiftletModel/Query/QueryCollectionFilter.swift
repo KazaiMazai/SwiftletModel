@@ -113,7 +113,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> Queries<Entity>
@@ -173,7 +173,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> Queries<Entity>  {
@@ -223,7 +223,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func filter( _ predicate: StringPredicate<Entity>) -> Queries<Entity> {
         whenResolved {
             $0.filter(predicate)

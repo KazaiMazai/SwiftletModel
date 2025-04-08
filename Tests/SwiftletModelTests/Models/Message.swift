@@ -40,7 +40,7 @@ public struct Message: Codable, Sendable {
     }
 }
 
-extension Query where Entity == Message {
+extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID, Entity == Message {
     var isMyMessage: Bool? {
         related(\.$author)?.isMe
     }

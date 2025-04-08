@@ -32,7 +32,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Queries<Entity>  {
@@ -96,7 +96,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }
@@ -159,7 +159,7 @@ extension Collection {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         

@@ -139,7 +139,7 @@ private extension Collection {
     }
 }
 
-private extension Queries {
+private extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
 
     func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> Queries<Entity>
     
@@ -152,7 +152,7 @@ private extension Queries {
     }
 }
 
-public extension Queries {
+public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     func sorted<T>(
         by keyPath: KeyPath<Entity, T>) -> Queries<Entity>
     where

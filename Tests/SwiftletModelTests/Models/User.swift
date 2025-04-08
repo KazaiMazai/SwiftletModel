@@ -68,7 +68,7 @@ extension CollisionResolver where Entity == User {
     }
 }
 
-extension Query where Entity == User {
+extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID, Entity == User {
     
     var isMe: Bool {
         CurrentUser

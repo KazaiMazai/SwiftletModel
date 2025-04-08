@@ -7,7 +7,7 @@
 
 import Collections
 
-extension Query {
+extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -101,7 +101,7 @@ extension Query {
     }
 }
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> Queries<Entity>
@@ -151,7 +151,7 @@ public extension Query {
     }
 }
 
-extension Query {
+extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
@@ -187,7 +187,7 @@ extension Query {
     }
 }
 
-public extension Query {
+public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> Queries<Entity> {
