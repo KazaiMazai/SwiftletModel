@@ -32,6 +32,38 @@ public extension Collection {
     }
 }
 
+public extension Queries {
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Queries<Entity>  {
+            
+        whenResolved {
+            $0.with(keyPath, nested: nested)
+        }
+    }
+    
+    func with<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }  
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.with(keyPath, nested: nested)
+        }
+    }
+    
+    func with<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.with(slice: keyPath, nested: nested)
+        }
+    }
+}
+
 
 //MARK: - Nested Fragment Collection
 
@@ -64,6 +96,41 @@ public extension Collection {
     }
 }
 
+public extension Queries {
+    func fragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.fragment(keyPath, nested: nested)
+        }
+    }
+    
+    func fragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.fragment(keyPath, nested: nested)
+        }
+    }
+    
+    func fragment<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.fragment(slice: keyPath, nested: nested)
+        }
+    }
+}
+
 //MARK: - Nested Ids Collection
 
 public extension Collection {
@@ -89,5 +156,37 @@ public extension Collection {
     ) -> [Query<Entity>] where Element == Query<Entity> {
         
         map { $0.id(slice: keyPath) }
+    }
+}
+
+public extension Queries {
+    func id<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.id(keyPath)
+        }
+    }
+    
+    func id<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.id(keyPath)
+        }
+    }
+    
+    func id<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+        
+    ) -> Queries<Entity> {
+        
+        whenResolved {
+            $0.id(slice: keyPath)
+        }
     }
 }

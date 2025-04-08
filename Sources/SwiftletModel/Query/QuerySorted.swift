@@ -138,3 +138,68 @@ private extension Collection {
             .compactMap { queries[$0] }
     }
 }
+
+private extension Queries {
+
+    func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> Queries<Entity>
+    
+    where
+    T: Comparable {
+        
+        whenResolved {
+            $0.sorted(using: index)
+        }
+    }
+}
+
+public extension Queries {
+    func sorted<T>(
+        by keyPath: KeyPath<Entity, T>) -> Queries<Entity>
+    where
+    T: Comparable {
+        whenResolved {
+            $0.sorted(by: keyPath)
+        }
+    }
+    
+    func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
+                        _ kp1: KeyPath<Entity, T1>) -> Queries<Entity>
+    
+    where
+    T0: Comparable,
+    T1: Comparable {
+
+        whenResolved {
+            $0.sorted(by: kp0, kp1)
+        }
+    }
+    
+    func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
+                            _ kp1: KeyPath<Entity, T1>,
+                            _ kp2: KeyPath<Entity, T2>) -> Queries<Entity>
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
+        
+        whenResolved {
+            $0.sorted(by: kp0, kp1, kp2)
+        }
+    }
+    
+    func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
+                                _ kp1: KeyPath<Entity, T1>,
+                                _ kp2: KeyPath<Entity, T2>,
+                                _ kp3: KeyPath<Entity, T3>) -> Queries<Entity>
+    
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable,
+    T3: Comparable {
+        
+        whenResolved {
+            $0.sorted(by: kp0, kp1, kp2, kp3)
+        }
+    }
+}

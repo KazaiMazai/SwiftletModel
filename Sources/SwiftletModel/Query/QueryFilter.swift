@@ -102,6 +102,56 @@ public extension Query {
 }
 
 public extension Query {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> Queries<Entity>
+    
+    where
+    T: Comparable {
+
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> Queries<Entity>
+    
+    where
+    T: Comparable & Hashable {
+
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> Queries<Entity>
+    
+    where
+    T: Hashable {
+
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> Queries<Entity>
+    
+    where
+    T: Equatable {
+
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
+public extension Query {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
@@ -134,5 +184,16 @@ public extension Query {
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
+    }
+}
+
+public extension Query {
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> Queries<Entity> {
+        
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
     }
 }

@@ -113,6 +113,55 @@ public extension Collection {
     }
 }
 
+public extension Queries {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> Queries<Entity>
+    where
+    T: Comparable {
+
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+     
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Comparable {
+         whenResolved { 
+             $0.filter(predicate)
+         }
+    }
+    
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Comparable & Hashable {
+        whenResolved { 
+             $0.filter(predicate)
+        }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Hashable { 
+         whenResolved { 
+             $0.filter(predicate)
+        }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Equatable {
+         whenResolved { 
+             $0.filter(predicate)
+         }
+    }
+}
+
 
 public extension Collection {
     static func filter<Entity>(
@@ -121,6 +170,16 @@ public extension Collection {
     where
     Element == Query<Entity>  {
         Query.filter(predicate, in: context)
+    }
+}
+
+public extension Queries {
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> Queries<Entity>  {
+        Queries(context: context) {
+            Query.filter(predicate, in: context)
+        }
     }
 }
 
@@ -161,5 +220,13 @@ public extension Collection {
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
+    }
+}
+
+public extension Queries {
+    func filter( _ predicate: StringPredicate<Entity>) -> Queries<Entity> {
+        whenResolved {
+            $0.filter(predicate)
+        }
     }
 }

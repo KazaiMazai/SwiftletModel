@@ -29,3 +29,18 @@ public extension Collection {
         map { $0.with(nested) }
     }
 }
+
+public extension Queries {
+    func with(_ nested: Nested...) -> Queries<Entity> {
+        with(nested)
+    }
+    
+    func with(_ nested: [Nested]) -> Queries<Entity> {
+        whenResolved { queries in
+            queries.map { $0.with(nested) }
+        }
+    }
+}
+
+ 
+ 

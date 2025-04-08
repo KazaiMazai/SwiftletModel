@@ -10,6 +10,18 @@ import Foundation
 
 //MARK: - Related Entities Query
 
+
+public extension Query {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    ) -> Queries<Child> {
+        
+        Queries(context: context) {
+            related(keyPath)
+        }
+    }
+}
+
 public extension Query {
     
     func related<Child, Directionality, Constraints>(
@@ -34,6 +46,8 @@ public extension Query {
     }
 }
 
+
+
 //MARK: - Related Entities Collection Query
 
 public extension Collection {
@@ -47,10 +61,28 @@ public extension Collection {
     }
     
     func related<Entity, Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [[Query<Child>]]
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
     
     where Element == Query<Entity> {
+        compactMap { $0.related(keyPath) }.flatMap { $0 }
+    }
+}
+
+public extension Queries {
+    
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Queries<Child> {
         
-        compactMap { $0.related(keyPath) }
+        whenResolved {
+            $0.related(keyPath)
+        }
+    }
+    
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Queries<Child> {
+       
+        whenResolved {
+            $0.related(keyPath)
+        }
     }
 }

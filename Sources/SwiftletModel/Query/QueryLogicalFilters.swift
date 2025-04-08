@@ -45,3 +45,49 @@ public extension Collection {
             .removingDuplicates(by: { $0.id })
     }
 }
+
+public extension Queries {
+    func and<T>(
+        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Comparable {
+        whenResolved {
+            $0.and(predicate)
+        }
+    }
+
+    func and<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Hashable {
+        
+        whenResolved {
+            $0.and(predicate)
+        }
+    }
+    
+    func and<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Equatable {
+        whenResolved {
+            $0.and(predicate)
+        }
+    }
+
+    func and<T>(
+        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+    where
+    T: Hashable & Comparable  {
+        whenResolved {
+            $0.and(predicate)
+        }
+    }
+    
+    func or(_ query: @escaping @autoclosure () -> Queries<Entity>) -> Queries<Entity>{
+        whenResolved {
+            [$0, query().resolveQueries()].flatMap { $0 }
+                 .removingDuplicates(by: { $0.id })
+        }
+    }
+}
