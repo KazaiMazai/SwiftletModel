@@ -7,27 +7,6 @@
 
 import Foundation
 
-/*
-public struct Query<Entity: EntityModelProtocol> {
-    typealias Resolver = () -> Entity?
-    
-    public let id: Entity.ID
-    
-    let context: Context
-    let resolver: Resolver
-    
-    public init(context: Context, id: Entity.ID) {
-        self.context = context
-        self.id = id
-        self.resolver = { context.find(id) }
-    }
-    
-    public func resolve() -> Entity? {
-        resolver()
-    }
-}
- */
-
 public typealias Query<Entity: EntityModelProtocol> = LazyQuery<Entity, Optional<Entity>, Entity.ID>
 
 //MARK: - Resolve Query Collection
@@ -70,7 +49,7 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
     
     init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
         self.context = context
-        self.id = id
+        self.metadata = id
         self.resolver = resolver
     }
     
@@ -88,7 +67,7 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
 public struct LazyQuery<Entity: EntityModelProtocol, QueryResult, Metadata> {
     typealias Resolver = () -> QueryResult
     
-    public let id: Metadata
+    public let metadata: Metadata
     
     let context: Context
     let resolver: Resolver
@@ -97,12 +76,16 @@ public struct LazyQuery<Entity: EntityModelProtocol, QueryResult, Metadata> {
 extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
     public init(context: Context, id: Entity.ID) {
         self.context = context
-        self.id = id
+        self.metadata = id
         self.resolver = { context.find(id) }
     }
     
     public func resolve() -> Entity? {
         resolver()
+    }
+    
+    public var id: Entity.ID {
+        metadata
     }
 }
   
