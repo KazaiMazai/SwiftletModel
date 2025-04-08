@@ -39,6 +39,7 @@ public protocol EntityModelProtocol {
 }
 
 public extension EntityModelProtocol {
+    
     static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
 
     static var fragmentMergeStrategy: MergeStrategy<Self> { Self.patch }
@@ -70,22 +71,6 @@ public extension EntityModelProtocol {
     }
 }
 
-extension EntityModelProtocol {
-    static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
-        context.query(ids)
-    }
-    
-    static func query(in context: Context) -> [Query<Self>] {
-        context.query()
-    }
-     
-    static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>] {
-        Self.query(in: context)
-            .with(nested)
-    }
-}
-
-
 public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
         Self.query(id, in: context)
@@ -97,13 +82,13 @@ public extension EntityModelProtocol {
      
     static func query(_ ids: [ID], in context: Context) -> Queries<Self> {
         Queries(context: context) {
-            Self.query(ids, in: context)
+            context.query(ids)
         }
     }
      
     static func query(in context: Context) -> Queries<Self> {
         Queries(context: context) {
-            Self.query(in: context)
+            context.query()
         }
     }
    
@@ -144,12 +129,6 @@ public extension EntityModelProtocol {
         _ predicate: StringPredicate<Self>,
         in context: Context) -> [Query<Self>] {
         Query<Self>.filter(predicate, in: context)
-    }
-}
-
-public extension Collection {
-    func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
-        map { $0.query(in: context) }
     }
 }
 

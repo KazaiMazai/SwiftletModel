@@ -197,3 +197,4 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
         }
     }
 }
+

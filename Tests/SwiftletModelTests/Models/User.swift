@@ -68,8 +68,7 @@ extension CollisionResolver where Entity == User {
     }
 }
 
-extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID, Entity == User {
-    
+extension Query<User> {
     var isMe: Bool {
         CurrentUser
             .query(CurrentUser.id, in: context)
@@ -77,3 +76,6 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
     }
 }
  
+
+
+

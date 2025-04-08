@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 02/04/2025.
 //
 
-extension Collection {
+fileprivate extension Collection {
     func with<Entity, Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> [Query<Entity>] where Element == Query<Entity> {
@@ -67,7 +67,7 @@ public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Voi
 
 //MARK: - Nested Fragment Collection
 
-extension Collection {
+fileprivate extension Collection {
     func fragment<Entity, Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }
@@ -133,7 +133,7 @@ public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Voi
 
 //MARK: - Nested Ids Collection
 
-extension Collection {
+fileprivate extension Collection {
     func id<Entity, Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         

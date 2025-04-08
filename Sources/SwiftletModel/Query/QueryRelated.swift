@@ -28,11 +28,13 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         
     ) -> Query<Child>? {
+        
         context
             .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .first
             .flatMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
+        
     }
 }
 
@@ -69,14 +71,6 @@ extension Collection {
 }
 
 public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
-    
-    func related<Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Queries<Child> {
-        
-        whenResolved {
-            $0.related(keyPath)
-        }
-    }
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Queries<Child> {

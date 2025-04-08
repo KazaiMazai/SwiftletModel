@@ -101,10 +101,15 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
         self.resolver = { context.find(id) }
     }
     
-    public func resolve() -> QueryResult {
+    public func resolve() -> Entity? {
         resolver()
     }
 }
   
+extension Collection {
+    func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
+        map { $0.query(in: context) }
+    }
+}
  
  
