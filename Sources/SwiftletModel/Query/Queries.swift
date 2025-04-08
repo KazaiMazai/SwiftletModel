@@ -19,7 +19,7 @@ extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     
     init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
         self.context = context
-        self.id = Void()
+        self.metadata = Void()
         self.resolver = queriesResolver
     }
     
