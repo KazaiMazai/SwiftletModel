@@ -70,6 +70,21 @@ public extension EntityModelProtocol {
     }
 }
 
+extension EntityModelProtocol {
+    static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
+        context.query(ids)
+    }
+    
+    static func query(in context: Context) -> [Query<Self>] {
+        context.query()
+    }
+     
+    static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>] {
+        Self.query(in: context)
+            .with(nested)
+    }
+}
+
 
 public extension EntityModelProtocol {
     func query(in context: Context) -> Query<Self> {
@@ -79,16 +94,20 @@ public extension EntityModelProtocol {
     static func query(_ id: ID, in context: Context) -> Query<Self> {
         context.query(id)
     }
-    
-    static func query(_ ids: [ID], in context: Context) -> [Query<Self>] {
-        context.query(ids)
+     
+    static func query(_ ids: [ID], in context: Context) -> Queries<Self> {
+        Queries(context: context) {
+            Self.query(ids, in: context)
+        }
     }
-    
-    static func query(in context: Context) -> [Query<Self>] {
-        context.query()
+     
+    static func query(in context: Context) -> Queries<Self> {
+        Queries(context: context) {
+            Self.query(in: context)
+        }
     }
-    
-    static func batchQuery(with nested: Nested..., in context: Context) -> [Query<Self>] {
+   
+    static func batchQuery(with nested: Nested..., in context: Context) -> Queries<Self> {
         Self.query(in: context)
             .with(nested)
     }

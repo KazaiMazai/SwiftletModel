@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
 
-public extension Collection {
+extension Collection {
     func and<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
     where

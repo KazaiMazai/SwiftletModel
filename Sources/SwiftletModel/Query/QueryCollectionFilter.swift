@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
 
-public extension Collection {
+extension Collection {
     static func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -163,7 +163,7 @@ public extension Queries {
 }
 
 
-public extension Collection {
+extension Collection {
     static func filter<Entity>(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>]
@@ -183,7 +183,7 @@ public extension Queries {
     }
 }
 
-public extension Collection {
+extension Collection {
      
     func filter<Entity>(
         _ predicate: StringPredicate<Entity>) -> [Query<Entity>]

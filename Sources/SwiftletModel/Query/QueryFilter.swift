@@ -7,7 +7,7 @@
 
 import Collections
 
-public extension Query {
+extension Query {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -151,7 +151,7 @@ public extension Query {
     }
 }
 
-public extension Query {
+extension Query {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {

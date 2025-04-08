@@ -8,7 +8,7 @@ import Foundation
 
 typealias SortIndex = Index
 
-public extension Collection {
+extension Collection {
     func sorted<Entity, T>(
         by keyPath: KeyPath<Entity, T>) -> [Query<Entity>]
     where

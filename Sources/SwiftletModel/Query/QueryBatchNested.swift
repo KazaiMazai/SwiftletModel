@@ -20,7 +20,7 @@ public extension Query {
 
 //MARK: - Nested Entities Batch Collection Query
 
-public extension Collection {
+extension Collection {
     func with<Entity>(_ nested: Nested...) -> [Query<Entity>] where Element == Query<Entity> {
         with(nested)
     }

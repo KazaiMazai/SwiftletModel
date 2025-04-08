@@ -34,7 +34,9 @@ public extension Query {
             .flatMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
     }
-    
+}
+
+extension Query {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
@@ -46,11 +48,9 @@ public extension Query {
     }
 }
 
-
-
 //MARK: - Related Entities Collection Query
 
-public extension Collection {
+extension Collection {
     
     func related<Entity, Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
