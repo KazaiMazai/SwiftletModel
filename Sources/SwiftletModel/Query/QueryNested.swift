@@ -47,7 +47,7 @@ public extension Query {
     
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Query {
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Queries<Entity> {
             
             with(keyPath, slice: false, fragment: true, nested: nested)
         }

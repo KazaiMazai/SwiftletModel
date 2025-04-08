@@ -7,31 +7,27 @@
 
 import Foundation
 
-public struct Queries<Entity: EntityModelProtocol> {
-    typealias QueriesResolver = () -> [Query<Entity>]
+public typealias Queries<Entity: EntityModelProtocol> = LazyQuery<Entity, Array<Query<Entity>>, Void>
+ 
+extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
+    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> Queries<T> {
+        Queries<T>(context: context) {
+            let queries = self.resolver()
+            return perform(queries)
+        }
+    }
     
-    let context: Context
-    let queriesResolver: QueriesResolver
-    
-    init(context: Context, queriesResolver: @escaping QueriesResolver) {
+    init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
         self.context = context
-        self.queriesResolver = queriesResolver
+        self.id = Void()
+        self.resolver = queriesResolver
     }
     
     public func resolve() -> [Entity] {
-        queriesResolver().resolve()
+        resolver().resolve()
     }
     
     func resolveQueries() -> [Query<Entity>] {
-        queriesResolver()
-    }
-}
-
-extension Queries {
-    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> Queries<T> {
-        Queries<T>(context: context) {
-            let queries = queriesResolver()
-            return perform(queries)
-        }
+        resolver()
     }
 }
