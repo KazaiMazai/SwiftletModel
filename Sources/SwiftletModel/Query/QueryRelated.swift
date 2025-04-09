@@ -17,7 +17,7 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
     ) -> Queries<Child> {
         
         Queries(context: context) {
-            related(keyPath)
+            queryRelated(keyPath)
         }
     }
 }
@@ -39,7 +39,7 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
 }
 
 extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
-    func related<Child, Directionality, Constraints>(
+    func queryRelated<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
     ) -> [Query<Child>] {
@@ -52,31 +52,13 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
 
 //MARK: - Related Entities Collection Query
 
-extension Collection {
-    
-    func related<Entity, Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
-    
-    where Element == Query<Entity> {
-        
-        compactMap { $0.related(keyPath) }
-    }
-    
-    func related<Entity, Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
-    
-    where Element == Query<Entity> {
-        compactMap { $0.related(keyPath) }.flatMap { $0 }
-    }
-}
-
 public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Queries<Child> {
        
         whenResolved {
-            $0.related(keyPath)
+            $0.compactMap { $0.queryRelated(keyPath) }.flatMap { $0 }
         }
     }
 }

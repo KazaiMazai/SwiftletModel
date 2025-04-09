@@ -115,7 +115,7 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
             
             whenResolved {
                 var entity = $0
-                let relatedEntities = related(keyPath)
+                let relatedEntities = queryRelated(keyPath)
                     .map { nested($0) }
                     .compactMap { $0.resolve() }
                 
@@ -132,7 +132,7 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
             
             whenResolved {
                 var entity = $0
-                let ids = related(keyPath).map { $0.id }
+                let ids = queryRelated(keyPath).map { $0.id }
                 entity[keyPath: keyPath] = slice ? .appending(ids: ids) : .ids(ids)
                 return entity
             }
