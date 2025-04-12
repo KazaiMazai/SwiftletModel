@@ -12,15 +12,15 @@ public typealias Query<Entity: EntityModelProtocol> = Lazy<Entity, Optional<Enti
 public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, id: Entity.ID) {
         self.context = context
-        self.key = { _ in  id }
-        self.resolver = { context.find(id) }
+        self.keyResolver = { _ in  id }
+        self.resolver = { context, id in id.flatMap { context.find($0) }}
     }
     
     func resolve() -> Entity? {
-        resolver()
+        resolver(context, keyResolver(context))
     }
     
-    var id: Entity.ID? { key(context) }
+    var id: Entity.ID? { keyResolver(context) }
 }
 
 //MARK: - Resolve Query Collection
@@ -34,11 +34,8 @@ public extension Collection {
 extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, idResolver: @escaping (Context) -> Entity.ID?) {
         self.context = context
-        self.key = idResolver
-        self.resolver = {
-            idResolver(context)
-                .flatMap { id in context.find(id) }
-        }
+        self.keyResolver = idResolver
+        self.resolver = { context, id in id.flatMap { context.find($0) } }
     }
     
     static func none(in context: Context) -> Self {
@@ -47,8 +44,8 @@ extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     
     init(context: Context, id: Entity.ID?, resolver: @escaping () -> Entity?) {
         self.context = context
-        self.key = { _ in id }
-        self.resolver = resolver
+        self.keyResolver = { _ in id }
+        self.resolver = { _,_ in resolver() }
     }
     
     func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {

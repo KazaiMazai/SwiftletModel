@@ -11,25 +11,25 @@ public typealias QueryGroup<Entity: EntityModelProtocol> = Lazy<Entity, Array<Qu
 
 public extension Lazy where Result == [Query<Entity>], Key == Void {
     func resolve() -> [Entity] {
-        resolver().resolve()
+        resolveQueries().resolve()
     }
 }
 
 extension Lazy where Result == [Query<Entity>], Key == Void {
     func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> QueryGroup<T> {
         QueryGroup<T>(context: context) {
-            let queries = self.resolver()
+            let queries = resolveQueries()
             return perform(queries)
         }
     }
     
     init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
         self.context = context
-        self.key = { _ in Void() }
-        self.resolver = queriesResolver
+        self.keyResolver = { _ in Void() }
+        self.resolver = { _,_ in queriesResolver() }
     }
     
     func resolveQueries() -> [Query<Entity>] {
-        resolver()
+        resolver(context, keyResolver(context))
     }
 }

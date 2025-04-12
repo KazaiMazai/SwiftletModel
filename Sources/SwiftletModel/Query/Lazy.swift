@@ -6,10 +6,10 @@
 //
 
 public struct Lazy<Entity: EntityModelProtocol, Result, Key> {
-    typealias Resolver = () -> Result
+    typealias Resolver = (Context, Key?) -> Result
     typealias KeyResolver = (Context) -> Key?
     
-    let key: KeyResolver
+    let keyResolver: KeyResolver
     
     let context: Context
     let resolver: Resolver
