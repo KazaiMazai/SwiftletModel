@@ -58,9 +58,9 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     }
 }
 
-//MARK: - Collection Predicate Filter
+//MARK: - Private Collection Predicate Filter
 
-fileprivate extension Collection {
+private extension Collection {
 
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
@@ -160,9 +160,9 @@ fileprivate extension Collection {
     }
 }
 
-//MARK: - Collection StringPredicate Filter
+//MARK: - Private Collection StringPredicate Filter
 
-fileprivate extension Collection {
+private extension Collection {
      
     func filter<Entity>(
         _ predicate: StringPredicate<Entity>) -> [Query<Entity>]
