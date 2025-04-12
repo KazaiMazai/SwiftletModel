@@ -68,9 +68,9 @@ public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     }
 }
 
-//MARK: - Query Predicate Filter
+//MARK: - Private Query Predicate Filter
 
-extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+private extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -164,9 +164,9 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     }
 }
 
-//MARK: - Query StringPredicate Filter
+//MARK: - Private Query StringPredicate Filter
 
-extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+private extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {

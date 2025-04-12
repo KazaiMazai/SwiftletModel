@@ -8,6 +8,57 @@ import Foundation
 
 typealias SortIndex = Index
 
+public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+    func sorted<T>(
+        by keyPath: KeyPath<Entity, T>) -> QueryGroup<Entity>
+    where
+    T: Comparable {
+        whenResolved {
+            $0.sorted(by: keyPath)
+        }
+    }
+    
+    func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
+                        _ kp1: KeyPath<Entity, T1>) -> QueryGroup<Entity>
+    
+    where
+    T0: Comparable,
+    T1: Comparable {
+        whenResolved {
+            $0.sorted(by: kp0, kp1)
+        }
+    }
+    
+    func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
+                            _ kp1: KeyPath<Entity, T1>,
+                            _ kp2: KeyPath<Entity, T2>) -> QueryGroup<Entity>
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable {
+        whenResolved {
+            $0.sorted(by: kp0, kp1, kp2)
+        }
+    }
+    
+    func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
+                                _ kp1: KeyPath<Entity, T1>,
+                                _ kp2: KeyPath<Entity, T2>,
+                                _ kp3: KeyPath<Entity, T3>) -> QueryGroup<Entity>
+    
+    where
+    T0: Comparable,
+    T1: Comparable,
+    T2: Comparable,
+    T3: Comparable {
+        whenResolved {
+            $0.sorted(by: kp0, kp1, kp2, kp3)
+        }
+    }
+}
+
+//MARK: - Private Sorting
+
 private extension Collection {
     func sorted<Entity, T>(
         by keyPath: KeyPath<Entity, T>) -> [Query<Entity>]
@@ -122,8 +173,6 @@ private extension Collection {
     }
 }
 
-//MARK: - Private Sorting
-
 private extension Collection {
 
     func sorted<Entity, T>(using index: SortIndex<Entity>.ComparableValue<T>) -> [Query<Entity>]
@@ -148,58 +197,6 @@ private extension Lazy where Result == [Query<Entity>], Metadata == Void {
         
         whenResolved {
             $0.sorted(using: index)
-        }
-    }
-}
-
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    func sorted<T>(
-        by keyPath: KeyPath<Entity, T>) -> QueryGroup<Entity>
-    where
-    T: Comparable {
-        whenResolved {
-            $0.sorted(by: keyPath)
-        }
-    }
-    
-    func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
-                        _ kp1: KeyPath<Entity, T1>) -> QueryGroup<Entity>
-    
-    where
-    T0: Comparable,
-    T1: Comparable {
-
-        whenResolved {
-            $0.sorted(by: kp0, kp1)
-        }
-    }
-    
-    func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
-                            _ kp1: KeyPath<Entity, T1>,
-                            _ kp2: KeyPath<Entity, T2>) -> QueryGroup<Entity>
-    where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
-        
-        whenResolved {
-            $0.sorted(by: kp0, kp1, kp2)
-        }
-    }
-    
-    func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
-                                _ kp1: KeyPath<Entity, T1>,
-                                _ kp2: KeyPath<Entity, T2>,
-                                _ kp3: KeyPath<Entity, T3>) -> QueryGroup<Entity>
-    
-    where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
-        
-        whenResolved {
-            $0.sorted(by: kp0, kp1, kp2, kp3)
         }
     }
 }
