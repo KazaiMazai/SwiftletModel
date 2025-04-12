@@ -81,15 +81,11 @@ public extension EntityModelProtocol {
     }
      
     static func query(_ ids: [ID], in context: Context) -> QueryGroup<Self> {
-        QueryGroup(context: context) {
-            context.query(ids)
-        }
+        context.query(ids)
     }
      
     static func query(in context: Context) -> QueryGroup<Self> {
-        QueryGroup(context: context) {
-            context.query()
-        }
+        context.query()
     }
    
     static func batchQuery(with nested: Nested..., in context: Context) -> QueryGroup<Self> {
