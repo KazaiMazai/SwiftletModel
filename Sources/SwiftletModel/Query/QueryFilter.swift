@@ -7,7 +7,7 @@
 
 import Collections
 
-public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> QueryGroup<Entity>
@@ -57,7 +57,7 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     }
 }
 
-public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> QueryGroup<Entity> {
@@ -70,7 +70,7 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
 
 //MARK: - Private Query Predicate Filter
 
-private extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -166,7 +166,7 @@ private extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
 
 //MARK: - Private Query StringPredicate Filter
 
-private extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {

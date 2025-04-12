@@ -1,11 +1,11 @@
 //
-//  Lazy.swift
+//  ContextQuery.swift
 //  SwiftletModel
 //
 //  Created by Sergey Kazakov on 12/04/2025.
 //
 
-public struct Lazy<Entity: EntityModelProtocol, Result, Key> {
+public struct ContextQuery<Entity: EntityModelProtocol, Result, Key> {
     typealias Resolver = (Context, Key?) -> Result
     typealias KeyResolver = (Context) -> Key?
     

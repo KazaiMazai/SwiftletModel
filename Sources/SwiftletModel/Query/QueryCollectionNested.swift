@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 02/04/2025.
 //
 
-public extension Lazy where Result == [Query<Entity>], Key == Void {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> QueryGroup<Entity>  {
@@ -40,7 +40,7 @@ public extension Lazy where Result == [Query<Entity>], Key == Void {
 
 //MARK: - Nested Fragment Collection
 
-public extension Lazy where Result == [Query<Entity>], Key == Void {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }
@@ -77,7 +77,7 @@ public extension Lazy where Result == [Query<Entity>], Key == Void {
 
 //MARK: - Nested Ids Collection
 
-public extension Lazy where Result == [Query<Entity>], Key == Void {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         

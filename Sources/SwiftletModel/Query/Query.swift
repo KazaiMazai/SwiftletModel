@@ -7,9 +7,9 @@
 
 import Foundation
 
-public typealias Query<Entity: EntityModelProtocol> = Lazy<Entity, Optional<Entity>, Entity.ID>
+public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Optional<Entity>, Entity.ID>
 
-public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, id: Entity.ID) {
         self.context = context
         self.keyResolver = { _ in  id }
@@ -31,7 +31,7 @@ public extension Collection {
     }
 }
 
-extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, idResolver: @escaping (Context) -> Entity.ID?) {
         self.context = context
         self.keyResolver = idResolver

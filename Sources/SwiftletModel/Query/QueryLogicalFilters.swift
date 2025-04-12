@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
  
-public extension Lazy where Result == [Query<Entity>], Key == Void {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func and<T>(
         _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
