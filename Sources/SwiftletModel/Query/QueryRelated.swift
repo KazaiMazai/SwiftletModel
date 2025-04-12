@@ -33,9 +33,8 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
             return .none(in: context)
         }
         
-        return Query(context: context) {
-            context
-                .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+        return Query(context: context) { context in
+            context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
                 .first
                 .flatMap { Child.ID($0) }
         }

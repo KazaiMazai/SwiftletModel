@@ -25,7 +25,7 @@ extension Lazy where Result == [Query<Entity>], Key == Void {
     
     init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
         self.context = context
-        self.key = { Void() }
+        self.key = { _ in Void() }
         self.resolver = queriesResolver
     }
     
