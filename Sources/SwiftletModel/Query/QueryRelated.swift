@@ -27,14 +27,18 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         
-    ) -> Query<Child>? {
+    ) -> Query<Child> {
         
-        context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id!)
-            .first
-            .flatMap { Child.ID($0) }
-            .map { Query<Child>(context: context, id: $0) }
+        guard let id = id else {
+            return .none(in: context)
+        }
         
+        return Query(context: context) {
+            context
+                .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+                .first
+                .flatMap { Child.ID($0) }
+        }
     }
 }
 
@@ -43,8 +47,13 @@ extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
     ) -> [Query<Child>] {
-        context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id!)
+        
+        guard let id = id else {
+            return []
+        }
+        
+        return context
+            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
     }

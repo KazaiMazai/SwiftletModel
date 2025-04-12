@@ -32,6 +32,18 @@ public extension Collection {
 }
 
 extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
+    init(context: Context, idResolver: @escaping () -> Entity.ID?) {
+        self.context = context
+        self.key = idResolver
+        self.resolver = {
+            idResolver()
+                .flatMap { id in context.find(id) }
+        }
+    }
+    
+    static func none(in context: Context) -> Self {
+        Self(context: context, idResolver: { nil })
+    }
     
     init(context: Context, id: Entity.ID?, resolver: @escaping () -> Entity?) {
         self.context = context
