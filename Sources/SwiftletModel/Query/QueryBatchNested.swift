@@ -20,16 +20,6 @@ public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
 
 //MARK: - Nested Entities Batch Collection Query
 
-extension Collection {
-    func with<Entity>(_ nested: Nested...) -> [Query<Entity>] where Element == Query<Entity> {
-        with(nested)
-    }
-    
-    func with<Entity>(_ nested: [Nested]) -> [Query<Entity>] where Element == Query<Entity> {
-        map { $0.with(nested) }
-    }
-}
-
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func with(_ nested: Nested...) -> QueryGroup<Entity> {
         with(nested)

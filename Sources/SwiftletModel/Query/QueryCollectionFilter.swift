@@ -5,6 +5,55 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
 
+public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> QueryGroup<Entity>
+    where
+    T: Comparable {
+
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+     
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+    where
+    T: Comparable {
+         whenResolved { 
+             $0.filter(predicate)
+         }
+    }
+    
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+    where
+    T: Comparable & Hashable {
+        whenResolved { 
+             $0.filter(predicate)
+        }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+    where
+    T: Hashable { 
+         whenResolved { 
+             $0.filter(predicate)
+        }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+    where
+    T: Equatable {
+         whenResolved { 
+             $0.filter(predicate)
+         }
+    }
+}
+
 extension Collection {
     static func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>,
@@ -110,55 +159,6 @@ extension Collection {
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
-    }
-}
-
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    static func filter<T>(
-        _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
-    where
-    T: Comparable {
-
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-     
-    func filter<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
-    where
-    T: Comparable {
-         whenResolved { 
-             $0.filter(predicate)
-         }
-    }
-    
-    func filter<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
-    where
-    T: Comparable & Hashable {
-        whenResolved { 
-             $0.filter(predicate)
-        }
-    }
-    
-    func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
-    where
-    T: Hashable { 
-         whenResolved { 
-             $0.filter(predicate)
-        }
-    }
-    
-    func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
-    where
-    T: Equatable {
-         whenResolved { 
-             $0.filter(predicate)
-         }
     }
 }
 
