@@ -8,7 +8,7 @@
 public struct Lazy<Entity: EntityModelProtocol, Result, Metadata> {
     typealias Resolver = () -> Result
     
-    public let metadata: Metadata
+    let metadata: Metadata
     
     let context: Context
     let resolver: Resolver

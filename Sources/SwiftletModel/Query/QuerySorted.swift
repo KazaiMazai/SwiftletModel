@@ -141,7 +141,7 @@ private extension Collection {
 
 private extension Lazy where Result == [Query<Entity>], Metadata == Void {
 
-    func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> Queries<Entity>
+    func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryGroup<Entity>
     
     where
     T: Comparable {
@@ -154,7 +154,7 @@ private extension Lazy where Result == [Query<Entity>], Metadata == Void {
 
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func sorted<T>(
-        by keyPath: KeyPath<Entity, T>) -> Queries<Entity>
+        by keyPath: KeyPath<Entity, T>) -> QueryGroup<Entity>
     where
     T: Comparable {
         whenResolved {
@@ -163,7 +163,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     }
     
     func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
-                        _ kp1: KeyPath<Entity, T1>) -> Queries<Entity>
+                        _ kp1: KeyPath<Entity, T1>) -> QueryGroup<Entity>
     
     where
     T0: Comparable,
@@ -176,7 +176,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     
     func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
                             _ kp1: KeyPath<Entity, T1>,
-                            _ kp2: KeyPath<Entity, T2>) -> Queries<Entity>
+                            _ kp2: KeyPath<Entity, T2>) -> QueryGroup<Entity>
     where
     T0: Comparable,
     T1: Comparable,
@@ -190,7 +190,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
                                 _ kp1: KeyPath<Entity, T1>,
                                 _ kp2: KeyPath<Entity, T2>,
-                                _ kp3: KeyPath<Entity, T3>) -> Queries<Entity>
+                                _ kp3: KeyPath<Entity, T3>) -> QueryGroup<Entity>
     
     where
     T0: Comparable,

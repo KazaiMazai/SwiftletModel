@@ -52,10 +52,15 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     }
 }
 
+//MARK: - Entities Collection Extension
 
 extension Collection {
-  func query<Entity>(in context: Context) -> [Query<Entity>] where Element == Entity, Entity: EntityModelProtocol {
-      map { $0.query(in: context) }
-  }
+    func query<Entity>(in context: Context) -> [Query<Entity>]
+    where
+    Element == Entity,
+    Entity: EntityModelProtocol {
+        
+        map { $0.query(in: context) }
+    }
 }
-  
+

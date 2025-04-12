@@ -14,9 +14,9 @@ import Foundation
 public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
-    ) -> Queries<Child> {
+    ) -> QueryGroup<Child> {
         
-        Queries(context: context) {
+        QueryGroup(context: context) {
             queryRelated(keyPath)
         }
     }
@@ -55,7 +55,7 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     
     func related<Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Queries<Child> {
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> QueryGroup<Child> {
        
         whenResolved {
             $0.compactMap { $0.queryRelated(keyPath) }.flatMap { $0 }

@@ -48,7 +48,7 @@ extension Collection {
 
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func and<T>(
-        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Comparable {
         whenResolved {
@@ -57,7 +57,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     }
 
     func and<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Hashable {
         
@@ -67,7 +67,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     }
     
     func and<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> Queries<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Equatable {
         whenResolved {
@@ -76,7 +76,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     }
 
     func and<T>(
-        _ predicate: Predicate<Entity, T>) -> Queries<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Hashable & Comparable  {
         whenResolved {
@@ -84,7 +84,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
         }
     }
     
-    func or(_ query: @escaping @autoclosure () -> Queries<Entity>) -> Queries<Entity>{
+    func or(_ query: @escaping @autoclosure () -> QueryGroup<Entity>) -> QueryGroup<Entity>{
         whenResolved {
             [$0, query().resolveQueries()].flatMap { $0 }
                  .removingDuplicates(by: { $0.id })

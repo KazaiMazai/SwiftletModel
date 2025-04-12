@@ -31,11 +31,11 @@ extension Collection {
 }
 
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    func with(_ nested: Nested...) -> Queries<Entity> {
+    func with(_ nested: Nested...) -> QueryGroup<Entity> {
         with(nested)
     }
     
-    func with(_ nested: [Nested]) -> Queries<Entity> {
+    func with(_ nested: [Nested]) -> QueryGroup<Entity> {
         whenResolved { queries in
             queries.map { $0.with(nested) }
         }

@@ -104,48 +104,48 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
 public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> Queries<Entity>
+        in context: Context) -> QueryGroup<Entity>
     
     where
     T: Comparable {
 
-        Queries(context: context) {
+        QueryGroup(context: context) {
             Query.filter(predicate, in: context)
         }
     }
 
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> Queries<Entity>
+        in context: Context) -> QueryGroup<Entity>
     
     where
     T: Comparable & Hashable {
 
-        Queries(context: context) {
+        QueryGroup(context: context) {
             Query.filter(predicate, in: context)
         }
     }
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> Queries<Entity>
+        in context: Context) -> QueryGroup<Entity>
     
     where
     T: Hashable {
 
-        Queries(context: context) {
+        QueryGroup(context: context) {
             Query.filter(predicate, in: context)
         }
     }
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> Queries<Entity>
+        in context: Context) -> QueryGroup<Entity>
     
     where
     T: Equatable {
 
-        Queries(context: context) {
+        QueryGroup(context: context) {
             Query.filter(predicate, in: context)
         }
     }
@@ -190,9 +190,9 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
 public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
-        in context: Context) -> Queries<Entity> {
+        in context: Context) -> QueryGroup<Entity> {
         
-        Queries(context: context) {
+        QueryGroup(context: context) {
             Query.filter(predicate, in: context)
         }
     }

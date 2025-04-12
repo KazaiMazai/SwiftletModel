@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias Queries<Entity: EntityModelProtocol> = Lazy<Entity, Array<Query<Entity>>, Void>
+public typealias QueryGroup<Entity: EntityModelProtocol> = Lazy<Entity, Array<Query<Entity>>, Void>
 
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func resolve() -> [Entity] {
@@ -16,8 +16,8 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
 }
 
 extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> Queries<T> {
-        Queries<T>(context: context) {
+    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> QueryGroup<T> {
+        QueryGroup<T>(context: context) {
             let queries = self.resolver()
             return perform(queries)
         }
