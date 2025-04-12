@@ -12,58 +12,56 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     where
     T: Comparable {
 
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
+        Query.filter(predicate, in: context)
     }
      
     func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Comparable {
-         whenResolved { 
-             $0.filter(predicate)
-         }
+        whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Comparable & Hashable {
-        whenResolved { 
-             $0.filter(predicate)
-        }
+        whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Hashable { 
-         whenResolved { 
-             $0.filter(predicate)
-        }
+        whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Equatable {
-         whenResolved { 
-             $0.filter(predicate)
-         }
+         whenResolved { $0.filter(predicate) }
     }
 }
 
-extension Collection {
-    static func filter<Entity, T>(
-        _ predicate: Predicate<Entity, T>,
-        in context: Context) -> [Query<Entity>]
-    where
-    Element == Query<Entity>,
-    T: Comparable {
-        Query.filter(predicate, in: context)
+
+public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+    func filter( _ predicate: StringPredicate<Entity>) -> QueryGroup<Entity> {
+        whenResolved { $0.filter(predicate) }
     }
-     
+    
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> QueryGroup<Entity>  {
+        
+            Query.filter(predicate, in: context)
+    }
+}
+
+//MARK: - Collection Predicate Filter
+
+fileprivate extension Collection {
+
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
     where
@@ -162,28 +160,9 @@ extension Collection {
     }
 }
 
+//MARK: - Collection StringPredicate Filter
 
-extension Collection {
-    static func filter<Entity>(
-        _ predicate: StringPredicate<Entity>,
-        in context: Context) -> [Query<Entity>]
-    where
-    Element == Query<Entity>  {
-        Query.filter(predicate, in: context)
-    }
-}
-
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    static func filter(
-        _ predicate: StringPredicate<Entity>,
-        in context: Context) -> QueryGroup<Entity>  {
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-}
-
-extension Collection {
+fileprivate extension Collection {
      
     func filter<Entity>(
         _ predicate: StringPredicate<Entity>) -> [Query<Entity>]
@@ -223,10 +202,3 @@ extension Collection {
     }
 }
 
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
-    func filter( _ predicate: StringPredicate<Entity>) -> QueryGroup<Entity> {
-        whenResolved {
-            $0.filter(predicate)
-        }
-    }
-}

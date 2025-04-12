@@ -10,28 +10,28 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
         _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Comparable {
-        whenResolved { $0.filter(predicate) }
+        filter(predicate)
     }
 
     func and<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Hashable {
-        whenResolved { $0.filter(predicate) }
+        filter(predicate)
     }
     
     func and<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Equatable {
-        whenResolved { $0.filter(predicate) }
+        filter(predicate)
     }
 
     func and<T>(
         _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
     where
     T: Hashable & Comparable  {
-        whenResolved { $0.filter(predicate) }
+        filter(predicate)
     }
     
     func or(_ query: @escaping @autoclosure () -> QueryGroup<Entity>) -> QueryGroup<Entity>{

@@ -5,40 +5,13 @@
 //  Created by Sergey Kazakov on 02/04/2025.
 //
 
-fileprivate extension Collection {
-    func with<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> [Query<Entity>] where Element == Query<Entity> {
-            
-            map { $0.with(keyPath, fragment: false, nested: nested) }
-        }
-    
-    func with<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.with(keyPath, slice: false, fragment: false, nested: nested) }
-    }
-    
-    func with<Entity, Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.with(keyPath, slice: true, fragment: false, nested: nested) }
-    }
-}
-
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> QueryGroup<Entity>  {
             
         whenResolved {
-            $0.with(keyPath, nested: nested)
+            $0.map { $0.with(keyPath, fragment: false, nested: nested) }
         }
     }
     
@@ -48,7 +21,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.with(keyPath, nested: nested)
+            $0.map { $0.with(keyPath, slice: false, fragment: false, nested: nested) }
         }
     }
     
@@ -59,7 +32,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.with(slice: keyPath, nested: nested)
+            $0.map { $0.with(keyPath, slice: true, fragment: false, nested: nested) }
         }
     }
 }
@@ -67,35 +40,6 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
 
 //MARK: - Nested Fragment Collection
 
-fileprivate extension Collection {
-    func fragment<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.with(keyPath, fragment: true, nested: nested) }
-    }
-    
-    func fragment<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.with(keyPath, slice: false, fragment: true, nested: nested) }
-    }
-    
-    func fragment<Entity, Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.with(keyPath, slice: true, fragment: true, nested: nested) }
-    }
-}
-
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
@@ -104,7 +48,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.fragment(keyPath, nested: nested)
+            $0.map { $0.with(keyPath, fragment: true, nested: nested) }
         }
     }
     
@@ -115,7 +59,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.fragment(keyPath, nested: nested)
+            $0.map { $0.with(keyPath, slice: false, fragment: true, nested: nested) }
         }
     }
     
@@ -126,39 +70,13 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.fragment(slice: keyPath, nested: nested)
+            $0.map { $0.with(keyPath, slice: true, fragment: true, nested: nested) }
         }
     }
 }
 
 //MARK: - Nested Ids Collection
 
-fileprivate extension Collection {
-    func id<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.id(keyPath) }
-    }
-    
-    func id<Entity, Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.id(keyPath) }
-    }
-    
-    func id<Entity, Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
-        
-    ) -> [Query<Entity>] where Element == Query<Entity> {
-        
-        map { $0.id(slice: keyPath) }
-    }
-}
-
 public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
@@ -166,7 +84,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.id(keyPath)
+            $0.map { $0.id(keyPath) }
         }
     }
     
@@ -176,7 +94,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.id(keyPath)
+            $0.map { $0.id(keyPath) }
         }
     }
     
@@ -186,7 +104,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     ) -> QueryGroup<Entity> {
         
         whenResolved {
-            $0.id(slice: keyPath)
+            $0.map { $0.id(slice: keyPath) }
         }
     }
 }
