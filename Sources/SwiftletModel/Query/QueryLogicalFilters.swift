@@ -34,9 +34,9 @@ public extension Lazy where Result == [Query<Entity>], Key == Void {
         filter(predicate)
     }
     
-    func or(_ query: @escaping @autoclosure () -> QueryGroup<Entity>) -> QueryGroup<Entity>{
-        whenResolved {
-            [$0, query().resolveQueries()]
+    func or(_ queryGroup: @escaping @autoclosure () -> QueryGroup<Entity>) -> QueryGroup<Entity>{
+        whenResolved { queries in
+            [queries, queryGroup().resolveQueries()]
                 .flatMap { $0 }
                 .removingDuplicates(by: { $0.id })
         }

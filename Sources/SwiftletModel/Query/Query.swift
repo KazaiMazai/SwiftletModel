@@ -17,7 +17,7 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     }
     
     func resolve() -> Entity? {
-        resolver(context, keyResolver(context))
+        resolver(context, id)
     }
     
     var id: Entity.ID? { keyResolver(context) }
