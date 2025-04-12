@@ -7,6 +7,69 @@
 
 import Collections
 
+public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> QueryGroup<Entity>
+    
+    where
+    T: Comparable {
+
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> QueryGroup<Entity>
+    
+    where
+    T: Comparable & Hashable {
+
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> QueryGroup<Entity>
+    
+    where
+    T: Hashable {
+
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> QueryGroup<Entity>
+    
+    where
+    T: Equatable {
+
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
+public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> QueryGroup<Entity> {
+        
+        QueryGroup(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
+//MARK: - Query Predicate Filter
+
 extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
@@ -101,55 +164,7 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     }
 }
 
-public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
-    static func filter<T>(
-        _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
-    
-    where
-    T: Comparable {
-
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-
-    static func filter<T>(
-        _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
-    
-    where
-    T: Comparable & Hashable {
-
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-    
-    static func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
-    
-    where
-    T: Hashable {
-
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-    
-    static func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
-    
-    where
-    T: Equatable {
-
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-}
+//MARK: - Query StringPredicate Filter
 
 extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     static func filter(
@@ -186,15 +201,5 @@ extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
             .query(in: context)
     }
 }
-
-public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
-    static func filter(
-        _ predicate: StringPredicate<Entity>,
-        in context: Context) -> QueryGroup<Entity> {
-        
-        QueryGroup(context: context) {
-            Query.filter(predicate, in: context)
-        }
-    }
-}
+ 
 

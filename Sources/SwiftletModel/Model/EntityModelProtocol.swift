@@ -103,7 +103,7 @@ public extension EntityModelProtocol {
 public extension EntityModelProtocol {
     static func filter<T>(
         _ predicate: Predicate<Self, T>,
-        in context: Context) -> [Query<Self>]
+        in context: Context) -> QueryGroup<Self>
     where
     T: Comparable {
         Query<Self>.filter(predicate, in: context)
@@ -111,7 +111,7 @@ public extension EntityModelProtocol {
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Self, T>,
-        in context: Context) -> [Query<Self>]
+        in context: Context) -> QueryGroup<Self>
     where
     T: Hashable {
         Query<Self>.filter(predicate, in: context)
@@ -119,7 +119,7 @@ public extension EntityModelProtocol {
     
     static func filter<T>(
         _ predicate: Predicate<Self, T>,
-        in context: Context) -> [Query<Self>]
+        in context: Context) -> QueryGroup<Self>
     where
     T: Hashable & Comparable {
         Query<Self>.filter(predicate, in: context)
@@ -127,7 +127,7 @@ public extension EntityModelProtocol {
     
     static func filter(
         _ predicate: StringPredicate<Self>,
-        in context: Context) -> [Query<Self>] {
+        in context: Context) -> QueryGroup<Self> {
         Query<Self>.filter(predicate, in: context)
     }
 }

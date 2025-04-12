@@ -93,6 +93,7 @@ final class FilterQueryTests: XCTestCase {
                 || $0.numOf10 == 2
             }
        
+        let context = context
         let filterResult = TestingModels.ExtensivelyIndexed
             .filter(\.numOf1 == 1, in: context)
             .or(.filter(\.numOf10 == 2, in: context))
@@ -109,7 +110,7 @@ final class FilterQueryTests: XCTestCase {
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
-       
+        let context = context
         let filterResult = TestingModels.ExtensivelyIndexed
             .filter(\.numOf1 == 1, in: context)
             .or(.filter(\.numOf10 != 5, in: context))
@@ -127,7 +128,7 @@ final class FilterQueryTests: XCTestCase {
                 || $0.numOf10 != 5
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
-       
+        let context = context
         let filterResult = TestingModels.NotIndexed
             .filter(\.numOf1 == 1, in: context)
             .or(.filter(\.numOf10 != 5, in: context))
@@ -145,7 +146,7 @@ final class FilterQueryTests: XCTestCase {
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
-       
+        let context = context
         let filterResult = TestingModels.NotIndexed
             .filter(\.numOf1 == 1, in: context)
             .or(.filter(\.numOf10 != 5, in: context))
@@ -163,7 +164,7 @@ final class FilterQueryTests: XCTestCase {
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
-       
+        let context = context
         let filterResult = TestingModels.NotIndexed
             .filter(\.numOf1 == 1, in: context)
             .or(.filter(\.numOf10 != 5, in: context))
