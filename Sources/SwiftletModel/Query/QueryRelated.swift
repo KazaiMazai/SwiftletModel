@@ -29,12 +29,12 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
         
     ) -> Query<Child> {
         
-        guard let id = id else {
-            return .none(in: context)
-        }
-        
-        return Query(context: context) { context in
-            context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+        Query(context: context) { context in
+            guard let id = id else {
+                return nil
+            }
+            
+            return context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
                 .first
                 .flatMap { Child.ID($0) }
         }
