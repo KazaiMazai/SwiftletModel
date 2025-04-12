@@ -42,7 +42,7 @@ public struct Message: Codable, Sendable {
 
 extension Query<Message> {
     var isMyMessage: Bool? {
-        related(\.$author)?.isMe
+        related(\.$author).isMe
     }
 }
  
