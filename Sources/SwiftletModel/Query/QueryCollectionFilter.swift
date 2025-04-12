@@ -76,8 +76,8 @@ private extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.filter(predicate))
-            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
+            let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
+            return filter( { filterResult.contains($0.id) })
         }
         
         return self
@@ -100,16 +100,16 @@ private extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.find(predicate.value))
-            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
+            let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
+            return filter( { filterResult.contains($0.id) })
         }
         
         if let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.filter(predicate))
-            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
+            let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
+            return filter( { filterResult.contains($0.id) })
         }
         
         return self
@@ -132,8 +132,8 @@ private extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.find(predicate.value))
-            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
+            let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
+            return filter( { filterResult.contains($0.id) })
         }
         
         return self
@@ -178,8 +178,8 @@ private extension Collection {
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
 
-            let filterResult = Set(index.search(predicate.value))
-            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
+            let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
+            return filter( { filterResult.contains($0.id) })
         }
 
          if predicate.method.isIncluding, let index = FullTextIndex<Entity>
@@ -187,9 +187,9 @@ private extension Collection {
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
 
-            let filterResult = Set(index.search(predicate.value))
+            let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return self
-                .filter({ $0.id.map { filterResult.contains($0) } ?? false })
+                .filter({ filterResult.contains($0.id) })
                 .resolve()
                 .filter(predicate.isIncluded)
                 .query(in: context)
