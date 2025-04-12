@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
 
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+public extension Lazy where Result == [Query<Entity>], Key == Void {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> QueryGroup<Entity>
@@ -45,7 +45,7 @@ public extension Lazy where Result == [Query<Entity>], Metadata == Void {
 }
 
 
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+public extension Lazy where Result == [Query<Entity>], Key == Void {
     func filter( _ predicate: StringPredicate<Entity>) -> QueryGroup<Entity> {
         whenResolved { $0.filter(predicate) }
     }

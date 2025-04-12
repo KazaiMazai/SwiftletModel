@@ -9,10 +9,10 @@ import Foundation
 
 public typealias Query<Entity: EntityModelProtocol> = Lazy<Entity, Optional<Entity>, Entity.ID>
 
-public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, id: Entity.ID) {
         self.context = context
-        self.metadata = id
+        self.key = id
         self.resolver = { context.find(id) }
     }
     
@@ -20,9 +20,7 @@ public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
         resolver()
     }
     
-    var id: Entity.ID {
-        metadata
-    }
+    var id: Entity.ID { key }
 }
 
 //MARK: - Resolve Query Collection
@@ -33,11 +31,11 @@ public extension Collection {
     }
 }
 
-extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
+extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     
     init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
         self.context = context
-        self.metadata = id
+        self.key = id
         self.resolver = resolver
     }
     

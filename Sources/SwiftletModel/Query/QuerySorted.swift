@@ -8,7 +8,7 @@ import Foundation
 
 typealias SortIndex = Index
 
-public extension Lazy where Result == [Query<Entity>], Metadata == Void {
+public extension Lazy where Result == [Query<Entity>], Key == Void {
     func sorted<T>(
         by keyPath: KeyPath<Entity, T>) -> QueryGroup<Entity>
     where
@@ -188,7 +188,7 @@ private extension Collection {
     }
 }
 
-private extension Lazy where Result == [Query<Entity>], Metadata == Void {
+private extension Lazy where Result == [Query<Entity>], Key == Void {
 
     func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryGroup<Entity>
     
