@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias QueryGroup<Entity: EntityModelProtocol> = ContextQuery<Entity, Array<Query<Entity>>, Void>
+public typealias QueryGroup<Entity: EntityModelProtocol> = ContextQuery<Entity, [Query<Entity>], Void>
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func resolve() -> [Entity] {
@@ -23,6 +23,13 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void {
         }
     }
     
+    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [[Query<T>]]) -> GroupedQueries<T> {
+        GroupedQueries<T>(context: context) {
+            let queries = resolveQueries()
+            return perform(queries)
+        }
+    }
+    
     init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
         self.context = context
         self.key = { _ in Void() }
@@ -33,3 +40,5 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void {
         result(context, key(context))
     }
 }
+
+

@@ -63,10 +63,10 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func related<Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> QueryGroup<Child> {
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> GroupedQueries<Child> {
        
         whenResolved {
-            $0.compactMap { $0.queryRelated(keyPath) }.flatMap { $0 }
+            $0.map { $0.queryRelated(keyPath) }
         }
     }
 }
