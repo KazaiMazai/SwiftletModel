@@ -9,21 +9,13 @@ import Foundation
 
 public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Optional<Entity>, Entity.ID>
 
+//MARK: - Resolve Query
+
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
-    init(context: Context, id: Entity.ID) {
-        self.context = context
-        self.key = { _ in  id }
-        self.result = { context, id in id.flatMap { context.find($0) }}
-    }
-    
     func resolve() -> Entity? {
         result(context, id)
     }
-    
-    var id: Entity.ID? { key(context) }
 }
-
-//MARK: - Resolve Query Collection
 
 public extension Collection {
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
@@ -32,8 +24,12 @@ public extension Collection {
 }
 
 extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
-    static func none(in context: Context) -> Self {
-        Self(context: context, id: nil) { nil }
+    var id: Entity.ID? { key(context) }
+
+    init(context: Context, id: Entity.ID) {
+        self.context = context
+        self.key = { _ in  id }
+        self.result = { context, id in id.flatMap { context.find($0) }}
     }
     
     init(context: Context, id: @escaping (Context) -> Entity.ID?) {
@@ -42,7 +38,7 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
         self.result = { context, id in id.flatMap { context.find($0) } }
     }
     
-    fileprivate init(context: Context, id: Entity.ID?, entity: @escaping () -> Entity?) {
+    init(context: Context, id: Entity.ID?, entity: @escaping () -> Entity?) {
         self.context = context
         self.key = { _ in id }
         self.result = { _,_ in entity() }
@@ -56,6 +52,10 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
             
             return perform(entity)
         }
+    }
+    
+    static func none(in context: Context) -> Self {
+        Self(context: context, id: nil) { nil }
     }
 }
 
