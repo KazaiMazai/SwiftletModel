@@ -12,15 +12,15 @@ public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Optio
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, id: Entity.ID) {
         self.context = context
-        self.keyResolver = { _ in  id }
-        self.resolver = { context, id in id.flatMap { context.find($0) }}
+        self.key = { _ in  id }
+        self.result = { context, id in id.flatMap { context.find($0) }}
     }
     
     func resolve() -> Entity? {
-        resolver(context, id)
+        result(context, id)
     }
     
-    var id: Entity.ID? { keyResolver(context) }
+    var id: Entity.ID? { key(context) }
 }
 
 //MARK: - Resolve Query Collection
@@ -34,8 +34,8 @@ public extension Collection {
 extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, idResolver: @escaping (Context) -> Entity.ID?) {
         self.context = context
-        self.keyResolver = idResolver
-        self.resolver = { context, id in id.flatMap { context.find($0) } }
+        self.key = idResolver
+        self.result = { context, id in id.flatMap { context.find($0) } }
     }
     
     static func none(in context: Context) -> Self {
@@ -44,8 +44,8 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     
     init(context: Context, id: Entity.ID?, resolver: @escaping () -> Entity?) {
         self.context = context
-        self.keyResolver = { _ in id }
-        self.resolver = { _,_ in resolver() }
+        self.key = { _ in id }
+        self.result = { _,_ in resolver() }
     }
     
     func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {

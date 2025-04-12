@@ -6,10 +6,7 @@
 //
 
 public struct ContextQuery<Entity: EntityModelProtocol, Result, Key> {
-    typealias Resolver = (Context, Key?) -> Result
-    typealias KeyResolver = (Context) -> Key?
-    
     let context: Context
-    let keyResolver: KeyResolver
-    let resolver: Resolver
+    let key: (Context) -> Key?
+    let result: (Context, Key?) -> Result
 }
