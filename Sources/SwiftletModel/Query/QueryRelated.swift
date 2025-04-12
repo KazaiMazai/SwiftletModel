@@ -11,7 +11,7 @@ import Foundation
 //MARK: - Related Entities Query
 
 
-public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
+public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
     ) -> Queries<Child> {
@@ -22,7 +22,7 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
     }
 }
 
-public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
+public extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
@@ -38,7 +38,7 @@ public extension LazyQuery where QueryResult == Optional<Entity>, Metadata == En
     }
 }
 
-extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID {
+extension Lazy where Result == Optional<Entity>, Metadata == Entity.ID {
     func queryRelated<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
@@ -52,7 +52,7 @@ extension LazyQuery where QueryResult == Optional<Entity>, Metadata == Entity.ID
 
 //MARK: - Related Entities Collection Query
 
-public extension LazyQuery where QueryResult == [Query<Entity>], Metadata == Void {
+public extension Lazy where Result == [Query<Entity>], Metadata == Void {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> Queries<Child> {

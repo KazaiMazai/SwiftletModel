@@ -209,7 +209,7 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: LazyQuery<Self, Optional<Self>, Self.ID>, nested: [Nested]) -> LazyQuery<Self, Optional<Self>, Self.ID> {
+        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: Lazy<Self, Optional<Self>, Self.ID>, nested: [Nested]) -> Lazy<Self, Optional<Self>, Self.ID> {
             guard let relation = nested.first else {
                 return query
             }
