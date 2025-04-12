@@ -32,20 +32,20 @@ public extension Collection {
 }
 
 extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
-    init(context: Context, idResolver: @escaping (Context) -> Entity.ID?) {
+    static func none(in context: Context) -> Self {
+        Self(context: context, id: nil) { nil }
+    }
+    
+    init(context: Context, id: @escaping (Context) -> Entity.ID?) {
         self.context = context
-        self.key = idResolver
+        self.key = id
         self.result = { context, id in id.flatMap { context.find($0) } }
     }
     
-    static func none(in context: Context) -> Self {
-        Self(context: context, idResolver: { _ in nil })
-    }
-    
-    init(context: Context, id: Entity.ID?, resolver: @escaping () -> Entity?) {
+    fileprivate init(context: Context, id: Entity.ID?, entity: @escaping () -> Entity?) {
         self.context = context
         self.key = { _ in id }
-        self.result = { _,_ in resolver() }
+        self.result = { _,_ in entity() }
     }
     
     func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
