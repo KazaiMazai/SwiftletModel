@@ -68,8 +68,8 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
             
             whenResolved {
                 var entity = $0
-                entity[keyPath: keyPath] = related(keyPath)
-                    .map { .id($0.id) } ?? .none
+                entity[keyPath: keyPath] = related(keyPath)?
+                    .id.map { .id($0)} ?? .none
                 return entity
             }
         }
@@ -132,7 +132,7 @@ extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
             
             whenResolved {
                 var entity = $0
-                let ids = queryRelated(keyPath).map { $0.id }
+                let ids = queryRelated(keyPath).compactMap { $0.id }
                 entity[keyPath: keyPath] = slice ? .appending(ids: ids) : .ids(ids)
                 return entity
             }

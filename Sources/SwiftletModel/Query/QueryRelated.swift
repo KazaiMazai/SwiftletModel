@@ -30,7 +30,7 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     ) -> Query<Child>? {
         
         context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Entity.self, relationName: keyPath.name, id: id!)
             .first
             .flatMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
@@ -44,7 +44,7 @@ extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
         
     ) -> [Query<Child>] {
         context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+            .getChildren(for: Entity.self, relationName: keyPath.name, id: id!)
             .compactMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
     }

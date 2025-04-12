@@ -77,7 +77,7 @@ private extension Collection {
             .resolve() {
 
             let filterResult = Set(index.filter(predicate))
-            return filter( { filterResult.contains($0.id) })
+            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
         }
         
         return self
@@ -101,7 +101,7 @@ private extension Collection {
             .resolve() {
 
             let filterResult = Set(index.find(predicate.value))
-            return filter( { filterResult.contains($0.id) })
+            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
         }
         
         if let index = SortIndex<Entity>.ComparableValue<T>
@@ -109,7 +109,7 @@ private extension Collection {
             .resolve() {
 
             let filterResult = Set(index.filter(predicate))
-            return filter( { filterResult.contains($0.id) })
+            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
         }
         
         return self
@@ -133,7 +133,7 @@ private extension Collection {
             .resolve() {
 
             let filterResult = Set(index.find(predicate.value))
-            return filter( { filterResult.contains($0.id) })
+            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
         }
         
         return self
@@ -179,7 +179,7 @@ private extension Collection {
             .resolve() {
 
             let filterResult = Set(index.search(predicate.value))
-            return filter( { filterResult.contains($0.id) })
+            return filter( { $0.id.map { filterResult.contains($0) } ?? false })
         }
 
          if predicate.method.isIncluding, let index = FullTextIndex<Entity>
@@ -189,7 +189,7 @@ private extension Collection {
 
             let filterResult = Set(index.search(predicate.value))
             return self
-                .filter( { filterResult.contains($0.id) })
+                .filter({ $0.id.map { filterResult.contains($0) } ?? false })
                 .resolve()
                 .filter(predicate.isIncluded)
                 .query(in: context)

@@ -12,7 +12,7 @@ public typealias Query<Entity: EntityModelProtocol> = Lazy<Entity, Optional<Enti
 public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     init(context: Context, id: Entity.ID) {
         self.context = context
-        self.key = id
+        self.key = { id }
         self.resolver = { context.find(id) }
     }
     
@@ -20,7 +20,7 @@ public extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
         resolver()
     }
     
-    var id: Entity.ID { key }
+    var id: Entity.ID? { key() }
 }
 
 //MARK: - Resolve Query Collection
@@ -33,9 +33,9 @@ public extension Collection {
 
 extension Lazy where Result == Optional<Entity>, Key == Entity.ID {
     
-    init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
+    init(context: Context, id: Entity.ID?, resolver: @escaping () -> Entity?) {
         self.context = context
-        self.key = id
+        self.key = { id }
         self.resolver = resolver
     }
     
