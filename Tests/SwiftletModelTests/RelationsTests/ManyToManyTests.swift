@@ -59,7 +59,8 @@ final class ManyToManyTests: XCTestCase {
         let bobsChats = User
             .query(User.bob.id, in: context)
             .related(\.$chats)
-
+            .resolve()
+        
         XCTAssertTrue(bobsChats.isEmpty)
     }
 }

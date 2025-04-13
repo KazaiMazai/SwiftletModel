@@ -68,12 +68,14 @@ extension CollisionResolver where Entity == User {
     }
 }
 
-extension Query where Entity == User {
-    
+extension Query<User> {
     var isMe: Bool {
         CurrentUser
             .query(CurrentUser.id, in: context)
-            .related(\.$user)?.id == id
+            .related(\.$user).id == id
     }
 }
  
+
+
+

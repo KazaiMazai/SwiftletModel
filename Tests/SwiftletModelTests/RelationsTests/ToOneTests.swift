@@ -23,7 +23,7 @@ final class ToOneTests: XCTestCase {
     func test_WhenDirectAdded_InverseIsAdded() {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: context)
-            .related(\.$message)?
+            .related(\.$message)
             .resolve()
 
         XCTAssertEqual(messageForAttachment?.id, Attachment.imageOne.id)
@@ -37,6 +37,7 @@ final class ToOneTests: XCTestCase {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: context)
             .related(\.$message)
+            .resolve()
 
         XCTAssertNil(messageForAttachment)
     }
@@ -49,7 +50,8 @@ final class ToOneTests: XCTestCase {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id, in: context)
             .related(\.$message)
-
+            .resolve()
+        
         XCTAssertNil(messageForAttachment)
     }
 
@@ -61,7 +63,8 @@ final class ToOneTests: XCTestCase {
         let attachment = message
             .query(in: context)
             .related(\.$attachment)
-
+            .resolve()
+        
         XCTAssertNil(attachment)
     }
 }

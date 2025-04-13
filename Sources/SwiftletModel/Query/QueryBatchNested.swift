@@ -8,7 +8,7 @@
 
 //MARK: - Nested Entities Batch Query
 
-public extension Query {
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     func with(_ nested: Nested...) -> Query<Entity> {
         with(nested)
     }
@@ -20,12 +20,17 @@ public extension Query {
 
 //MARK: - Nested Entities Batch Collection Query
 
-public extension Collection {
-    func with<Entity>(_ nested: Nested...) -> [Query<Entity>] where Element == Query<Entity> {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func with(_ nested: Nested...) -> QueryList<Entity> {
         with(nested)
     }
     
-    func with<Entity>(_ nested: [Nested]) -> [Query<Entity>] where Element == Query<Entity> {
-        map { $0.with(nested) }
+    func with(_ nested: [Nested]) -> QueryList<Entity> {
+        whenResolved { queries in
+            queries.map { $0.with(nested) }
+        }
     }
 }
+
+ 
+ 

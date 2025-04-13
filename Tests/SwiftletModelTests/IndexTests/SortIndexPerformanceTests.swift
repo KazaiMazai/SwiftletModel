@@ -38,7 +38,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
 
     func test_NoIndex_SortPerformance() throws {
-        let queries = TestingModels.NotIndexed.query(in: context)
+        let queries: QueryList<TestingModels.NotIndexed> = TestingModels.NotIndexed.query(in: context)
         measure {
             let _ = queries
                 .sorted(by: \.numOf1)
@@ -47,7 +47,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
     
     func test_Indexed_SortPerformance() throws {
-        let queries = TestingModels.SingleValueIndexed.query(in: context)
+        let queries: QueryList<TestingModels.SingleValueIndexed> = TestingModels.SingleValueIndexed.query(in: context)
         measure {
             let _ = queries
                 .sorted(by: \.numOf1)
@@ -56,7 +56,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
     
     func test_EvalProperyIndexed_SortPerformance() throws {
-        let queries = TestingModels.EvaluatedPropertyDescIndexed.query(in: context)
+        let queries: QueryList<TestingModels.EvaluatedPropertyDescIndexed> = TestingModels.EvaluatedPropertyDescIndexed.query(in: context)
         measure {
             let _ = queries
                 .sorted(by: \.numOf1.desc)

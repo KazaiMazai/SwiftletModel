@@ -78,3 +78,18 @@ extension Context {
     }
 }
 
+extension Context {
+    func query<Entity: EntityModelProtocol>(_ id: Entity.ID) -> Query<Entity> {
+        Query(context: self, id: id)
+    }
+ 
+    func query<Entity: EntityModelProtocol>(_ ids: [Entity.ID]) -> QueryList<Entity> {
+        QueryList(context: self) {
+            ids.map { query($0) }
+        }
+    }
+  
+    func query<Entity: EntityModelProtocol>() -> QueryList<Entity> {
+        query(ids(Entity.self))
+    }
+}

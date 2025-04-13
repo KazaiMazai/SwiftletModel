@@ -7,7 +7,70 @@
 
 import Collections
 
-public extension Query {
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> QueryList<Entity>
+    
+    where
+    T: Comparable {
+
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+
+    static func filter<T>(
+        _ predicate: Predicate<Entity, T>,
+        in context: Context) -> QueryList<Entity>
+    
+    where
+    T: Comparable & Hashable {
+
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> QueryList<Entity>
+    
+    where
+    T: Hashable {
+
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+    
+    static func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>,
+        in context: Context) -> QueryList<Entity>
+    
+    where
+    T: Equatable {
+
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> QueryList<Entity> {
+        
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
+//MARK: - Private Query Predicate Filter
+
+private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
@@ -101,7 +164,9 @@ public extension Query {
     }
 }
 
-public extension Query {
+//MARK: - Private Query StringPredicate Filter
+
+private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
@@ -136,3 +201,5 @@ public extension Query {
             .query(in: context)
     }
 }
+ 
+

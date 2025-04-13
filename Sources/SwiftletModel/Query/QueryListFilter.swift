@@ -5,16 +5,63 @@
 //  Created by Sergey Kazakov on 06/04/2025.
 //
 
-public extension Collection {
-    static func filter<Entity, T>(
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> [Query<Entity>]
+        in context: Context) -> QueryList<Entity>
     where
-    Element == Query<Entity>,
     T: Comparable {
+
         Query.filter(predicate, in: context)
     }
      
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
+    where
+    T: Comparable {
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    func filter<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
+    where
+    T: Comparable & Hashable {
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
+    where
+    T: Hashable { 
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    func filter<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
+    where
+    T: Equatable {
+         whenResolved { $0.filter(predicate) }
+    }
+}
+
+
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func filter( _ predicate: StringPredicate<Entity>) -> QueryList<Entity> {
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    static func filter(
+        _ predicate: StringPredicate<Entity>,
+        in context: Context) -> QueryList<Entity>  {
+        
+            Query.filter(predicate, in: context)
+    }
+}
+
+//MARK: - Private Collection Predicate Filter
+
+private extension Collection {
+
     func filter<Entity, T>(
         _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
     where
@@ -29,7 +76,7 @@ public extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.filter(predicate))
+            let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
             return filter( { filterResult.contains($0.id) })
         }
         
@@ -53,7 +100,7 @@ public extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.find(predicate.value))
+            let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
             return filter( { filterResult.contains($0.id) })
         }
         
@@ -61,7 +108,7 @@ public extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.filter(predicate))
+            let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
             return filter( { filterResult.contains($0.id) })
         }
         
@@ -85,7 +132,7 @@ public extension Collection {
             .query(.indexName(predicate.keyPath), in: context)
             .resolve() {
 
-            let filterResult = Set(index.find(predicate.value))
+            let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
             return filter( { filterResult.contains($0.id) })
         }
         
@@ -113,18 +160,9 @@ public extension Collection {
     }
 }
 
+//MARK: - Private Collection StringPredicate Filter
 
-public extension Collection {
-    static func filter<Entity>(
-        _ predicate: StringPredicate<Entity>,
-        in context: Context) -> [Query<Entity>]
-    where
-    Element == Query<Entity>  {
-        Query.filter(predicate, in: context)
-    }
-}
-
-public extension Collection {
+private extension Collection {
      
     func filter<Entity>(
         _ predicate: StringPredicate<Entity>) -> [Query<Entity>]
@@ -140,7 +178,7 @@ public extension Collection {
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
 
-            let filterResult = Set(index.search(predicate.value))
+            let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return filter( { filterResult.contains($0.id) })
         }
 
@@ -149,9 +187,9 @@ public extension Collection {
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
 
-            let filterResult = Set(index.search(predicate.value))
+            let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return self
-                .filter( { filterResult.contains($0.id) })
+                .filter({ filterResult.contains($0.id) })
                 .resolve()
                 .filter(predicate.isIncluded)
                 .query(in: context)
@@ -163,3 +201,4 @@ public extension Collection {
             .query(in: context)
     }
 }
+

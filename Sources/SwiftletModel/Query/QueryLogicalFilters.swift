@@ -4,44 +4,41 @@
 //
 //  Created by Sergey Kazakov on 06/04/2025.
 //
-
-public extension Collection {
-    func and<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+ 
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func and<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
-    Element == Query<Entity>,
     T: Comparable {
         filter(predicate)
     }
 
-    func and<Entity, T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
+    func and<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
-    Element == Query<Entity>,
     T: Hashable {
         filter(predicate)
     }
     
-    func and<Entity, T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
+    func and<T>(
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
-    Element == Query<Entity>,
     T: Equatable {
         filter(predicate)
     }
 
-    func and<Entity, T>(
-        _ predicate: Predicate<Entity, T>) -> [Query<Entity>]
+    func and<T>(
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
-    Element == Query<Entity>,
     T: Hashable & Comparable  {
         filter(predicate)
     }
     
-    func or<Entity>(_ query: @autoclosure () -> [Query<Entity>]) -> [Query<Entity>]
-    where
-    Element == Query<Entity> {
-        [Array(self), query()].flatMap { $0 }
-            .removingDuplicates(by: { $0.id })
+    func or(_ queryList: @escaping @autoclosure () -> QueryList<Entity>) -> QueryList<Entity>{
+        whenResolved { queries in
+            [queries, queryList().resolveQueries()]
+                .flatMap { $0 }
+                .removingDuplicates(by: { $0.id })
+        }
     }
 }

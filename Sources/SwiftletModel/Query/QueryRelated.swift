@@ -10,24 +10,48 @@ import Foundation
 
 //MARK: - Related Entities Query
 
-public extension Query {
+
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
+    ) -> QueryList<Child> {
+        
+        QueryList(context: context) {
+            queryRelated(keyPath)
+        }
+    }
+}
+
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>
         
-    ) -> Query<Child>? {
-        context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
-            .first
-            .flatMap { Child.ID($0) }
-            .map { Query<Child>(context: context, id: $0) }
+    ) -> Query<Child> {
+        
+        Query(context: context) { context in
+            guard let id = id else {
+                return nil
+            }
+            
+            return context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
+                .first
+                .flatMap { Child.ID($0) }
+        }
     }
-    
-    func related<Child, Directionality, Constraints>(
+}
+
+extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    func queryRelated<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
         
     ) -> [Query<Child>] {
-        context
+        
+        guard let id = id else {
+            return []
+        }
+        
+        return context
             .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
             .compactMap { Child.ID($0) }
             .map { Query<Child>(context: context, id: $0) }
@@ -36,21 +60,13 @@ public extension Query {
 
 //MARK: - Related Entities Collection Query
 
-public extension Collection {
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
-    func related<Entity, Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> [Query<Child>]
-    
-    where Element == Query<Entity> {
-        
-        compactMap { $0.related(keyPath) }
-    }
-    
-    func related<Entity, Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> [[Query<Child>]]
-    
-    where Element == Query<Entity> {
-        
-        compactMap { $0.related(keyPath) }
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> QueryGroup<Child> {
+       
+        whenResolved {
+            $0.map { $0.queryRelated(keyPath) }
+        }
     }
 }

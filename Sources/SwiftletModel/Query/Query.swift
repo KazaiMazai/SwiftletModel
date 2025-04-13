@@ -7,26 +7,15 @@
 
 import Foundation
 
-public struct Query<Entity: EntityModelProtocol> {
-    typealias Resolver = () -> Entity?
-    
-    public let id: Entity.ID
-    
-    let context: Context
-    let resolver: Resolver
-    
-    public init(context: Context, id: Entity.ID) {
-        self.context = context
-        self.id = id
-        self.resolver = { context.find(id) }
-    }
-    
-    public func resolve() -> Entity? {
-        resolver()
+public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Optional<Entity>, Entity.ID>
+
+//MARK: - Resolve Query
+
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    func resolve() -> Entity? {
+        result(context, id)
     }
 }
- 
-//MARK: - Resolve Query Collection
 
 public extension Collection {
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
@@ -34,30 +23,25 @@ public extension Collection {
     }
 }
 
-//MARK: - Context Query Extension
+extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+    var id: Entity.ID? { key(context) }
 
-extension Context {
-    func query<Entity: EntityModelProtocol>(_ id: Entity.ID) -> Query<Entity> {
-        Query(context: self, id: id)
-    }
-    
-    func query<Entity: EntityModelProtocol>(_ ids: [Entity.ID]) -> [Query<Entity>] {
-        ids.map { query($0) }
-    }
-    
-    func query<Entity: EntityModelProtocol>() -> [Query<Entity>] {
-        query(ids(Entity.self))
-    }
-}
-
-//MARK: - Internal Query extensions
-
-extension Query {
-    
-    init(context: Context, id: Entity.ID, resolver: @escaping () -> Entity?) {
+    init(context: Context, id: Entity.ID) {
         self.context = context
-        self.id = id
-        self.resolver = resolver
+        self.key = { _ in  id }
+        self.result = { context, id in id.flatMap { context.find($0) }}
+    }
+    
+    init(context: Context, id: @escaping (Context) -> Entity.ID?) {
+        self.context = context
+        self.key = id
+        self.result = { context, id in id.flatMap { context.find($0) } }
+    }
+    
+    init(context: Context, id: Entity.ID?, entity: @escaping () -> Entity?) {
+        self.context = context
+        self.key = { _ in id }
+        self.result = { _,_ in entity() }
     }
     
     func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
@@ -68,6 +52,22 @@ extension Query {
             
             return perform(entity)
         }
+    }
+    
+    static func none(in context: Context) -> Self {
+        Self(context: context, id: nil) { nil }
+    }
+}
+
+//MARK: - Entities Collection Extension
+
+extension Collection {
+    func query<Entity>(in context: Context) -> [Query<Entity>]
+    where
+    Element == Entity,
+    Entity: EntityModelProtocol {
+        
+        map { $0.query(in: context) }
     }
 }
 
