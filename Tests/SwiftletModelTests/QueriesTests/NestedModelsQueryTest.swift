@@ -108,7 +108,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
-                    .sorted(by: \.id)
+                    .sorted(by: \.text.count)
                     .filter(\.text.isEmpty == false)
                     .id(\.$replyTo)
             }
@@ -126,8 +126,25 @@ final class NestedModelsQueryTest: XCTestCase {
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
-                    .sorted(by: \.id)
+                    .sorted(by: \.text.count)
                     .filter(\.text.isEmpty == true)
+                    .id(\.$replyTo)
+            }
+            .resolve()
+
+        assertSnapshot(of: messages, as: .json(encoder))
+    }
+    
+    func test_WhenQueryWithNestedModelsAndSort_EqualExpectedJSON() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+
+        let messages = Message
+            .query(in: context)
+            .sorted(by: \.id)
+            .with(\.$replies) { replies in
+                replies
+                    .sorted(by: \.text.count)
                     .id(\.$replyTo)
             }
             .resolve()
