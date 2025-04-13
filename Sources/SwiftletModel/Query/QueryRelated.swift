@@ -14,9 +14,9 @@ import Foundation
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
-    ) -> QueryGroup<Child> {
+    ) -> QueryList<Child> {
         
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             queryRelated(keyPath)
         }
     }
@@ -63,7 +63,7 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func related<Child, Directionality, Constraints>(
-        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> GroupedQueries<Child> {
+        _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> QueryGroup<Child> {
        
         whenResolved {
             $0.map { $0.queryRelated(keyPath) }

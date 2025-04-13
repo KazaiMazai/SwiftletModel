@@ -21,11 +21,11 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
 //MARK: - Nested Entities Batch Collection Query
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    func with(_ nested: Nested...) -> QueryGroup<Entity> {
+    func with(_ nested: Nested...) -> QueryList<Entity> {
         with(nested)
     }
     
-    func with(_ nested: [Nested]) -> QueryGroup<Entity> {
+    func with(_ nested: [Nested]) -> QueryList<Entity> {
         whenResolved { queries in
             queries.map { $0.with(nested) }
         }

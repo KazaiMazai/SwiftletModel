@@ -10,48 +10,48 @@ import Collections
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
+        in context: Context) -> QueryList<Entity>
     
     where
     T: Comparable {
 
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
 
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
+        in context: Context) -> QueryList<Entity>
     
     where
     T: Comparable & Hashable {
 
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
+        in context: Context) -> QueryList<Entity>
     
     where
     T: Hashable {
 
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
+        in context: Context) -> QueryList<Entity>
     
     where
     T: Equatable {
 
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
@@ -60,9 +60,9 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
-        in context: Context) -> QueryGroup<Entity> {
+        in context: Context) -> QueryList<Entity> {
         
-        QueryGroup(context: context) {
+        QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }

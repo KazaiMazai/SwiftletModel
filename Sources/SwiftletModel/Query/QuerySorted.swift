@@ -10,7 +10,7 @@ typealias SortIndex = Index
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func sorted<T>(
-        by keyPath: KeyPath<Entity, T>) -> QueryGroup<Entity>
+        by keyPath: KeyPath<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable {
         whenResolved {
@@ -19,7 +19,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
     
     func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
-                        _ kp1: KeyPath<Entity, T1>) -> QueryGroup<Entity>
+                        _ kp1: KeyPath<Entity, T1>) -> QueryList<Entity>
     
     where
     T0: Comparable,
@@ -31,7 +31,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
                             _ kp1: KeyPath<Entity, T1>,
-                            _ kp2: KeyPath<Entity, T2>) -> QueryGroup<Entity>
+                            _ kp2: KeyPath<Entity, T2>) -> QueryList<Entity>
     where
     T0: Comparable,
     T1: Comparable,
@@ -44,7 +44,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
                                 _ kp1: KeyPath<Entity, T1>,
                                 _ kp2: KeyPath<Entity, T2>,
-                                _ kp3: KeyPath<Entity, T3>) -> QueryGroup<Entity>
+                                _ kp3: KeyPath<Entity, T3>) -> QueryList<Entity>
     
     where
     T0: Comparable,
@@ -190,7 +190,7 @@ private extension Collection {
 
 private extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
-    func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryGroup<Entity>
+    func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryList<Entity>
     
     where
     T: Comparable {

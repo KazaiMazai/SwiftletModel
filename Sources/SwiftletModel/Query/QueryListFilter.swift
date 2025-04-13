@@ -8,7 +8,7 @@
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
-        in context: Context) -> QueryGroup<Entity>
+        in context: Context) -> QueryList<Entity>
     where
     T: Comparable {
 
@@ -16,28 +16,28 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
      
     func filter<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable {
         whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable & Hashable {
         whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Hashable { 
         whenResolved { $0.filter(predicate) }
     }
     
     func filter<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Equatable {
          whenResolved { $0.filter(predicate) }
@@ -46,13 +46,13 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    func filter( _ predicate: StringPredicate<Entity>) -> QueryGroup<Entity> {
+    func filter( _ predicate: StringPredicate<Entity>) -> QueryList<Entity> {
         whenResolved { $0.filter(predicate) }
     }
     
     static func filter(
         _ predicate: StringPredicate<Entity>,
-        in context: Context) -> QueryGroup<Entity>  {
+        in context: Context) -> QueryList<Entity>  {
         
             Query.filter(predicate, in: context)
     }

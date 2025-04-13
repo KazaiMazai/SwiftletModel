@@ -33,7 +33,7 @@ public protocol EntityModelProtocol {
 
     static var patch: MergeStrategy<Self> { get }
     
-    static func batchQuery(with nested: Nested..., in context: Context) -> QueryGroup<Self>
+    static func batchQuery(with nested: Nested..., in context: Context) -> QueryList<Self>
          
     static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
 }
@@ -80,15 +80,15 @@ public extension EntityModelProtocol {
         context.query(id)
     }
      
-    static func query(_ ids: [ID], in context: Context) -> QueryGroup<Self> {
+    static func query(_ ids: [ID], in context: Context) -> QueryList<Self> {
         context.query(ids)
     }
      
-    static func query(in context: Context) -> QueryGroup<Self> {
+    static func query(in context: Context) -> QueryList<Self> {
         context.query()
     }
    
-    static func batchQuery(with nested: Nested..., in context: Context) -> QueryGroup<Self> {
+    static func batchQuery(with nested: Nested..., in context: Context) -> QueryList<Self> {
         Self.query(in: context)
             .with(nested)
     }
@@ -99,7 +99,7 @@ public extension EntityModelProtocol {
 public extension EntityModelProtocol {
     static func filter<T>(
         _ predicate: Predicate<Self, T>,
-        in context: Context) -> QueryGroup<Self>
+        in context: Context) -> QueryList<Self>
     where
     T: Comparable {
         Query<Self>.filter(predicate, in: context)
@@ -107,7 +107,7 @@ public extension EntityModelProtocol {
     
     static func filter<T>(
         _ predicate: EqualityPredicate<Self, T>,
-        in context: Context) -> QueryGroup<Self>
+        in context: Context) -> QueryList<Self>
     where
     T: Hashable {
         Query<Self>.filter(predicate, in: context)
@@ -115,7 +115,7 @@ public extension EntityModelProtocol {
     
     static func filter<T>(
         _ predicate: Predicate<Self, T>,
-        in context: Context) -> QueryGroup<Self>
+        in context: Context) -> QueryList<Self>
     where
     T: Hashable & Comparable {
         Query<Self>.filter(predicate, in: context)
@@ -123,7 +123,7 @@ public extension EntityModelProtocol {
     
     static func filter(
         _ predicate: StringPredicate<Self>,
-        in context: Context) -> QueryGroup<Self> {
+        in context: Context) -> QueryList<Self> {
         Query<Self>.filter(predicate, in: context)
     }
 }

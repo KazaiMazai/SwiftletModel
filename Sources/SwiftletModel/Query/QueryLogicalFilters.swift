@@ -7,36 +7,36 @@
  
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func and<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable {
         filter(predicate)
     }
 
     func and<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Hashable {
         filter(predicate)
     }
     
     func and<T>(
-        _ predicate: EqualityPredicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Equatable {
         filter(predicate)
     }
 
     func and<T>(
-        _ predicate: Predicate<Entity, T>) -> QueryGroup<Entity>
+        _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Hashable & Comparable  {
         filter(predicate)
     }
     
-    func or(_ queryGroup: @escaping @autoclosure () -> QueryGroup<Entity>) -> QueryGroup<Entity>{
+    func or(_ queryList: @escaping @autoclosure () -> QueryList<Entity>) -> QueryList<Entity>{
         whenResolved { queries in
-            [queries, queryGroup().resolveQueries()]
+            [queries, queryList().resolveQueries()]
                 .flatMap { $0 }
                 .removingDuplicates(by: { $0.id })
         }
