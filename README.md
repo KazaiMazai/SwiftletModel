@@ -155,7 +155,7 @@ protocol EntityModelProtocol {
 
     mutating func normalize()
 
-    static func batchQuery(in context: Context) -> [Query<Self>]
+    static func batchQuery(in context: Context) -> QueryList<Self>
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
