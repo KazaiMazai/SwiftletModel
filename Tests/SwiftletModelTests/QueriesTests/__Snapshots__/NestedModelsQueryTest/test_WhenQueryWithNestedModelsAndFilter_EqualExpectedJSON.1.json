@@ -5,7 +5,19 @@
     "chat" : null,
     "id" : "0",
     "replies" : [
-
+      {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
+        "id" : "4",
+        "replies" : null,
+        "replyTo" : {
+          "id" : "0"
+        },
+        "text" : "wassap!",
+        "timestamp" : -63114076800,
+        "viewedBy" : null
+      }
     ],
     "replyTo" : null,
     "text" : "hello, ya'll",

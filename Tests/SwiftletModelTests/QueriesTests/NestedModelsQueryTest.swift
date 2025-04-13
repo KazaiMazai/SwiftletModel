@@ -13,8 +13,9 @@ import SnapshotTesting
 
 final class NestedModelsQueryTest: XCTestCase {
     var context = Context()
-    
+  
     override func setUpWithError() throws {
+        
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -109,7 +110,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .with(\.$replies) { replies in
                 replies
                     .sorted(by: \.text.count)
-                    .filter(\.text.isEmpty == false)
+                    .filter(\.text.count > 3)
                     .id(\.$replyTo)
             }
             .resolve()
@@ -127,7 +128,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .with(\.$replies) { replies in
                 replies
                     .sorted(by: \.text.count)
-                    .filter(\.text.isEmpty == true)
+                    .filter(\.text.count > 5)
                     .id(\.$replyTo)
             }
             .resolve()
