@@ -9,6 +9,19 @@
         "attachment" : null,
         "author" : null,
         "chat" : null,
+        "id" : "3",
+        "replies" : null,
+        "replyTo" : {
+          "id" : "0"
+        },
+        "text" : "yo!",
+        "timestamp" : -63114076800,
+        "viewedBy" : null
+      },
+      {
+        "attachment" : null,
+        "author" : null,
+        "chat" : null,
         "id" : "1",
         "replies" : null,
         "replyTo" : {

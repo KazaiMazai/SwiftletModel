@@ -9,32 +9,6 @@
         "attachment" : null,
         "author" : null,
         "chat" : null,
-        "id" : "1",
-        "replies" : null,
-        "replyTo" : {
-          "id" : "0"
-        },
-        "text" : "hello",
-        "timestamp" : -63114076800,
-        "viewedBy" : null
-      },
-      {
-        "attachment" : null,
-        "author" : null,
-        "chat" : null,
-        "id" : "2",
-        "replies" : null,
-        "replyTo" : {
-          "id" : "0"
-        },
-        "text" : "howdy",
-        "timestamp" : -63114076800,
-        "viewedBy" : null
-      },
-      {
-        "attachment" : null,
-        "author" : null,
-        "chat" : null,
         "id" : "4",
         "replies" : null,
         "replyTo" : {

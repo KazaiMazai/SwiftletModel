@@ -13,8 +13,9 @@ import SnapshotTesting
 
 final class NestedModelsQueryTest: XCTestCase {
     var context = Context()
-    
+  
     override func setUpWithError() throws {
+        
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -65,10 +66,10 @@ final class NestedModelsQueryTest: XCTestCase {
         
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(\.$author)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
-
+            
         assertSnapshot(of: messages, as: .json(encoder))
         
     }
@@ -79,9 +80,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(\.$author)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -92,9 +93,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(\.$replies)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -105,11 +106,49 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
-            .with(\.$replies) {
-                $0.id(\.$replyTo)
+            .sorted(by: \.id)
+            .with(\.$replies) { replies in
+                replies
+                    .sorted(by: \.text.count)
+                    .filter(\.text.count > 3)
+                    .id(\.$replyTo)
             }
             .resolve()
-            .sorted(by: { $0.id < $1.id})
+
+        assertSnapshot(of: messages, as: .json(encoder))
+    }
+    
+    func test_WhenQueryWithNestedModelsAndFilter_EqualExpectedJSON() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+
+        let messages = Message
+            .query(in: context)
+            .sorted(by: \.id)
+            .with(\.$replies) { replies in
+                replies
+                    .sorted(by: \.text.count)
+                    .filter(\.text.count > 5)
+                    .id(\.$replyTo)
+            }
+            .resolve()
+
+        assertSnapshot(of: messages, as: .json(encoder))
+    }
+    
+    func test_WhenQueryWithNestedModelsAndSort_EqualExpectedJSON() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+
+        let messages = Message
+            .query(in: context)
+            .sorted(by: \.id)
+            .with(\.$replies) { replies in
+                replies
+                    .sorted(by: \.text.count)
+                    .id(\.$replyTo)
+            }
+            .resolve()
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -120,13 +159,12 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
             }
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
-        
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
@@ -136,9 +174,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(slice: \.$replies)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
