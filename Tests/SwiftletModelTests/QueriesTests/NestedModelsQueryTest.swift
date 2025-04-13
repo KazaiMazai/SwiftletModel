@@ -65,10 +65,10 @@ final class NestedModelsQueryTest: XCTestCase {
         
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(\.$author)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
-
+            
         assertSnapshot(of: messages, as: .json(encoder))
         
     }
@@ -79,9 +79,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(\.$author)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -92,9 +92,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(\.$replies)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -105,6 +105,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
                     .sorted(by: \.id)
@@ -112,7 +113,6 @@ final class NestedModelsQueryTest: XCTestCase {
                     .id(\.$replyTo)
             }
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -123,6 +123,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
                     .sorted(by: \.id)
@@ -130,7 +131,6 @@ final class NestedModelsQueryTest: XCTestCase {
                     .id(\.$replyTo)
             }
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -141,13 +141,12 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
             }
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
-        
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
@@ -157,9 +156,9 @@ final class NestedModelsQueryTest: XCTestCase {
 
         let messages = Message
             .query(in: context)
+            .sorted(by: \.id)
             .id(slice: \.$replies)
             .resolve()
-            .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
