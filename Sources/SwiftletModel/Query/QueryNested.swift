@@ -9,6 +9,8 @@ import Foundation
 
 public typealias QueryModifier<T: EntityModelProtocol> = (Query<T>) -> Query<T>
 
+public typealias QueryListModifier<T: EntityModelProtocol> = (QueryList<T>) -> QueryList<T>
+
 //MARK: - Nested Entity Query
 
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
@@ -22,14 +24,14 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: false, fragment: false, nested: nested)
         }
     
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: true, fragment: false, nested: nested)
         }
@@ -47,14 +49,14 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: false, fragment: true, nested: nested)
         }
     
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
             
             with(keyPath, slice: true, fragment: true, nested: nested)
         }
@@ -110,13 +112,11 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool,
         fragment: Bool,
-        nested: @escaping QueryModifier<Child>) -> Self {
+        nested: @escaping QueryListModifier<Child>) -> Self {
             
             whenResolved {
                 var entity = $0
-                let relatedEntities = queryRelated(keyPath)
-                    .map { nested($0) }
-                    .compactMap { $0.resolve() }
+                let relatedEntities = nested(related(keyPath)).resolve()
                 
                 entity[keyPath: keyPath] = slice ?
                     .appending(relatedEntities, fragment: fragment) :

@@ -17,7 +17,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }  
+        nested: @escaping QueryListModifier<Child> = { $0 }
     ) -> QueryList<Entity> {
         
         whenResolved {
@@ -27,7 +27,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
+        nested: @escaping QueryListModifier<Child> = { $0 }
         
     ) -> QueryList<Entity> {
         
@@ -54,7 +54,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
+        nested: @escaping QueryListModifier<Child> = { $0 }
         
     ) -> QueryList<Entity> {
         
@@ -65,7 +65,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }
+        nested: @escaping QueryListModifier<Child> = { $0 }
         
     ) -> QueryList<Entity> {
         
