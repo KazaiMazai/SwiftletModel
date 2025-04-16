@@ -58,13 +58,12 @@ extension EntitiesRepository {
         var storage = storages[key] ?? [:]
 
         guard let existing: T = find(entity.id) else {
-            storage[entity.id.description] = entity.normalized()
+            storage[entity.id.description] = entity
             storages[key] = storage
             return
         }
 
-        let new = entity.normalized()
-        let merged = options.merge(existing, new)
+        let merged = options.merge(existing, entity)
 
         storage[entity.id.description] = merged
         storages[key] = storage
