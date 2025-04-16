@@ -12,20 +12,20 @@ public protocol EntityModelProtocol {
     associatedtype ID: Hashable, LosslessStringConvertible
 
     var id: ID { get }
-
-    func save(to context: inout Context, options: MergeStrategy<Self>) throws
-
-    func willSave(to context: inout Context) throws
+   
+    mutating func normalize()
+    
+    mutating func willSave(to context: inout Context) throws
 
     func didSave(to context: inout Context) throws
-
-    func delete(from context: inout Context) throws
+    
+    func save(to context: inout Context, options: MergeStrategy<Self>) throws
 
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
   
-    mutating func normalize()
+    func delete(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
@@ -44,13 +44,13 @@ public extension EntityModelProtocol {
 
     static var fragmentMergeStrategy: MergeStrategy<Self> { Self.patch }
 
+    mutating func willSave(to context: inout Context) throws { }
+    
+    func didSave(to context: inout Context) throws { }
+    
     func willDelete(from context: inout Context) throws { }
 
-    func willSave(to context: inout Context) throws { }
-
-    func didDelete(from context: inout Context) throws { }
-
-    func didSave(to context: inout Context) throws { }
+    func didDelete(from context: inout Context) throws { }    
 }
 
 public extension MergeStrategy where T: EntityModelProtocol {

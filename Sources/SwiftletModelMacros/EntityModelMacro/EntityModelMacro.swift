@@ -119,27 +119,28 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
-            try willSave(to: &context)
+            var copy = self
+            try copy.willSave(to: &context)
             \(raw: uniqueAttributes
                 .map {
-                    "try updateUniqueIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
+                    "try copy.updateUniqueIndex(\($0.keyPathAttributes.attribute), collisions: \($0.collisions.attributes), in: &context)"
                  }
                 .joined(separator: "\n")
             )
             \(raw: indexAttributes
-                .map { "try updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try copy.updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             \(raw: fullTextIndexAttributes
-                .map { "try updateFullTextIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .map { "try copy.updateFullTextIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
-            context.insert(self, options: options)
+            context.insert(copy.normalized(), options: options)
             \(raw: relationshipAttributes
-                .map { "try save(\($0.keyPathAttributes.attribute), to: &context)" }
+                .map { "try copy.save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
-            try didSave(to: &context)
+            try copy.didSave(to: &context)
         }
         """
         )

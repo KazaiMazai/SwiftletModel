@@ -135,33 +135,34 @@ make our model conform to `EntityModelProtocol` requirements.
 <p>
 
 ```swift
-protocol EntityModelProtocol {
-    // swiftlint:disable:next type_name
-    associatedtype ID: Hashable, Codable, LosslessStringConvertible
+public protocol EntityModelProtocol {
+    associatedtype ID: Hashable, LosslessStringConvertible
 
     var id: ID { get }
-
-    func save(to context: inout Context, options: MergeStrategy<Self>) throws
-
-    func willSave(to context: inout Context) throws
+   
+    mutating func normalize()
+    
+    mutating func willSave(to context: inout Context) throws
 
     func didSave(to context: inout Context) throws
-
-    func delete(from context: inout Context) throws
+    
+    func save(to context: inout Context, options: MergeStrategy<Self>) throws
 
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
-
-    mutating func normalize()
-
-    static func batchQuery(in context: Context) -> QueryList<Self>
+  
+    func delete(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
     static var fragmentMergeStrategy: MergeStrategy<Self> { get }
 
     static var patch: MergeStrategy<Self> { get }
+    
+    static func batchQuery(with nested: Nested..., in context: Context) -> QueryList<Self>
+         
+    static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
 }
 ```
 
