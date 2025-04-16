@@ -1104,7 +1104,7 @@ let user = User(
     profile: User.Profile(...)
 )
 
-try save(to: &context)
+try user.save(to: &context)
 
 ```
 
@@ -1129,7 +1129,7 @@ let user = User(
     avatar: Avatar(...)
 )
 
-try save(to: &context, options: .fragment)
+try user.save(to: &context, options: .fragment)
 
 
 ``` 
@@ -1207,7 +1207,7 @@ When assigning related nested entities, we can mark them as fragments to utilise
 
 var chat = Chat(id: "1")
 chat.$users = .fragment([.bob, .alice, .john])
-try! chat.save(to: &context)
+try chat.save(to: &context)
 
 ```
 
