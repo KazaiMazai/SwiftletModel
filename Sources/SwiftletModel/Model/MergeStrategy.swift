@@ -29,6 +29,18 @@ public extension MergeStrategy {
             }
         }
     }
+    
+    static func lastWriteWins<V: Comparable>(
+            by keyPath: @Sendable @escaping @autoclosure () -> KeyPath<T, V>,
+            _ strategies: MergeStrategy<T>...) -> MergeStrategy<T> {
+                
+                MergeStrategy { old, new in
+                    old[keyPath: keyPath()] < new[keyPath: keyPath()]
+                        ? strategies.reduce(new) { result, strategy in strategy.merge(old, result) }
+                        : strategies.reduce(old) { result, strategy in strategy.merge(new, result) }
+ 
+                }
+    }
 }
 
 public extension MergeStrategy {
