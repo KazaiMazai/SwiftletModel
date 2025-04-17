@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 03/03/2024.
 //
 
-@testable import SwiftletModel
+import SwiftletModel
 import Foundation
 
 @EntityModel

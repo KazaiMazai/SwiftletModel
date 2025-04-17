@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 12/03/2025.
 //
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func updateUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         collisions resolver: CollisionResolver<Self>,
@@ -87,7 +87,7 @@ extension EntityModelProtocol {
     }
 }
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
