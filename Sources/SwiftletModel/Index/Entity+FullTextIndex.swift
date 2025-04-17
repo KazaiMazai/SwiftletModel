@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func updateFullTextIndex<T>(
         _ keyPaths: KeyPath<Self, T>...,
         in context: inout Context) throws
@@ -23,7 +23,7 @@ extension EntityModelProtocol {
     }
 }
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func removeFromFullTextIndex<T>(
         _ keyPaths: KeyPath<Self, T>...,
         in context: inout Context) throws

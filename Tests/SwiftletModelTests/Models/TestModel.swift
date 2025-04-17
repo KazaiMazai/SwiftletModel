@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 30/03/2025.
 //
 
-@testable import SwiftletModel
+import SwiftletModel
 import Foundation
 
 enum TestingModels {

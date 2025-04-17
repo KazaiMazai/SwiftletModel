@@ -50,7 +50,13 @@ public extension EntityModelProtocol {
     
     func willDelete(from context: inout Context) throws { }
 
-    func didDelete(from context: inout Context) throws { }    
+    func didDelete(from context: inout Context) throws { }
+    
+    func normalized() -> Self {
+        var copy = self
+        copy.normalize()
+        return copy
+    }
 }
 
 public extension MergeStrategy where T: EntityModelProtocol {
@@ -125,14 +131,6 @@ public extension EntityModelProtocol {
         _ predicate: StringPredicate<Self>,
         in context: Context) -> QueryList<Self> {
         Query<Self>.filter(predicate, in: context)
-    }
-}
-
-extension EntityModelProtocol {
-    func normalized() -> Self {
-        var copy = self
-        copy.normalize()
-        return copy
     }
 }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func updateIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
@@ -102,7 +102,7 @@ extension EntityModelProtocol {
     }
 }
 
-extension EntityModelProtocol {
+public extension EntityModelProtocol {
     func removeFromIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
