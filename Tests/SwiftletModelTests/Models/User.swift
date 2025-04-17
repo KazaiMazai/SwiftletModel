@@ -8,16 +8,6 @@
 import SwiftletModel
 import Foundation
 
-@EntityModel
-struct CurrentUser: Codable, Sendable {
-    static let id: String = "current"
-
-    var id: String = CurrentUser.id
-
-    @Relationship
-    var user: User? = nil
-}
-
 extension User {
     struct Profile: Codable {
         let bio: String?
@@ -56,7 +46,7 @@ struct User: Codable, Sendable {
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
         CollisionResolver { existingId, _, _, context in
-            guard var user = Query<Entity>(context: context, id: existingId).resolve(),
+            guard var user = Entity.query(existingId, in: context).resolve(),
                 user.isCurrent
             else {
                 return
@@ -65,14 +55,6 @@ extension CollisionResolver where Entity == User {
             user.isCurrent = false
             try user.save(to: &context)
         }
-    }
-}
-
-extension Query<User> {
-    var isMe: Bool {
-        CurrentUser
-            .query(CurrentUser.id, in: context)
-            .related(\.$user).id == id
     }
 }
  

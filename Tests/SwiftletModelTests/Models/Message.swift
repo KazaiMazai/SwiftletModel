@@ -5,7 +5,7 @@
 //  Created by Sergey Kazakov on 03/03/2024.
 //
 
-@testable import SwiftletModel
+import SwiftletModel
 import Foundation
  
 @EntityModel
@@ -42,7 +42,8 @@ public struct Message: Codable, Sendable {
 
 extension Query<Message> {
     var isMyMessage: Bool? {
-        related(\.$author).isMe
+        related(\.$author)
+            .resolve()?.isCurrent == true
     }
 }
  
