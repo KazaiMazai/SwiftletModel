@@ -43,6 +43,7 @@ struct User: Codable, Sendable {
     var adminOf: [Chat]?
 }
  
+ 
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
         CollisionResolver { existingId, _, _, context in

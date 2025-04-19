@@ -15,12 +15,19 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     func resolve() -> Entity? {
         result(context, id)
     }
+    
+    
+    func batchQuery(with nested: [Nested]) -> QueryList<Entity> {
+        Entity.query(in: context)
+            .with(nested)
+    }
 }
 
 public extension Collection {
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
         compactMap { $0.resolve() }
     }
+   
 }
 
 extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {

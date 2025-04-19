@@ -11,4 +11,6 @@ public enum Nested: String, Codable {
    case ids
    case entities
    case fragments
+   case batchEntities
+   
 }

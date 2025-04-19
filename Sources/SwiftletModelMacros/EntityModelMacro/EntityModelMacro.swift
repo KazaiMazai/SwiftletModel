@@ -238,6 +238,13 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
+            case .batchEntities:
+                        query
+                        \(raw: attributes
+                            .map { "\\.$\($0.propertyName)" }
+                            .map { ".with(\($0)) { $0.batchQuery(with: next) }"}
+                            .joined(separator: "\n")
+                        )
             }
         }
         """
