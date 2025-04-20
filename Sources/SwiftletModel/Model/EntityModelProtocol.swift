@@ -13,6 +13,8 @@ public protocol EntityModelProtocol {
 
     var id: ID { get }
    
+    var metadata: Metadata<Self>? { get }
+    
     mutating func normalize()
     
     mutating func willSave(to context: inout Context) throws
@@ -39,6 +41,7 @@ public protocol EntityModelProtocol {
 }
 
 public extension EntityModelProtocol {
+    var metadata: Metadata<Self>? { Metadata<Self>(self) }
     
     static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
 

@@ -9,9 +9,10 @@ import Foundation
 
 @propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
-    public var wrappedValue: Index<Entity> {
-        self
+    public var wrappedValue: Index<Entity>.Type {
+        Self.self
     }
+     
     
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
     where

@@ -69,4 +69,12 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             $0.map { $0.queryRelated(keyPath) }
         }
     }
+    
+    func related<Child, Directionality, Constraints>(
+        _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> QueryList<Child> {
+       
+            whenResolved {
+                $0.map { $0.related(keyPath) }
+            }
+    }
 }

@@ -15,16 +15,6 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 }
 
-public extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    func batchQuery(with nested: Nested...) -> QueryList<Entity> {
-        batchQuery(with: nested)
-    }
-    
-    func batchQuery(with nested: [Nested]) -> QueryList<Entity> {
-        Entity.query(in: context)
-            .with(nested)
-    }
-}
 
 extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> QueryList<T> {

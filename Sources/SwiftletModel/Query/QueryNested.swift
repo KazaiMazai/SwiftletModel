@@ -35,6 +35,13 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
             
             with(keyPath, slice: true, fragment: false, nested: nested)
         }
+    
+    func with<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+            
+            with(keyPath, fragment: false, nested: nested)
+        }
 }
 
 //MARK: - Nested Fragment Query

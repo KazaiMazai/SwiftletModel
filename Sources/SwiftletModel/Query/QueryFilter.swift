@@ -6,6 +6,7 @@
 //
 
 import Collections
+import Foundation
 
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
@@ -67,6 +68,88 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
         }
     }
 }
+
+
+
+//MARK: - Metadata Query Predicate Filter
+
+public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+//    func filter(snapshot: ClosedRange<Date>) -> Query<Entity> {
+//        self.filter(\Metadata<Entity>.savedAt >= snapshot.lowerBound)
+//            .filter(\Metadata<Entity>.savedAt <= snapshot.upperBound)
+//    }
+    
+//    func filter(_ snapshot: SnapshotPredicate) -> Query<Entity> {
+//        self.filter(snapshot)
+//    }
+}
+
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+//    func filter(snapshot: ClosedRange<Date>) -> QueryList<Entity> {
+//        self.filter(\Metadata<Entity>.updatedAt >= snapshot.lowerBound)
+//            .filter(\Metadata<Entity>.updatedAt <= snapshot.upperBound)
+//    }
+    
+    func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
+    where
+    Result == [Query<Entity>],
+    Key == Void {
+        switch predicate {
+        case .updatedAt(let range):
+            self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
+                .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+        }
+       
+    }
+}
+
+public extension ContextQuery {
+   
+    
+//    func filter(
+//        _ predicate: SnapshotPredicate) -> QueryList<Entity>
+//    where
+//    Result == [Query<Entity>],
+//    Key == Void {
+//        
+//        whenResolved { entity in
+////            guard let metadata = Metadata<Entity>.query(entity.id, in: context).resolve() else {
+////                return nil
+////            }
+////            
+////            return predicate.isIncluded(metadata) ? entity : nil
+//        }
+//    }
+    
+    
+    func filter(
+        _ predicate: SnapshotPredicate) -> Query<Entity>
+    where
+    Result == Optional<Entity>,
+    Key == Entity.ID {
+        
+        whenResolved { entity in
+            guard let metadata = Metadata<Entity>.query(entity.id, in: context).resolve() else {
+                return nil
+            }
+            
+            return predicate.isIncluded(metadata) ? entity : nil
+        }
+    }
+
+    func filter<T: EntityModelProtocol>(
+        _ predicate: SnapshotPredicate) -> Query<Metadata<T>>
+    where
+    Entity == Metadata<T>,
+    Result == Optional<Metadata<T>>,
+    Key == Metadata<T>.ID {
+        
+        whenResolved { metadata in
+            predicate.isIncluded(metadata) ? metadata : nil
+        }
+    }
+}
+
 
 //MARK: - Private Query Predicate Filter
 

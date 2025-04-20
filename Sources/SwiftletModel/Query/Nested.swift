@@ -7,10 +7,10 @@
 
 import Foundation
 
-public enum Nested: String, Codable {
-   case ids
-   case entities
-   case fragments
-   case batchEntities
-   
+public enum Nested {
+    case ids
+    case entities
+    case fragments
+    case snapshot(SnapshotPredicate)
+    
 }

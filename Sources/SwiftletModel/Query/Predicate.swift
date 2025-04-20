@@ -202,3 +202,16 @@ extension String {
             lowercased().hasSuffix(value.lowercased())
     }
 }
+
+public enum SnapshotPredicate {
+    case updatedAt(ClosedRange<Date>)
+    
+    func isIncluded<Entity>(_ metadata: Metadata<Entity>) -> Bool {
+        switch self {
+        case .updatedAt(let range):
+            range.contains(metadata.updatedAt)
+        }
+    }
+}
+   
+

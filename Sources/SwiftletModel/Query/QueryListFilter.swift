@@ -11,10 +11,10 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         in context: Context) -> QueryList<Entity>
     where
     T: Comparable {
-
+        
         Query.filter(predicate, in: context)
     }
-     
+    
     func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
@@ -32,7 +32,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
-    T: Hashable { 
+    T: Hashable {
         whenResolved { $0.filter(predicate) }
     }
     
@@ -40,7 +40,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Equatable {
-         whenResolved { $0.filter(predicate) }
+        whenResolved { $0.filter(predicate) }
     }
 }
 
@@ -57,6 +57,33 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             Query.filter(predicate, in: context)
     }
 }
+
+//MARK: - Metadata Collection Predicate Filter
+
+extension ContextQuery {
+//    func filter<T>(
+//        _ predicate: Predicate<Metadata<Entity>, T>) -> QueryList<Entity>
+//    where
+//    T: Comparable {
+//        whenResolved { $0.filter(predicate) }
+//    }
+    
+    func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
+    where
+    Result == [Query<Entity>],
+    Key == Void {
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    func filter<T: EntityModelProtocol>(_ predicate: SnapshotPredicate) -> QueryList<Entity>
+    where
+    Entity == Metadata<T>,
+    Result == [Query<Metadata<T>>],
+    Key == Void {
+        whenResolved { $0.filter(predicate) }
+    }
+}
+
 
 //MARK: - Private Collection Predicate Filter
 
@@ -141,7 +168,7 @@ private extension Collection {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
+   
     func filter<Entity, T>(
         _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
     where
@@ -158,7 +185,74 @@ private extension Collection {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
+    
+//    
+//    switch predicate {
+//    case .updatedAt(let range):
+//        self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
+//            .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+//    }
+//    
+    
+//    func filter<Entity, T>(
+//        _ predicate: Predicate<Metadata<Entity>, T>) -> [Query<Entity>]
+//    where
+//    Element == Query<Entity>,
+//    T: Comparable {
+//        
+//        guard let context = first?.context else {
+//            return Array(self)
+//        }
+//        
+//        let index = Metadata<Entity>
+//                .filter(predicate, in: context)
+//                .resolve()
+//                .map { $0.id }
+//        
+//        let filterResult: Set<Entity.ID?> = Set(index)
+//        return filter( { filterResult.contains($0.id) })
+//    }
+    
+    func filter<Entity>(
+        _ predicate: SnapshotPredicate) -> [Query<Entity>]
+    where
+    Element == Query<Entity> {
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        let index: [Metadata<Entity>.ID]
+        switch predicate {
+        case .updatedAt(let range):
+            index = Metadata<Entity>
+                    .filter(\Metadata<Entity>.updatedAt >= range.lowerBound, in: context)
+                    .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+                    .resolve()
+                    .map { $0.id }
+        }
+        
+        let filterResult: Set<Entity.ID?> = Set(index)
+        return filter( { filterResult.contains($0.id) })
+    }
+    
+    func filter<Entity>(
+        _ predicate: SnapshotPredicate) -> [Query<Metadata<Entity>>]
+    where
+    Element == Query<Metadata<Entity>> {
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        return switch predicate {
+        case .updatedAt(let range):
+            self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
+                .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+        }
+    }
 }
+
 
 //MARK: - Private Collection StringPredicate Filter
 

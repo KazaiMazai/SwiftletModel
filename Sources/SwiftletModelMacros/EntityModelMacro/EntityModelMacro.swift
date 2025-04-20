@@ -140,6 +140,8 @@ extension FunctionDeclSyntax {
                 .map { "try copy.save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
+        
+            try copy.metadata?.save(to: &context)
             try copy.didSave(to: &context)
         }
         """
@@ -179,6 +181,7 @@ extension FunctionDeclSyntax {
                 }
                 .joined(separator: "\n")
             )
+            try metadata?.deleted().save(to: &context)
             try didDelete(from: &context)
         }
         """
@@ -238,21 +241,19 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case .batchEntities:
-                        query
-                        \(raw: attributes
-                            .map { "\\.$\($0.propertyName)" }
-                            .map { ".with(\($0)) { $0.batchQuery(with: next) }"}
-                            .joined(separator: "\n")
-                        )
+            case .snapshot(let predicate):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(slice: \($0)) { $0.filter(predicate).with(next) }"}
+                    .joined(separator: "\n")
+                )
             }
         }
         """
         )
     }
 }
-
-
 
 extension VariableDeclSyntax {
     
