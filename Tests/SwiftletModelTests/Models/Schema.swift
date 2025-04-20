@@ -20,9 +20,13 @@ struct Schema {
     }
     
     static func batchSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema
-            .batchQuery(with: .entities, .snapshot(.updatedAt(Date.distantPast...Date.distantFuture)), .ids, in: context)
-        
+        Schema.batchQuery(
+            with: .entities,
+            .snapshot(.updatedAt(Date.distantPast...Date.distantFuture)),
+            .entities,
+            .ids,
+            in: context
+        )
     }
 }
 
@@ -35,16 +39,9 @@ extension Schema {
         
         var id: String { Self.version }
         
-        @Relationship var attachments: [Attachment]? = .none
-        @Relationship var chats: [Chat]? = .none
-        @Relationship var messages: [Message]? = .none
-        @Relationship var users: [User]? = .none
-        
-        @Relationship var attachmentsMetadata: [Metadata<Attachment>]? = .none
-        @Relationship var chatsMetadata: [Metadata<Chat>]? = .none
-        @Relationship var messagesMetadata: [Metadata<Message>]? = .none
-        @Relationship var usersMetadata: [Metadata<User>]? = .none
+        @Relationship var attachments: [Metadata<Attachment>]? = .none
+        @Relationship var chats: [Metadata<Chat>]? = .none
+        @Relationship var messages: [Metadata<Message>]? = .none
+        @Relationship var users: [Metadata<User>]? = .none
     }
-     
-    
 }

@@ -15,23 +15,6 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     func resolve() -> Entity? {
         result(context, id)
     }
-    
-//    func batchQuery(_ snapshot: ClosedRange<Date>, with nested: [Nested]) -> Query<Entity> {
-//        self.filter(\Metadata<Entity>.savedAt >= snapshot.lowerBound)
-//            .filter(\Metadata<Entity>.savedAt <= snapshot.upperBound)
-//            .with(nested)
-//    }
-    
-//    func filter(_ predicate: SnapshotPredicate) -> Query<Entity> {
-//        switch predicate.method {
-//        case .updatedAt(let range):
-//            self.filter(\Metadata<Entity>.savedAt >= range.lowerBound)
-//                .filter(\Metadata<Entity>.savedAt <= range.upperBound)
-//        }
-//       
-//    }
-    
-     
 }
 
 public extension Collection {

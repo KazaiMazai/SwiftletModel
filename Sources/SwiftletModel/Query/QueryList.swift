@@ -15,7 +15,6 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 }
 
-
 extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
         QueryList<T>(context: context) {
@@ -41,5 +40,3 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void {
         result(context, key(context))
     }
 }
-
-
