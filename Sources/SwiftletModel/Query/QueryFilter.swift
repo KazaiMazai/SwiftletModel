@@ -84,24 +84,24 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
 //    }
 }
 
-public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+//public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 //    func filter(snapshot: ClosedRange<Date>) -> QueryList<Entity> {
 //        self.filter(\Metadata<Entity>.updatedAt >= snapshot.lowerBound)
 //            .filter(\Metadata<Entity>.updatedAt <= snapshot.upperBound)
 //    }
     
-    func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
-    where
-    Result == [Query<Entity>],
-    Key == Void {
-        switch predicate {
-        case .updatedAt(let range):
-            self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
-                .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
-        }
-       
-    }
-}
+//    func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
+//    where
+//    Result == [Query<Entity>],
+//    Key == Void {
+////        switch predicate {
+////        case .updatedAt(let range):
+////            self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
+////                .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+////        }
+//       
+//    }
+//}
 
 public extension ContextQuery {
    

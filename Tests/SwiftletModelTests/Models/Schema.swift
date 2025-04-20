@@ -28,6 +28,7 @@ struct Schema {
 
 
 extension Schema {
+    
     @EntityModel
     struct V1 {
         static let version = "\(V1.self)"
@@ -44,4 +45,6 @@ extension Schema {
         @Relationship var messagesMetadata: [Metadata<Message>]? = .none
         @Relationship var usersMetadata: [Metadata<User>]? = .none
     }
+     
+    
 }

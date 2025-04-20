@@ -60,13 +60,13 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
 //MARK: - Metadata Collection Predicate Filter
 
-extension ContextQuery {
-//    func filter<T>(
-//        _ predicate: Predicate<Metadata<Entity>, T>) -> QueryList<Entity>
-//    where
-//    T: Comparable {
-//        whenResolved { $0.filter(predicate) }
-//    }
+public extension ContextQuery {
+    //    func filter<T>(
+    //        _ predicate: Predicate<Metadata<Entity>, T>) -> QueryList<Entity>
+    //    where
+    //    T: Comparable {
+    //        whenResolved { $0.filter(predicate) }
+    //    }
     
     func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
     where
@@ -240,15 +240,11 @@ private extension Collection {
         _ predicate: SnapshotPredicate) -> [Query<Metadata<Entity>>]
     where
     Element == Query<Metadata<Entity>> {
-        
-        guard let context = first?.context else {
-            return Array(self)
-        }
-        
-        return switch predicate {
+         
+        switch predicate {
         case .updatedAt(let range):
-            self.filter(\Metadata<Entity>.updatedAt >= range.lowerBound)
-                .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
+            return self.filter(\.updatedAt >= range.lowerBound)
+                .filter(\.updatedAt <= range.upperBound)
         }
     }
 }

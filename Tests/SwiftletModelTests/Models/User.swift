@@ -105,7 +105,7 @@ extension User: EntityModelProtocol {
                 }
         case .snapshot(let predicate):
             query
-                .with(slice: \.$chats) {
+                .with(\.$chats) {
                     $0.filter(predicate).with(next)
                 }
                 .with(slice: \.$adminOf) {
