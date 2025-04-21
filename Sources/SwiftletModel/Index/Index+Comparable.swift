@@ -25,9 +25,9 @@ extension Index {
         
         var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
         
-        func asDeleted() -> Deleted<Self>? { nil }
+        func softDeleteCopy(in context: Context) -> Deleted<Self>? { nil }
         
-        func saveMetadata(to context: inout Context, timestamp: Date) throws { }
+        func saveMetadata(to context: inout Context) throws { }
         
         func removeMetadata(from context: inout Context) throws { }
     }
@@ -113,8 +113,8 @@ extension Index.ComparableValue {
             .flatMap { $0 }
     }
     
-    func contains(id: Entity.ID, in range: ClosedRange<Value>) -> Bool {
-        guard let value = indexedValues[id] else {
+    func contains(id: Entity.ID?, in range: ClosedRange<Value>) -> Bool {
+        guard let id, let value = indexedValues[id] else {
             return false
         }
         

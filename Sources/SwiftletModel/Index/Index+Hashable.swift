@@ -20,9 +20,9 @@ extension Index {
             self.name = name
         }
         
-        func asDeleted() -> Deleted<Self>? { nil }
+        func softDeleteCopy(in context: Context) -> Deleted<Self>? { nil }
         
-        func saveMetadata(to context: inout Context, timestamp: Date) throws { }
+        func saveMetadata(to context: inout Context) throws { }
         
         func removeMetadata(from context: inout Context) throws { }
     }

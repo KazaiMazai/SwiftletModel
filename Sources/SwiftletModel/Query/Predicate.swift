@@ -204,14 +204,12 @@ extension String {
 }
 
 public enum MetadataPredicate {
-    case updatedAt(ClosedRange<Date>)
+    case updated(within: ClosedRange<Date>)
     
     var indexName: String {
         switch self {
-        case .updatedAt:
+        case .updated:
             return Metadata.updatedAt.indexName
         }
     }
 }
-   
-

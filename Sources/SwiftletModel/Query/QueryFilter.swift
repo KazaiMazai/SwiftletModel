@@ -80,7 +80,7 @@ public extension ContextQuery {
 
         whenResolved { entity in
             switch predicate {
-            case .updatedAt(let range):
+            case let .updated(within: range):
                 if let index = SortIndex<Entity>.ComparableValue<Date>
                     .query(predicate.indexName, in: context)
                     .resolve() {
@@ -195,7 +195,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
         in context: Context) -> [Query<Entity>] {
 
         switch predicate {
-        case .updatedAt(let range):
+        case let .updated(within: range):
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(predicate.indexName, in: context)
                 .resolve() {

@@ -181,13 +181,12 @@ private extension Collection {
         }
         
         switch predicate {
-        case .updatedAt(let range):
+        case let .updated(within: range):
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(predicate.indexName, in: context)
                 .resolve() {
 
-                let filterResult: Set<Entity.ID?> = Set(index.filter(range: range))
-                return filter( { filterResult.contains($0.id) })
+                return filter { index.contains(id: $0.id, in: range) }
             }
         }
         
