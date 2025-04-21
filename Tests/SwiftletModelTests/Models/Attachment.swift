@@ -8,14 +8,6 @@
 import SwiftletModel
 import Foundation
 
-extension Attachment {
-    enum Kind: Codable {
-        case image(url: URL)
-        case video(url: URL)
-        case file(url: URL)
-    }
-}
-
 @EntityModel
 struct Attachment: Codable, Sendable {
     let id: String
@@ -23,5 +15,11 @@ struct Attachment: Codable, Sendable {
 
     @Relationship(.required, inverse: \.attachment)
     var message: Message?
+    
+    enum Kind: Codable {
+        case image(url: URL)
+        case video(url: URL)
+        case file(url: URL)
+    }
 }
- 
+  

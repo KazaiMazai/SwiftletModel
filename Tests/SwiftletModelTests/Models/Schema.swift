@@ -14,18 +14,9 @@ struct Schema {
     
     @Relationship
     var v1: Schema.V1? = .id(V1.version)
-    
-    static func batchSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.batchQuery(
-            with: .entities, .entitiesSlice(.updated(within: Date.distantPast...Date.distantFuture)), .ids,
-            in: context
-        )
-    }
 }
- 
 
 extension Schema {
-    
     @EntityModel
     struct V1 {
         static let version = "\(V1.self)"
@@ -43,3 +34,20 @@ extension Schema {
         @Relationship var deletedUsers: [Deleted<User>]? = .none
     }
 }
+
+extension Schema {
+    static func batchQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+        Schema.batchQuery(
+            with: .entities, .entities(filter: .updated(within: range)), .ids,
+            in: context
+        )
+    }
+    
+    static func batchQuery(in context: Context) -> QueryList<Self> {
+        Schema.batchQuery(
+            with: .entities, .entities, .ids,
+            in: context
+        )
+    }
+}
+ 
