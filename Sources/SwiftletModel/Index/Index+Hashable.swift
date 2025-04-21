@@ -19,6 +19,12 @@ extension Index {
         init(name: String) {
             self.name = name
         }
+        
+        func deleted() -> Deleted<Self>? { nil }
+        
+        func saveMetadata(to context: inout Context, timestamp: Date) throws { }
+        
+        func removeMetadata(from context: inout Context) throws { }
     }
 }
 

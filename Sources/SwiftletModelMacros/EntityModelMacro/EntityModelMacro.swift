@@ -141,8 +141,8 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
         
-            try deleted?.delete(from: &context)
-            try updateMetadata(.updatedAt, value: Date(), in: &context)
+            try deleted()?.delete(from: &context)
+            try saveMetadata(to: &context, timestamp: Date())
             try copy.didSave(to: &context)
         }
         """
@@ -159,6 +159,7 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
+            let copy = query(in: context).with(.ids).resolve()
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {
@@ -182,8 +183,8 @@ extension FunctionDeclSyntax {
                 }
                 .joined(separator: "\n")
             )
-            try removeFromMetadata(.updatedAt, valueType: Date.self, in: &context)
-            try deleted?.save(to: &context)
+            try removeMetadata(from: &context)
+            try copy?.deleted()?.save(to: &context)
             try didDelete(from: &context)
         }
         """
@@ -243,7 +244,7 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case .snapshot(let predicate):
+            case .filter(let predicate):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }

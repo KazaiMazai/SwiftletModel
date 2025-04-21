@@ -13,8 +13,6 @@ public protocol EntityModelProtocol {
 
     var id: ID { get }
    
-    var deleted: Deleted<Self>? { get }
-    
     mutating func normalize()
     
     mutating func willSave(to context: inout Context) throws
@@ -22,12 +20,18 @@ public protocol EntityModelProtocol {
     func didSave(to context: inout Context) throws
     
     func save(to context: inout Context, options: MergeStrategy<Self>) throws
-
+    
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
   
     func delete(from context: inout Context) throws
+    
+    func deleted() -> Deleted<Self>?
+    
+    func saveMetadata(to context: inout Context, timestamp: Date) throws
+    
+    func removeMetadata(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
@@ -41,7 +45,6 @@ public protocol EntityModelProtocol {
 }
 
 public extension EntityModelProtocol {
-    var deleted: Deleted<Self>? { Deleted<Self>(self) }
     
     static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
 
@@ -59,6 +62,18 @@ public extension EntityModelProtocol {
         var copy = self
         copy.normalize()
         return copy
+    }
+    
+    func deleted() -> Deleted<Self>? {
+        Deleted<Self>(self)
+    }
+    
+    func saveMetadata(to context: inout Context, timestamp: Date) throws {
+        try updateMetadata(.updatedAt, value: timestamp, in: &context)
+    }
+    
+    func removeMetadata(from context: inout Context) throws {
+        try removeFromMetadata(.updatedAt, valueType: Date.self, in: &context)
     }
 }
 

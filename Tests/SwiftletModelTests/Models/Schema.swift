@@ -22,7 +22,7 @@ struct Schema {
     static func batchSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.batchQuery(
             with: .entities,
-            .snapshot(.updatedAt(Date.distantPast...Date.distantFuture)),
+            .filter(.updatedAt(Date.distantPast...Date.distantFuture)),
             .entities,
             .ids,
             in: context

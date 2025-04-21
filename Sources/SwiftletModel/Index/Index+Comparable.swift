@@ -24,6 +24,12 @@ extension Index {
         }
         
         var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
+        
+        func deleted() -> Deleted<Self>? { nil }
+        
+        func saveMetadata(to context: inout Context, timestamp: Date) throws { }
+        
+        func removeMetadata(from context: inout Context) throws { }
     }
 }
  
