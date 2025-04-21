@@ -11,6 +11,6 @@ public enum Nested {
     case ids
     case entities
     case fragments
-    case snapshot(SnapshotPredicate)
+    case snapshot(MetadataPredicate)
     
 }

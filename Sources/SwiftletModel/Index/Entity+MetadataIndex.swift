@@ -18,14 +18,14 @@ public enum MetadataIndex: String {
 
 public extension EntityModelProtocol {
     func updateMetadata<Value>(
-        _ indexName: String,
+        _ metadata: MetadataIndex,
         value: Value,
         in context: inout Context) throws
     where
     Value: Comparable {
         
         try Index.ComparableValue.updateIndex(
-            indexName: indexName,
+            indexName: metadata.indexName,
             self,
             value: value,
             in: &context
@@ -35,29 +35,28 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func removeFromMetadata<Value>(
-        _ indexName: String,
-        value: Value,
+        _ metadata: MetadataIndex,
+        valueType: Value.Type,
         in context: inout Context) throws
     where
     Value: Comparable {
         
         try Index.ComparableValue<Value>.removeFromIndex(
-            indexName: indexName,
+            indexName: metadata.indexName,
             self, in: &context)
     }
 }
 
-
 public extension EntityModelProtocol {
     func updateMetadata<Value>(
-        _ indexName: String,
+        _ metadata: MetadataIndex,
         value: Value,
         in context: inout Context) throws
     where
     Value: Hashable {
         
         try Index.HashableValue.updateIndex(
-            indexName: indexName,
+            indexName: metadata.indexName,
             self,
             value: value,
             in: &context
@@ -67,14 +66,56 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func removeFromMetadata<Value>(
-        _ indexName: String,
-        value: Value,
+        _ metadata: MetadataIndex,
+        valueType: Value.Type,
         in context: inout Context) throws
     where
     Value: Hashable {
         
         try Index.HashableValue<Value>.removeFromIndex(
-            indexName: indexName,
+            indexName: metadata.indexName,
+            self, in: &context)
+    }
+}
+
+public extension EntityModelProtocol {
+    func updateMetadata<Value>(
+        _ metadata: MetadataIndex,
+        value: Value,
+        in context: inout Context) throws
+    where
+    Value: Hashable & Comparable {
+        
+        try Index.HashableValue.updateIndex(
+            indexName: metadata.indexName,
+            self,
+            value: value,
+            in: &context
+        )
+        
+        try Index.ComparableValue.updateIndex(
+            indexName: metadata.indexName,
+            self,
+            value: value,
+            in: &context
+        )
+    }
+}
+
+public extension EntityModelProtocol {
+    func removeFromMetadata<Value>(
+        _ metadata: MetadataIndex,
+        valueType: Value.Type,
+        in context: inout Context) throws
+    where
+    Value: Hashable & Comparable {
+        
+        try Index.HashableValue<Value>.removeFromIndex(
+            indexName: metadata.indexName,
+            self, in: &context)
+        
+        try Index.ComparableValue<Value>.removeFromIndex(
+            indexName: metadata.indexName,
             self, in: &context)
     }
 }
