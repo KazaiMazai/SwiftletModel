@@ -24,3 +24,4 @@ struct Attachment: Codable, Sendable {
     @Relationship(.required, inverse: \.attachment)
     var message: Message?
 }
+ 

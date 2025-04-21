@@ -18,7 +18,7 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     }
 }
 
-//MARK: - Nested Entities Batch Collection Query
+//MARK: - Nested Enstities Batch Collection Query
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func with(_ nested: Nested...) -> QueryList<Entity> {

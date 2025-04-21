@@ -12,24 +12,16 @@ import SwiftletModel
 struct Schema {
     var id: String { "\(Schema.self)"}
     
-    @Relationship
-    var v1: Schema.V1? = .none
-    
-    init() {
-        $v1 = .id(V1.version)
-    }
+    @Relationship var v1: Schema.V1? = .id(V1.version)
     
     static func batchSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.batchQuery(
-            with: .entities,
-            .filter(.updatedAt(Date.distantPast...Date.distantFuture)),
-            .entities,
-            .ids,
+            with: .entities, .entitiesSlice(.updated(within: Date.distantPast...Date.distantFuture)), .ids,
             in: context
         )
     }
 }
-
+ 
 
 extension Schema {
     

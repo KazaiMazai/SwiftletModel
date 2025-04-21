@@ -11,6 +11,7 @@ public enum Nested {
     case ids
     case entities
     case fragments
-    case filter(MetadataPredicate)
+    case entitiesSlice(MetadataPredicate)
+    case fragmentsSlice(MetadataPredicate)
     
 }
