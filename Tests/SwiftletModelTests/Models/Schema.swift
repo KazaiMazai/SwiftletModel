@@ -16,6 +16,11 @@ struct Schema {
     var v1: Schema.V1? = .id(V1.version)
 }
 
+typealias User = Schema.V1.User
+typealias Chat = Schema.V1.Chat
+typealias Message = Schema.V1.Message
+typealias Attachment = Schema.V1.Attachment
+
 extension Schema {
     @EntityModel
     struct V1 {

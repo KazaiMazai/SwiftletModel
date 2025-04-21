@@ -21,29 +21,29 @@ extension User {
     }
 }
 
-
-@EntityModel
-struct User: Codable, Sendable {
-    @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
-    @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
-    @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
-    
-    let id: String
-    private(set) var name: String?
-    private(set) var avatar: Avatar?
-    private(set) var profile: Profile?
-    private(set) var username: String
-    private(set) var email: String
-    
-    var isCurrent: Bool = false
-    
-    @Relationship(inverse: \.users)
-    var chats: [Chat]?
-    
-    @Relationship(inverse: \.admins)
-    var adminOf: [Chat]?
+extension Schema.V1 {
+    @EntityModel
+    struct User: Codable, Sendable {
+        @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
+        @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
+        @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
+        
+        let id: String
+        private(set) var name: String?
+        private(set) var avatar: Avatar?
+        private(set) var profile: Profile?
+        private(set) var username: String
+        private(set) var email: String
+        
+        var isCurrent: Bool = false
+        
+        @Relationship(inverse: \.users)
+        var chats: [Chat]?
+        
+        @Relationship(inverse: \.admins)
+        var adminOf: [Chat]?
+    }
 }
- 
 
 
 
