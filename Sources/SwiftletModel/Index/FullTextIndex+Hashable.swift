@@ -34,7 +34,7 @@ extension FullTextIndex {
             self.name = name
         }
         
-        func deleted() -> Deleted<Self>? { nil }
+        func asDeleted() -> Deleted<Self>? { nil }
         
         func saveMetadata(to context: inout Context, timestamp: Date) throws { }
         

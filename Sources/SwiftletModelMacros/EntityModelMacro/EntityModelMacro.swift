@@ -141,7 +141,7 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
         
-            try deleted()?.delete(from: &context)
+            try asDeleted()?.delete(from: &context)
             try saveMetadata(to: &context, timestamp: Date())
             try copy.didSave(to: &context)
         }
@@ -184,7 +184,7 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
             try removeMetadata(from: &context)
-            try copy?.deleted()?.save(to: &context)
+            try copy?.asDeleted()?.save(to: &context)
             try didDelete(from: &context)
         }
         """
