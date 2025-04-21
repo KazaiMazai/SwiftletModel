@@ -9,11 +9,10 @@ import Foundation
 
 @EntityModel
 public struct Deleted<Entity: EntityModelProtocol> {
-    public var id: Entity.ID
+    public var id: Entity.ID { entity.id }
     public let entity: Entity
     
     init(_ entity: Entity) {
-        self.id = entity.id
         self.entity = entity
     }
 }
@@ -22,12 +21,10 @@ public extension Deleted {
     func asDeleted() -> Deleted<Self>? { nil }
     
     mutating func willSave(to context: inout Context) throws {
-        try Entity.query(id, in: context)
-            .resolve()?
-            .delete(from: &context)
+        try Entity.delete(id: id, from: &context)
     }
     
-    func recover(in context: inout Context) throws {
+    func restore(in context: inout Context) throws {
         try entity.save(to: &context, options: Entity.defaultMergeStrategy)
         try delete(from: &context)
     }

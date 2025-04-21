@@ -142,7 +142,7 @@ extension FunctionDeclSyntax {
             )
         
             try asDeleted()?.delete(from: &context)
-            try saveMetadata(to: &context, timestamp: Date())
+            try saveMetadata(to: &context)
             try copy.didSave(to: &context)
         }
         """
@@ -158,6 +158,7 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
+        
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             let copy = query(in: context).with(.ids).resolve()
             try willDelete(from: &context)
@@ -198,6 +199,7 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
+          
         \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }

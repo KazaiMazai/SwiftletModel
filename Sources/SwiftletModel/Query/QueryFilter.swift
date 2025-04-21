@@ -69,8 +69,6 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     }
 }
 
-
-
 //MARK: - Snapshot Predicate Filter
 
 public extension ContextQuery {

@@ -29,7 +29,7 @@ public protocol EntityModelProtocol {
     
     func asDeleted() -> Deleted<Self>?
     
-    func saveMetadata(to context: inout Context, timestamp: Date) throws
+    func saveMetadata(to context: inout Context) throws
     
     func removeMetadata(from context: inout Context) throws
 
@@ -68,8 +68,8 @@ public extension EntityModelProtocol {
         Deleted<Self>(self)
     }
     
-    func saveMetadata(to context: inout Context, timestamp: Date) throws {
-        try updateMetadata(.updatedAt, value: timestamp, in: &context)
+    func saveMetadata(to context: inout Context) throws {
+        try updateMetadata(.updatedAt, value: Date(), in: &context)
     }
     
     func removeMetadata(from context: inout Context) throws {

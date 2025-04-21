@@ -165,7 +165,6 @@ private extension Collection {
             return Array(self)
         }
         
-        
         return self
             .resolve()
             .filter(predicate.isIncluded)
