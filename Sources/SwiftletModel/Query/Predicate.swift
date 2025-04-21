@@ -213,5 +213,20 @@ public enum SnapshotPredicate {
         }
     }
 }
+
+public enum MetadataPredicate {
+    case updatedAt(ClosedRange<Date>)
+    
+    var indexName: String {
+        switch self {
+        case .updatedAt:
+            return MetadataIndex.updatedAt.indexName
+        }
+    }
+    
+    func isIncluded<Entity>(_ metadata: Entity) -> Bool {
+       false
+    }
+}
    
 

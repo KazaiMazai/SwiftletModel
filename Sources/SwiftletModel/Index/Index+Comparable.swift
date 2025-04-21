@@ -100,6 +100,21 @@ extension Index.ComparableValue {
             .flatMap { $0 }
     }
     
+    func filter(range: ClosedRange<Value>) -> [Entity.ID] {
+        index
+            .submap(from: range.lowerBound, through: range.upperBound)
+            .map { $1.elements }
+            .flatMap { $0 }
+    }
+    
+    func contains(id: Entity.ID, in range: ClosedRange<Value>) -> Bool {
+        guard let value = indexedValues[id] else {
+            return false
+        }
+        
+        return range.contains(value)
+    }
+    
     func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
         Dictionary(index.map { ($0, $1.elements) },
                    uniquingKeysWith: { $1 })

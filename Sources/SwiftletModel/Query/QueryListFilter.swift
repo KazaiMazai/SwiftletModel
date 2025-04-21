@@ -4,6 +4,7 @@
 //
 //  Created by Sergey Kazakov on 06/04/2025.
 //
+import Foundation
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     static func filter<T>(
@@ -72,6 +73,13 @@ public extension ContextQuery {
     where
     Entity == Metadata<T>,
     Result == [Query<Metadata<T>>],
+    Key == Void {
+        whenResolved { $0.filter(predicate) }
+    }
+    
+    func filter(_ predicate: MetadataPredicate) -> QueryList<Entity>
+    where
+    Result == [Query<Entity>],
     Key == Void {
         whenResolved { $0.filter(predicate) }
     }
@@ -211,6 +219,29 @@ private extension Collection {
             return self.filter(\.updatedAt >= range.lowerBound)
                 .filter(\.updatedAt <= range.upperBound)
         }
+    }
+    
+    func filter<Entity>(
+        _ predicate: MetadataPredicate) -> [Query<Entity>]
+    where
+    Element == Query<Entity>{
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        switch predicate {
+        case .updatedAt(let range):
+            if let index = SortIndex<Entity>.ComparableValue<Date>
+                .query(predicate.indexName, in: context)
+                .resolve() {
+
+                let filterResult: Set<Entity.ID?> = Set(index.filter(range: range))
+                return filter( { filterResult.contains($0.id) })
+            }
+        }
+        
+        return []
     }
 }
 

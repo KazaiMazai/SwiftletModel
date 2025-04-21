@@ -100,6 +100,27 @@ public extension ContextQuery {
             predicate.isIncluded(metadata) ? metadata : nil
         }
     }
+    
+    func filter(
+        _ predicate: MetadataPredicate) -> Query<Entity>
+    where
+    Result == Optional<Entity>,
+    Key == Entity.ID {
+
+        whenResolved { entity in
+            switch predicate {
+            case .updatedAt(let range):
+                if let index = SortIndex<Entity>.ComparableValue<Date>
+                    .query(predicate.indexName, in: context)
+                    .resolve() {
+                     
+                    return index.contains(id: entity.id, in: range) ? entity : nil
+                }
+            }
+            
+            return nil
+        }
+    }
 }
 
 
@@ -197,6 +218,26 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .filter(predicate.isIncluded)
             .query(in: context)
     }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
+        in context: Context) -> [Query<Entity>] {
+
+        switch predicate {
+        case .updatedAt(let range):
+            if let index = SortIndex<Entity>.ComparableValue<Date>
+                .query(predicate.indexName, in: context)
+                .resolve() {
+                
+                return index
+                    .filter(range: range)
+                    .map { Query<Entity>(context: context, id: $0) }
+            }
+        }
+        
+        return []
+    }
+
 }
 
 //MARK: - Private Query StringPredicate Filter
