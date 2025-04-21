@@ -209,12 +209,8 @@ public enum MetadataPredicate {
     var indexName: String {
         switch self {
         case .updatedAt:
-            return MetadataIndex.updatedAt.indexName
+            return Metadata.updatedAt.indexName
         }
-    }
-    
-    func isIncluded<Entity>(_ metadata: Entity) -> Bool {
-       false
     }
 }
    

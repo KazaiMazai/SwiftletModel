@@ -7,18 +7,9 @@
 
 import Foundation
 
-
-public enum MetadataIndex: String {
-    case updatedAt
-    
-    var indexName: String {
-        "MetadataIndex.\(rawValue)"
-    }
-}
-
 public extension EntityModelProtocol {
     func updateMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         value: Value,
         in context: inout Context) throws
     where
@@ -35,7 +26,7 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func removeFromMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         valueType: Value.Type,
         in context: inout Context) throws
     where
@@ -49,7 +40,7 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func updateMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         value: Value,
         in context: inout Context) throws
     where
@@ -66,7 +57,7 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func removeFromMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         valueType: Value.Type,
         in context: inout Context) throws
     where
@@ -80,7 +71,7 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func updateMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         value: Value,
         in context: inout Context) throws
     where
@@ -104,7 +95,7 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     func removeFromMetadata<Value>(
-        _ metadata: MetadataIndex,
+        _ metadata: Metadata,
         valueType: Value.Type,
         in context: inout Context) throws
     where
