@@ -59,23 +59,9 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 }
 
-//MARK: - Snapshot Predicate Filter
+//MARK: - Metadata Predicate Filter
 
 public extension ContextQuery {
-    func filter(_ predicate: SnapshotPredicate) -> QueryList<Entity>
-    where
-    Result == [Query<Entity>],
-    Key == Void {
-        whenResolved { $0.filter(predicate) }
-    }
-    
-    func filter<T: EntityModelProtocol>(_ predicate: SnapshotPredicate) -> QueryList<Entity>
-    where
-    Entity == Metadata<T>,
-    Result == [Query<Metadata<T>>],
-    Key == Void {
-        whenResolved { $0.filter(predicate) }
-    }
     
     func filter(_ predicate: MetadataPredicate) -> QueryList<Entity>
     where
@@ -184,41 +170,6 @@ private extension Collection {
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
-    }
- 
-    func filter<Entity>(
-        _ predicate: SnapshotPredicate) -> [Query<Entity>]
-    where
-    Element == Query<Entity> {
-        
-        guard let context = first?.context else {
-            return Array(self)
-        }
-        
-        let index: [Metadata<Entity>.ID]
-        switch predicate {
-        case .updatedAt(let range):
-            index = Metadata<Entity>
-                    .filter(\Metadata<Entity>.updatedAt >= range.lowerBound, in: context)
-                    .filter(\Metadata<Entity>.updatedAt <= range.upperBound)
-                    .resolve()
-                    .map { $0.id }
-        }
-        
-        let filterResult: Set<Entity.ID?> = Set(index)
-        return filter( { filterResult.contains($0.id) })
-    }
-    
-    func filter<Entity>(
-        _ predicate: SnapshotPredicate) -> [Query<Metadata<Entity>>]
-    where
-    Element == Query<Metadata<Entity>> {
-         
-        switch predicate {
-        case .updatedAt(let range):
-            return self.filter(\.updatedAt >= range.lowerBound)
-                .filter(\.updatedAt <= range.upperBound)
-        }
     }
     
     func filter<Entity>(

@@ -141,7 +141,6 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
         
-            try copy.metadata?.save(to: &context)
             try deleted?.delete(from: &context)
             try updateMetadata(.updatedAt, value: Date(), in: &context)
             try copy.didSave(to: &context)
@@ -183,7 +182,6 @@ extension FunctionDeclSyntax {
                 }
                 .joined(separator: "\n")
             )
-            try metadata?.deleted().save(to: &context)
             try removeFromMetadata(.updatedAt, valueType: Date.self, in: &context)
             try deleted?.save(to: &context)
             try didDelete(from: &context)

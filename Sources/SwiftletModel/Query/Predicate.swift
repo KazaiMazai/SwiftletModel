@@ -203,17 +203,6 @@ extension String {
     }
 }
 
-public enum SnapshotPredicate {
-    case updatedAt(ClosedRange<Date>)
-    
-    func isIncluded<Entity>(_ metadata: Metadata<Entity>) -> Bool {
-        switch self {
-        case .updatedAt(let range):
-            range.contains(metadata.updatedAt)
-        }
-    }
-}
-
 public enum MetadataPredicate {
     case updatedAt(ClosedRange<Date>)
     

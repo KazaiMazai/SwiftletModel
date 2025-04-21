@@ -39,9 +39,14 @@ extension Schema {
         
         var id: String { Self.version }
         
-        @Relationship var attachments: [Metadata<Attachment>]? = .none
-        @Relationship var chats: [Metadata<Chat>]? = .none
-        @Relationship var messages: [Metadata<Message>]? = .none
-        @Relationship var users: [Metadata<User>]? = .none
+        @Relationship var attachments: [Attachment]? = .none
+        @Relationship var chats: [Chat]? = .none
+        @Relationship var messages: [Message]? = .none
+        @Relationship var users: [User]? = .none
+        
+        @Relationship var deletedAttachments: [Deleted<Attachment>]? = .none
+        @Relationship var deletedChats: [Deleted<Chat>]? = .none
+        @Relationship var deletedMessages: [Deleted<Message>]? = .none
+        @Relationship var deletedUsers: [Deleted<User>]? = .none
     }
 }

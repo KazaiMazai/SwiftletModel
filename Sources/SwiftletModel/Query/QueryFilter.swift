@@ -75,33 +75,6 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
 
 public extension ContextQuery {
     func filter(
-        _ predicate: SnapshotPredicate) -> Query<Entity>
-    where
-    Result == Optional<Entity>,
-    Key == Entity.ID {
-        
-        whenResolved { entity in
-            guard let metadata = Metadata<Entity>.query(entity.id, in: context).resolve() else {
-                return nil
-            }
-            
-            return predicate.isIncluded(metadata) ? entity : nil
-        }
-    }
-
-    func filter<T: EntityModelProtocol>(
-        _ predicate: SnapshotPredicate) -> Query<Metadata<T>>
-    where
-    Entity == Metadata<T>,
-    Result == Optional<Metadata<T>>,
-    Key == Metadata<T>.ID {
-        
-        whenResolved { metadata in
-            predicate.isIncluded(metadata) ? metadata : nil
-        }
-    }
-    
-    func filter(
         _ predicate: MetadataPredicate) -> Query<Entity>
     where
     Result == Optional<Entity>,
