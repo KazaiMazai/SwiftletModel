@@ -142,6 +142,7 @@ extension FunctionDeclSyntax {
             )
         
             try copy.metadata?.save(to: &context)
+            try deleted?.delete(from: &context)
             try copy.didSave(to: &context)
         }
         """
@@ -182,6 +183,7 @@ extension FunctionDeclSyntax {
                 .joined(separator: "\n")
             )
             try metadata?.deleted().save(to: &context)
+            try deleted?.save(to: &context)
             try didDelete(from: &context)
         }
         """
