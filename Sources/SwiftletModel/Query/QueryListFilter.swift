@@ -2,7 +2,7 @@
 //  QueryCollectionFilter.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 06/04/2025.
+//  Created by Serge Kazakov on 06/04/2025.
 //
 import Foundation
 

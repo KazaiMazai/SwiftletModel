@@ -2,7 +2,7 @@
 //  QuerySchema.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 22/04/2025.
+//  Created by Serge Kazakov on 22/04/2025.
 //
 
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {

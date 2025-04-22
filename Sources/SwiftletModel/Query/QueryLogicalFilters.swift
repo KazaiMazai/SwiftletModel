@@ -2,7 +2,7 @@
 //  QueryAndFilters.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 06/04/2025.
+//  Created by Serge Kazakov on 06/04/2025.
 //
  
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
