@@ -90,6 +90,7 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
   * [FullTextIndex](#fulltextindex)
   * [Index Performance Considerations](#index-performance-considerations)
 - [Schema](#schema)
+  * [Schema Versioning](#schema-versioning)
   * [Schema Bulk Queries](#schema-bulk-queries)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
@@ -1481,13 +1482,13 @@ Best Practices
 
 ## Schema 
 
-### Schema Bulk Queries
+SwiftletModel provides schema versioning and bulk query capabilities to help manage your data model evolution and synchronization needs.
 
-SwiftletModel provides a way to query the entire schema of your data model, which is particularly useful for syncing or backing up your data. Schema queries allow you to fetch all entities of your data model with their relationships intact.
+### Schema Versioning
 
-Here's an example of how to define schema and use schema queries:
+You can define a schema that includes all related entities and version your data model. Here's an example:
 
-```swift
+```swift    
 @EntityModel
 struct Schema {
     var id: String { "\(Schema.self)" }
@@ -1496,11 +1497,19 @@ struct Schema {
     var v1: Schema.V1? = .relation(V1())
 }
 
+// Typealiases to the latest version
+typealias User = Schema.V1.User
+typealias Chat = Schema.V1.Chat
+typealias Message = Schema.V1.Message
+typealias Attachment = Schema.V1.Attachment
+
 extension Schema {
+    /**
+    First version of the schema
+    */
     @EntityModel
     struct V1: Codable {
         static let version = "\(V1.self)"
-        
         var id: String { Self.version }
         
         // Define relationships to all entity types
@@ -1516,17 +1525,34 @@ extension Schema {
         @Relationship var deletedUsers: [Deleted<User>]? = .none
     }
 }
+```
 
+Since schema is a plain struct like any other entity, migration between versions is straightforward:
+1. Add a new version of the schema
+2. Update the typealiases to point to the latest version 
+3. Define how data should be mapped between versions
+
+### Schema Bulk Queries
+
+SwiftletModel provides powerful bulk query capabilities for your schema, which are particularly useful for:
+- Data synchronization with backends or local databases
+- Creating local backups
+- Implementing undo/redo functionality
+- Debugging and development tools
+
+Here's how to define and use schema queries:
+
+```swift
 extension Schema {
     // Query the entire schema changes within a specific time range
     static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
         Schema.queryAll(
             with: 
-            .entities,              // Get related versions for schema (Schema -> versions)
-            .schemaEntities(        // Get all entities for the version (V1 -> entities relations) 
-                filter: .updated(within: range)  //filter by updated within range
+            .entities,              // Get schema versions (Schema -> versions)
+            .schemaEntities(        // Get all entities for each version
+                filter: .updated(within: range)  // Filter by update time
             ), 
-            .ids,                   // For each entity get all related entity IDs
+            .ids,                   // Get related entity IDs (sufficient for backing up relations)
             in: context
         )
     }
@@ -1535,21 +1561,41 @@ extension Schema {
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
             with: 
-            .entities,           // Get related versions for the schema (Schema -> version relations)
-            .schemaEntities,     // Get all entities for the version (V1 -> entities relations) 
-            .ids,                // For each entity get all related entity IDs
+            .entities,           // Get schema versions
+            .schemaEntities,     // Get all entities for each version
+            .ids,                // Get related entity IDs
             in: context
         )
     }
 }
+
+// Usage example:
+var context = Context()
+
+// Initialize and save schema
+let schema = Schema()
+try schema.save(to: &context)
+
+// Save some entities
+let user = User(id: "1", name: "Bob")
+let chat = Chat(id: "1", users: .relation([user]))
+try user.save(to: &context)
+try chat.save(to: &context)
+
+// Query entire schema with all entities and relationships
+let schemaData = Schema.fullSchemaQuery(in: context).resolve()
+
+// Query schema changes since last sync
+var lastSyncDate = Date.distantPast
+let syncChanges = Schema.fullSchemaQuery(updated: lastSyncDate...Date(), in: context).resolve()
+lastSyncDate = Date()
 ```
 
-This schema query approach offers several benefits:
-
-- **Version Control**: By structuring your schema with versions (e.g., V1), you can manage schema migrations and backwards compatibility
-- **Complete Data Access**: Query all entities and their relationships in a single operation
-- **Deletion Tracking**: Keep track of deleted entities for sync operations
-- **Time-Based Filtering**: Query only entities that were updated within a specific time range
+Key benefits of this schema approach:
+- **Version Control**: Manage schema migrations and backwards compatibility
+- **Complete Data Access**: Query all entities and relationships in one operation
+- **Deletion Tracking**: Track deleted entities for sync operations
+- **Time-Based Filtering**: Query entities updated within specific time ranges
 - **Flexible Resolution**: Choose between fetching complete entities, fragments, or just IDs
 
 You can use schema queries for:
