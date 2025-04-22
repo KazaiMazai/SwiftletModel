@@ -1,5 +1,5 @@
 //
-//  QueryBatchNested.swift
+//  QueryAllNested.swift
 //  SwiftletModel
 //
 //  Created by Sergey Kazakov on 02/04/2025.

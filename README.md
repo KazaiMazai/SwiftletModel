@@ -41,8 +41,8 @@ Although primarily in-memory, SwiftletModel’s data model is Codable, allowing 
   * [Relationship DeleteRule](#relationship-deleterule)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
-  * [Batch nested models query](#batch-nested-models-query)
-  * [Combining batch nested models with nested models query](#combining-batch-nested-models-with-nested-models-query)
+  * [Bulk nested models query](#Bulk-nested-models-query)
+  * [Combining bulk nested models with nested models query](#combining-bulk-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
 - [How to use Sort Queries](#how-to-use-sort-queries)
   * [Basic Sorting](#basic-sorting)
@@ -304,10 +304,10 @@ Now we are querying things from another end, WTF?*
 When `resolve()` is called all entities are pulled from the context storage 
 and put in its place according to the nested shape in denormalized form.
 
-### Batch nested models query
+### Bulk nested models query
 
-Batch nested models query is s quick way to fetch related models graph up to a certain depth.
-It's possible to query all nested models at once in a single line: 
+Bulk nested models query is s quick way to fetch related models graph up to a certain depth.
+It's possible to query entity with all nested related models at once in a single line: 
 
 ```swift
 let user = User
@@ -325,9 +325,9 @@ let user = User
     .resolve()
 ```
 
-### Combining batch nested models with nested models query
+### Combining bulk nested models with nested models query
 
-Batch nested queries can be combined with other queries to include all related models only for certain parts of the model graph
+Bulk nested queries can be combined with other queries to include all related models only for certain parts of the model graph
 
 *In the example below, user would be resovled with all chats and while each chat would include all related models.*
 
