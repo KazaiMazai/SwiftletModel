@@ -9,24 +9,32 @@ import Foundation
 
 public enum Nested {
     case ids
-    case entities(MetadataPredicate?)
-    case fragments(MetadataPredicate?)
+    case entities(MetadataPredicate?, schemaQuery: Bool)
+    case fragments(MetadataPredicate?, schemaQuery: Bool)
 }
 
 public extension Nested {
     static var entities: Nested {
-        .entities(nil)
+        .entities(nil, schemaQuery: false)
     }
     
     static var fragments: Nested {
-        .fragments(nil)
+        .fragments(nil, schemaQuery: false)
     }
     
     static func entities(filter: MetadataPredicate) -> Nested {
-        .entities(filter)
+        .entities(filter, schemaQuery: false)
     }
     
     static func fragments(filter: MetadataPredicate) -> Nested {
-        .entities(filter)
+        .entities(filter, schemaQuery: false)
+    }
+    
+    static func schemaEntities(filter: MetadataPredicate) -> Nested {
+        .entities(filter, schemaQuery: true)
+    }
+    
+    static func schemaFragments(filter: MetadataPredicate) -> Nested {
+        .entities(filter, schemaQuery: true)
     }
 }

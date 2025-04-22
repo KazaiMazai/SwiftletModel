@@ -16,6 +16,8 @@ public struct Deleted<Entity: EntityModelProtocol> {
         self.entity = entity
     }
 }
+
+extension Deleted: Codable where Entity: Codable { }
  
 public extension Deleted {
     func asDeleted(in context: Context) -> Deleted<Self>? { nil }

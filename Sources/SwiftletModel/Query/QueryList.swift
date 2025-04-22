@@ -40,3 +40,17 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void {
         result(context, key(context))
     }
 }
+
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func first() -> Query<Entity> {
+        Query(context: context) { _ in
+            resolveQueries().first?.id
+        }
+    }
+    
+    func last() -> Query<Entity> {
+        Query(context: context) { _ in
+            resolveQueries().last?.id
+        }
+    }
+}

@@ -6,7 +6,7 @@
 //
 
 
-//MARK: - Nested Entities Batch Query
+//MARK: - All Nested Entities Query
 
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     func with(_ nested: Nested...) -> Query<Entity> {
@@ -14,11 +14,11 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     }
     
     func with(_ nested: [Nested]) -> Query<Entity> {
-        Entity.nestedQueryModifier(self, nested: nested)
+        Entity.nestedQueryModifier(self, in: context, nested: nested)
     }
 }
 
-//MARK: - Nested Enstities Batch Collection Query
+//MARK: - All Nested Entities Collection Query
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func with(_ nested: Nested...) -> QueryList<Entity> {

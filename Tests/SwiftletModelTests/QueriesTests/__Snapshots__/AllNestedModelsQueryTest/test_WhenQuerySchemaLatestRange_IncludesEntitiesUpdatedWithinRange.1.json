@@ -1,0 +1,71 @@
+[
+  {
+    "v1" : {
+      "attachments" : [
+
+      ],
+      "chats" : [
+        {
+          "admins" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "id" : "1",
+          "messages" : [
+            {
+              "id" : "0"
+            },
+            {
+              "id" : "1"
+            },
+            {
+              "id" : "2"
+            },
+            {
+              "id" : "3"
+            },
+            {
+              "id" : "4"
+            }
+          ],
+          "users" : [
+            {
+              "id" : "1"
+            },
+            {
+              "id" : "2"
+            },
+            {
+              "id" : "5"
+            },
+            {
+              "id" : "3"
+            },
+            {
+              "id" : "4"
+            }
+          ]
+        }
+      ],
+      "deletedAttachments" : [
+
+      ],
+      "deletedChats" : [
+
+      ],
+      "deletedMessages" : [
+
+      ],
+      "deletedUsers" : [
+
+      ],
+      "messages" : [
+
+      ],
+      "users" : [
+
+      ]
+    }
+  }
+]

@@ -9,11 +9,11 @@ import Foundation
 import SwiftletModel
 
 @EntityModel
-struct Schema {
+struct Schema: Codable {
     var id: String { "\(Schema.self)"}
     
     @Relationship
-    var v1: Schema.V1? = .id(V1.version)
+    var v1: Schema.V1? = .relation(V1())
 }
 
 typealias User = Schema.V1.User
@@ -24,7 +24,7 @@ typealias Attachment = Schema.V1.Attachment
 extension Schema {
     
     @EntityModel
-    struct V1 {
+    struct V1: Codable {
         static let version = "\(V1.self)"
         
         var id: String { Self.version }
@@ -42,16 +42,9 @@ extension Schema {
 }
 
 extension Schema {
-    static func batchQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
-        Schema.batchQuery(
-            with: .entities, .entities(filter: .updated(within: range)), .ids,
-            in: context
-        )
-    }
-    
-    static func batchQuery(in context: Context) -> QueryList<Self> {
-        Schema.batchQuery(
-            with: .entities, .entities, .ids,
+    static func schemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: .entities, .schemaEntities(filter: .updated(within: range)), .ids,
             in: context
         )
     }
