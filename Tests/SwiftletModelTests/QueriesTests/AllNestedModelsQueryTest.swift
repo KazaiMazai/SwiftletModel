@@ -138,7 +138,7 @@ final class AllNestedModelsQueryTest: XCTestCase {
             .save(to: &context)
         
         let schema = Schema
-            .schemaQuery(updated: snapshotTime...Date.distantFuture, in: context)
+            .fullSchemaQuery(updated: snapshotTime...Date.distantFuture, in: context)
             .resolve()
         
         assertSnapshot(of: schema, as: .json(encoder))
@@ -158,7 +158,7 @@ final class AllNestedModelsQueryTest: XCTestCase {
         
         
         let schema = Schema
-            .schemaQuery(updated: Date.distantPast...snapshotTime, in: context)
+            .fullSchemaQuery(updated: Date.distantPast...snapshotTime, in: context)
             .resolve()
 
         assertSnapshot(of: schema, as: .json(encoder))

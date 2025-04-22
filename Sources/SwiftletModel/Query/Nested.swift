@@ -37,4 +37,12 @@ public extension Nested {
     static func schemaFragments(filter: MetadataPredicate) -> Nested {
         .entities(filter, schemaQuery: true)
     }
+    
+    static var schemaEntities: Nested {
+        .entities(nil, schemaQuery: true)
+    }
+    
+    static var schemaFragments: Nested {
+        .fragments(nil, schemaQuery: true)
+    }
 }

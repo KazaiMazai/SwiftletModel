@@ -42,9 +42,16 @@ extension Schema {
 }
 
 extension Schema {
-    static func schemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
         Schema.queryAll(
             with: .entities, .schemaEntities(filter: .updated(within: range)), .ids,
+            in: context
+        )
+    }
+    
+    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: .entities, .schemaEntities, .ids,
             in: context
         )
     }
