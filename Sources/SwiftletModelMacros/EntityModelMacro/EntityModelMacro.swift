@@ -232,14 +232,14 @@ extension FunctionDeclSyntax {
                     .map { ".id(\($0))"}
                     .joined(separator: "\n")
                 )
-            case let .fragments(.none):
+            case .fragments(.none):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case let .entities(.none):
+            case .entities(.none):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
