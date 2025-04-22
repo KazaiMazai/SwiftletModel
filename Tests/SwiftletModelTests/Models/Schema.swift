@@ -22,6 +22,7 @@ typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
+    
     @EntityModel
     struct V1 {
         static let version = "\(V1.self)"

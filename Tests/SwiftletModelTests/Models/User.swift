@@ -8,20 +8,8 @@
 import SwiftletModel
 import Foundation
 
-extension User {
-    struct Profile: Codable {
-        let bio: String?
-        let url: String?
-    }
-    
-    struct Avatar: Codable {
-        let small: URL?
-        let medium: URL?
-        let large: URL?
-    }
-}
-
 extension Schema.V1 {
+    
     @EntityModel
     struct User: Codable, Sendable {
         @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
@@ -43,9 +31,18 @@ extension Schema.V1 {
         @Relationship(inverse: \.admins)
         var adminOf: [Chat]?
     }
+    
+    struct Profile: Codable {
+        let bio: String?
+        let url: String?
+    }
+    
+    struct Avatar: Codable {
+        let small: URL?
+        let medium: URL?
+        let large: URL?
+    }
 }
-
-
 
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
@@ -61,7 +58,3 @@ extension CollisionResolver where Entity == User {
         }
     }
 }
-
-
-
-
