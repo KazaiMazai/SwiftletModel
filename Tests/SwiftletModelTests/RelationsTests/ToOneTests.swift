@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftletModel
+import SwiftletModel
 
 final class ToOneTests: XCTestCase {
     var context = Context()

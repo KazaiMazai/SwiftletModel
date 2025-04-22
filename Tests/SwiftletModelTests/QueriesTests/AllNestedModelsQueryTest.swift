@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftletModel
+import SwiftletModel
 import SnapshotTesting
 import SnapshotTestingCustomDump
 

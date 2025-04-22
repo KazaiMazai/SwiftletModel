@@ -5,7 +5,7 @@
 //  Created by Serge Kazakov on 02/04/2025.
 //
 
-@testable import SwiftletModel
+import SwiftletModel
 import Foundation
 import XCTest
 
