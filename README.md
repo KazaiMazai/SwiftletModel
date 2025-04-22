@@ -161,7 +161,7 @@ public protocol EntityModelProtocol {
     
     func saveMetadata(to context: inout Context) throws
     
-    func removeMetadata(from context: inout Context) throws
+    func deleteMetadata(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
