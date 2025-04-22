@@ -69,7 +69,7 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     }
 }
 
-//MARK: - Snapshot Predicate Filter
+//MARK: - Metadata Predicate Filter
 
 public extension ContextQuery {
     func filter(
@@ -90,6 +90,18 @@ public extension ContextQuery {
             }
             
             return nil
+        }
+    }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
+        in context: Context) -> QueryList<Entity>
+    where
+    Result == Optional<Entity>,
+    Key == Entity.ID {
+        
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
         }
     }
 }

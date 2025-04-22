@@ -153,6 +153,12 @@ public extension EntityModelProtocol {
         in context: Context) -> QueryList<Self> {
         Query<Self>.filter(predicate, in: context)
     }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
+        in context: Context) -> QueryList<Self> {
+        Query<Self>.filter(predicate, in: context)
+    }
 }
 
 extension PartialKeyPath {
