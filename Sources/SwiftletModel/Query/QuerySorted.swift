@@ -9,6 +9,12 @@ import Foundation
 typealias SortIndex = Index
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func sorted(by metadata: Metadata) -> QueryList<Entity> {
+        whenResolved {
+            $0.sorted(by: metadata)
+        }
+    }
+    
     func sorted<T>(
         by keyPath: KeyPath<Entity, T>) -> QueryList<Entity>
     where
@@ -170,6 +176,26 @@ private extension Collection {
         }
         
         return sorted(using: index)
+    }
+    
+    func sorted<Entity>(by metadata: Metadata) -> [Query<Entity>]
+    where
+    Element == Query<Entity>{
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        switch metadata {
+        case .updatedAt:
+            if let index = SortIndex<Entity>.ComparableValue<Date>
+                .query(metadata.indexName, in: context)
+                .resolve() {
+                
+                return sorted(using: index)
+            }
+        }
+        
+        return Array(self)
     }
 }
 

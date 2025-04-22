@@ -21,6 +21,12 @@ extension Unique {
         init(name: String) {
             self.name = name
         }
+        
+        func asDeleted(in context: Context) -> Deleted<Self>? { nil }
+        
+        func saveMetadata(to context: inout Context) throws { }
+        
+        func deleteMetadata(from context: inout Context) throws { }
     }
 }
 

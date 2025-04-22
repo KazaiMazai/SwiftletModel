@@ -4,6 +4,7 @@
 //
 //  Created by Sergey Kazakov on 06/04/2025.
 //
+import Foundation
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     static func filter<T>(
@@ -11,10 +12,10 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         in context: Context) -> QueryList<Entity>
     where
     T: Comparable {
-
+        
         Query.filter(predicate, in: context)
     }
-     
+    
     func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
@@ -32,7 +33,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
-    T: Hashable { 
+    T: Hashable {
         whenResolved { $0.filter(predicate) }
     }
     
@@ -40,7 +41,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Equatable {
-         whenResolved { $0.filter(predicate) }
+        whenResolved { $0.filter(predicate) }
     }
 }
 
@@ -55,6 +56,18 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         in context: Context) -> QueryList<Entity>  {
         
             Query.filter(predicate, in: context)
+    }
+}
+
+//MARK: - Metadata Predicate Filter
+
+public extension ContextQuery {
+    
+    func filter(_ predicate: MetadataPredicate) -> QueryList<Entity>
+    where
+    Result == [Query<Entity>],
+    Key == Void {
+        whenResolved { $0.filter(predicate) }
     }
 }
 
@@ -141,7 +154,7 @@ private extension Collection {
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
+   
     func filter<Entity, T>(
         _ predicate: EqualityPredicate<Entity, T>) -> [Query<Entity>]
     where
@@ -152,11 +165,32 @@ private extension Collection {
             return Array(self)
         }
         
-        
         return self
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
+    }
+    
+    func filter<Entity>(
+        _ predicate: MetadataPredicate) -> [Query<Entity>]
+    where
+    Element == Query<Entity>{
+        
+        guard let context = first?.context else {
+            return Array(self)
+        }
+        
+        switch predicate {
+        case let .updated(within: range):
+            if let index = SortIndex<Entity>.ComparableValue<Date>
+                .query(predicate.indexName, in: context)
+                .resolve() {
+
+                return filter { index.contains(id: $0.id, in: range) }
+            }
+        }
+        
+        return []
     }
 }
 

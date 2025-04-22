@@ -57,6 +57,7 @@ final class AllNestedModelsQueryTest: XCTestCase {
         )
 
         try chat.save(to: &context)
+        try Schema().save(to: &context)
     }
 
     func test_WhenQueryWithNestedEntities_EqualExpectedJSON() {
@@ -123,4 +124,66 @@ final class AllNestedModelsQueryTest: XCTestCase {
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
+    
+    func test_WhenQuerySchemaLatestRange_IncludesEntitiesUpdatedWithinRange() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+
+        Thread.sleep(forTimeInterval: 1.0)
+        let snapshotTime = Date.now
+        Thread.sleep(forTimeInterval: 1.0)
+
+        try! Chat.query("1", in: context)
+            .resolve()?
+            .save(to: &context)
+        
+        let schema = Schema
+            .fullSchemaQuery(updated: snapshotTime...Date.distantFuture, in: context)
+            .resolve()
+        
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
+    
+    func test_WhenQuerySchemaOlderRange_IncludesEntitiesUpdatedWithinRange() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+
+        Thread.sleep(forTimeInterval: 1.0)
+        let snapshotTime = Date.now
+        Thread.sleep(forTimeInterval: 1.0)
+
+        try! Chat.query("1", in: context)
+            .resolve()?
+            .save(to: &context)
+        
+        
+        let schema = Schema
+            .fullSchemaQuery(updated: Date.distantPast...snapshotTime, in: context)
+            .resolve()
+
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
+
+    func test_WhenQueryFullSchema_IncludesAllEntities() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+        
+        let schema = Schema
+            .fullSchemaQuery(in: context)
+            .resolve()
+        
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
+    
+    func test_WhenQueryFullSchemaFragments_IncludesAllEntities() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+        
+        let schema = Schema
+            .fullSchemaQuery(in: context)
+            .resolve()
+        
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
+ 
 }

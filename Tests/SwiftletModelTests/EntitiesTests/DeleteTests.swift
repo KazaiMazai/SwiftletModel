@@ -30,14 +30,51 @@ final class DeleteTests: XCTestCase {
         try chat.save(to: &context)
     }
 
-    func test_WhenEntityIsDeleted_EntityIsRemovedFromRepository() {
+    func test_WhenEntityIsDeleted_EntityIsRemovedFromContext() {
         try! Chat.delete(id: "1", from: &context)
 
-        let chatInRepository = Chat
+        let chat = Chat
             .query("1", in: context)
             .resolve()
 
-        XCTAssertNil(chatInRepository)
+        XCTAssertNil(chat)
+
+        let deletedChat = Deleted<Chat>
+            .query("1", in: context)
+            .resolve()
+
+        XCTAssertNotNil(deletedChat)
+    }
+    
+    func test_WhenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() {
+        let softDeleteChat = Chat
+            .query("1", in: context)
+            .resolve()?
+            .asDeleted(in: context)
+        
+        try! softDeleteChat!.save(to: &context)
+
+        let chat = Chat
+            .query("1", in: context)
+            .resolve()
+
+        XCTAssertNil(chat)
+    }
+    
+    func test_WhenSoftDeleteEntityIsRestored_EntityIsRestoredInContext() {
+        try! Chat.delete(id: "1", from: &context)
+ 
+        try! Deleted<Chat>
+            .query("1", in: context)
+            .resolve()?
+            .restore(in: &context)
+
+        
+        let chat = Chat
+            .query("1", in: context)
+            .resolve()
+
+        XCTAssertNotNil(chat)
     }
 
     func test_WhenEntityIsDeleted_EntityIsRemovedFromRelations() {
@@ -64,6 +101,18 @@ final class DeleteTests: XCTestCase {
 
         XCTAssertNil(message)
         XCTAssertNil(attachment)
+
+        let deletedMessage = Deleted<Message>
+            .query("1", in: context)
+            .resolve()
+
+        XCTAssertNotNil(deletedMessage)
+
+        let deletedAttachment = Deleted<Attachment>
+            .query("1", in: context)
+            .resolve()
+
+        XCTAssertNotNil(deletedAttachment)
     }
 
     func test_WhenEntityIsDetached_EntityIsRemovedFromRelations() {
@@ -81,7 +130,7 @@ final class DeleteTests: XCTestCase {
         XCTAssertTrue(userChats.isEmpty)
     }
 
-    func test_WhenEntityIsDetached_EntityIsNotRemovedFromRepository() {
+    func test_WhenEntityIsDetached_EntityIsNotRemovedFromContext() {
         let chat = Chat
             .query("1", in: context)
             .resolve()!

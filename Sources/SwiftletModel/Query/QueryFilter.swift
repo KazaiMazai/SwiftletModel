@@ -6,6 +6,7 @@
 //
 
 import Collections
+import Foundation
 
 public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     static func filter<T>(
@@ -67,6 +68,44 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
         }
     }
 }
+
+//MARK: - Metadata Predicate Filter
+
+public extension ContextQuery {
+    func filter(
+        _ predicate: MetadataPredicate) -> Query<Entity>
+    where
+    Result == Optional<Entity>,
+    Key == Entity.ID {
+
+        whenResolved { entity in
+            switch predicate {
+            case let .updated(within: range):
+                if let index = SortIndex<Entity>.ComparableValue<Date>
+                    .query(predicate.indexName, in: context)
+                    .resolve() {
+                     
+                    return index.contains(id: entity.id, in: range) ? entity : nil
+                }
+            }
+            
+            return nil
+        }
+    }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
+        in context: Context) -> QueryList<Entity>
+    where
+    Result == Optional<Entity>,
+    Key == Entity.ID {
+        
+        QueryList(context: context) {
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
 
 //MARK: - Private Query Predicate Filter
 
@@ -162,6 +201,26 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .filter(predicate.isIncluded)
             .query(in: context)
     }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
+        in context: Context) -> [Query<Entity>] {
+
+        switch predicate {
+        case let .updated(within: range):
+            if let index = SortIndex<Entity>.ComparableValue<Date>
+                .query(predicate.indexName, in: context)
+                .resolve() {
+                
+                return index
+                    .filter(range: range)
+                    .map { Query<Entity>(context: context, id: $0) }
+            }
+        }
+        
+        return []
+    }
+
 }
 
 //MARK: - Private Query StringPredicate Filter

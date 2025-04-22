@@ -21,11 +21,12 @@ public extension Collection {
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
         compactMap { $0.resolve() }
     }
+   
 }
 
 extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
     var id: Entity.ID? { key(context) }
-
+    
     init(context: Context, id: Entity.ID) {
         self.context = context
         self.key = { _ in  id }
@@ -58,6 +59,8 @@ extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
         Self(context: context, id: nil) { nil }
     }
 }
+
+
 
 //MARK: - Entities Collection Extension
 

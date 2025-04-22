@@ -4,6 +4,9 @@
 //
 //  Created by Sergey Kazakov on 12/03/2025.
 //
+
+import Foundation
+
 extension Unique {
     @EntityModel
     struct HashableValue<Value: Hashable> {
@@ -17,6 +20,12 @@ extension Unique {
         init(name: String) {
             self.name = name
         }
+        
+        func asDeleted(in context: Context) -> Deleted<Self>? { nil }
+        
+        func saveMetadata(to context: inout Context) throws { }
+        
+        func deleteMetadata(from context: inout Context) throws { }
     }
 }
 

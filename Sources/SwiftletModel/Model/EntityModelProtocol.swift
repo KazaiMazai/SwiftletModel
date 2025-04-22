@@ -20,12 +20,18 @@ public protocol EntityModelProtocol {
     func didSave(to context: inout Context) throws
     
     func save(to context: inout Context, options: MergeStrategy<Self>) throws
-
+    
     func willDelete(from context: inout Context) throws
 
     func didDelete(from context: inout Context) throws
   
     func delete(from context: inout Context) throws
+    
+    func asDeleted(in context: Context) -> Deleted<Self>?
+    
+    func saveMetadata(to context: inout Context) throws
+    
+    func deleteMetadata(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
@@ -33,9 +39,9 @@ public protocol EntityModelProtocol {
 
     static var patch: MergeStrategy<Self> { get }
     
-    static func batchQuery(with nested: Nested..., in context: Context) -> QueryList<Self>
+    static func queryAll(with nested: Nested..., in context: Context) -> QueryList<Self>
          
-    static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
+    static func nestedQueryModifier(_ query: Query<Self>, in context: Context, nested: [Nested]) -> Query<Self>
 }
 
 public extension EntityModelProtocol {
@@ -56,6 +62,21 @@ public extension EntityModelProtocol {
         var copy = self
         copy.normalize()
         return copy
+    }
+    
+    func asDeleted(in context: Context) -> Deleted<Self>? {
+        query(in: context)
+            .with(.ids)
+            .resolve()
+            .map { Deleted($0) }
+    }
+    
+    func saveMetadata(to context: inout Context) throws {
+        try updateMetadata(.updatedAt, value: Date(), in: &context)
+    }
+    
+    func deleteMetadata(from context: inout Context) throws {
+        try removeFromMetadata(.updatedAt, valueType: Date.self, in: &context)
     }
 }
 
@@ -94,7 +115,7 @@ public extension EntityModelProtocol {
         context.query()
     }
    
-    static func batchQuery(with nested: Nested..., in context: Context) -> QueryList<Self> {
+    static func queryAll(with nested: Nested..., in context: Context) -> QueryList<Self> {
         Self.query(in: context)
             .with(nested)
     }
@@ -129,6 +150,12 @@ public extension EntityModelProtocol {
     
     static func filter(
         _ predicate: StringPredicate<Self>,
+        in context: Context) -> QueryList<Self> {
+        Query<Self>.filter(predicate, in: context)
+    }
+    
+    static func filter(
+        _ predicate: MetadataPredicate,
         in context: Context) -> QueryList<Self> {
         Query<Self>.filter(predicate, in: context)
     }

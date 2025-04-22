@@ -202,3 +202,14 @@ extension String {
             lowercased().hasSuffix(value.lowercased())
     }
 }
+
+public enum MetadataPredicate {
+    case updated(within: ClosedRange<Date>)
+    
+    var indexName: String {
+        switch self {
+        case .updated:
+            return Metadata.updatedAt.indexName
+        }
+    }
+}

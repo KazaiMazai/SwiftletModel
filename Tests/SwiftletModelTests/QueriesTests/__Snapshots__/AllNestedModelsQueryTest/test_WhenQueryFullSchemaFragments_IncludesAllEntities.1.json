@@ -1,0 +1,260 @@
+[
+  {
+    "v1" : {
+      "attachments" : [
+
+      ],
+      "chats" : [
+        {
+          "admins" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "id" : "1",
+          "messages" : [
+            {
+              "id" : "0"
+            },
+            {
+              "id" : "1"
+            },
+            {
+              "id" : "2"
+            },
+            {
+              "id" : "3"
+            },
+            {
+              "id" : "4"
+            }
+          ],
+          "users" : [
+            {
+              "id" : "1"
+            },
+            {
+              "id" : "2"
+            },
+            {
+              "id" : "5"
+            },
+            {
+              "id" : "3"
+            },
+            {
+              "id" : "4"
+            }
+          ]
+        }
+      ],
+      "deletedAttachments" : [
+
+      ],
+      "deletedChats" : [
+
+      ],
+      "deletedMessages" : [
+
+      ],
+      "deletedUsers" : [
+
+      ],
+      "messages" : [
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "4"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "0",
+          "replies" : [
+            {
+              "id" : "1"
+            },
+            {
+              "id" : "2"
+            },
+            {
+              "id" : "3"
+            },
+            {
+              "id" : "4"
+            }
+          ],
+          "replyTo" : null,
+          "text" : "hello, ya'll",
+          "timestamp" : -63114076800,
+          "viewedBy" : [
+
+          ]
+        },
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "2"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "1",
+          "replies" : [
+
+          ],
+          "replyTo" : {
+            "id" : "0"
+          },
+          "text" : "hello",
+          "timestamp" : -63114076800,
+          "viewedBy" : [
+
+          ]
+        },
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "1"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "2",
+          "replies" : [
+
+          ],
+          "replyTo" : {
+            "id" : "0"
+          },
+          "text" : "howdy",
+          "timestamp" : -63114076800,
+          "viewedBy" : [
+
+          ]
+        },
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "5"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "3",
+          "replies" : [
+
+          ],
+          "replyTo" : {
+            "id" : "0"
+          },
+          "text" : "yo!",
+          "timestamp" : -63114076800,
+          "viewedBy" : [
+
+          ]
+        },
+        {
+          "attachment" : null,
+          "author" : {
+            "id" : "3"
+          },
+          "chat" : {
+            "id" : "1"
+          },
+          "id" : "4",
+          "replies" : [
+
+          ],
+          "replyTo" : {
+            "id" : "0"
+          },
+          "text" : "wassap!",
+          "timestamp" : -63114076800,
+          "viewedBy" : [
+
+          ]
+        }
+      ],
+      "users" : [
+        {
+          "adminOf" : [
+
+          ],
+          "chats" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "email" : "michael@gmail.com",
+          "id" : "4",
+          "isCurrent" : false,
+          "name" : "Michael",
+          "username" : "@michael"
+        },
+        {
+          "adminOf" : [
+
+          ],
+          "chats" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "email" : "alice@gmail.com",
+          "id" : "2",
+          "isCurrent" : false,
+          "name" : "Alice",
+          "username" : "@alice"
+        },
+        {
+          "adminOf" : [
+
+          ],
+          "chats" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "email" : "tom@gmail.com",
+          "id" : "5",
+          "isCurrent" : false,
+          "name" : "Tom",
+          "username" : "@tom"
+        },
+        {
+          "adminOf" : [
+
+          ],
+          "chats" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "email" : "john@gmail.com",
+          "id" : "3",
+          "isCurrent" : false,
+          "name" : "John",
+          "username" : "@john"
+        },
+        {
+          "adminOf" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "chats" : [
+            {
+              "id" : "1"
+            }
+          ],
+          "email" : "bob@gmail.com",
+          "id" : "1",
+          "isCurrent" : false,
+          "name" : "Bob",
+          "username" : "@bob"
+        }
+      ]
+    }
+  }
+]

@@ -71,7 +71,6 @@ final class NestedModelsQueryTest: XCTestCase {
             .resolve()
             
         assertSnapshot(of: messages, as: .json(encoder))
-        
     }
 
     func test_WhenQueryWithNestedModelId_EqualExpectedJSON() {

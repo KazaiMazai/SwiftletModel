@@ -140,6 +140,9 @@ extension FunctionDeclSyntax {
                 .map { "try copy.save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
+        
+            try Deleted<Self>.delete(id: id, from: &context)
+            try copy.saveMetadata(to: &context)
             try copy.didSave(to: &context)
         }
         """
@@ -155,7 +158,9 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
+        
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
+            let copy = asDeleted(in: context)
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {
@@ -179,6 +184,8 @@ extension FunctionDeclSyntax {
                 }
                 .joined(separator: "\n")
             )
+            try deleteMetadata(from: &context)
+            try copy?.save(to: &context)
             try didDelete(from: &context)
         }
         """
@@ -192,6 +199,7 @@ extension FunctionDeclSyntax {
         
         try FunctionDeclSyntax(
         """
+          
         \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }
@@ -210,7 +218,7 @@ extension FunctionDeclSyntax {
         try FunctionDeclSyntax(
         """
             
-        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
+        \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
             guard let relation = nested.first else {
                 return query
             }
@@ -224,18 +232,63 @@ extension FunctionDeclSyntax {
                     .map { ".id(\($0))"}
                     .joined(separator: "\n")
                 )
-            case .fragments:
+            case let .fragments(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case .entities:
+            case let .entities(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".with(\($0)) { $0.with(next) }"}
+                    .joined(separator: "\n")
+                )
+                    
+            case let .fragments(.some(predicate), false):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(slice: \($0)) { $0.filter(predicate).with(next) }"}
+                    .joined(separator: "\n")
+                )
+            case let .entities(.some(predicate), false):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(slice: \($0)) { $0.filter(predicate).with(next) }"}
+                    .joined(separator: "\n")
+                )
+        
+            case let .fragments(.none, true):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(\($0)) { _ in .schemaQuery(in: context).with(next) }"}
+                    .joined(separator: "\n")
+                )
+            case let .entities(.none, true):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(\($0)) { _ in .schemaQuery(in: context).with(next) }"}
+                    .joined(separator: "\n")
+                )
+                    
+            case let .fragments(.some(predicate), true):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".fragment(slice: \($0)) { _ in .schemaQuery(in: context).filter(predicate).with(next) }"}
+                    .joined(separator: "\n")
+                )
+            case let .entities(.some(predicate), true):
+                query
+                \(raw: attributes
+                    .map { "\\.$\($0.propertyName)" }
+                    .map { ".with(slice: \($0)) { _ in .schemaQuery(in: context).filter(predicate).with(next) }"}
                     .joined(separator: "\n")
                 )
             }
@@ -244,8 +297,6 @@ extension FunctionDeclSyntax {
         )
     }
 }
-
-
 
 extension VariableDeclSyntax {
     
