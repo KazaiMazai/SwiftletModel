@@ -55,5 +55,12 @@ extension Schema {
             in: context
         )
     }
+    
+    static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: .entities, .schemaFragments, .ids,
+            in: context
+        )
+    }
 }
 

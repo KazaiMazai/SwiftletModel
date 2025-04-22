@@ -163,5 +163,27 @@ final class AllNestedModelsQueryTest: XCTestCase {
 
         assertSnapshot(of: schema, as: .json(encoder))
     }
+
+    func test_WhenQueryFullSchema_IncludesAllEntities() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+        
+        let schema = Schema
+            .fullSchemaQuery(in: context)
+            .resolve()
+        
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
+    
+    func test_WhenQueryFullSchemaFragments_IncludesAllEntities() {
+        let encoder = JSONEncoder.prettyPrinting
+        encoder.relationEncodingStrategy = .plain
+        
+        let schema = Schema
+            .fullSchemaQuery(in: context)
+            .resolve()
+        
+        assertSnapshot(of: schema, as: .json(encoder))
+    }
  
 }
