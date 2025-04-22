@@ -2,7 +2,7 @@
 //  File.swift
 //  
 //
-//  Created by Sergey Kazakov on 11/07/2024.
+//  Created by Serge Kazakov on 11/07/2024.
 //
 
 import Foundation

@@ -2,12 +2,12 @@
 //  File.swift
 //  
 //
-//  Created by Sergey Kazakov on 13/07/2024.
+//  Created by Serge Kazakov on 13/07/2024.
 //
 
 import Foundation
 import XCTest
-@testable import SwiftletModel
+import SwiftletModel
 
 final class ManyToManyTests: XCTestCase {
     var context = Context()

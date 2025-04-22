@@ -2,7 +2,7 @@
 //  QueryAllNested.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 02/04/2025.
+//  Created by Serge Kazakov on 02/04/2025.
 //
 
 

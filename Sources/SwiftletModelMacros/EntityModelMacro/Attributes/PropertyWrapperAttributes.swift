@@ -2,7 +2,7 @@
 //  WrapperType.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 07/04/2025.
+//  Created by Serge Kazakov on 07/04/2025.
 //
 
  enum PropertyWrapperAttributes: String, CaseIterable {

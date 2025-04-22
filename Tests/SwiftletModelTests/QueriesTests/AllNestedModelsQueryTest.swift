@@ -2,12 +2,12 @@
 //  File.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 08/03/2025.
+//  Created by Serge Kazakov on 08/03/2025.
 //
 
 import Foundation
 import XCTest
-@testable import SwiftletModel
+import SwiftletModel
 import SnapshotTesting
 import SnapshotTestingCustomDump
 

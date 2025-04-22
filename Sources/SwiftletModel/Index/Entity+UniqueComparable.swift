@@ -2,7 +2,7 @@
 //  EntityModel+UniqueIndex.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 12/03/2025.
+//  Created by Serge Kazakov on 12/03/2025.
 //
 
 public extension EntityModelProtocol {

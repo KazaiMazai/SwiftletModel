@@ -2,7 +2,7 @@
 //  ContextQuery.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 12/04/2025.
+//  Created by Serge Kazakov on 12/04/2025.
 //
 
 public struct ContextQuery<Entity: EntityModelProtocol, Result, Key> {

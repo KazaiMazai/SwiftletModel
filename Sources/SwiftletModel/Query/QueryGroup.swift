@@ -2,7 +2,7 @@
 //  QueriesGroup.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 13/04/2025.
+//  Created by Serge Kazakov on 13/04/2025.
 //
 
 public typealias QueryGroup<Entity: EntityModelProtocol> = ContextQuery<Entity, [[Query<Entity>]], Void>

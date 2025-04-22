@@ -2,12 +2,12 @@
 //  File.swift
 //  
 //
-//  Created by Sergey Kazakov on 24/07/2024.
+//  Created by Serge Kazakov on 24/07/2024.
 //
 
 import Foundation
 import XCTest
-@testable import SwiftletModel
+import SwiftletModel
 
 final class DeleteTests: XCTestCase {
     var context = Context()

@@ -2,7 +2,7 @@
 //  File.swift
 //  SwiftletModel
 //
-//  Created by Sergey Kazakov on 21/04/2025.
+//  Created by Serge Kazakov on 21/04/2025.
 //
 
 import Foundation
