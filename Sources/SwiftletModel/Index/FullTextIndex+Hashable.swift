@@ -38,7 +38,7 @@ extension FullTextIndex {
         
         func saveMetadata(to context: inout Context) throws { }
         
-        func removeMetadata(from context: inout Context) throws { }
+        func deleteMetadata(from context: inout Context) throws { }
     }
 }
 

@@ -184,7 +184,7 @@ extension FunctionDeclSyntax {
                 }
                 .joined(separator: "\n")
             )
-            try removeMetadata(from: &context)
+            try deleteMetadata(from: &context)
             try copy?.save(to: &context)
             try didDelete(from: &context)
         }

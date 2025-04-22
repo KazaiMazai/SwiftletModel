@@ -31,7 +31,7 @@ public protocol EntityModelProtocol {
     
     func saveMetadata(to context: inout Context) throws
     
-    func removeMetadata(from context: inout Context) throws
+    func deleteMetadata(from context: inout Context) throws
 
     static var defaultMergeStrategy: MergeStrategy<Self> { get }
 
@@ -75,7 +75,7 @@ public extension EntityModelProtocol {
         try updateMetadata(.updatedAt, value: Date(), in: &context)
     }
     
-    func removeMetadata(from context: inout Context) throws {
+    func deleteMetadata(from context: inout Context) throws {
         try removeFromMetadata(.updatedAt, valueType: Date.self, in: &context)
     }
 }
