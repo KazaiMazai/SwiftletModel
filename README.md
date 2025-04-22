@@ -30,7 +30,7 @@ SwiftletModel excels in the following scenarios:
 SwiftletModel offers a streamlined, in-memory alternative to CoreData and SwiftData. It is designed for applications that need a straightforward local data management system without the complexity of a full-fledged database.
  
 
-Although primarily in-memory, SwiftletModel’s data model is Codable, allowing for straightforward data persistence if required.
+Although primarily in-memory, SwiftletModel's data model is Codable, allowing for straightforward data persistence if required.
 
 ## Table of Contents
 
@@ -1476,6 +1476,85 @@ Best Practices
     - Index only text fields that need to be searched
     -  Consider the length of indexed content
     -  Test search relevance with representative data
+
+## Schema 
+
+### Schema Bulk Queries
+
+SwiftletModel provides a way to query the entire schema of your data model, which is particularly useful for syncing or backing up your data. Schema queries allow you to fetch all entities of your data model with their relationships intact.
+
+Here's an example of how to define schema and use schema queries:
+
+```swift
+@EntityModel
+struct Schema {
+    var id: String { "\(Schema.self)" }
+    
+    @Relationship
+    var v1: Schema.V1? = .relation(V1())
+}
+
+extension Schema {
+    @EntityModel
+    struct V1: Codable {
+        static let version = "\(V1.self)"
+        
+        var id: String { Self.version }
+        
+        // Define relationships to all entity types
+        @Relationship var attachments: [Attachment]? = .none
+        @Relationship var chats: [Chat]? = .none
+        @Relationship var messages: [Message]? = .none
+        @Relationship var users: [User]? = .none
+        
+        // Track deleted entities
+        @Relationship var deletedAttachments: [Deleted<Attachment>]? = .none
+        @Relationship var deletedChats: [Deleted<Chat>]? = .none
+        @Relationship var deletedMessages: [Deleted<Message>]? = .none
+        @Relationship var deletedUsers: [Deleted<User>]? = .none
+    }
+}
+
+extension Schema {
+    // Query the entire schema changes within a specific time range
+    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: 
+            .entities,              // Get related versions for schema (Schema -> versions)
+            .schemaEntities(        // Get all entities for the version (V1 -> entities relations) 
+                filter: .updated(within: range)  //filter by updated within range
+            ), 
+            .ids,                   // For each entity get all related entity IDs
+            in: context
+        )
+    }
+    
+    // Query the entire schema
+    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: 
+            .entities,           // Get related versions for the schema (Schema -> version relations)
+            .schemaEntities,     // Get all entities for the version (V1 -> entities relations) 
+            .ids,                // For each entity get all related entity IDs
+            in: context
+        )
+    }
+}
+```
+
+This schema query approach offers several benefits:
+
+- **Version Control**: By structuring your schema with versions (e.g., V1), you can manage schema migrations and backwards compatibility
+- **Complete Data Access**: Query all entities and their relationships in a single operation
+- **Deletion Tracking**: Keep track of deleted entities for sync operations
+- **Time-Based Filtering**: Query only entities that were updated within a specific time range
+- **Flexible Resolution**: Choose between fetching complete entities, fragments, or just IDs
+
+You can use schema queries for:
+- Data synchronization with a backend
+- Creating local backups
+- Implementing undo/redo functionality
+- Debugging and development tools
 
 ## Type Safety
 
