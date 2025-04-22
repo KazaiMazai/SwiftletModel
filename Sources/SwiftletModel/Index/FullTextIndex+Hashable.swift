@@ -34,7 +34,7 @@ extension FullTextIndex {
             self.name = name
         }
         
-        func softDeleteCopy(in context: Context) -> Deleted<Self>? { nil }
+        func asDeleted(in context: Context) -> Deleted<Self>? { nil }
         
         func saveMetadata(to context: inout Context) throws { }
         

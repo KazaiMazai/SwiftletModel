@@ -25,7 +25,7 @@ extension Index {
         
         var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
         
-        func softDeleteCopy(in context: Context) -> Deleted<Self>? { nil }
+        func asDeleted(in context: Context) -> Deleted<Self>? { nil }
         
         func saveMetadata(to context: inout Context) throws { }
         

@@ -142,7 +142,7 @@ extension FunctionDeclSyntax {
             )
         
             try Deleted<Self>.delete(id: id, from: &context)
-            try saveMetadata(to: &context)
+            try copy.saveMetadata(to: &context)
             try copy.didSave(to: &context)
         }
         """
@@ -160,7 +160,7 @@ extension FunctionDeclSyntax {
         """
         
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
-            let copy = softDeleteCopy(in: context)
+            let copy = asDeleted(in: context)
             try willDelete(from: &context)
             \(raw: uniqueAttributes
                 .map {

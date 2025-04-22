@@ -27,7 +27,7 @@ public protocol EntityModelProtocol {
   
     func delete(from context: inout Context) throws
     
-    func softDeleteCopy(in context: Context) -> Deleted<Self>?
+    func asDeleted(in context: Context) -> Deleted<Self>?
     
     func saveMetadata(to context: inout Context) throws
     
@@ -64,7 +64,7 @@ public extension EntityModelProtocol {
         return copy
     }
     
-    func softDeleteCopy(in context: Context) -> Deleted<Self>? {
+    func asDeleted(in context: Context) -> Deleted<Self>? {
         query(in: context)
             .with(.ids)
             .resolve()

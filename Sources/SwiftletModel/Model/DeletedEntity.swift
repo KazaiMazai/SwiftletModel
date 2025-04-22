@@ -18,7 +18,7 @@ public struct Deleted<Entity: EntityModelProtocol> {
 }
  
 public extension Deleted {
-    func softDeleteCopy(in context: Context) -> Deleted<Self>? { nil }
+    func asDeleted(in context: Context) -> Deleted<Self>? { nil }
     
     mutating func willSave(to context: inout Context) throws {
         try Entity.delete(id: id, from: &context)
