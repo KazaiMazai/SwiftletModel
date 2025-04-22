@@ -41,7 +41,7 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
   * [Relationship DeleteRule](#relationship-deleterule)
 - [How to Query Entities](#how-to-query-entities)
   * [Query with nested models](#query-with-nested-models)
-  * [Bulk nested models query](#Bulk-nested-models-query)
+  * [Bulk nested models query](#bulk-nested-models-query)
   * [Combining bulk nested models with nested models query](#combining-bulk-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
 - [How to use Sort Queries](#how-to-use-sort-queries)
@@ -87,12 +87,14 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
 - [Indexing](#indexing)
   * [Index](#index)
   * [Unique](#unique)
+  * [FullTextIndex](#fulltextindex)
   * [Index Performance Considerations](#index-performance-considerations)
+- [Schema](#schema)
+  * [Schema Bulk Queries](#schema-bulk-queries)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Licensing](#licensing)
-
 
 ## Getting Started
 
@@ -1551,7 +1553,7 @@ This schema query approach offers several benefits:
 - **Flexible Resolution**: Choose between fetching complete entities, fragments, or just IDs
 
 You can use schema queries for:
-- Data synchronization with a backend
+- Data synchronization with a backend or local db
 - Creating local backups
 - Implementing undo/redo functionality
 - Debugging and development tools
