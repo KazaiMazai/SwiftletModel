@@ -34,6 +34,8 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
 
 ## Table of Contents
 
+- [Installation](#installation)
+- [Documentation](#documentation)
 - [Getting Started](#getting-started)
   * [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
@@ -94,9 +96,19 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
   * [Schema Bulk Queries](#schema-bulk-queries)
   * [Metadata](#metadata)
 - [Type Safety](#type-safety)
-- [Installation](#installation)
-- [Documentation](#documentation)
 - [Licensing](#licensing)
+
+## Installation
+
+You can add SwiftletModel to an Xcode project as an SPM package:
+
+- From the File menu, select Add Package Dependencies...
+- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
+- Done
+
+## Documentation
+
+Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/main/documentation/swiftletmodel)
 
 ## Getting Started
 
@@ -1672,19 +1684,6 @@ This also means that you cannot accidentally break it.
 
 If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
 is a wonderful series of articles about it.
- 
-
-## Installation
-
-You can add SwiftletModel to an Xcode project as an SPM package:
-
-- From the File menu, select Add Package Dependencies...
-- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
-- Profit
-
-## Documentation
-
-Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/0.4.3/documentation/swiftletmodel)
 
 ## Licensing
 
