@@ -9,7 +9,7 @@ import Foundation
 
 extension Unique {
     @EntityModel
-    struct HashableValue<Value: Hashable> {
+    struct HashableValue<Value: Hashable & Sendable> {
         var id: String { name }
         
         let name: String

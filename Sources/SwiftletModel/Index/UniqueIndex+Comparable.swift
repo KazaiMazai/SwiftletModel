@@ -10,7 +10,7 @@ import BTree
 
 extension Unique {
     @EntityModel
-    struct ComparableValue<Value: Comparable> {
+    struct ComparableValue<Value: Comparable & Sendable> {
         var id: String { name }
         
         let name: String

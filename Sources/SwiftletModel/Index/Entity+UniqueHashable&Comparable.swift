@@ -14,7 +14,7 @@ public extension EntityModelProtocol {
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     where
-    T: Hashable & Comparable {
+    T: Hashable & Comparable & Sendable {
         try Unique.HashableValue<T>.updateIndex(
             indexName: .indexName(keyPath),
             self,
@@ -30,8 +30,8 @@ public extension EntityModelProtocol {
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable {
         try Unique.HashableValue<Pair<T0, T1>>.updateIndex(
             indexName: .indexName(kp0, kp1),
             self,
@@ -48,9 +48,9 @@ public extension EntityModelProtocol {
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable,
-    T2: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable,
+    T2: Hashable & Comparable & Sendable {
         try Unique.HashableValue<Triplet<T0, T1, T2>>.updateIndex(
             indexName: .indexName(kp0, kp1, kp2),
             self,
@@ -68,10 +68,10 @@ public extension EntityModelProtocol {
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable,
-    T2: Hashable & Comparable,
-    T3: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable,
+    T2: Hashable & Comparable & Sendable,
+    T3: Hashable & Comparable & Sendable {
         
         try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
@@ -89,7 +89,7 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
-    T: Hashable & Comparable {
+    T: Hashable & Comparable & Sendable {
         
         try Unique.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
@@ -99,8 +99,8 @@ public extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable {
         try Unique.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
@@ -110,9 +110,9 @@ public extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable,
-    T2: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable,
+    T2: Hashable & Comparable & Sendable {
         try Unique.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
@@ -123,10 +123,10 @@ public extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
     where
-    T0: Hashable & Comparable,
-    T1: Hashable & Comparable,
-    T2: Hashable & Comparable,
-    T3: Hashable & Comparable {
+    T0: Hashable & Comparable & Sendable,
+    T1: Hashable & Comparable & Sendable,
+    T2: Hashable & Comparable & Sendable,
+    T3: Hashable & Comparable & Sendable {
         try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }
