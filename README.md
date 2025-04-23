@@ -8,18 +8,20 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 
+## Why
 
-SwiftletModel offers an easy and efficient way to implement complex domain model graph in your iOS applications.
-
+SwiftletModel is a zero-boilerplate, type-safe, in-memory graph model engine for iOS apps.
+Think: SwiftData(CoreData)-level power, without complexity.
+ 
 - **Entities as Plain Structs**: Define your entities using simple Swift structs.
 - **Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
 - **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
-- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search with B-tree, Unique, and Full-Text indexes.
+- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search. B-tree, Unique, and Full-Text BM25-ranked indexes will help.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
  
-## Why
+## Use Cases
 
 SwiftletModel excels in the following scenarios:
 
@@ -27,17 +29,109 @@ SwiftletModel excels in the following scenarios:
 - **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
 - **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management and fully fledged local db is not needed.
 
-SwiftletModel offers a streamlined, in-memory alternative to CoreData and SwiftData. It is designed for applications that need a straightforward local data management system without the complexity of a full-fledged database.
+
+***Persistence is optional***. Although primarily in-memory, SwiftletModel's data models are plain Codable structs, allowing for straightforward integration with any storage solution as a sidecar: flat file, CRDT, GRDB, CoreData/SwiftData, SQLite, iCloudKit, Firebase, backend API, etc.
+
  
+## 🚀 Quick Start
 
-Although primarily in-memory, SwiftletModel's data model is Codable, allowing for straightforward data persistence if required.
+SwiftletModel lets you define rich, normalized, in-memory graph models in Swift—without CoreData complexity. Here's how to get started fast.
 
-## Table of Contents
+---
 
-- [Installation](#installation)
-- [Documentation](#documentation)
-- [Getting Started](#getting-started)
-  * [Model Definitions](#model-definitions)
+### 1. Installation
+
+Using [Swift Package Manager](https://swift.org/package-manager/):
+
+```swift
+.package(url: "https://github.com/KazaiMazai/SwiftletModel.git", from: "1.0.0")
+``` 
+
+Or via Xcode:
+
+- File → Add Packages
+- Enter the URL:
+```
+https://github.com/KazaiMazai/SwiftletModel.git
+```
+
+### 2. Define a Model
+Use `@EntityModel` to define structs with rich relationships:
+
+```swift
+@EntityModel
+struct Message {
+    let id: String
+    let text: String
+
+    @Relationship(.required) var author: User?
+    @Relationship(inverse: \.messages) var chat: Chat?
+}
+```
+That’s all. The macro handles conformance to `EntityModelProtocol`, merging, relation handling, and storage access.
+
+
+### 3. Create a Context
+
+```swift
+var context = Context()
+```
+This acts as your normalized, in-memory store and handles all entity relations.
+
+### 4. Save Entities
+
+```swift
+let user = User(id: "1", name: "Alice")
+let chat = Chat(id: "1", users: .relation([user]))
+
+try chat.save(to: &context)
+```
+
+💡 Only include full objects when needed. Else just use `.id(...)` to refer to existing entities.
+
+```swift
+let message = Message(id: "1", text: "Hello", author: .id("1"), chat: .id("1"))
+```
+
+### 5. Query & Resolve
+
+```swift
+let chat = Chat
+    .query("1", in: context)
+    .with(\.$users)
+    .with(\.$messages)
+    .resolve()
+```
+This pulls the chat and its users and messages from the context with proper denormalization.
+
+
+### 6. Handle Partial Data Safely
+
+```swift
+let partialUser = User(id: "1", name: "Bob") // No avatar, no profile
+try partialUser.save(to: &context, options: .fragment)
+```
+
+Fragment merge strategy means: update only the non-nil parts. Nothing gets wiped accidentally.
+
+
+### 7. Codable Ready
+
+All entities can be marked as Codable. 
+Models and Relations would serialize, making it trivial to persist, transmit or integrate.
+
+```swift
+let json = try? JSONEncoder().encode(user)
+```
+
+That’s it. You now have a type-safe, bidirectionally-linked, normalized in-memory model graph.
+
+
+## Deep Dive
+
+### Table of Contents
+
+- [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
 - [How to Delete Entities](#how-to-delete-entities)
   * [Relationship DeleteRule](#relationship-deleterule)
@@ -86,6 +180,7 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
   * [Handling incomplete Related Entity Models](#handling-incomplete-related-entity-models)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
+  * [Incomplete Data Handling Summary](#incomplete-data-handling-summary)
 - [Indexing](#indexing)
   * [Index](#index)
   * [Unique](#unique)
@@ -96,25 +191,13 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
   * [Schema Bulk Queries](#schema-bulk-queries)
   * [Metadata](#metadata)
 - [Type Safety](#type-safety)
+- [Documentation](#documentation)
 - [Licensing](#licensing)
 
-## Installation
 
-You can add SwiftletModel to an Xcode project as an SPM package:
+## Model Definitions
 
-- From the File menu, select Add Package Dependencies...
-- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
-- Done
-
-## Documentation
-
-Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/main/documentation/swiftletmodel)
-
-## Getting Started
-
-### Model Definitions
-
-First, we define the model with all kinds of relations:
+When we define the model with all kinds of relations:
 
 ```swift
 
@@ -144,7 +227,7 @@ struct Message {
 
 ```
 
-That's pretty much it. EntityModel macro will generate all the necessary stuff to
+EntityModel macro will generate all the necessary things to
 make our model conform to `EntityModelProtocol` requirements.
 
 <details><summary>EntityModelProtocol definitions</summary>
@@ -198,11 +281,14 @@ public protocol EntityModelProtocol {
 Now let's create a chat instance and put some messages into it.
 To do it we need to create a context first:
 
-
-
 ```swift
 var context = Context()
 ```
+
+***What is a context?***
+
+>Context is a place where all entities live.
+>Actually it's just a wrapper around a plain swift dictionary that is used to store entities and relations.
 
 Now let's create a chat with some messages.
 
@@ -1328,6 +1414,33 @@ try message.save(to: &context)
 
 ```
 
+### Incomplete Data Handling Summary 
+
+Use `default` merge strategy to replace entity with new full entity:
+```swift
+try message.save(to: &context)
+```
+
+Use fragment merge strategy to patch entity with non-`nil` fields only:
+```swift
+try message.save(to: &context, options: .fragment)
+```
+
+Set relation accordingly to the case to carry out a proper relation update when saving an entity:
+
+| Slice                | Description                                           |
+|----------------------|-------------------------------------------------------|
+| `.relation(x)`       | Overwrite with new full related entity                |
+| `.fragment(x)`       | Patch related entity with non-`nil` fields only     |
+| `.id("x")`           | Set to-one relation by ID                             |
+| `.ids(["x", "y"])`   | Set to-many relation by IDs                           |
+| `.relation([x])`     | Overwrite with new full related entities              |
+| `.fragment([x])`     | Patch related entities with non-`nil` fields only     |
+| `.appending(...)`    | Append to an existing to-many relation                |
+| `.null`              | Explicitly nullify a relation (only if optional)      |
+| `.none`              | No-op; leaves existing relation unchanged             |
+
+
 ## Indexing
 SwiftletModel provides three types of indexes to optimize data access and enforce uniqueness constraints: `Index`, `Unique`, and `FullTextIndex`. Each serves a different purpose and offers specific functionality.
 
@@ -1684,6 +1797,11 @@ This also means that you cannot accidentally break it.
 
 If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
 is a wonderful series of articles about it.
+
+## Documentation
+
+Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/main/documentation/swiftletmodel)
+
 
 ## Licensing
 
