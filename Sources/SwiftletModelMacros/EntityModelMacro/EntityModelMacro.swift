@@ -215,7 +215,17 @@ extension FunctionDeclSyntax {
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
-        try FunctionDeclSyntax(
+        guard !attributes.isEmpty else {
+            return try FunctionDeclSyntax(
+            """
+            \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
+                query
+            }
+            """
+            )
+        }
+        
+        return try FunctionDeclSyntax(
         """
             
         \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
@@ -381,7 +391,7 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
+               let _ = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }
