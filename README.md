@@ -1482,7 +1482,7 @@ Best Practices
 
 ## Schema 
 
-SwiftletModel provides schema versioning and bulk query capabilities to help manage your data model evolution and synchronization needs.
+Schema is implicitly defined by your model types. However, in some cases, it’s beneficial to define the entire schema explicitly in one place, enabling bulk data queries. This approach proves especially useful for schema versioning, persistent storage, and synchronization with external data sources.
 
 ### Schema Versioning
 
@@ -1504,9 +1504,7 @@ typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
-    /**
-    First version of the schema
-    */
+    // First version of the schema
     @EntityModel
     struct V1: Codable {
         static let version = "\(V1.self)"
@@ -1530,13 +1528,13 @@ extension Schema {
 Since schema is a plain struct like any other entity, migration between versions is straightforward:
 1. Add a new version of the schema
 2. Update the typealiases to point to the latest version 
-3. Define how data should be mapped between versions
+3. Define how data should be mapped to the latest version
 
 ### Schema Bulk Queries
 
 SwiftletModel provides powerful bulk query capabilities for your schema, which are particularly useful for:
 - Data synchronization with backends or local databases
-- Creating local backups
+- Creating full backups
 - Implementing undo/redo functionality
 - Debugging and development tools
 
@@ -1544,26 +1542,26 @@ Here's how to define and use schema queries:
 
 ```swift
 extension Schema {
-    // Query the entire schema changes within a specific time range
-    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: 
-            .entities,              // Get schema versions (Schema -> versions)
-            .schemaEntities(        // Get all entities for each version
-                filter: .updated(within: range)  // Filter by update time
-            ), 
-            .ids,                   // Get related entity IDs (sufficient for backing up relations)
+    // Query the entire schema. 
+    // Pulling all entities in the schema with all related nested entities' IDs 
+    // is enough to restore the entire schema and all relations.
+    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(with:          // Depth level 0: get the schema
+            Nested.entities,           // Depth level 1: get all related nested entities – schema versions
+            Nested.schemaEntities,     // Depth level 2: get all entities in the schema – entities
+            Nested.ids,                // Depth level 3: get all related nested entities' IDs – entities relations
             in: context
         )
     }
-    
-    // Query the entire schema
-    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: 
-            .entities,           // Get schema versions
-            .schemaEntities,     // Get all entities for each version
-            .ids,                // Get related entity IDs
+
+    // Query the entire schema changes within a specific time range
+    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+        Schema.queryAll(with:           // Depth level 0: get the schema
+            Nested.entities,            // Depth level 1: get all related nested entities – schema versions
+            Nested.schemaEntities(      // Depth level 2: get all entities in the schema – entities
+                filter: .updated(within: range)  // Filter by updatedAt
+            ), 
+            Nested.ids,                 // Depth level 3: get all related nested entities' IDs – entities relations
             in: context
         )
     }
