@@ -121,6 +121,8 @@ All entities can be marked as Codable.
 Models and Relations would serialize, making it trivial to persist, transmit or integrate.
 
 ```swift
+extension User: Codable { }
+
 let json = try? JSONEncoder().encode(user)
 ```
 
