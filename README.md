@@ -34,6 +34,8 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
 
 ## Table of Contents
 
+- [Installation](#installation)
+- [Documentation](#documentation)
 - [Getting Started](#getting-started)
   * [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
@@ -92,10 +94,21 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
 - [Schema](#schema)
   * [Schema Versioning](#schema-versioning)
   * [Schema Bulk Queries](#schema-bulk-queries)
+  * [Metadata](#metadata)
 - [Type Safety](#type-safety)
-- [Installation](#installation)
-- [Documentation](#documentation)
 - [Licensing](#licensing)
+
+## Installation
+
+You can add SwiftletModel to an Xcode project as an SPM package:
+
+- From the File menu, select Add Package Dependencies...
+- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
+- Done
+
+## Documentation
+
+Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/main/documentation/swiftletmodel)
 
 ## Getting Started
 
@@ -1482,7 +1495,7 @@ Best Practices
 
 ## Schema 
 
-SwiftletModel provides schema versioning and bulk query capabilities to help manage your data model evolution and synchronization needs.
+Schema is implicitly defined by your model types. However, in some cases, it's beneficial to define the entire schema explicitly in one place, enabling bulk data queries. This approach proves especially useful for schema versioning, persistent storage, and synchronization with external data sources.
 
 ### Schema Versioning
 
@@ -1504,9 +1517,7 @@ typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
-    /**
-    First version of the schema
-    */
+    // First version of the schema
     @EntityModel
     struct V1: Codable {
         static let version = "\(V1.self)"
@@ -1530,13 +1541,13 @@ extension Schema {
 Since schema is a plain struct like any other entity, migration between versions is straightforward:
 1. Add a new version of the schema
 2. Update the typealiases to point to the latest version 
-3. Define how data should be mapped between versions
+3. Define how data should be mapped to the latest version
 
 ### Schema Bulk Queries
 
 SwiftletModel provides powerful bulk query capabilities for your schema, which are particularly useful for:
 - Data synchronization with backends or local databases
-- Creating local backups
+- Creating full backups
 - Implementing undo/redo functionality
 - Debugging and development tools
 
@@ -1544,26 +1555,26 @@ Here's how to define and use schema queries:
 
 ```swift
 extension Schema {
-    // Query the entire schema changes within a specific time range
-    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: 
-            .entities,              // Get schema versions (Schema -> versions)
-            .schemaEntities(        // Get all entities for each version
-                filter: .updated(within: range)  // Filter by update time
-            ), 
-            .ids,                   // Get related entity IDs (sufficient for backing up relations)
+    // Query the entire schema. 
+    // Pulling all entities in the schema with all related nested entities' IDs 
+    // is enough to restore the entire schema and all relations.
+    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(with:          // Depth level 0: get the schema
+            Nested.entities,           // Depth level 1: get all related nested entities – schema versions
+            Nested.schemaEntities,     // Depth level 2: get all entities in the schema – entities
+            Nested.ids,                // Depth level 3: get all related nested entities' IDs – entities relations
             in: context
         )
     }
-    
-    // Query the entire schema
-    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: 
-            .entities,           // Get schema versions
-            .schemaEntities,     // Get all entities for each version
-            .ids,                // Get related entity IDs
+
+    // Query the entire schema changes within a specific time range
+    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+        Schema.queryAll(with:           // Depth level 0: get the schema
+            Nested.entities,            // Depth level 1: get all related nested entities – schema versions
+            Nested.schemaEntities(      // Depth level 2: get all entities in the schema – entities
+                filter: .updated(within: range)  // Filter by updatedAt
+            ), 
+            Nested.ids,                 // Depth level 3: get all related nested entities' IDs – entities relations
             in: context
         )
     }
@@ -1604,6 +1615,52 @@ You can use schema queries for:
 - Implementing undo/redo functionality
 - Debugging and development tools
 
+### Metadata
+
+SwiftletModel provides a metadata sidecar that allows storing and indexing additional information about entities. This is particularly useful for tracking entity state changes, implementing sync mechanisms, and filtering entities based on metadata values.
+
+By default, SwiftletModel automatically tracks the `updatedAt` metadata for all entities, updating it whenever an entity is saved. This enables efficient querying of recently changed entities.
+
+Example usage:
+
+```swift
+// Query entities updated within a time range
+let recentChanges = User
+    .filter(.updated(within: lastSync...Date()), in: context)
+    .resolve()
+
+```
+
+The metadata system supports both Comparable and Hashable values, allowing you to:
+- Track timestamps for entity changes
+- Implement efficient sync mechanisms
+- Filter entities based on metadata values
+
+Key features:
+- Automatic `updatedAt` tracking
+- Efficient querying using metadata indexes
+
+This is particularly useful when implementing:
+- Data synchronization
+- Change tracking
+
+For example, you can use metadata to implement efficient incremental sync with a backend:
+
+```swift
+// Track last sync time
+var lastSyncDate = Date.distantPast
+
+// Query only entities that changed since last sync
+let updatedEntities = User
+    .filter(.metadata(\.updatedAt, within: lastSyncDate...Date()), in: context)
+    .resolve()
+
+// Update sync timestamp
+lastSyncDate = Date()
+```
+
+The metadata system is built on top of SwiftletModel's indexing capabilities, ensuring efficient querying and filtering operations.
+
 ## Type Safety
 
 Relations rely heavily on principles of Type-Driven design under the hood.
@@ -1627,19 +1684,6 @@ This also means that you cannot accidentally break it.
 
 If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
 is a wonderful series of articles about it.
- 
-
-## Installation
-
-You can add SwiftletModel to an Xcode project as an SPM package:
-
-- From the File menu, select Add Package Dependencies...
-- Enter "https://github.com/KazaiMazai/SwiftletModel.git" into the package repository URL text field
-- Profit
-
-## Documentation
-
-Full project documentation can be found [here](https://swiftpackageindex.com/KazaiMazai/SwiftletModel/0.4.3/documentation/swiftletmodel)
 
 ## Licensing
 
