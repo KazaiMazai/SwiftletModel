@@ -92,6 +92,7 @@ Although primarily in-memory, SwiftletModel's data model is Codable, allowing fo
 - [Schema](#schema)
   * [Schema Versioning](#schema-versioning)
   * [Schema Bulk Queries](#schema-bulk-queries)
+  * [Metadata](#metadata)
 - [Type Safety](#type-safety)
 - [Installation](#installation)
 - [Documentation](#documentation)
@@ -1482,7 +1483,7 @@ Best Practices
 
 ## Schema 
 
-Schema is implicitly defined by your model types. However, in some cases, it’s beneficial to define the entire schema explicitly in one place, enabling bulk data queries. This approach proves especially useful for schema versioning, persistent storage, and synchronization with external data sources.
+Schema is implicitly defined by your model types. However, in some cases, it's beneficial to define the entire schema explicitly in one place, enabling bulk data queries. This approach proves especially useful for schema versioning, persistent storage, and synchronization with external data sources.
 
 ### Schema Versioning
 
@@ -1601,6 +1602,52 @@ You can use schema queries for:
 - Creating local backups
 - Implementing undo/redo functionality
 - Debugging and development tools
+
+### Metadata
+
+SwiftletModel provides a metadata sidecar that allows storing and indexing additional information about entities. This is particularly useful for tracking entity state changes, implementing sync mechanisms, and filtering entities based on metadata values.
+
+By default, SwiftletModel automatically tracks the `updatedAt` metadata for all entities, updating it whenever an entity is saved. This enables efficient querying of recently changed entities.
+
+Example usage:
+
+```swift
+// Query entities updated within a time range
+let recentChanges = User
+    .filter(.updated(within: lastSync...Date()), in: context)
+    .resolve()
+
+```
+
+The metadata system supports both Comparable and Hashable values, allowing you to:
+- Track timestamps for entity changes
+- Implement efficient sync mechanisms
+- Filter entities based on metadata values
+
+Key features:
+- Automatic `updatedAt` tracking
+- Efficient querying using metadata indexes
+
+This is particularly useful when implementing:
+- Data synchronization
+- Change tracking
+
+For example, you can use metadata to implement efficient incremental sync with a backend:
+
+```swift
+// Track last sync time
+var lastSyncDate = Date.distantPast
+
+// Query only entities that changed since last sync
+let updatedEntities = User
+    .filter(.metadata(\.updatedAt, within: lastSyncDate...Date()), in: context)
+    .resolve()
+
+// Update sync timestamp
+lastSyncDate = Date()
+```
+
+The metadata system is built on top of SwiftletModel's indexing capabilities, ensuring efficient querying and filtering operations.
 
 ## Type Safety
 
