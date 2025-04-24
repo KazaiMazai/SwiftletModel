@@ -11,6 +11,8 @@ import BTree
 extension Unique {
     @EntityModel
     struct ComparableValue<Value: Comparable & Sendable> {
+        private let queue = DispatchQueue(label: "com.switletmodel.unique.comparable_value")
+        
         var id: String { name }
         
         let name: String
@@ -59,9 +61,28 @@ extension Unique.ComparableValue {
         try index?.save(to: &context)
     }
 }
-
 private extension Unique.ComparableValue {
     func checkForCollisions(_ entity: Entity,
+                           value: Value,
+                           in context: inout Context,
+                           resolveCollisions resolver: CollisionResolver<Entity>) throws {
+       
+       try queue.sync { try _checkForCollisions(entity, value: value, in: &context, resolveCollisions: resolver) }
+    }
+    
+    mutating func update(_ entity: Entity,
+                         value: Value) {
+       queue.sync { _update(entity, value: value) }
+    }
+    
+    mutating func remove(_ entity: Entity) {
+        queue.sync { _remove(entity) }
+    }
+}
+
+
+private extension Unique.ComparableValue {
+    func _checkForCollisions(_ entity: Entity,
                            value: Value,
                            in context: inout Context,
                            resolveCollisions resolver: CollisionResolver<Entity>) throws {
@@ -72,7 +93,7 @@ private extension Unique.ComparableValue {
         try resolver.resolveCollision(existing: existingId, new: entity.id, indexName: name, in: &context)
     }
     
-    mutating func update(_ entity: Entity,
+    mutating func _update(_ entity: Entity,
                          value: Value) {
         let existingValue = indexedValues[entity.id]
         
@@ -88,7 +109,7 @@ private extension Unique.ComparableValue {
         indexedValues[entity.id] = value
     }
     
-    mutating func remove(_ entity: Entity) {
+    mutating func _remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
               let _ = index[value]
         else {
