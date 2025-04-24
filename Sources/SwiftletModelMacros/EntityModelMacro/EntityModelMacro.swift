@@ -242,14 +242,14 @@ extension FunctionDeclSyntax {
                     .map { ".id(\($0))"}
                     .joined(separator: "\n")
                 )
-            case let .fragments(.none, false):
+            case .fragments(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case let .entities(.none, false):
+            case .entities(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
@@ -272,14 +272,14 @@ extension FunctionDeclSyntax {
                     .joined(separator: "\n")
                 )
         
-            case let .fragments(.none, true):
+            case .fragments(.none, true):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { _ in .schemaQuery(in: context).with(next) }"}
                     .joined(separator: "\n")
                 )
-            case let .entities(.none, true):
+            case .entities(.none, true):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
