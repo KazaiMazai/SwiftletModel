@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public struct Context {
+public struct Context: Sendable {
     private var entitiesRepository = EntitiesRepository()
     private var relationsRepository = RelationsRepository()
     
