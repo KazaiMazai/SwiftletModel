@@ -7,7 +7,8 @@
 
 import Foundation
 
-@propertyWrapper @MainActor
+@MainActor
+@propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
     public var wrappedValue: Index<Entity>.Type {
         Self.self
