@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol EntityModelProtocol {
+public protocol EntityModelProtocol: Sendable {
     // swiftlint:disable:next type_name
     associatedtype ID: Hashable, LosslessStringConvertible, Sendable
 
