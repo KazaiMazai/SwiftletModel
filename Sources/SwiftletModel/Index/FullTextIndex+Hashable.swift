@@ -9,7 +9,7 @@ import Foundation
 
 extension FullTextIndex {
     @EntityModel
-    struct HashableValue<Value: Hashable> {
+    struct HashableValue<Value: Hashable & Sendable> {
         typealias Token = String
         
         var id: String { name }

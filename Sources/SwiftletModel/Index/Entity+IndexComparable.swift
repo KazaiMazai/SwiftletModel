@@ -12,7 +12,7 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
-    T: Comparable {
+    T: Comparable & Sendable {
         
         try Index.ComparableValue.updateIndex(
             indexName: .indexName(keyPath),
@@ -27,8 +27,8 @@ public extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable {
         try Index.ComparableValue.updateIndex(
             indexName: .indexName(kp0, kp1),
             self,
@@ -43,9 +43,9 @@ public extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable {
         try Index.ComparableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2),
             self,
@@ -61,10 +61,10 @@ public extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable,
+    T3: Comparable & Sendable {
         try Index.ComparableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
@@ -79,7 +79,7 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
-    T: Comparable {
+    T: Comparable & Sendable {
         try Index.ComparableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
     
@@ -88,8 +88,8 @@ public extension EntityModelProtocol {
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable {
         try Index.ComparableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
     
@@ -99,9 +99,9 @@ public extension EntityModelProtocol {
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable {
         try Index.ComparableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
     
@@ -112,10 +112,10 @@ public extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable,
+    T3: Comparable & Sendable {
         try Index.ComparableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }
