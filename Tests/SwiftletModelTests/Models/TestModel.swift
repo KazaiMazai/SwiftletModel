@@ -145,7 +145,7 @@ extension TestingModels {
         let numOf1000: ComparableBox<Int>
     }
 
-     struct ComparableBox<T: Comparable>: Comparable {
+    struct ComparableBox<T: Comparable>: Comparable, Sendable where T: Sendable {
         let value: T
 
         static func < (lhs: Self, rhs: Self) -> Bool {
