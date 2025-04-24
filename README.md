@@ -44,7 +44,7 @@ SwiftletModel lets you define rich, normalized, in-memory graph models in Swiftâ
 Using [Swift Package Manager](https://swift.org/package-manager/):
 
 ```swift
-.package(url: "https://github.com/KazaiMazai/SwiftletModel.git", from: "1.0.0")
+.package(url: "https://github.com/KazaiMazai/SwiftletModel.git", from: "0.0.1")
 ``` 
 
 Or via Xcode:
