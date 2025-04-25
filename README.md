@@ -8,36 +8,47 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FKazaiMazai%2FSwiftletModel%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/KazaiMazai/SwiftletModel)
 
-## Why
+## What is SwiftletModel?
 
-SwiftletModel is a zero-boilerplate, type-safe, in-memory graph model engine for iOS apps.
-Think: SwiftData(CoreData)-level power, without complexity.
- 
+*If CoreData broke up with legacy, embraced modern Swift, and married GraphQL — you'd get SwiftletModel.*
+
+> *SwiftletModel is what you wished SwiftData was — if it were reinvented from scratch.*  
+It gives you CoreData-level power with plain Swift structs, in-memory speed, and zero boilerplate.
+
+**Is it an ORM?**  
+Not exactly. SwiftletModel isn’t a traditional ORM or database layer. It doesn’t abstract SQL or manage disk persistence.  
+
+Instead, it’s a type-safe, normalized, in-memory graph model engine — a place to merge, shape, and manage business entity data from multiple sources, effortlessly.
+
+**Persistence is optional.**  
+Although primarily in-memory, SwiftletModel’s data models are plain Codable structs, allowing straightforward integration with any storage solution as a sidecar: flat files, CRDTs, GRDB, CoreData/SwiftData, SQLite, iCloudKit, Firebase, backend APIs, etc.
+
+## Features
+
 - **Entities as Plain Structs**: Define your entities using simple Swift structs.
 - **Bidirectional Relations**: Manage relationships between entities effortlessly with type safety.
 - **Normalized In-Memory Storage**: Store your data in a normalized form to maintain consistency and efficiency.
 - **On-the-Fly Denormalization**: Transform your data into any required shape instantly.
 - **Incomplete Data Handling**: Seamlessly handle scenarios involving partial or missing data.
-- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search. B-tree, Unique, and Full-Text BM25-ranked indexes will help.
+- **Indexing**: Sort and filter data efficiently, enforce unique constraints, and perform full-text search. B-tree, Unique, and Full-Text BM25-ranked indexes help boost performance.
 - **Codable Out of the Box**: Easily encode and decode your entities for persistence, response mapping, or other purposes.
- 
+
 ## Use Cases
 
 SwiftletModel excels in the following scenarios:
 
-- **Complex Domain Models**: Ideal for apps with intricate domain models with multiple interconnected entity types.
+- **Complex Domain Models**: Ideal for apps with intricate domain models featuring multiple interconnected entity types.
 - **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
-- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth for data management and fully fledged local db is not needed.
+- **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth and a fully fledged local database is not needed.
+- **Multiple Data Sources**: A true painkiller for apps that manage and merge data from multiple origins — backend APIs, local files, cloud services, HealthKit, Location, etc. — into a unified, type-safe in-memory graph.
 
-
-***Persistence is optional***. Although primarily in-memory, SwiftletModel's data models are plain Codable structs, allowing for straightforward integration with any storage solution as a sidecar: flat file, CRDT, GRDB, CoreData/SwiftData, SQLite, iCloudKit, Firebase, backend API, etc.
-
+---
  
 ## 🚀 Quick Start
 
-SwiftletModel lets you define rich, normalized, in-memory graph models in Swift—without CoreData complexity. Here's how to get started fast.
+Here's how to get started fast.
 
----
+
 
 ### 1. Installation
 
