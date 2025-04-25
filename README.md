@@ -13,15 +13,11 @@
 *If CoreData broke up with legacy, embraced modern Swift, and married GraphQL — you'd get SwiftletModel.*
 
 > *SwiftletModel is what you wished SwiftData was — if it were reinvented from scratch.*  
-It gives you CoreData-level power with plain Swift structs, in-memory speed, and zero boilerplate.
+It gives you CoreData-level graph management power with plain Swift structs, in-memory speed, and zero boilerplate.
 
-**Is it an ORM?**  
-Not exactly. SwiftletModel isn’t a traditional ORM or database layer. It doesn’t abstract SQL or manage disk persistence.  
+**Is it an ORM?** Not exactly. SwiftletModel isn’t a traditional ORM or database layer. It doesn’t abstract SQL or manage disk persistence.  
 
 Instead, it’s a type-safe, normalized, in-memory graph model engine — a place to merge, shape, and manage business entity data from multiple sources, effortlessly.
-
-**Persistence is optional.**  
-Although primarily in-memory, SwiftletModel’s data models are plain Codable structs, allowing straightforward integration with any storage solution as a sidecar: flat files, CRDTs, GRDB, CoreData/SwiftData, SQLite, iCloudKit, Firebase, backend APIs, etc.
 
 ## Features
 
@@ -41,6 +37,10 @@ SwiftletModel excels in the following scenarios:
 - **Lightweight Local Storage**: Suitable when you want to avoid the development overhead of persistent storage solutions like CoreData, SwiftData, Realm, or SQLite.
 - **Backend-Centric Applications**: Perfect for applications where the backend is the primary source of truth and a fully fledged local database is not needed.
 - **Multiple Data Sources**: A true painkiller for apps that manage and merge data from multiple origins — backend APIs, local files, cloud services, HealthKit, Location, etc. — into a unified, type-safe in-memory graph.
+
+**Persistence is optional.**  
+Although primarily in-memory, SwiftletModel’s data models are plain Codable structs, allowing straightforward integration with any storage solution as a sidecar: flat files, CRDTs, GRDB, CoreData/SwiftData, SQLite, iCloudKit, Firebase, backend APIs, etc.
+
 
 ---
  
