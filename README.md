@@ -1860,9 +1860,7 @@ Any mistake will be spotted at compile time:
 
 
 This also means that you cannot accidentally break it.
-
-If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
-is a wonderful series of articles about it.
+ 
 
 ## Documentation
 
