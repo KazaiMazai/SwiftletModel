@@ -36,7 +36,7 @@ extension Schema.V1 {
         var replyTo: Message?
 
         @Relationship
-        var viewedBy: [User]?
+        var viewedBy: [User]? = nil
 
         public func willDelete(from context: inout Context) throws {
             try delete(\.$attachment, inverse: \.$message, from: &context)
