@@ -451,7 +451,7 @@ and put in its place according to the nested shape in denormalized form.
 
 ### Bulk nested models query
 
-Bulk nested models query is s quick way to fetch related models graph up to a certain depth.
+Bulk nested models query is a quick way to fetch related models graph up to a certain depth.
 It's possible to query entity with all nested related models at once in a single line: 
 
 ```swift
