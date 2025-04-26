@@ -7,7 +7,8 @@
 
 import Foundation
 
-@propertyWrapper
+@MainActor
+@propertyWrapper 
 public struct Unique<Entity: EntityModelProtocol>: Sendable, Codable {
     
     public var wrappedValue: Unique<Entity> {

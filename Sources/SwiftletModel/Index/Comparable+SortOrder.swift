@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Descending<T: Comparable>: Comparable {
+public struct Descending<T: Comparable>: Comparable, Sendable where T: Sendable {
     public let value: T
 
     public static func < (lhs: Descending<T>, rhs: Descending<T>) -> Bool {
@@ -15,6 +15,6 @@ public struct Descending<T: Comparable>: Comparable {
     }
 }
 
-public extension Comparable {
+public extension Comparable where Self: Sendable {
     var desc: Descending<Self> { Descending(value: self) }
 }

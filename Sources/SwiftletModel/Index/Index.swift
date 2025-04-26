@@ -7,13 +7,13 @@
 
 import Foundation
 
+@MainActor
 @propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
     public var wrappedValue: Index<Entity>.Type {
         Self.self
     }
      
-    
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
     where
     T0: Comparable {

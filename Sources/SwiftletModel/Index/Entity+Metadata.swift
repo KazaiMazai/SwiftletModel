@@ -13,7 +13,7 @@ public extension EntityModelProtocol {
         value: Value,
         in context: inout Context) throws
     where
-    Value: Comparable {
+    Value: Comparable & Sendable {
         
         try Index.ComparableValue.updateIndex(
             indexName: metadata.indexName,
@@ -30,7 +30,7 @@ public extension EntityModelProtocol {
         valueType: Value.Type,
         in context: inout Context) throws
     where
-    Value: Comparable {
+    Value: Comparable & Sendable {
         
         try Index.ComparableValue<Value>.removeFromIndex(
             indexName: metadata.indexName,
@@ -44,7 +44,7 @@ public extension EntityModelProtocol {
         value: Value,
         in context: inout Context) throws
     where
-    Value: Hashable {
+    Value: Hashable & Sendable {
         
         try Index.HashableValue.updateIndex(
             indexName: metadata.indexName,
@@ -61,7 +61,7 @@ public extension EntityModelProtocol {
         valueType: Value.Type,
         in context: inout Context) throws
     where
-    Value: Hashable {
+    Value: Hashable & Sendable {
         
         try Index.HashableValue<Value>.removeFromIndex(
             indexName: metadata.indexName,
@@ -75,7 +75,7 @@ public extension EntityModelProtocol {
         value: Value,
         in context: inout Context) throws
     where
-    Value: Hashable & Comparable {
+    Value: Hashable & Comparable & Sendable {
         
         try Index.HashableValue.updateIndex(
             indexName: metadata.indexName,
@@ -99,7 +99,7 @@ public extension EntityModelProtocol {
         valueType: Value.Type,
         in context: inout Context) throws
     where
-    Value: Hashable & Comparable {
+    Value: Hashable & Comparable & Sendable {
         
         try Index.HashableValue<Value>.removeFromIndex(
             indexName: metadata.indexName,

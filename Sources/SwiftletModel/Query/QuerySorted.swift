@@ -18,7 +18,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func sorted<T>(
         by keyPath: KeyPath<Entity, T>) -> QueryList<Entity>
     where
-    T: Comparable {
+    T: Comparable & Sendable {
         whenResolved {
             $0.sorted(by: keyPath)
         }
@@ -28,8 +28,8 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
                         _ kp1: KeyPath<Entity, T1>) -> QueryList<Entity>
     
     where
-    T0: Comparable,
-    T1: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable {
         whenResolved {
             $0.sorted(by: kp0, kp1)
         }
@@ -39,9 +39,9 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
                             _ kp1: KeyPath<Entity, T1>,
                             _ kp2: KeyPath<Entity, T2>) -> QueryList<Entity>
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable {
         whenResolved {
             $0.sorted(by: kp0, kp1, kp2)
         }
@@ -53,10 +53,10 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
                                 _ kp3: KeyPath<Entity, T3>) -> QueryList<Entity>
     
     where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable,
+    T3: Comparable & Sendable {
         whenResolved {
             $0.sorted(by: kp0, kp1, kp2, kp3)
         }
@@ -70,7 +70,7 @@ private extension Collection {
         by keyPath: KeyPath<Entity, T>) -> [Query<Entity>]
     where
     Element == Query<Entity>,
-    T: Comparable {
+    T: Comparable & Sendable {
         guard let context = first?.context else {
             return Array(self)
         }
@@ -95,8 +95,8 @@ private extension Collection {
     
     where
     Element == Query<Entity>,
-    T0: Comparable,
-    T1: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable {
         
         guard let context = first?.context else {
             return Array(self)
@@ -123,9 +123,9 @@ private extension Collection {
                                     _ kp2: KeyPath<Entity, T2>) -> [Query<Entity>]
     where
     Element == Query<Entity>,
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable {
         
         guard let context = first?.context else {
             return Array(self)
@@ -154,10 +154,10 @@ private extension Collection {
     
     where
     Element == Query<Entity>,
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
+    T0: Comparable & Sendable,
+    T1: Comparable & Sendable,
+    T2: Comparable & Sendable,
+    T3: Comparable & Sendable {
         
         guard let context = first?.context else {
             return Array(self)
@@ -205,7 +205,7 @@ private extension Collection {
     
     where
     Element == Query<Entity>,
-    T: Comparable {
+    T: Comparable & Sendable {
         
         let queries = Dictionary(map { query in (query.id, query) }, uniquingKeysWith: { $1 })
         return index
@@ -219,7 +219,7 @@ private extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryList<Entity>
     
     where
-    T: Comparable {
+    T: Comparable & Sendable {
         
         whenResolved {
             $0.sorted(using: index)

@@ -22,6 +22,11 @@ extension Pair: Equatable where T0: Equatable,
     
 }
 
+extension Pair: Sendable where T0: Sendable,
+                              T1: Sendable {
+    
+}
+
 extension Pair: Comparable where T0: Comparable,
                                  T1: Comparable {
     
@@ -39,6 +44,12 @@ struct Triplet<T0, T1, T2> {
 extension Triplet: Equatable where T0: Equatable,
                                    T1: Equatable,
                                    T2: Equatable {
+    
+}
+
+extension Triplet: Sendable where T0: Sendable,
+                                  T1: Sendable,
+                                  T2: Sendable {
     
 }
 
@@ -84,6 +95,12 @@ extension Quadruple: Hashable where T0: Hashable,
                                     T1: Hashable,
                                     T2: Hashable,
                                     T3: Hashable {
+}
+
+extension Quadruple: Sendable where T0: Sendable,
+                                    T1: Sendable,
+                                    T2: Sendable,
+                                    T3: Sendable {
 }
 
 func indexValue<T0, T1>(_ tuple: (T0, T1)) -> Pair<T0, T1> {

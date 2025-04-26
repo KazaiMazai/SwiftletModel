@@ -9,9 +9,15 @@ import Foundation
 import BTree
 import Collections
 
+/**
+ Map is backed with CoW BTree storage.
+ Should not blow up since index entities live inside Context and not accessible elsewhere.
+*/
+extension Map: @unchecked @retroactive Sendable { }
+
 extension Index {
     @EntityModel
-    struct ComparableValue<Value: Comparable> {
+    struct ComparableValue<Value: Comparable & Sendable>  {
         var id: String { name }
         
         let name: String
@@ -23,7 +29,9 @@ extension Index {
             self.name = name
         }
         
-        var sorted: [Entity.ID] { index.flatMap { $0.1.elements } }
+        var sorted: [Entity.ID] {
+            index.flatMap { $0.1.elements }
+        }
         
         func asDeleted(in context: Context) -> Deleted<Self>? { nil }
         
@@ -53,7 +61,7 @@ extension Index.ComparableValue {
         try index?.save(to: &context)
     }
 }
-
+ 
 extension Index.ComparableValue {
     func filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
         switch predicate.method {
@@ -124,11 +132,11 @@ extension Index.ComparableValue {
     func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
         Dictionary(index.map { ($0, $1.elements) },
                    uniquingKeysWith: { $1 })
-        
     }
 }
 
 private extension Index.ComparableValue {
+    
     mutating func update(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
         

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension KeyPath where Value: Comparable {
+public extension KeyPath where Value: Comparable & Sendable {
     static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
         Predicate(keyPath: lhs, method: .equal, value: rhs)
     }
@@ -33,7 +33,7 @@ public extension KeyPath where Value: Comparable {
     }   
 }
 
-public extension KeyPath where Value: Equatable {
+public extension KeyPath where Value: Equatable & Sendable {
     static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> EqualityPredicate<Root, Value> {
         EqualityPredicate(keyPath: lhs, method: .equal, value: rhs)
     }
@@ -43,7 +43,7 @@ public extension KeyPath where Value: Equatable {
     }
 }
 
-public struct Predicate<Entity, Value: Comparable> {
+public struct Predicate<Entity, Value: Comparable & Sendable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
     let value: Value
@@ -75,7 +75,7 @@ public struct Predicate<Entity, Value: Comparable> {
     }
 }
 
-public struct EqualityPredicate<Entity, Value: Equatable> {
+public struct EqualityPredicate<Entity, Value: Equatable & Sendable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
     let value: Value

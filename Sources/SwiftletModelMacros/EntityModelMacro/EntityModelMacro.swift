@@ -215,7 +215,17 @@ extension FunctionDeclSyntax {
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
         
-        try FunctionDeclSyntax(
+        guard !attributes.isEmpty else {
+            return try FunctionDeclSyntax(
+            """
+            \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
+                query
+            }
+            """
+            )
+        }
+        
+        return try FunctionDeclSyntax(
         """
             
         \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
@@ -232,14 +242,14 @@ extension FunctionDeclSyntax {
                     .map { ".id(\($0))"}
                     .joined(separator: "\n")
                 )
-            case let .fragments(.none, false):
+            case .fragments(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-            case let .entities(.none, false):
+            case .entities(.none, false):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
@@ -262,14 +272,14 @@ extension FunctionDeclSyntax {
                     .joined(separator: "\n")
                 )
         
-            case let .fragments(.none, true):
+            case .fragments(.none, true):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
                     .map { ".fragment(\($0)) { _ in .schemaQuery(in: context).with(next) }"}
                     .joined(separator: "\n")
                 )
-            case let .entities(.none, true):
+            case .entities(.none, true):
                 query
                 \(raw: attributes
                     .map { "\\.$\($0.propertyName)" }
@@ -381,7 +391,7 @@ private extension VariableDeclSyntax {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
+               let _ = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
                 return nil
             }
         }

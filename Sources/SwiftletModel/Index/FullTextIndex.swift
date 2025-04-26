@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 @propertyWrapper
 public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, Codable {
    

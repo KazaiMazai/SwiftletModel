@@ -23,7 +23,7 @@ let package = Package(
              .upToNextMajor(from: "1.1.0")
            ),
 
-        .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0"..<"600.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"601.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.12.0"),
         .package(url: "https://github.com/attaswift/BTree", from: "4.0.0")
     ],

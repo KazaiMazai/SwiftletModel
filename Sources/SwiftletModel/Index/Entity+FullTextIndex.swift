@@ -12,7 +12,7 @@ public extension EntityModelProtocol {
         _ keyPaths: KeyPath<Self, T>...,
         in context: inout Context) throws
     where
-    T: Hashable {
+    T: Hashable & Sendable {
         
         try FullTextIndex.HashableValue.updateIndex(
             indexName: .indexName(keyPaths),
@@ -28,7 +28,7 @@ public extension EntityModelProtocol {
         _ keyPaths: KeyPath<Self, T>...,
         in context: inout Context) throws
     where
-    T: Hashable {
+    T: Hashable & Sendable {
         
         try FullTextIndex.HashableValue<[T]>.removeFromIndex(indexName: .indexName(keyPaths), self, in: &context)
     }
