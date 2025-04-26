@@ -7,6 +7,7 @@
 
 import Foundation
 
+// swiftlint:disable identifier_name
 struct Pair<T0, T1> {
     let t0: T0
     let t1: T1
@@ -35,6 +36,7 @@ extension Pair: Comparable where T0: Comparable,
     }
 }
 
+// swiftlint:disable identifier_name
 struct Triplet<T0, T1, T2> {
     let t0: T0
     let t1: T1
@@ -67,6 +69,7 @@ extension Triplet: Hashable where T0: Hashable,
                                   T2: Hashable {
 }
 
+// swiftlint:disable identifier_name
 struct Quadruple<T0, T1, T2, T3> {
     let t0: T0
     let t1: T1
@@ -107,10 +110,12 @@ func indexValue<T0, T1>(_ tuple: (T0, T1)) -> Pair<T0, T1> {
     Pair(t0: tuple.0, t1: tuple.1)
 }
 
+// swiftlint:disable large_tuple
 func indexValue<T0, T1, T2>(_ tuple: (T0, T1, T2)) -> Triplet<T0, T1, T2> {
     Triplet(t0: tuple.0, t1: tuple.1, t2: tuple.2)
 }
 
+// swiftlint:disable large_tuple
 func indexValue<T0, T1, T2, T3>(_ tuple: (T0, T1, T2, T3)) -> Quadruple<T0, T1, T2, T3> {
     Quadruple(t0: tuple.0, t1: tuple.1, t2: tuple.2, t3: tuple.3)
 }

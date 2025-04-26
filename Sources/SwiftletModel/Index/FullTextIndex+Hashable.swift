@@ -27,8 +27,8 @@ extension FullTextIndex {
         private var totalLengthSum: Int = 0
         private var entitiesCount: Int = 0
 
-        private let k1: Double = 1.2  // term frequency saturation parameter
-        private let b: Double = 0.75  // length normalization parameter
+        private let bm25ParameterK1: Double = 1.2  // term frequency saturation parameter
+        private let bm25ParameterB: Double = 0.75  // length normalization parameter
 
         init(name: String) {
             self.name = name
@@ -62,8 +62,8 @@ extension FullTextIndex.HashableValue {
                 let docLength = Double(valueLenghtsForEntities[entityId] ?? 0)
 
                 // BM25 score calculation
-                let numerator = tf * (k1 + 1.0)
-                let denominator = tf + k1 * (1.0 - b + b * docLength / averageValueLength)
+                let numerator = tf * (bm25ParameterK1 + 1.0)
+                let denominator = tf + bm25ParameterK1 * (1.0 - bm25ParameterB + bm25ParameterB * docLength / averageValueLength)
                 let score = idf * numerator / denominator
 
                 scores[entityId, default: 0] += score
