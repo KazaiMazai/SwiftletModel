@@ -1706,39 +1706,61 @@ You can define a schema that includes all related entities and version your data
 
 ```swift    
 @EntityModel
-struct Schema {
-    var id: String { "\(Schema.self)" }
+struct Schema: Codable {
+    
+    var id: String { "\(Schema.self)"}
     
     @Relationship
-    var v1: Schema.V1? = .relation(V1())
+    var versions: [SchemaVersions]? = .relation([
+        .v1(schema: V1())
+    ])
 }
 
-// Typealiases to the latest version
 typealias User = Schema.V1.User
 typealias Chat = Schema.V1.Chat
 typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
-    // First version of the schema
+    enum Version: String {
+        case v1
+    }
+    
+    @EntityModel
+    enum SchemaVersions: Codable {
+        case v1(schema: V1)
+        
+        var id: String { version.rawValue }
+        
+        var version: Version {
+            switch self {
+            case .v1(let model):
+                return model.version
+            }
+        }
+    }
+}
+
+extension Schema {
+    
     @EntityModel
     struct V1: Codable {
-        static let version = "\(V1.self)"
-        var id: String { Self.version }
+        var version: Version { .v1 }
         
-        // Define relationships to all entity types
+        var id: String { version.rawValue }
+        
         @Relationship var attachments: [Attachment]? = .none
         @Relationship var chats: [Chat]? = .none
         @Relationship var messages: [Message]? = .none
         @Relationship var users: [User]? = .none
         
-        // Track deleted entities
         @Relationship var deletedAttachments: [Deleted<Attachment>]? = .none
         @Relationship var deletedChats: [Deleted<Chat>]? = .none
         @Relationship var deletedMessages: [Deleted<Message>]? = .none
         @Relationship var deletedUsers: [Deleted<User>]? = .none
     }
 }
+
 ```
 
 Since schema is a plain struct like any other entity, migration between versions is straightforward:
@@ -1758,26 +1780,46 @@ Here's how to define and use schema queries:
 
 ```swift
 extension Schema {
-    // Query the entire schema. 
-    // Pulling all entities in the schema with all related nested entities' IDs 
-    // is enough to restore the entire schema and all relations.
+    /** 
+        - Query all available schemas
+        - For each schema query all versions
+        - For each version query all available entities
+        - For each entity query all related entities' IDs
+        - is enough to restore the entire schema and all relations.
+    */
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(with:          // Depth level 0: get the schema
-            Nested.entities,           // Depth level 1: get all related nested entities – schema versions
-            Nested.schemaEntities,     // Depth level 2: get all entities in the schema – entities
-            Nested.ids,                // Depth level 3: get all related nested entities' IDs – entities relations
+        Schema.queryAll(
+            with: .schemaEntities, .schemaEntities, .ids,
             in: context
         )
     }
+    
+    /** 
+        - Query all available schemas
+        - For each schema query all versions
+        - For each version query all available entities with `updatedAt` within a specific time range
+        - For each entity query all related entities' IDs
+        - is enough to restore the entire schema and all relations.
+    */
 
-    // Query the entire schema changes within a specific time range
-    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
-        Schema.queryAll(with:           // Depth level 0: get the schema
-            Nested.entities,            // Depth level 1: get all related nested entities – schema versions
-            Nested.schemaEntities(      // Depth level 2: get all entities in the schema – entities
-                filter: .updated(within: range)  // Filter by updatedAt
-            ), 
-            Nested.ids,                 // Depth level 3: get all related nested entities' IDs – entities relations
+    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: .schemaEntities, .schemaEntities, .ids,
+            in: context
+        )
+    }
+    
+    
+    /** 
+        - Query all available schemas
+        - For each schema query all versions
+        - For each version query all available entities as `fragments` with `updatedAt` within a specific time range
+        - For each entity query all related entities' IDs
+        - is enough to restore the entire schema and all relations.
+    */
+    static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
+        Schema.queryAll(
+            with: .schemaEntities, .schemaFragments, .ids,
             in: context
         )
     }
