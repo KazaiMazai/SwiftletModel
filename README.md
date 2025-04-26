@@ -140,9 +140,7 @@ let json = try? JSONEncoder().encode(user)
 That’s it. You now have a type-safe, bidirectionally-linked, normalized in-memory model graph.
 
 
-## Deep Dive
-
-### Table of Contents
+## Table of Contents
 
 - [Model Definitions](#model-definitions)
 - [How to Save Entities](#how-to-save-entities)
@@ -189,6 +187,7 @@ That’s it. You now have a type-safe, bidirectionally-linked, normalized in-mem
   * [Handling incomplete Entity Models](#handling-incomplete-entity-models)
     + [Default Merge Strategy](#default-merge-strategy)
     + [Fragment Merge Strategy](#fragment-merge-strategy)
+    + [Last Write Wins Merge Strategy](#last-write-wins-merge-strategy)
     + [Advanced Merge Strategies](#advanced-merge-strategies)
   * [Handling incomplete Related Entity Models](#handling-incomplete-related-entity-models)
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
