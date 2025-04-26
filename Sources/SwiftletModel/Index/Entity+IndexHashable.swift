@@ -102,7 +102,8 @@ public extension EntityModelProtocol {
     T0: Hashable & Sendable,
     T1: Hashable & Sendable,
     T2: Hashable & Sendable {
-        try Index.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
+        try Index.HashableValue<Triplet<T0, T1, T2>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
 
     func removeFromIndex<T0, T1, T2, T3>(
@@ -116,6 +117,7 @@ public extension EntityModelProtocol {
     T1: Hashable & Sendable,
     T2: Hashable & Sendable,
     T3: Hashable & Sendable {
-        try Index.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
+        try Index.HashableValue<Quadruple<T0, T1, T2, T3>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

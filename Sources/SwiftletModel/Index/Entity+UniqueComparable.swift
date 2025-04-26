@@ -122,7 +122,8 @@ public extension EntityModelProtocol {
     T1: Comparable & Sendable,
     T2: Comparable & Sendable {
 
-        try Unique.ComparableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
+        try Unique.ComparableValue<Triplet<T0, T1, T2>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
 
     func removeFromUniqueIndex<T0, T1, T2, T3>(
@@ -138,6 +139,7 @@ public extension EntityModelProtocol {
     T2: Comparable & Sendable,
     T3: Comparable & Sendable {
 
-        try Unique.ComparableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
+        try Unique.ComparableValue<Quadruple<T0, T1, T2, T3>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

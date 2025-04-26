@@ -10,6 +10,7 @@ import Foundation
 extension FullTextIndex {
     @EntityModel
     struct HashableValue<Value: Hashable & Sendable> {
+        // swiftlint:disable:next nesting
         typealias Token = String
 
         var id: String { name }
@@ -53,17 +54,18 @@ extension FullTextIndex.HashableValue {
             guard let matchingDocs = index[token] else { continue }
 
             // Calculate IDF
-            let N = Double(tokensForEntities.count) // total number of documents
-            let n = Double(matchingDocs.count) // number of documents containing the term
-            let idf = log((N - n + 0.5) / (n + 0.5) + 1.0)
+            let documentsCount = Double(tokensForEntities.count) // total number of documents
+            let matchingDocumentsCount = Double(matchingDocs.count) // number of documents containing the term
+            let idf = log((documentsCount - matchingDocumentsCount + 0.5) / (matchingDocumentsCount + 0.5) + 1.0)
 
             for entityId in matchingDocs {
-                let tf = Double(tokenFrequenciesForEntities[entityId]?[token] ?? 0)
+                let tokenFrequency = Double(tokenFrequenciesForEntities[entityId]?[token] ?? 0)
                 let docLength = Double(valueLenghtsForEntities[entityId] ?? 0)
 
                 // BM25 score calculation
-                let numerator = tf * (bm25ParameterK1 + 1.0)
-                let denominator = tf + bm25ParameterK1 * (1.0 - bm25ParameterB + bm25ParameterB * docLength / averageValueLength)
+                let numerator = tokenFrequency * (bm25ParameterK1 + 1.0)
+                let denominator = tokenFrequency + bm25ParameterK1 *
+                (1.0 - bm25ParameterB + bm25ParameterB * docLength / averageValueLength)
                 let score = idf * numerator / denominator
 
                 scores[entityId, default: 0] += score
@@ -97,7 +99,7 @@ extension FullTextIndex.HashableValue {
 
 private  extension FullTextIndex.HashableValue {
     mutating func update(_ entity: Entity,
-                        value: Value) {
+                         value: Value) {
 
         let existingValue = indexedValues[entity.id]
 

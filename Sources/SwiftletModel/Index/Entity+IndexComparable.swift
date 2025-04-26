@@ -90,7 +90,8 @@ public extension EntityModelProtocol {
     where
     T0: Comparable & Sendable,
     T1: Comparable & Sendable {
-        try Index.ComparableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
+        try Index.ComparableValue<Pair<T0, T1>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
 
     func removeFromIndex<T0, T1, T2>(
@@ -102,7 +103,8 @@ public extension EntityModelProtocol {
     T0: Comparable & Sendable,
     T1: Comparable & Sendable,
     T2: Comparable & Sendable {
-        try Index.ComparableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
+        try Index.ComparableValue<Triplet<T0, T1, T2>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
 
     func removeFromIndex<T0, T1, T2, T3>(
@@ -116,6 +118,7 @@ public extension EntityModelProtocol {
     T1: Comparable & Sendable,
     T2: Comparable & Sendable,
     T3: Comparable & Sendable {
-        try Index.ComparableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
+        try Index.ComparableValue<Quadruple<T0, T1, T2, T3>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

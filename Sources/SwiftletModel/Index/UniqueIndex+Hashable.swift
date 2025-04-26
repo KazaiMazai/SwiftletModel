@@ -64,9 +64,9 @@ extension Unique.HashableValue {
 
 private extension Unique.HashableValue {
     func checkForCollisions(_ entity: Entity,
-                           value: Value,
-                           in context: inout Context,
-                           resolveCollisions resolver: CollisionResolver<Entity>) throws {
+                            value: Value,
+                            in context: inout Context,
+                            resolveCollisions resolver: CollisionResolver<Entity>) throws {
         guard let existingId = index[value], existingId != entity.id else {
             return
         }
@@ -82,7 +82,7 @@ private extension Unique.HashableValue {
             return
         }
 
-        if let existingValue, let _ = index[existingValue] {
+        if let existingValue, index[existingValue] != nil {
             index[existingValue] = nil
         }
 
@@ -92,7 +92,7 @@ private extension Unique.HashableValue {
 
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-              let _ = index[value]
+              index[value] != nil
         else {
             return
         }

@@ -66,7 +66,7 @@ private extension Index.HashableValue {
             return
         }
 
-        if let existingValue, let _ = index[existingValue] {
+        if let existingValue, index[existingValue] != nil {
             remove(entity)
         }
 
@@ -78,7 +78,7 @@ private extension Index.HashableValue {
 
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-              let _ = index[value]
+              index[value] != nil
         else {
             return
         }
