@@ -25,7 +25,6 @@ typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
-    
     enum Version: String {
         case v1
     }
