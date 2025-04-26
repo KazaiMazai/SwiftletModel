@@ -451,7 +451,7 @@ and put in its place according to the nested shape in denormalized form.
 
 ### Bulk nested models query
 
-Bulk nested models query is s quick way to fetch related models graph up to a certain depth.
+Bulk nested models query is a quick way to fetch related models graph up to a certain depth.
 It's possible to query entity with all nested related models at once in a single line: 
 
 ```swift
@@ -1707,40 +1707,19 @@ You can define a schema that includes all related entities and version your data
 ```swift    
 @EntityModel
 struct Schema: Codable {
+    enum Version: String { case v1 }
     
     var id: String { "\(Schema.self)"}
     
     @Relationship
-    var versions: [SchemaVersions]? = .relation([
-        .v1(schema: V1())
-    ])
+    var v1: V1? = .relation(V1())
 }
 
 typealias User = Schema.V1.User
 typealias Chat = Schema.V1.Chat
 typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
-
-extension Schema {
-    enum Version: String {
-        case v1
-    }
-    
-    @EntityModel
-    enum SchemaVersions: Codable {
-        case v1(schema: V1)
-        
-        var id: String { version.rawValue }
-        
-        var version: Version {
-            switch self {
-            case .v1(let model):
-                return model.version
-            }
-        }
-    }
-}
-
+ 
 extension Schema {
     
     @EntityModel
@@ -1782,21 +1761,21 @@ Here's how to define and use schema queries:
 extension Schema {
     /** 
         - Query all available schemas
-        - For each schema query all versions
+        - For each schema query all related versions
         - For each version query all available entities
         - For each entity query all related entities' IDs
         - is enough to restore the entire schema and all relations.
     */
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaEntities, .ids,
+            with: .entities, .schemaEntities, .ids,
             in: context
         )
     }
     
     /** 
         - Query all available schemas
-        - For each schema query all versions
+        - For each schema query all related versions
         - For each version query all available entities with `updatedAt` within a specific time range
         - For each entity query all related entities' IDs
         - is enough to restore the entire schema and all relations.
@@ -1804,7 +1783,7 @@ extension Schema {
 
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaEntities, .ids,
+            with: .entities, .schemaEntities, .ids,
             in: context
         )
     }
@@ -1812,14 +1791,14 @@ extension Schema {
     
     /** 
         - Query all available schemas
-        - For each schema query all versions
+        - For each schema query all related versions
         - For each version query all available entities as `fragments` with `updatedAt` within a specific time range
         - For each entity query all related entities' IDs
         - is enough to restore the entire schema and all relations.
     */
     static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaFragments, .ids,
+            with: .entities, .schemaFragments, .ids,
             in: context
         )
     }
