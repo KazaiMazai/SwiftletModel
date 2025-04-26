@@ -18,7 +18,7 @@ public extension KeyPath where Value: Comparable & Sendable {
 
     static func > (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
         Predicate(keyPath: lhs, method: .greaterThan, value: rhs)
-    }   
+    }
 
     static func != (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
         Predicate(keyPath: lhs, method: .notEqual, value: rhs)
@@ -30,14 +30,14 @@ public extension KeyPath where Value: Comparable & Sendable {
 
     static func >= (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
         Predicate(keyPath: lhs, method: .greaterThanOrEqual, value: rhs)
-    }   
+    }
 }
 
 public extension KeyPath where Value: Equatable & Sendable {
     static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> EqualityPredicate<Root, Value> {
         EqualityPredicate(keyPath: lhs, method: .equal, value: rhs)
     }
-    
+
     static func != (lhs: KeyPath<Root, Value>, rhs: Value) -> EqualityPredicate<Root, Value> {
         EqualityPredicate(keyPath: lhs, method: .notEqual, value: rhs)
     }
@@ -47,7 +47,7 @@ public struct Predicate<Entity, Value: Comparable & Sendable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
     let value: Value
- 
+
     func isIncluded(_ entity: Entity) -> Bool {
         switch method {
         case .equal:
@@ -61,10 +61,10 @@ public struct Predicate<Entity, Value: Comparable & Sendable> {
         case .lessThanOrEqual:
             entity[keyPath: keyPath] <= value
         case .greaterThanOrEqual:
-            entity[keyPath: keyPath] >= value   
+            entity[keyPath: keyPath] >= value
         }
     }
-    
+
     enum Method {
         case equal
         case lessThan
@@ -79,7 +79,7 @@ public struct EqualityPredicate<Entity, Value: Equatable & Sendable> {
     let keyPath: KeyPath<Entity, Value>
     let method: Method
     let value: Value
- 
+
     func isIncluded(_ entity: Entity) -> Bool {
         switch method {
         case .equal:
@@ -88,7 +88,7 @@ public struct EqualityPredicate<Entity, Value: Equatable & Sendable> {
             entity[keyPath: keyPath] != value
         }
     }
-    
+
     enum Method {
         case equal
         case notEqual
@@ -99,7 +99,7 @@ public struct StringPredicate<Entity> {
     let keyPaths: [KeyPath<Entity, String>]
     let method: Method
     let value: String
-    
+
     func isIncluded(_ entity: Entity) -> Bool {
         switch method {
         case .contains(let caseSensitive):
@@ -116,7 +116,7 @@ public struct StringPredicate<Entity> {
             !keyPaths.contains { entity[keyPath: $0].hasSuffix(value, caseSensitive: caseSensitive) }
         }
     }
-    
+
     enum Method {
         case contains(caseSensitive: Bool)
         case hasPrefix(caseSensitive: Bool)
@@ -133,7 +133,7 @@ public struct StringPredicate<Entity> {
                 return false
             }
         }
-        
+
         var isIncluding: Bool {
             switch self {
             case .contains, .hasPrefix, .hasSuffix:
@@ -205,7 +205,7 @@ extension String {
 
 public enum MetadataPredicate {
     case updated(within: ClosedRange<Date>)
-    
+
     var indexName: String {
         switch self {
         case .updated:

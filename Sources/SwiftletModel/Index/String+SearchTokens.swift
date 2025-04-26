@@ -22,16 +22,16 @@ extension String {
             .flatMap { $0.windows(ofLength: length) }
             .map { String($0) }
     }
-    
+
     func windows(ofLength length: Int) -> [SubSequence] {
         guard length > 0 else {
             return []
         }
-        
+
         guard self.count >= length else {
             return []
         }
-        
+
         return (0...(self.count - length))
             .map { start in
                 let end = start + length

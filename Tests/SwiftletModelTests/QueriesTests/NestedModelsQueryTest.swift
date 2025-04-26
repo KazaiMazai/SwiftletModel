@@ -10,12 +10,11 @@ import XCTest
 import SwiftletModel
 import SnapshotTesting
 
-
 final class NestedModelsQueryTest: XCTestCase {
     var context = Context()
-  
+
     override func setUpWithError() throws {
-        
+
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -63,13 +62,13 @@ final class NestedModelsQueryTest: XCTestCase {
     func test_WhenQueryWithNestedModel_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
-        
+
         let messages = Message
             .query(in: context)
             .sorted(by: \.id)
             .with(\.$author)
             .resolve()
-            
+
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
@@ -116,7 +115,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
-    
+
     func test_WhenQueryWithNestedModelsAndFilter_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
@@ -134,7 +133,7 @@ final class NestedModelsQueryTest: XCTestCase {
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
-    
+
     func test_WhenQueryWithNestedModelsAndSort_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
@@ -180,4 +179,3 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 }
-

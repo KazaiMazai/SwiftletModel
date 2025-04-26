@@ -12,7 +12,7 @@ import SnapshotTesting
 
 final class RelationsEncodingDecodingTests: XCTestCase {
     var context = Context()
- 
+
     override func setUpWithError() throws {
         let chat = Chat(
             id: "1",
@@ -49,11 +49,10 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                     .id(\.$chat)
                 }
                 .id(\.$users)
-                .id(\.$admins) 
+                .id(\.$admins)
             }
             .resolve()
 
-        
         assertSnapshot(of: user, as: .json(encoder))
 
         let decodedUser = try! decoder.decode(
@@ -62,7 +61,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
@@ -96,14 +95,14 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
     func test_WhenExactCoding_EqualExpectedJSON() {
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
-        
+
         let decoder = JSONDecoder()
         decoder.relationDecodingStrategy = .explicitKeyedContainer
 
@@ -123,14 +122,14 @@ final class RelationsEncodingDecodingTests: XCTestCase {
             .resolve()
 
         assertSnapshot(of: user, as: .json(encoder))
-         
+
         let decodedUser = try! decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
@@ -163,7 +162,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
@@ -198,7 +197,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
@@ -223,16 +222,16 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$admins)
             }
             .resolve()
- 
+
         assertSnapshot(of: user, as: .json(encoder))
-        
+
         let decodedUser = try! decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
                 .data(using: .utf8)!
         )
-        
+
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 }

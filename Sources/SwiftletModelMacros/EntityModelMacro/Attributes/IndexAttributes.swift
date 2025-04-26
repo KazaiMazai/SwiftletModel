@@ -15,7 +15,6 @@ import SwiftSyntaxMacros
   import SwiftSyntaxMacroExpansion
 #endif
 
-
 struct IndexAttributes {
     let relationWrapperType: PropertyWrapperAttributes
     let propertyName: String
@@ -26,30 +25,30 @@ extension IndexAttributes {
     enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
-        
+
         init(propertyIdentifier: String,
              labeledExprListSyntax: LabeledExprListSyntax) {
-            
+
             let keyPathAttributes = labeledExprListSyntax
                 .filter(\.isKeyPath)
                 .map { $0.expressionString }
-            
+
             guard !keyPathAttributes.isEmpty else {
                 self = .init(propertyIdentifier: propertyIdentifier)
                 return
             }
-            
+
             let attributes = [keyPathAttributes]
                 .flatMap { $0 }
                 .joined(separator: ",")
-            
+
             self = .labeledExpressionList(attributes)
         }
-        
+
         init(propertyIdentifier: String) {
             self = .propertyIdentifier("\\.$\(propertyIdentifier)")
         }
-        
+
         var attribute: String {
             switch self {
             case .labeledExpressionList(let value), .propertyIdentifier(let value):

@@ -98,7 +98,7 @@ let chat = Chat(id: "1", users: .relation([user]))
 try chat.save(to: &context)
 ```
 
-💡 Only include full objects when needed. Else just use `.id(...)` to refer to existing entities.
+Only include full objects when needed. Else just use `.id(...)` to refer to existing entities.
 
 ```swift
 let message = Message(id: "1", text: "Hello", author: .id("1"), chat: .id("1"))
@@ -139,6 +139,30 @@ let json = try? JSONEncoder().encode(user)
 
 That’s it. You now have a type-safe, bidirectionally-linked, normalized in-memory model graph.
 
+## 🧠 Ideas Behind SwiftletModel
+
+### Functional Core, Imperative Shell
+
+SwiftletModel’s `Context` is a **pure, synchronous** in-memory graph — no side effects, no async.  
+Persistence, networking, and I/O are handled externally in your app’s shell, never inside the model.
+
+
+### Persistence-Free by Design
+
+SwiftletModel **does not** bundle storage.  
+Entities are plain `Codable` structs — save, sync, or persist however you want.
+
+### No Infrastructure Leak
+
+SwiftletModel **keeps your business models clean**.  
+Service layer concerns (databases, APIs, networking) **never leak** into your domain model.
+
+### Predictable and Composable
+
+Queries are instant, state is deterministic, and testing is effortless.  
+You can freely compose SwiftletModel with any backend, cache, or sync layer.
+
+ 
 
 ## Table of Contents
 
@@ -1860,9 +1884,7 @@ Any mistake will be spotted at compile time:
 
 
 This also means that you cannot accidentally break it.
-
-If you want to learn more about type-driven design [here](https://swiftology.io/collections/type-driven-design/)
-is a wonderful series of articles about it.
+ 
 
 ## Documentation
 

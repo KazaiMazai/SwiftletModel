@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public extension EntityModelProtocol {
     func updateUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
@@ -23,7 +22,7 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
     func updateUniqueIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -40,7 +39,7 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
     func updateUniqueIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -59,7 +58,8 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
+    // swiftlint:disable:next function_parameter_count
     func updateUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -72,7 +72,7 @@ public extension EntityModelProtocol {
     T1: Hashable & Comparable & Sendable,
     T2: Hashable & Comparable & Sendable,
     T3: Hashable & Comparable & Sendable {
-        
+
         try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
@@ -83,17 +83,16 @@ public extension EntityModelProtocol {
     }
 }
 
-
 public extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
     where
     T: Hashable & Comparable & Sendable {
-        
+
         try Unique.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -101,9 +100,10 @@ public extension EntityModelProtocol {
     where
     T0: Hashable & Comparable & Sendable,
     T1: Hashable & Comparable & Sendable {
-        try Unique.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
+        try Unique.HashableValue<Pair<T0, T1>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -113,9 +113,10 @@ public extension EntityModelProtocol {
     T0: Hashable & Comparable & Sendable,
     T1: Hashable & Comparable & Sendable,
     T2: Hashable & Comparable & Sendable {
-        try Unique.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
+        try Unique.HashableValue<Triplet<T0, T1, T2>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -127,6 +128,7 @@ public extension EntityModelProtocol {
     T1: Hashable & Comparable & Sendable,
     T2: Hashable & Comparable & Sendable,
     T3: Hashable & Comparable & Sendable {
-        try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
+        try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>
+            .removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

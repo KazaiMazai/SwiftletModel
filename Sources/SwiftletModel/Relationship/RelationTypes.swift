@@ -47,17 +47,17 @@ public extension Relations {
     }
 }
 
-//MARK: - Directionality
+// MARK: - Directionality
 
 public protocol DirectionalityProtocol { }
 
 public extension Relations {
     enum OneWay: DirectionalityProtocol { }
-    
+
     enum Mutual: DirectionalityProtocol { }
 }
 
-//MARK: - Cardinality
+// MARK: - Cardinality
 
 public protocol CardinalityProtocol {
     associatedtype Value
@@ -72,7 +72,7 @@ public protocol CardinalityProtocol {
 
 public extension Relations {
     enum ToMany<Entity: EntityModelProtocol> { }
-    
+
     enum ToOne<Entity: EntityModelProtocol> { }
 }
 
@@ -109,7 +109,7 @@ extension Relations.ToOne: CardinalityProtocol {
     }
 }
 
-//MARK: - Constraints
+// MARK: - Constraints
 
 public protocol ConstraintsProtocol { }
 

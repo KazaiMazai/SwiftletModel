@@ -10,7 +10,7 @@
         case unique = "Unique"
         case index = "Index"
         case relationship = "Relationship"
-        
+
         var title: String {
             rawValue
         }

@@ -14,7 +14,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             $0.sorted(by: metadata)
         }
     }
-    
+
     func sorted<T>(
         by keyPath: KeyPath<Entity, T>) -> QueryList<Entity>
     where
@@ -23,10 +23,10 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             $0.sorted(by: keyPath)
         }
     }
-    
+
     func sorted<T0, T1>(by kp0: KeyPath<Entity, T0>,
                         _ kp1: KeyPath<Entity, T1>) -> QueryList<Entity>
-    
+
     where
     T0: Comparable & Sendable,
     T1: Comparable & Sendable {
@@ -34,7 +34,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             $0.sorted(by: kp0, kp1)
         }
     }
-    
+
     func sorted<T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
                             _ kp1: KeyPath<Entity, T1>,
                             _ kp2: KeyPath<Entity, T2>) -> QueryList<Entity>
@@ -46,12 +46,12 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             $0.sorted(by: kp0, kp1, kp2)
         }
     }
-    
+
     func sorted<T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
                                 _ kp1: KeyPath<Entity, T1>,
                                 _ kp2: KeyPath<Entity, T2>,
                                 _ kp3: KeyPath<Entity, T3>) -> QueryList<Entity>
-    
+
     where
     T0: Comparable & Sendable,
     T1: Comparable & Sendable,
@@ -63,7 +63,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 }
 
-//MARK: - Private Sorting
+// MARK: - Private Sorting
 
 private extension Collection {
     func sorted<Entity, T>(
@@ -74,7 +74,7 @@ private extension Collection {
         guard let context = first?.context else {
             return Array(self)
         }
-        
+
         guard let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(keyPath), in: context)
             .resolve()
@@ -86,22 +86,22 @@ private extension Collection {
                 }
                 .query(in: context)
         }
-        
+
         return sorted(using: index)
     }
-    
+
     func sorted<Entity, T0, T1>(by kp0: KeyPath<Entity, T0>,
                                 _ kp1: KeyPath<Entity, T1>) -> [Query<Entity>]
-    
+
     where
     Element == Query<Entity>,
     T0: Comparable & Sendable,
     T1: Comparable & Sendable {
-        
+
         guard let context = first?.context else {
             return Array(self)
         }
-        
+
         guard let index = SortIndex<Entity>.ComparableValue<Pair<T0, T1>>
             .query(.indexName(kp0, kp1), in: context)
             .resolve()
@@ -114,10 +114,10 @@ private extension Collection {
                 }
                 .query(in: context)
         }
-        
+
         return sorted(using: index)
     }
-    
+
     func sorted<Entity, T0, T1, T2>(by kp0: KeyPath<Entity, T0>,
                                     _ kp1: KeyPath<Entity, T1>,
                                     _ kp2: KeyPath<Entity, T2>) -> [Query<Entity>]
@@ -126,11 +126,11 @@ private extension Collection {
     T0: Comparable & Sendable,
     T1: Comparable & Sendable,
     T2: Comparable & Sendable {
-        
+
         guard let context = first?.context else {
             return Array(self)
         }
-        
+
         guard let index = SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>
             .query(.indexName(kp0, kp1, kp2), in: context)
             .resolve()
@@ -143,22 +143,22 @@ private extension Collection {
                 }
                 .query(in: context)
         }
-        
+
         return sorted(using: index)
     }
-    
+
     func sorted<Entity, T0, T1, T2, T3>(by kp0: KeyPath<Entity, T0>,
                                         _ kp1: KeyPath<Entity, T1>,
                                         _ kp2: KeyPath<Entity, T2>,
                                         _ kp3: KeyPath<Entity, T3>) -> [Query<Entity>]
-    
+
     where
     Element == Query<Entity>,
     T0: Comparable & Sendable,
     T1: Comparable & Sendable,
     T2: Comparable & Sendable,
     T3: Comparable & Sendable {
-        
+
         guard let context = first?.context else {
             return Array(self)
         }
@@ -174,27 +174,27 @@ private extension Collection {
                 }
                 .query(in: context)
         }
-        
+
         return sorted(using: index)
     }
-    
+
     func sorted<Entity>(by metadata: Metadata) -> [Query<Entity>]
     where
-    Element == Query<Entity>{
+    Element == Query<Entity> {
         guard let context = first?.context else {
             return Array(self)
         }
-        
+
         switch metadata {
         case .updatedAt:
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(metadata.indexName, in: context)
                 .resolve() {
-                
+
                 return sorted(using: index)
             }
         }
-        
+
         return Array(self)
     }
 }
@@ -202,11 +202,11 @@ private extension Collection {
 private extension Collection {
 
     func sorted<Entity, T>(using index: SortIndex<Entity>.ComparableValue<T>) -> [Query<Entity>]
-    
+
     where
     Element == Query<Entity>,
     T: Comparable & Sendable {
-        
+
         let queries = Dictionary(map { query in (query.id, query) }, uniquingKeysWith: { $1 })
         return index
             .sorted
@@ -217,10 +217,10 @@ private extension Collection {
 private extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     func sorted<T>(using index: SortIndex<Entity>.ComparableValue<T>) -> QueryList<Entity>
-    
+
     where
     T: Comparable & Sendable {
-        
+
         whenResolved {
             $0.sorted(using: index)
         }
