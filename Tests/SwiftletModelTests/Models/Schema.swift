@@ -10,40 +10,19 @@ import SwiftletModel
 
 @EntityModel
 struct Schema: Codable {
+    enum Version: String { case v1 }
     
     var id: String { "\(Schema.self)"}
     
     @Relationship
-    var versions: [SchemaVersions]? = .relation([
-        .v1(schema: V1())
-    ])
+    var v1: V1? = .relation(V1())
 }
 
 typealias User = Schema.V1.User
 typealias Chat = Schema.V1.Chat
 typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
-
-extension Schema {
-    enum Version: String {
-        case v1
-    }
-    
-    @EntityModel
-    enum SchemaVersions: Codable {
-        case v1(schema: V1)
-        
-        var id: String { version.rawValue }
-        
-        var version: Version {
-            switch self {
-            case .v1(let model):
-                return model.version
-            }
-        }
-    }
-}
-
+ 
 extension Schema {
     
     @EntityModel
@@ -67,21 +46,21 @@ extension Schema {
 extension Schema {
     static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaEntities(filter: .updated(within: range)), .ids,
+            with: .entities, .schemaEntities(filter: .updated(within: range)), .ids,
             in: context
         )
     }
     
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaEntities, .ids,
+            with: .entities, .schemaEntities, .ids,
             in: context
         )
     }
     
     static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
-            with: .schemaEntities, .schemaFragments, .ids,
+            with: .entities, .schemaFragments, .ids,
             in: context
         )
     }
