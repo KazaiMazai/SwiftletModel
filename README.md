@@ -1256,7 +1256,61 @@ try user.save(to: &context, options: .fragment)
 
 ``` 
 
-#### Advanced Merge Strategies
+
+#### Last Write Wins Merge Strategy
+
+The last write wins merge strategy compares timestamps to determine which entity is newer, then applies merge strategies accordingly:
+
+```swift
+@EntityModel
+struct User {
+    let id: String
+    var name: String?
+    var profile: Profile?
+    var lastModified: Date
+}
+
+extension User {
+    // New entity is considered to be the source of truth 
+    // and only missing properties are patched with the old ones.
+    static var lastWritePatch: MergeStrategy<Self> {
+        .lastWriteWins(User.patch, comparedBy: \.lastModified)
+    }
+
+    // New entity is considered to be the source of truth and replaces the old one.
+    static var lastWriteWins: MergeStrategy<Self> {
+        .lastWriteWins(.replace, comparedBy: \.lastModified)
+    }
+}
+
+// Usage example:
+let oldUser = User(id: "1", name: "Bob", profile: nil, lastModified: Date.distantPast)
+let newUser = User(id: "1", name: nil, profile: profile, lastModified: Date())
+
+try oldUser.save(to: &context, options: User.lastWritePatch)
+try newUser.save(to: &context, options: User.lastWritePatch)
+
+// Result: name="Bob" (preserved from old), profile=profile (from new)
+// since new.lastModified > old.lastModified
+
+
+```
+
+For entities that implement `Comparable`, the `.lastWriteWins` strategy can be used without explicitly specifying the comparison keyPath:
+
+```swift
+extension User: Comparable {
+    static func < (lhs: User, rhs: User) -> Bool {
+        lhs.lastModified < rhs.lastModified
+    }
+}
+
+static var lastWriteWins: MergeStrategy<Self> {
+    .lastWriteWins(User.patch)
+}
+```
+
+#### Customizing Merge Strategies
 
 
 Both default and fragment merge strategies can be overridden for any entity:

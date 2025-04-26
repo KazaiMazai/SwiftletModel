@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Serge Kazakov on 02/03/2024.
 //
@@ -9,7 +9,7 @@ import Foundation
 
 public struct MergeStrategy<T>: Sendable {
     let merge: @Sendable (_ old: T, _ new: T) -> T
-
+    
     public init(merge: @Sendable @escaping (T, T) -> T) {
         self.merge = merge
     }
@@ -29,10 +29,38 @@ public extension MergeStrategy {
             }
         }
     }
+    
+    static func lastWriteWins<V: Comparable>(
+        _ strategies: MergeStrategy<T>...,
+        comparedBy keyPath: @Sendable @escaping @autoclosure () -> KeyPath<T, V>
+    ) -> MergeStrategy<T> {
+        
+        lastWriteWins(strategies, comparedBy: keyPath())
+    }
+    
+    static func lastWriteWins(
+        _ strategies: MergeStrategy<T>...) -> MergeStrategy<T>
+    where T: Comparable {
+        
+        lastWriteWins(strategies, comparedBy: \.self)
+    }
+    
+    static func lastWriteWins<V: Comparable>(
+        _ strategies: [MergeStrategy<T>],
+        comparedBy keyPath: @Sendable @escaping @autoclosure () -> KeyPath<T, V>
+    ) -> MergeStrategy<T> {
+        
+        MergeStrategy { old, new in
+            old[keyPath: keyPath()] < new[keyPath: keyPath()]
+            ? strategies.reduce(new) { result, strategy in strategy.merge(old, result) }
+            : strategies.reduce(old) { result, strategy in strategy.merge(new, result) }
+            
+        }
+    }
 }
 
 public extension MergeStrategy {
-
+    
     static func patch<Entity, Value>(
         _ keyPath: @Sendable @escaping @autoclosure () -> WritableKeyPath<Entity, Value?>
     ) -> MergeStrategy<Entity> {
@@ -43,8 +71,8 @@ public extension MergeStrategy {
             return new
         }
     }
-
-    static func patch<Value>() -> MergeStrategy<Value?> {
+    
+    static func patch<Value>() -> MergeStrategy<Value?> where T == Value? {
         MergeStrategy<Value?> { old, new in
             new ?? old
         }
@@ -62,7 +90,7 @@ public extension MergeStrategy {
             return new
         }
     }
-
+    
     static func append<Entity, Value>(
         _ keyPath: @Sendable @escaping @autoclosure () -> WritableKeyPath<Entity, [Value]?>
     ) -> MergeStrategy<Entity> {
