@@ -65,6 +65,7 @@ public extension EntityModelProtocol {
         )
     }
 
+    // swiftlint:disable:next function_parameter_count
     func updateUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
