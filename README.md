@@ -1149,8 +1149,15 @@ struct User {
 }
 
 extension User {
-    static var lastWriteWins: MergeStrategy<Self> {
+    // New entity is considered to be the source of truth 
+    // and only missing properties are patched with the old ones.
+    static var lastWritePatch: MergeStrategy<Self> {
         .lastWriteWins(User.patch, comparedBy: \.lastModified)
+    }
+
+    // New entity is considered to be the source of truth and replaces the old one.
+    static var lastWriteWins: MergeStrategy<Self> {
+        .lastWriteWins(.replace, comparedBy: \.lastModified)
     }
 }
 
@@ -1158,11 +1165,13 @@ extension User {
 let oldUser = User(id: "1", name: "Bob", profile: nil, lastModified: Date.distantPast)
 let newUser = User(id: "1", name: nil, profile: profile, lastModified: Date())
 
-try oldUser.save(to: &context, options: User.lastWriteWins)
-try newUser.save(to: &context, options: User.lastWriteWins)
+try oldUser.save(to: &context, options: User.lastWritePatch)
+try newUser.save(to: &context, options: User.lastWritePatch)
 
 // Result: name="Bob" (preserved from old), profile=profile (from new)
 // since new.lastModified > old.lastModified
+
+
 ```
 
 For entities that implement `Comparable`, the `.lastWriteWins` strategy can be used without explicitly specifying the comparison keyPath:
