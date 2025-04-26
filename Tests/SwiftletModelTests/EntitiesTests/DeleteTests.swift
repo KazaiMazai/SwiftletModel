@@ -45,13 +45,13 @@ final class DeleteTests: XCTestCase {
 
         XCTAssertNotNil(deletedChat)
     }
-    
+
     func test_WhenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() {
         let softDeleteChat = Chat
             .query("1", in: context)
             .resolve()?
             .asDeleted(in: context)
-        
+
         try! softDeleteChat!.save(to: &context)
 
         let chat = Chat
@@ -60,16 +60,15 @@ final class DeleteTests: XCTestCase {
 
         XCTAssertNil(chat)
     }
-    
+
     func test_WhenSoftDeleteEntityIsRestored_EntityIsRestoredInContext() {
         try! Chat.delete(id: "1", from: &context)
- 
+
         try! Deleted<Chat>
             .query("1", in: context)
             .resolve()?
             .restore(in: &context)
 
-        
         let chat = Chat
             .query("1", in: context)
             .resolve()

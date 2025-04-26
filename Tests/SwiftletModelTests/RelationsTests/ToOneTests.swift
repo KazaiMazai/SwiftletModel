@@ -51,7 +51,7 @@ final class ToOneTests: XCTestCase {
             .query(Attachment.imageOne.id, in: context)
             .related(\.$message)
             .resolve()
-        
+
         XCTAssertNil(messageForAttachment)
     }
 
@@ -64,7 +64,7 @@ final class ToOneTests: XCTestCase {
             .query(in: context)
             .related(\.$attachment)
             .resolve()
-        
+
         XCTAssertNil(attachment)
     }
 }

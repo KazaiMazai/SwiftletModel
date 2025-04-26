@@ -22,7 +22,7 @@ public struct EntityModelMacro: ExtensionMacro {
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
-            
+
             return try ExtensionDeclSyntax.entityModelMacro(
                 of: node,
                 attachedTo: declaration,
@@ -32,7 +32,7 @@ public struct EntityModelMacro: ExtensionMacro {
             )
         }
 }
- 
+
 extension SwiftSyntax.ExtensionDeclSyntax {
     static func entityModelMacro(
         of node: SwiftSyntax.AttributeSyntax,
@@ -40,29 +40,29 @@ extension SwiftSyntax.ExtensionDeclSyntax {
         providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
         conformingTo protocols: [SwiftSyntax.TypeSyntax],
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
-            
+
             let accessAttribute = declaration.accessAttribute()
-            
+
             let variableDeclarations = declaration
                 .memberBlock
                 .members
                 .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-            
+
             let relationshipAttributes = variableDeclarations
                 .compactMap { $0.relationshipAttributes() }
-            
+
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
-            
+
             let fullTextIndexAttributes = variableDeclarations
                 .compactMap { $0.fullTextIndexAttributes() }
-            
+
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
-            
+
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
-            
+
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
@@ -87,12 +87,12 @@ extension ExtensionDeclSyntax {
                                     uniqueAttributes: [UniqueAttributes],
                                     fullTextIndexAttributes: [FullTextIndexAttributes],
                                     accessAttribute: AccessAttribute
-                                            
+
     ) throws -> ExtensionDeclSyntax {
         let protocolsString = protocols.map { "\($0)" }
             .joined(separator: ",")
             .trimmingCharacters(in: .whitespaces)
-        
+
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
@@ -113,9 +113,9 @@ extension FunctionDeclSyntax {
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes],
-        _ fullTextIndexAttributes:  [FullTextIndexAttributes]
+        _ fullTextIndexAttributes: [FullTextIndexAttributes]
     ) throws -> FunctionDeclSyntax {
-        
+
         try FunctionDeclSyntax(
         """
         \(raw: accessAttributes.name) func save(to context: inout Context, options: MergeStrategy<Self> = .default) throws {
@@ -140,7 +140,7 @@ extension FunctionDeclSyntax {
                 .map { "try copy.save(\($0.keyPathAttributes.attribute), to: &context)" }
                 .joined(separator: "\n")
             )
-        
+
             try Deleted<Self>.delete(id: id, from: &context)
             try copy.saveMetadata(to: &context)
             try copy.didSave(to: &context)
@@ -148,17 +148,17 @@ extension FunctionDeclSyntax {
         """
         )
     }
-    
+
     static func delete(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
-        
+
         try FunctionDeclSyntax(
         """
-        
+
         \(raw: accessAttributes.name) func delete(from context: inout Context) throws {
             let copy = asDeleted(in: context)
             try willDelete(from: &context)
@@ -191,15 +191,15 @@ extension FunctionDeclSyntax {
         """
         )
     }
-    
+
     static func normalize(
         _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
-        
+
         try FunctionDeclSyntax(
         """
-          
+
         \(raw: accessAttributes.name) mutating func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }
@@ -209,12 +209,12 @@ extension FunctionDeclSyntax {
         """
         )
     }
-    
+
     static func nestedQueryModifier(
         _ accessAttributes: AccessAttribute,
         _ attributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
-        
+
         guard !attributes.isEmpty else {
             return try FunctionDeclSyntax(
             """
@@ -224,15 +224,15 @@ extension FunctionDeclSyntax {
             """
             )
         }
-        
+
         return try FunctionDeclSyntax(
         """
-            
+
         \(raw: accessAttributes.name) static func nestedQueryModifier(_ query: ContextQuery<Self, Optional<Self>, Self.ID>, in context: Context, nested: [Nested]) -> ContextQuery<Self, Optional<Self>, Self.ID> {
             guard let relation = nested.first else {
                 return query
             }
-            
+
             let next = Array(nested.dropFirst())
             return switch relation {
             case .ids:
@@ -256,7 +256,7 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0)) { $0.with(next) }"}
                     .joined(separator: "\n")
                 )
-                    
+
             case let .fragments(.some(predicate), false):
                 query
                 \(raw: attributes
@@ -271,7 +271,7 @@ extension FunctionDeclSyntax {
                     .map { ".with(slice: \($0)) { $0.filter(predicate).with(next) }"}
                     .joined(separator: "\n")
                 )
-        
+
             case .fragments(.none, true):
                 query
                 \(raw: attributes
@@ -286,7 +286,7 @@ extension FunctionDeclSyntax {
                     .map { ".with(\($0)) { _ in .schemaQuery(in: context).with(next) }"}
                     .joined(separator: "\n")
                 )
-                    
+
             case let .fragments(.some(predicate), true):
                 query
                 \(raw: attributes
@@ -309,15 +309,15 @@ extension FunctionDeclSyntax {
 }
 
 extension VariableDeclSyntax {
-    
+
     static func patch(
         _ accessAttributes: AccessAttribute,
         _ attributes: [PropertyAttributes]
     ) throws -> VariableDeclSyntax {
-        
+
         try VariableDeclSyntax(
         """
-        
+
         \(raw: accessAttributes.name) static var patch: MergeStrategy<Self> {
             MergeStrategy(
                 \(raw: attributes
@@ -341,7 +341,6 @@ private extension DeclGroupSyntax {
 }
 
 private extension VariableDeclSyntax {
-    
 
     func relationshipAttributes() -> RelationshipAttributes? {
         for attribute in self.attributes {
@@ -358,21 +357,21 @@ private extension VariableDeclSyntax {
             else {
                 return nil
             }
-            
+
             guard let keyPathsExprList = customAttribute
                 .arguments?
                 .as(LabeledExprListSyntax.self) else {
-                
+
                 return RelationshipAttributes(
                     propertyWrapperType: wrapperType,
                     propertyName: property,
                     keyPathAttributes: RelationshipAttributes.KeyPathAttributes(
                         propertyIdentifier: property
-                    ), 
+                    ),
                     deleteRule: .nullify
                 )
             }
-            
+
             return RelationshipAttributes(
                 propertyWrapperType: wrapperType,
                 propertyName: property,
@@ -385,7 +384,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-    
+
     func optionalPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 
@@ -416,7 +415,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-    
+
     func indexAttributes() -> IndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
@@ -427,20 +426,20 @@ private extension VariableDeclSyntax {
             else {
                 continue
             }
-           
+
             guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
             else {
                 return nil
             }
-            
+
             guard let keyPathsExprList = customAttribute
                 .arguments?
                 .as(LabeledExprListSyntax.self) else {
-                
+
                 return nil
             }
-            
+
             return IndexAttributes(
                 relationWrapperType: wrapperType,
                 propertyName: property,
@@ -452,7 +451,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-    
+
     func uniqueAttributes() -> UniqueAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
@@ -469,11 +468,11 @@ private extension VariableDeclSyntax {
             else {
                 return nil
             }
-            
+
             guard let keyPathsExprList = customAttribute
                 .arguments?
                 .as(LabeledExprListSyntax.self) else {
-                
+
                    return UniqueAttributes(
                         propertyWrapper: wrapperType,
                         propertyName: property,
@@ -483,7 +482,7 @@ private extension VariableDeclSyntax {
                         collisions: .upsert
                     )
             }
-            
+
             return UniqueAttributes(
                 propertyWrapper: wrapperType,
                 propertyName: property,
@@ -496,7 +495,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-    
+
     func fullTextIndexAttributes() -> FullTextIndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
@@ -507,20 +506,20 @@ private extension VariableDeclSyntax {
             else {
                 continue
             }
-           
+
             guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
                   let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
             else {
                 return nil
             }
-            
+
             guard let keyPathsExprList = customAttribute
                 .arguments?
                 .as(LabeledExprListSyntax.self) else {
-                
+
                 return nil
             }
-            
+
             return FullTextIndexAttributes(
                 propertyWrapper: wrapperType,
                 propertyName: property,
@@ -532,7 +531,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-    
+
     func staticPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 

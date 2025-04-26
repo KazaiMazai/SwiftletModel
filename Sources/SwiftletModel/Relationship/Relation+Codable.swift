@@ -170,7 +170,7 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
 // MARK: - Codable Flattaned
 
 extension Relation.ID: Codable where Entity.ID: Codable {
-    
+
 }
 
 extension Relation where Entity: Codable, Entity.ID: Codable {

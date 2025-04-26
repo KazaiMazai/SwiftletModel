@@ -8,11 +8,11 @@
 import Collections
 import Foundation
 
-public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> QueryList<Entity>
-    
+
     where
     T: Comparable {
 
@@ -24,7 +24,7 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> QueryList<Entity>
-    
+
     where
     T: Comparable & Hashable {
 
@@ -32,11 +32,11 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
             Query.filter(predicate, in: context)
         }
     }
-    
+
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> QueryList<Entity>
-    
+
     where
     T: Hashable {
 
@@ -44,11 +44,11 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
             Query.filter(predicate, in: context)
         }
     }
-    
+
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> QueryList<Entity>
-    
+
     where
     T: Equatable {
 
@@ -58,24 +58,24 @@ public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID
     }
 }
 
-public extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> QueryList<Entity> {
-        
+
         QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
 }
 
-//MARK: - Metadata Predicate Filter
+// MARK: - Metadata Predicate Filter
 
 public extension ContextQuery {
     func filter(
         _ predicate: MetadataPredicate) -> Query<Entity>
     where
-    Result == Optional<Entity>,
+    Result == Entity?,
     Key == Entity.ID {
 
         whenResolved { entity in
@@ -84,36 +84,35 @@ public extension ContextQuery {
                 if let index = SortIndex<Entity>.ComparableValue<Date>
                     .query(predicate.indexName, in: context)
                     .resolve() {
-                     
+
                     return index.contains(id: entity.id, in: range) ? entity : nil
                 }
             }
-            
+
             return nil
         }
     }
-    
+
     static func filter(
         _ predicate: MetadataPredicate,
         in context: Context) -> QueryList<Entity>
     where
-    Result == Optional<Entity>,
+    Result == Entity?,
     Key == Entity.ID {
-        
+
         QueryList(context: context) {
             Query.filter(predicate, in: context)
         }
     }
 }
 
+// MARK: - Private Query Predicate Filter
 
-//MARK: - Private Query Predicate Filter
-
-private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+private extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-    
+
     where
     T: Comparable {
 
@@ -125,7 +124,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .filter(predicate)
             .map { Query<Entity>(context: context, id: $0) }
         }
-        
+
         return Entity
             .query(in: context)
             .resolve()
@@ -136,7 +135,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-    
+
     where
     T: Comparable & Hashable {
 
@@ -157,18 +156,18 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
                 .filter(predicate)
                 .map { Query<Entity>(context: context, id: $0) }
         }
-        
+
         return Entity
             .query(in: context)
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
+
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-    
+
     where
     T: Hashable {
 
@@ -180,18 +179,18 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
                 .find(predicate.value)
                 .map { Query<Entity>(context: context, id: $0) }
         }
-        
+
         return Entity
             .query(in: context)
             .resolve()
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
+
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-    
+
     where
     T: Equatable {
 
@@ -201,7 +200,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .filter(predicate.isIncluded)
             .query(in: context)
     }
-    
+
     static func filter(
         _ predicate: MetadataPredicate,
         in context: Context) -> [Query<Entity>] {
@@ -211,30 +210,30 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(predicate.indexName, in: context)
                 .resolve() {
-                
+
                 return index
                     .filter(range: range)
                     .map { Query<Entity>(context: context, id: $0) }
             }
         }
-        
+
         return []
     }
 
 }
 
-//MARK: - Private Query StringPredicate Filter
+// MARK: - Private Query StringPredicate Filter
 
-private extension ContextQuery where Result == Optional<Entity>, Key == Entity.ID {
+private extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter(
         _ predicate: StringPredicate<Entity>,
         in context: Context) -> [Query<Entity>] {
-        
+
         if predicate.method.isMatching, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
-            
+
             return index
                 .search(predicate.value)
                 .map { Query<Entity>(context: context, id: $0) }
@@ -244,7 +243,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
             .resolve() {
-            
+
             return index
                 .search(predicate.value)
                 .map { Query<Entity>(context: context, id: $0) }
@@ -252,7 +251,7 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
                 .filter(predicate.isIncluded)
                 .query(in: context)
         }
-        
+
         return Entity
             .query(in: context)
             .resolve()
@@ -260,5 +259,3 @@ private extension ContextQuery where Result == Optional<Entity>, Key == Entity.I
             .query(in: context)
     }
 }
- 
-

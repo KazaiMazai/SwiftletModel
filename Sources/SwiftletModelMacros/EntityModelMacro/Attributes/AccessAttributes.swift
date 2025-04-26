@@ -14,7 +14,7 @@ enum AccessAttribute: String {
     case `public`
     case `open`
     case missingAttribute = ""
-    
+
     var name: String {
         rawValue
     }

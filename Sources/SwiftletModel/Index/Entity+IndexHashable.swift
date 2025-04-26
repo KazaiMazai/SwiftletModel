@@ -13,7 +13,7 @@ public extension EntityModelProtocol {
         in context: inout Context) throws
     where
     T: Hashable & Sendable {
-        
+
         try Index.HashableValue.updateIndex(
             indexName: .indexName(keyPath),
             self,
@@ -21,7 +21,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -36,7 +36,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -53,7 +53,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -82,7 +82,7 @@ public extension EntityModelProtocol {
     T: Hashable & Sendable {
         try Index.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -92,7 +92,7 @@ public extension EntityModelProtocol {
     T1: Hashable & Sendable {
         try Index.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -104,7 +104,7 @@ public extension EntityModelProtocol {
     T2: Hashable & Sendable {
         try Index.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,

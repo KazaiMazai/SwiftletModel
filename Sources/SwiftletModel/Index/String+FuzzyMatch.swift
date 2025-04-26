@@ -12,7 +12,7 @@ extension String {
         let patternTokens = Set(pattern.makeTokens())
         return patternTokens.first { token in self.contains(token) } != nil
     }
-    
+
     func matches(tokens: [String]) -> Bool {
         tokens.first { token in self.contains(token) } != nil
     }

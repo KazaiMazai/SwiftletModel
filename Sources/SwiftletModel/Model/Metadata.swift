@@ -7,7 +7,7 @@
 
 public enum Metadata: String {
     case updatedAt
-    
+
     var indexName: String {
         "\(Metadata.self).\(rawValue)"
     }

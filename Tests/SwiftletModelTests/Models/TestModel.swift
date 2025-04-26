@@ -9,20 +9,20 @@ import SwiftletModel
 import Foundation
 
 enum TestingModels {
-    
+
 }
 
 extension TestingModels {
     @EntityModel
     struct SingleValueIndexed {
         @Index<Self>(\.numOf1) private static var valueIndex
-        
+
         let id: String
         let numOf1: Int
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
-        
+
         init(id: String, value: Int) {
             self.id = id
             self.numOf1 = value % 10
@@ -31,30 +31,29 @@ extension TestingModels {
             self.numOf1000 = value / 1000
         }
     }
-    
+
     @EntityModel
     struct ExtensivelyIndexed {
         @Index<Self>(\.numOf1) private static var numOf1Index
         @Index<Self>(\.numOf10) private static var numOf10Index
         @Index<Self>(\.numOf100) private static var numOf100Index
         @Index<Self>(\.numOf1000) private static var numOf1000Index
-        
+
         @Index<Self>(\.numOf10, \.numOf1) private static var valueIndex2
         @Index<Self>(\.numOf10.desc, \.numOf1) private static var valueIndexDesc2
-        
+
         @Index<Self>(\.numOf100, \.numOf10, \.numOf1) private static var valueIndex3
         @Index<Self>(\.numOf100, \.numOf10.desc, \.numOf1) private static var valueIndexDesc3
-        
+
         @Index<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1) private static var valueIndex4
         @Index<Self>(\.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1) private static var valueIndexDesc4
-       
-        
+
         let id: String
         let numOf1: Int
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
-        
+
         init(id: String, value: Int) {
             self.id = id
             self.numOf1 = value % 10
@@ -63,17 +62,17 @@ extension TestingModels {
             self.numOf1000 = value / 1000
         }
     }
-    
+
     @EntityModel
     struct EvaluatedPropertyDescIndexed {
         @Index<Self>(\.numOf1.desc) private static var valueIndexDesc
-        
+
         let id: String
         let numOf1: Int
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
-        
+
         init(id: String, value: Int) {
             self.id = id
             self.numOf1 = value % 10
@@ -82,7 +81,7 @@ extension TestingModels {
             self.numOf10 = value / 10
         }
     }
-    
+
     @EntityModel
     struct NotIndexed {
         let id: String
@@ -90,7 +89,7 @@ extension TestingModels {
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
-        
+
         init(id: String, value: Int) {
             self.id = id
             self.numOf1 = value % 10
@@ -99,28 +98,28 @@ extension TestingModels {
             self.numOf10 = value / 10
         }
     }
-    
+
     @EntityModel
     struct UniquelyIndexed {
         @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
         @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
-        
+
         let id: String
         let numOf1: Int
         let numOf10: Int
         let numOf100: Int
         let numOf1000: Int
     }
-    
+
     @EntityModel
     struct UniquelyIndexedComparable {
         @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
         @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
-        
+
         let id: String
         let numOf1: ComparableBox<Int>
         let numOf10: ComparableBox<Int>
@@ -150,31 +149,21 @@ extension TestingModels {
 
         static func < (lhs: Self, rhs: Self) -> Bool {
             lhs.value < rhs.value
-        } 
+        }
     }
-    
+
     @EntityModel
     struct StringFullTextIndexed {
         @FullTextIndex<Self>(\.text) private static var valueIndex
-        
+
         let id: String
         let text: String
-        
-        init(id: String, text: String) {
-            self.id = id
-            self.text = text
-        }
     }
-    
+
     @EntityModel
     struct StringNotIndexed {
         let id: String
         let text: String
-        
-        init(id: String, text: String) {
-            self.id = id
-            self.text = text
-        }
     }
 }
 
@@ -201,7 +190,6 @@ extension TestingModels.EvaluatedPropertyDescIndexed {
             .shuffled()
     }
 }
-
 
 extension TestingModels.ExtensivelyIndexed {
     static func shuffled(_ count: Int) -> [TestingModels.ExtensivelyIndexed] {
@@ -323,13 +311,13 @@ fileprivate extension Array where Element == String {
             "Fresh soncoya juice",
             "Wild tallow plum"
         ]
-        
+
         let locations = ["garden", "market", "farm", "orchard", "grove", "plantation", "forest", "valley", "hills", "coast"]
         let preparations = ["juice", "smoothie", "jam", "preserve", "sauce", "syrup", "dessert", "salad", "pie", "compote"]
         let descriptors = ["organic", "wild", "fresh", "sweet", "ripe", "local", "exotic", "tropical", "seasonal", "handpicked"]
-        
+
         var expandedTexts = baseTexts
-        
+
         for text in baseTexts {
             if let fruit = text.split(separator: " ").last {
                 for location in locations {
@@ -343,10 +331,7 @@ fileprivate extension Array where Element == String {
                 }
             }
         }
-        
+
         return expandedTexts.shuffled()
     }
 }
-
-
-

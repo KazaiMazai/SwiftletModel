@@ -48,7 +48,7 @@ public extension Relationship where Directionality == Relations.Mutual,
 public extension Relationship where Directionality == Relations.Mutual,
                                     Cardinality == Relations.ToOne<Entity> {
 
-    init<EnclosingType>(_ constraint: Constraint<Constraints>, 
+    init<EnclosingType>(_ constraint: Constraint<Constraints>,
                         deleteRule: Relations.DeleteRule = .nullify,
                         inverse: KeyPath<Entity, EnclosingType?>) {
         self.init(relation: .none)
@@ -115,4 +115,3 @@ extension Relationship: Codable where Value: Codable, Entity: Codable, Entity.ID
 // MARK: - Sendable
 
 extension Relationship: Sendable where Entity: Sendable, Entity.ID: Sendable { }
-

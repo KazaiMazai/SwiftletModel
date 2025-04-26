@@ -12,10 +12,10 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, T>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
+
     where
     T: Hashable & Sendable {
-        
+
         try Unique.HashableValue.updateIndex(
             indexName: .indexName(keyPath),
             self,
@@ -24,17 +24,17 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
     func updateUniqueIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable {
-        
+
         try Unique.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1),
             self,
@@ -43,19 +43,19 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
     func updateUniqueIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable,
     T2: Hashable & Sendable {
-        
+
         try Unique.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2),
             self,
@@ -64,7 +64,7 @@ public extension EntityModelProtocol {
             resolveCollisions: resolver
         )
     }
-    
+
     func updateUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -72,13 +72,13 @@ public extension EntityModelProtocol {
         _ kp3: KeyPath<Self, T3>,
         collisions resolver: CollisionResolver<Self>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable,
     T2: Hashable & Sendable,
     T3: Hashable & Sendable {
-        
+
         try Unique.HashableValue.updateIndex(
             indexName: .indexName(kp0, kp1, kp2, kp3),
             self,
@@ -89,57 +89,56 @@ public extension EntityModelProtocol {
     }
 }
 
-
 public extension EntityModelProtocol {
     func removeFromUniqueIndex<T>(
         _ keyPath: KeyPath<Self, T>,
         in context: inout Context) throws
-    
+
     where
     T: Hashable & Sendable {
-        
+
         try Unique.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable {
-        
+
         try Unique.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable,
     T2: Hashable & Sendable {
-        
+
         try Unique.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
-    
+
     func removeFromUniqueIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
         _ kp2: KeyPath<Self, T2>,
         _ kp3: KeyPath<Self, T3>,
         in context: inout Context) throws
-    
+
     where
     T0: Hashable & Sendable,
     T1: Hashable & Sendable,
     T2: Hashable & Sendable,
     T3: Hashable & Sendable {
-        
+
         try Unique.HashableValue<Quadruple<T0, T1, T2, T3>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2, kp3), self, in: &context)
     }
 }

@@ -11,7 +11,7 @@ import SwiftletModel
 @EntityModel
 struct Schema: Codable {
     var id: String { "\(Schema.self)"}
-    
+
     @Relationship
     var v1: Schema.V1? = .relation(V1())
 }
@@ -22,18 +22,18 @@ typealias Message = Schema.V1.Message
 typealias Attachment = Schema.V1.Attachment
 
 extension Schema {
-    
+
     @EntityModel
     struct V1: Codable {
         static let version = "\(V1.self)"
-        
+
         var id: String { Self.version }
-        
+
         @Relationship var attachments: [Attachment]? = .none
         @Relationship var chats: [Chat]? = .none
         @Relationship var messages: [Message]? = .none
         @Relationship var users: [User]? = .none
-        
+
         @Relationship var deletedAttachments: [Deleted<Attachment>]? = .none
         @Relationship var deletedChats: [Deleted<Chat>]? = .none
         @Relationship var deletedMessages: [Deleted<Message>]? = .none
@@ -48,14 +48,14 @@ extension Schema {
             in: context
         )
     }
-    
+
     static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
             with: .entities, .schemaEntities, .ids,
             in: context
         )
     }
-    
+
     static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
         Schema.queryAll(
             with: .entities, .schemaFragments, .ids,
@@ -63,4 +63,3 @@ extension Schema {
         )
     }
 }
-

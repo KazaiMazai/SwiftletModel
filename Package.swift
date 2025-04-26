@@ -37,7 +37,7 @@ let package = Package(
         ),
         .target(
             name: "SwiftletModel",
-          
+
             dependencies: [
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections"),
@@ -50,7 +50,7 @@ let package = Package(
             dependencies: [
                 "SwiftletModel",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                .product(name: "SnapshotTestingCustomDump", package: "swift-snapshot-testing"),
+                .product(name: "SnapshotTestingCustomDump", package: "swift-snapshot-testing")
             ]
         )
     ]

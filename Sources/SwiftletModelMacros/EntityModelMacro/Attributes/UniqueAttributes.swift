@@ -26,30 +26,30 @@ extension UniqueAttributes {
    enum KeyPathAttributes {
         case labeledExpressionList(String)
         case propertyIdentifier(String)
-        
+
         init(propertyIdentifier: String,
              labeledExprListSyntax: LabeledExprListSyntax) {
-            
+
             let keyPathAttributes = labeledExprListSyntax
                 .filter(\.isKeyPath)
                 .map { $0.expressionString }
-            
+
             guard !keyPathAttributes.isEmpty else {
                 self = .init(propertyIdentifier: propertyIdentifier)
                 return
             }
-            
+
             let attributes = [keyPathAttributes]
                 .flatMap { $0 }
                 .joined(separator: ",")
-            
+
             self = .labeledExpressionList(attributes)
         }
-        
+
         init(propertyIdentifier: String) {
             self = .propertyIdentifier("\\.$\(propertyIdentifier)")
         }
-        
+
         var attribute: String {
             switch self {
             case .labeledExpressionList(let value), .propertyIdentifier(let value):
@@ -57,23 +57,23 @@ extension UniqueAttributes {
             }
         }
     }
-    
+
     struct CollisionsResolverAttributes {
         static let collisions = "collisions"
-        
-        let attributes : String
+
+        let attributes: String
         static let upsert: CollisionsResolverAttributes = {
             CollisionsResolverAttributes(attributes: ".upsert")
         }()
-        
+
         init(attributes: String) {
             self.attributes = attributes
         }
-        
+
         init?(_ expressionString: String) {
             attributes = expressionString
         }
-        
+
         init(labeledExprListSyntax: LabeledExprListSyntax) {
             self = labeledExprListSyntax
                 .filter { $0.labelString?.contains(CollisionsResolverAttributes.collisions) ?? false }

@@ -13,14 +13,14 @@ public extension EntityModelProtocol {
         in context: inout Context) throws
     where
     T: Comparable & Hashable & Sendable {
-        
+
         try Index.ComparableValue.updateIndex(
             indexName: .indexName(keyPath),
             self,
             value: self[keyPath: keyPath],
             in: &context
         )
-        
+
         try Index.HashableValue.updateIndex(
             indexName: .indexName(keyPath),
             self,
@@ -28,7 +28,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -50,7 +50,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -74,7 +74,7 @@ public extension EntityModelProtocol {
             in: &context
         )
     }
-    
+
     func updateIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -111,7 +111,7 @@ public extension EntityModelProtocol {
         try Index.ComparableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
         try Index.HashableValue<T>.removeFromIndex(indexName: .indexName(keyPath), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -122,7 +122,7 @@ public extension EntityModelProtocol {
         try Index.ComparableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
         try Index.HashableValue<Pair<T0, T1>>.removeFromIndex(indexName: .indexName(kp0, kp1), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1, T2>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
@@ -135,7 +135,7 @@ public extension EntityModelProtocol {
         try Index.ComparableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
         try Index.HashableValue<Triplet<T0, T1, T2>>.removeFromIndex(indexName: .indexName(kp0, kp1, kp2), self, in: &context)
     }
-    
+
     func removeFromIndex<T0, T1, T2, T3>(
         _ kp0: KeyPath<Self, T0>,
         _ kp1: KeyPath<Self, T1>,
