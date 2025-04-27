@@ -141,28 +141,26 @@ That’s it. You now have a type-safe, bidirectionally-linked, normalized in-mem
 
 ## 🧠 Ideas Behind SwiftletModel
 
-### Functional Core, Imperative Shell
+**SwiftletModel intentionally does not bundle persistence, observation, or reactive capabilities.**
 
-SwiftletModel’s `Context` is a **pure, synchronous** in-memory graph — no side effects, no async.  
-Persistence, networking, and I/O are handled externally in your app’s shell, never inside the model.
+Adding any form of persistence under the model’s core would inevitably influence its design and expose implementation details, introducing unwanted side effects — something I deliberately avoided.
 
+Instead, the SwiftletModel core is crafted as a pure, synchronous in-memory graph with no side effects or asynchronous behavior.
 
-### Persistence-Free by Design
-
-SwiftletModel **does not** bundle storage.  
-Entities are plain `Codable` structs — save, sync, or persist however you want.
-
-### No Infrastructure Leak
-
-SwiftletModel **keeps your business models clean**.  
-Service layer concerns (databases, APIs, networking) **never leak** into your domain model.
-
-### Predictable and Composable
-
-Queries are instant, state is deterministic, and testing is effortless.  
-You can freely compose SwiftletModel with any backend, cache, or sync layer.
-
- 
+- **Context** is simply a plain dictionary — with a superpower.
+- **Queries** are instant.
+- **Models** are plain `structs`, `Codable` if necessary.
+- **State** is deterministic.
+- **Testing** is effortless.
+    
+This minimalistic design makes SwiftletModel an ideal foundational block, allowing developers to integrate it seamlessly with anything:
+- Combine
+- ObservableObjects or Observation
+- SwiftUI plain states 
+- Even complex architectures like TCA (The Composable Architecture)
+    
+Entities are plain `Codable` structs, easily composable with any backend, caching layer, sync mechanism, or persistent storage.
+This approach is a clear embodiment of **Functional Core, Imperative Shell**.
 
 ## Table of Contents
 
