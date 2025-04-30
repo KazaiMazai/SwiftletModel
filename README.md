@@ -107,10 +107,14 @@ let message = Message(id: "1", text: "Hello", author: .id("1"), chat: .id("1"))
 ### 5. Query & Resolve
 
 ```swift
-let chat = Chat
-    .query("1", in: context)
+let chats = Chat
+    .query(in: context)
+    .filter(\.hasNewMessages == true)
+    .sorted(by: \.updatedAt.desc)
     .with(\.$users)
-    .with(\.$messages)
+    .with(\.$messages) {
+        $0.with(\.$author)
+    }
     .resolve()
 ```
 This pulls the chat and its users and messages from the context with proper denormalization.
