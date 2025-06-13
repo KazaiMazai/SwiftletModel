@@ -177,7 +177,7 @@ extension FunctionDeclSyntax {
                 .map {
                     switch $0.deleteRule {
                     case .nullify:
-                        "detach(\($0.keyPathAttributes.attribute), in: &context)"
+                        "try detach(\($0.keyPathAttributes.attribute), in: &context)"
                     case .cascade:
                         "try delete(\($0.keyPathAttributes.attribute), from: &context)"
                     }

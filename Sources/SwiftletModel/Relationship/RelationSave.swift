@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OrderedCollections
 
 // MARK: - Save Relations and Attached Entities
 
@@ -15,7 +16,7 @@ public extension EntityModelProtocol {
         to context: inout Context) throws {
 
         try saveEntities(at: keyPath, in: &context)
-        saveRelation(at: keyPath, in: &context)
+        try saveRelation(at: keyPath, in: &context)
     }
 }
 
@@ -27,7 +28,7 @@ public extension EntityModelProtocol {
         to context: inout Context) throws {
 
         try saveEntities(at: keyPath, in: &context)
-        saveRelation(at: keyPath, inverse: inverse, in: &context)
+        try saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
 
     func save<Child, Constaint, InverseConstraint>(
@@ -36,7 +37,7 @@ public extension EntityModelProtocol {
         to context: inout Context) throws {
 
         try saveEntities(at: keyPath, in: &context)
-        saveRelation(at: keyPath, inverse: inverse, in: &context)
+        try saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
 
     func save<Child, Constaint, InverseConstraint>(
@@ -45,7 +46,7 @@ public extension EntityModelProtocol {
         to context: inout Context) throws {
 
         try saveEntities(at: keyPath, in: &context)
-        saveRelation(at: keyPath, inverse: inverse, in: &context)
+        try saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
 
     func save<Child, Constaint, InverseConstraint>(
@@ -54,7 +55,7 @@ public extension EntityModelProtocol {
         to context: inout Context) throws {
 
         try saveEntities(at: keyPath, in: &context)
-        saveRelation(at: keyPath, inverse: inverse, in: &context)
+        try saveRelation(at: keyPath, inverse: inverse, in: &context)
     }
 }
 
@@ -62,32 +63,63 @@ public extension EntityModelProtocol {
 
 private extension EntityModelProtocol {
 
+//    func saveRelation<Child, Cardinality, Constraint>(
+//        at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
+//        in context: inout Context) {
+//
+//        context.updateLinks(link(relationIds(keyPath), keyPath))
+//    }
+//
+//    func saveRelation<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+//        at keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
+//        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
+//        in context: inout Context) {
+//
+//        let children = relationIds(keyPath)
+//        switch relation(keyPath).directLinkUpdateOption {
+//        case .append:
+//            context.updateLinks(link(children, keyPath, inverse: inverse))
+//        case .replace, .remove:
+//            let enititesToKeep = Set(children)
+//            let oddExisingChildren = context
+//                .getChildren(for: Self.self, relationName: keyPath.name, id: id)
+//                .compactMap { Child.ID($0) }
+//                .filter { !enititesToKeep.contains($0) }
+//
+//            context.updateLinks(unlink(oddExisingChildren, keyPath, inverse: inverse))
+//            context.updateLinks(link(children, keyPath, inverse: inverse))
+//        }
+//    }
+}
+
+private extension EntityModelProtocol {
+
     func saveRelation<Child, Cardinality, Constraint>(
         at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
-        in context: inout Context) {
+        in context: inout Context) throws {
 
-        context.updateLinks(link(relationIds(keyPath), keyPath))
+            try StoredRelations<Self, Child>.updateLink(
+                parentID: id,
+                children: relationIds(keyPath),
+                option: relation(keyPath).directLinkUpdateOption,
+                keyPath: keyPath,
+                in: &context
+            )
     }
 
     func saveRelation<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
         at keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
-        in context: inout Context) {
+        in context: inout Context) throws {
 
-        let children = relationIds(keyPath)
-        switch relation(keyPath).directLinkUpdateOption {
-        case .append:
-            context.updateLinks(link(children, keyPath, inverse: inverse))
-        case .replace, .remove:
-            let enititesToKeep = Set(children)
-            let oddExisingChildren = context
-                .getChildren(for: Self.self, relationName: keyPath.name, id: id)
-                .compactMap { Child.ID($0) }
-                .filter { !enititesToKeep.contains($0) }
-
-            context.updateLinks(unlink(oddExisingChildren, keyPath, inverse: inverse))
-            context.updateLinks(link(children, keyPath, inverse: inverse))
-        }
+        try StoredRelations<Self, Child>.updateLink(
+            parentId: id,
+            children: relationIds(keyPath),
+            option: relation(keyPath).directLinkUpdateOption,
+            keyPath: keyPath,
+            inverse: inverse,
+            in: &context
+        )
     }
 }
 
@@ -99,53 +131,53 @@ private extension EntityModelProtocol {
         try relation(keyPath).save(&context)
     }
 }
-
-private extension EntityModelProtocol {
-    func link<Child, Cardinality, Constraint>(
-        _ children: [Child.ID],
-        _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
-
-    ) -> Links<Self, Child> {
-
-        Links(
-            direct: [Link(
-                parent: id,
-                children: children,
-                attribute: LinkAttribute(
-                    name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkUpdateOption
-                )
-            )],
-            inverse: []
-        )
-    }
-
-    func link<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
-        _ children: [Child.ID],
-        _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
-        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
-
-    ) -> Links<Self, Child> {
-
-        Links(
-            direct: [Link(
-                parent: id,
-                children: children,
-                attribute: LinkAttribute(
-                    name: keyPath.name,
-                    updateOption: relation(keyPath).directLinkUpdateOption
-                )
-            )],
-            inverse: children.map { child in
-                Link(
-                    parent: child,
-                    children: [id],
-                    attribute: LinkAttribute(
-                        name: inverse.name,
-                        updateOption: MutualRelation<Self, InverseRelation, InverseConstraint>.inverseLinkUpdateOption
-                    )
-                )
-            }
-        )
-    }
-}
+//
+//private extension EntityModelProtocol {
+//    func link<Child, Cardinality, Constraint>(
+//        _ children: [Child.ID],
+//        _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>
+//
+//    ) -> Links<Self, Child> {
+//
+//        Links(
+//            direct: [Link(
+//                parent: id,
+//                children: children,
+//                attribute: LinkAttribute(
+//                    name: keyPath.name,
+//                    updateOption: relation(keyPath).directLinkUpdateOption
+//                )
+//            )],
+//            inverse: []
+//        )
+//    }
+//
+//    func link<Child, Cardinality, Constraint, InverseRelation, InverseConstraint>(
+//        _ children: [Child.ID],
+//        _ keyPath: KeyPath<Self, MutualRelation<Child, Cardinality, Constraint>>,
+//        inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>
+//
+//    ) -> Links<Self, Child> {
+//
+//        Links(
+//            direct: [Link(
+//                parent: id,
+//                children: children,
+//                attribute: LinkAttribute(
+//                    name: keyPath.name,
+//                    updateOption: relation(keyPath).directLinkUpdateOption
+//                )
+//            )],
+//            inverse: children.map { child in
+//                Link(
+//                    parent: child,
+//                    children: [id],
+//                    attribute: LinkAttribute(
+//                        name: inverse.name,
+//                        updateOption: MutualRelation<Self, InverseRelation, InverseConstraint>.inverseLinkUpdateOption
+//                    )
+//                )
+//            }
+//        )
+//    }
+//}

@@ -119,7 +119,7 @@ final class DeleteTests: XCTestCase {
             .query("1", in: context)
             .resolve()!
 
-        chat.detach(\.$users, inverse: \.$chats, in: &context)
+        try! chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let userChats = User
             .query(User.bob.id, in: context)
@@ -134,7 +134,7 @@ final class DeleteTests: XCTestCase {
             .query("1", in: context)
             .resolve()!
 
-        chat.detach(\.$users, inverse: \.$chats, in: &context)
+        try! chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let user = User
             .query(User.bob.id, in: context)
@@ -148,7 +148,7 @@ final class DeleteTests: XCTestCase {
             .query("1", in: context)
             .resolve()!
 
-        message.detach(\.$author, in: &context)
+        try! message.detach(\.$author, in: &context)
 
         let refetchedMessage = Message
             .query("1", in: context)

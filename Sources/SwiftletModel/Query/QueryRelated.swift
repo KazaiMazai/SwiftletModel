@@ -31,10 +31,13 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
             guard let id = id else {
                 return nil
             }
-
-            return context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
-                .first
-                .flatMap { Child.ID($0) }
+            
+            return StoredRelations<Entity, Child>.queryChildren(
+                parentId: id,
+                relationName: keyPath.name,
+                in: context
+            )
+            .first
         }
     }
 }
@@ -48,11 +51,13 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         guard let id = id else {
             return []
         }
-
-        return context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
-            .compactMap { Child.ID($0) }
-            .map { Query<Child>(context: context, id: $0) }
+        
+        return StoredRelations<Entity, Child>.queryChildren(
+            parentId: id,
+            relationName: keyPath.name,
+            in: context
+        )
+        .map { Query<Child>(context: context, id: $0) }
     }
 }
 
