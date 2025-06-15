@@ -31,7 +31,7 @@ public extension EntityModelProtocol {
                 id, with: keyPath,
                 in: context
             )
-            
+
             try delete(children, relation: keyPath, inverse: inverse, from: &context)
     }
 
@@ -136,7 +136,6 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context) throws {
 
-    
         try Link<Self, Child>.update(
             id, entities,
             keyPath: keyPath,

@@ -76,7 +76,7 @@ extension Relation {
             return false
         }
     }
-    
+
     var isSlice: Bool {
         switch state {
         case .entity, .id:
@@ -87,7 +87,7 @@ extension Relation {
             return true
         }
     }
-    
+
 }
 
 extension Relation {

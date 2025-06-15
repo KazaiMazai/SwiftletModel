@@ -31,7 +31,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
             guard let id = id else {
                 return nil
             }
-            
+
             return Link<Entity, Child>.findChildrenOf(
                 id, with: keyPath,
                 in: context
@@ -50,7 +50,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         guard let id = id else {
             return []
         }
-        
+
         return Link<Entity, Child>.findChildrenOf(
             id, with: keyPath,
             in: context

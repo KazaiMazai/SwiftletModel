@@ -10,7 +10,7 @@ import Foundation
 struct EntitiesRepository {
     typealias EntityID = String
     typealias EntityName = String
-   
+
     private var storages: [EntityName: [EntityID: any EntityModelProtocol]] = [:]
 }
 

@@ -11,7 +11,7 @@ extension Relation {
     func updateOption<Parent>() -> Link<Parent, Entity>.UpdateOption {
         isSlice ? .append : .replace
     }
-    
+
     static func inverseUpdateOption<Parent>() -> Link<Parent, Entity>.UpdateOption {
         Cardinality.isToMany ? .append : .replace
     }

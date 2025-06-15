@@ -5,9 +5,8 @@
 //  Created by Sergey Kazakov on 15/06/2025.
 //
 
-
 extension KeyPath {
-    var ValueType: Value.Type {
+    var valueType: Value.Type {
         Value.self
     }
 }
