@@ -38,7 +38,7 @@ Child: EntityModelProtocol {
 }
 
 extension Link {
-    enum Option {
+    enum UpdateOption {
         case append
         case replace
         case remove
@@ -93,22 +93,15 @@ extension Link {
         _ children: [Child.ID],
         keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context,
-        options: Option
+        options: UpdateOption
     ) throws {
         
-        let directLink = Link(
+        try Link<Parent, Child>.updateOneWayLink(
             parent, children,
-            keyPath: keyPath
+            keyPath: keyPath,
+            in: &context,
+            merge: options.merge
         )
-        
-        switch options {
-        case .append:
-            try directLink.save(to: &context, options: Self.append)
-        case .replace:
-            try directLink.save(to: &context, options: Self.replace)
-        case .remove:
-            try directLink.save(to: &context, options: Self.remove)
-        }
     }
     
     static func update<Cardinality, Constraint, InverseRelation, InverseConstraint>(
@@ -117,7 +110,7 @@ extension Link {
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
         in context: inout Context,
-        options: Option) throws {
+        options: UpdateOption) throws {
             
             switch options {
             case .remove:
@@ -191,5 +184,19 @@ private extension Link {
                     options: inverseMerge
                 )
             }
+        }
+    
+    static func updateOneWayLink<Cardinality, Constraint>(
+        _ parent: Parent.ID,
+        _ children: [Child.ID],
+        keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
+        in context: inout Context,
+        merge: MergeStrategy<Link<Parent, Child>>) throws {
+            
+            let directLink = Link(
+                parent, children,
+                keyPath: keyPath
+            )
+            try directLink.save(to: &context, options: merge)
         }
 }
