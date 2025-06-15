@@ -14,9 +14,8 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         from context: inout Context) throws {
 
-        let children = Link<Self, Child>.findChildren(
-            related: keyPath,
-            to: id,
+        let children = Link<Self, Child>.findChildrenOf(
+            id, with: keyPath,
             in: context
         )
 
@@ -28,9 +27,8 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         from context: inout Context) throws {
 
-            let children = Link<Self, Child>.findChildren(
-                related: keyPath,
-                to: id,
+            let children = Link<Self, Child>.findChildrenOf(
+                id, with: keyPath,
                 in: context
             )
             
@@ -81,9 +79,8 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-        let children = Link<Self, Child>.findChildren(
-            related: keyPath,
-            to: id,
+        let children = Link<Self, Child>.findChildrenOf(
+            id, with: keyPath,
             in: context
         )
 
@@ -95,9 +92,8 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context) throws {
 
-        let children = Link<Self, Child>.findChildren(
-            related: keyPath,
-            to: id,
+        let children = Link<Self, Child>.findChildrenOf(
+            id, with: keyPath,
             in: context
         )
 

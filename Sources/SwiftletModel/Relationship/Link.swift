@@ -16,9 +16,9 @@ Child: EntityModelProtocol {
     
     var id: String { "\(parent)-\(name)" }
     
-    private let name: String
     private let parent: Parent.ID
-    private(set) var children: OrderedSet<Child.ID> = []
+    private(set) var children: OrderedSet<Child.ID>
+    private let name: String
     
     init<Value>( _ parent: Parent.ID, _ children: [Child.ID], keyPath: KeyPath<Parent, Value>) {
         self.parent = parent
@@ -79,9 +79,9 @@ extension Link {
 }
 
 extension Link {
-    static func findChildren<Directionality, Cardinality, Constraint>(
-        related keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
-        to parent: Parent.ID,
+    static func findChildrenOf<Directionality, Cardinality, Constraint>(
+        _ parent: Parent.ID,
+        with keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
         in context: Context) -> [Child.ID] {
             query("\(parent)-\(keyPath.name)", in: context)
                 .resolve()?
@@ -141,7 +141,7 @@ extension Link {
             case .replace:
                 let childrenSet = Set(children)
                 let oddChildren = Link<Parent, Child>
-                    .findChildren(related: keyPath, to: parent, in: context)
+                    .findChildrenOf(parent, with: keyPath, in: context)
                     .filter { !childrenSet.contains($0) }
                 
                 try Link<Parent, Child>.updateMutualLink(
@@ -179,7 +179,6 @@ private extension Link {
                 parent, children,
                 keyPath: keyPath
             )
-            
             try directLink.save(to: &context, options: directMerge)
             try children.forEach {
                 let inverseLink = Link<Child, Parent>(
