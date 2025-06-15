@@ -68,17 +68,6 @@ extension Relation {
 }
 
 extension Relation {
-    func directLink<Parent>() -> Link<Parent, Entity>.Option {
-        switch state {
-        case .entity, .id:
-            return .replace
-        case .entities(_, let slice, _), .ids(_, let slice):
-            return slice ? .append : .replace
-        case .none:
-            return .append
-        }
-    }
-
     var isFragment: Bool {
         switch state {
         case .entity(_, let fragment), .entities(_, _, let fragment):
@@ -87,6 +76,18 @@ extension Relation {
             return false
         }
     }
+    
+    var isSlice: Bool {
+        switch state {
+        case .entity, .id:
+            return false
+        case .entities(_, let slice, _), .ids(_, let slice):
+            return slice
+        case .none:
+            return true
+        }
+    }
+    
 }
 
 extension Relation {

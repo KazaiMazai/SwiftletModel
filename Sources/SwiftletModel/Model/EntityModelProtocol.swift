@@ -161,12 +161,6 @@ public extension EntityModelProtocol {
     }
 }
 
-extension PartialKeyPath {
-    var name: String {
-        String(describing: self)
-    }
-}
-
 extension EntityModelProtocol {
     func relationIds<Child, Direction, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>

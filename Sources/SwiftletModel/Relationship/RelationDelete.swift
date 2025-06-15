@@ -14,7 +14,7 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         from context: inout Context) throws {
 
-        let children = Link<Self, Child>.find(
+        let children = Link<Self, Child>.findChildren(
             related: keyPath,
             to: id,
             in: context
@@ -28,7 +28,7 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         from context: inout Context) throws {
 
-            let children = Link<Self, Child>.find(
+            let children = Link<Self, Child>.findChildren(
                 related: keyPath,
                 to: id,
                 in: context
@@ -81,7 +81,7 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-        let children = Link<Self, Child>.find(
+        let children = Link<Self, Child>.findChildren(
             related: keyPath,
             to: id,
             in: context
@@ -95,7 +95,7 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context) throws {
 
-        let children = Link<Self, Child>.find(
+        let children = Link<Self, Child>.findChildren(
             related: keyPath,
             to: id,
             in: context
@@ -129,7 +129,7 @@ public extension EntityModelProtocol {
             try Link<Self, Child>.update(
                 id, entities,
                 keyPath: keyPath,
-                to: &context,
+                in: &context,
                 options: .remove
             )
     }
@@ -145,7 +145,7 @@ public extension EntityModelProtocol {
             id, entities,
             keyPath: keyPath,
             inverse: inverse,
-            to: &context,
+            in: &context,
             options: .remove
         )
     }

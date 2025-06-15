@@ -8,14 +8,6 @@
 import Foundation
 import Collections
 
-extension Link {
-    enum Option {
-        case append
-        case replace
-        case remove
-    }
-}
-
 @EntityModel
 struct Link<Parent, Child>: Sendable
 where
@@ -28,9 +20,9 @@ Child: EntityModelProtocol {
     private let parent: Parent.ID
     private(set) var children: OrderedSet<Child.ID> = []
     
-    init( _ parent: Parent.ID, _ children: [Child.ID], name: String) {
+    init<Value>( _ parent: Parent.ID, _ children: [Child.ID], keyPath: KeyPath<Parent, Value>) {
         self.parent = parent
-        self.name = name
+        self.name = keyPath.name
         self.children = OrderedSet(children)
     }
     
@@ -40,11 +32,31 @@ Child: EntityModelProtocol {
     
     func deleteMetadata(from context: inout Context) throws { }
     
-    
-    static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
+    static var defaultMergeStrategy: MergeStrategy<Self> { Self.replace }
     
     static var fragmentMergeStrategy: MergeStrategy<Self> { Self.append }
-    
+}
+
+extension Link {
+    enum Option {
+        case append
+        case replace
+        case remove
+        
+        var merge: MergeStrategy<Link<Parent, Child>> {
+            switch self {
+            case .append:
+                return Link<Parent, Child>.append
+            case .replace:
+                return Link<Parent, Child>.replace
+            case .remove:
+                return Link<Parent, Child>.remove
+            }
+        }
+    }
+}
+
+extension Link {
     static var append: MergeStrategy<Self> {
         MergeStrategy { old, new in
             var old = old
@@ -64,8 +76,10 @@ Child: EntityModelProtocol {
             return old
         }
     }
-    
-    static func find<Directionality, Cardinality, Constraint>(
+}
+
+extension Link {
+    static func findChildren<Directionality, Cardinality, Constraint>(
         related keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
         to parent: Parent.ID,
         in context: Context) -> [Child.ID] {
@@ -73,21 +87,18 @@ Child: EntityModelProtocol {
                 .resolve()?
                 .children.elements ?? []
         }
-}
-
-extension Link {
-    
+ 
     static func update<Cardinality, Constraint>(
         _ parent: Parent.ID,
         _ children: [Child.ID],
         keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
-        to context: inout Context,
+        in context: inout Context,
         options: Option
     ) throws {
         
         let directLink = Link(
             parent, children,
-            name: keyPath.name
+            keyPath: keyPath
         )
         
         switch options {
@@ -105,7 +116,7 @@ extension Link {
         _ children: [Child.ID],
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
-        to context: inout Context,
+        in context: inout Context,
         options: Option) throws {
             
             switch options {
@@ -125,13 +136,12 @@ extension Link {
                     inverse: inverse,
                     in: &context,
                     directMerge: Link<Parent, Child>.append,
-                    inverseMerge: inverse.typeOfValue.inverseMerge()
+                    inverseMerge: inverse.ValueType.inverseUpdateOption().merge
                 )
             case .replace:
                 let childrenSet = Set(children)
-                
                 let oddChildren = Link<Parent, Child>
-                    .find(related: keyPath, to: parent, in: context)
+                    .findChildren(related: keyPath, to: parent, in: context)
                     .filter { !childrenSet.contains($0) }
                 
                 try Link<Parent, Child>.updateMutualLink(
@@ -149,15 +159,13 @@ extension Link {
                     inverse: inverse,
                     in: &context,
                     directMerge: Link<Parent, Child>.replace,
-                    inverseMerge: inverse.typeOfValue.inverseMerge()
+                    inverseMerge: inverse.ValueType.inverseUpdateOption().merge
                 )
             }
         }
 }
 
-
-fileprivate extension Link {
-    
+private extension Link {
     static func updateMutualLink<Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ parent: Parent.ID,
         _ children: [Child.ID],
@@ -169,14 +177,14 @@ fileprivate extension Link {
             
             let directLink = Link(
                 parent, children,
-                name: keyPath.name
+                keyPath: keyPath
             )
             
             try directLink.save(to: &context, options: directMerge)
             try children.forEach {
                 let inverseLink = Link<Child, Parent>(
                     $0, [parent],
-                    name: inverse.name
+                    keyPath: inverse
                 )
                 
                 try inverseLink.save(
@@ -185,28 +193,4 @@ fileprivate extension Link {
                 )
             }
         }
-}
-
-extension Relation {
-    static  func inverseLink<Parent>() -> Link<Parent, Entity>.Option {
-        Cardinality.isToMany ? .append : .replace
-    }
-    
-    static  func inverseMerge<Parent>() -> MergeStrategy<Link<Parent, Entity>> {
-        let inverseOption: Link<Parent, Entity>.Option = inverseLink()
-        switch inverseOption {
-        case .append:
-            return Link<Parent, Entity>.append
-        case .replace:
-            return Link<Parent, Entity>.replace
-        case .remove:
-            return Link<Parent, Entity>.remove
-        }
-    }
-}
-
-fileprivate extension KeyPath {
-    var typeOfValue: Value.Type {
-        Value.self
-    }
 }

@@ -70,8 +70,8 @@ private extension EntityModelProtocol {
             try Link<Self, Child>.update(
                 id, relationIds(keyPath),
                 keyPath: keyPath,
-                to: &context,
-                options: relation(keyPath).directLink()
+                in: &context,
+                options: relation(keyPath).updateOption()
             )
     }
 
@@ -84,8 +84,8 @@ private extension EntityModelProtocol {
             id, relationIds(keyPath),
             keyPath: keyPath,
             inverse: inverse,
-            to: &context,
-            options: relation(keyPath).directLink()
+            in: &context,
+            options: relation(keyPath).updateOption()
         )
     }
 }
