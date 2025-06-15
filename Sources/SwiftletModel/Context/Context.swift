@@ -65,18 +65,6 @@ public extension Context {
     }
 }
 
-//extension Context {
-//    mutating func updateLinks<Parent: EntityModelProtocol, Child: EntityModelProtocol>(_ links: Links<Parent, Child>) {
-//        relationsRepository.updateLinks(links)
-//    }
-//}
-
-//extension Context {
-//    func getChildren<T: EntityModelProtocol>(for type: T.Type, relationName: String, id: T.ID) -> OrderedSet<String> {
-//        relationsRepository.getChildren(for: type, relationName: relationName, id: id)
-//    }
-//}
-
 extension Context {
     func query<Entity: EntityModelProtocol>(_ id: Entity.ID) -> Query<Entity> {
         Query(context: self, id: id)
