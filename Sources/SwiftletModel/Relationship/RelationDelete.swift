@@ -15,8 +15,8 @@ public extension EntityModelProtocol {
         from context: inout Context) throws {
 
         let children = StoredRelations<Self, Child>.queryChildren(
-            parentId: id,
-            relationName: keyPath.name,
+            of: id,
+            keyPath: keyPath,
             in: context
         )
 
@@ -29,8 +29,8 @@ public extension EntityModelProtocol {
         from context: inout Context) throws {
 
             let children = StoredRelations<Self, Child>.queryChildren(
-                parentId: id,
-                relationName: keyPath.name,
+                of: id,
+                keyPath: keyPath,
                 in: context
             )
             
@@ -82,8 +82,8 @@ public extension EntityModelProtocol {
         in context: inout Context) throws {
 
         let children = StoredRelations<Self, Child>.queryChildren(
-            parentId: id,
-            relationName: keyPath.name,
+            of: id,
+            keyPath: keyPath,
             in: context
         )
 
@@ -96,8 +96,8 @@ public extension EntityModelProtocol {
         in context: inout Context) throws {
 
         let children = StoredRelations<Self, Child>.queryChildren(
-            parentId: id,
-            relationName: keyPath.name,
+            of: id,
+            keyPath: keyPath,
             in: context
         )
 

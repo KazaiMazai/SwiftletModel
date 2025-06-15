@@ -14,16 +14,16 @@ where
 Parent: EntityModelProtocol,
 Child: EntityModelProtocol {
     
-    var id: String { "\(parentId)-\(name)" }
+    var id: String { "\(parent)-\(name)" }
     
-    let name: String
-    private let parentId: Parent.ID
-    private(set) var relations: OrderedSet<Child.ID> = []
+    private let name: String
+    private let parent: Parent.ID
+    private(set) var children: OrderedSet<Child.ID> = []
     
     init(id: Parent.ID, name: String, relations: [Child.ID]) {
-        self.parentId = id
+        self.parent = id
         self.name = name
-        self.relations = OrderedSet(relations)
+        self.children = OrderedSet(relations)
     }
     
     func asDeleted(in context: Context) -> Deleted<Self>? { nil }
@@ -40,7 +40,7 @@ Child: EntityModelProtocol {
     static var append: MergeStrategy<Self> {
         MergeStrategy { old, new in
             var old = old
-            old.relations.append(contentsOf: new.relations)
+            old.children.append(contentsOf: new.children)
             return old
         }
     }
@@ -52,28 +52,19 @@ Child: EntityModelProtocol {
     static var remove: MergeStrategy<Self> {
         MergeStrategy { old, new in
             var old = old
-            old.relations.subtract(new.relations)
+            old.children.subtract(new.children)
             return old
         }
     }
     
-    fileprivate static func query(
-        parentId: Parent.ID,
-        relationName: String,
-        in context: Context) -> Query<Self> {
-            
-            query("\(parentId)-\(relationName)", in: context)
-        }
-    
-    static func queryChildren(
-        parentId: Parent.ID,
-        relationName: String,
+    static func queryChildren<Directionality, Cardinality, Constraint>(
+        of parent: Parent.ID,
+        keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
         in context: Context) -> [Child.ID] {
-            query(parentId: parentId,  relationName: relationName, in: context)
+            query("\(parent)-\(keyPath.name)", in: context)
             .resolve()?
-            .relations.elements ?? []
+            .children.elements ?? []
     }
-    
 }
 
 extension StoredRelations {
@@ -110,10 +101,9 @@ extension StoredRelations {
                 let enititesToKeep = Set(children)
                 
                 let odd = StoredRelations<Parent, Child>
-                    .query(parentId: parentId, relationName: keyPath.name, in: context)
-                    .resolve()?
-                    .relations.elements ?? []
+                    .queryChildren(of: parentId, keyPath: keyPath, in: context)
                     .filter { !enititesToKeep.contains($0) }
+                
                 
                 try StoredRelations<Parent, Child>.update(
                     parentId: parentId,

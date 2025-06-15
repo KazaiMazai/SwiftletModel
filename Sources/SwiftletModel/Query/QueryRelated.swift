@@ -33,8 +33,8 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
             }
             
             return StoredRelations<Entity, Child>.queryChildren(
-                parentId: id,
-                relationName: keyPath.name,
+                of: id,
+                keyPath: keyPath,
                 in: context
             )
             .first
@@ -53,8 +53,8 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         }
         
         return StoredRelations<Entity, Child>.queryChildren(
-            parentId: id,
-            relationName: keyPath.name,
+            of: id,
+            keyPath: keyPath,
             in: context
         )
         .map { Query<Child>(context: context, id: $0) }
