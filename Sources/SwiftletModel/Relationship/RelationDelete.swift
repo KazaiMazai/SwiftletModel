@@ -126,7 +126,7 @@ public extension EntityModelProtocol {
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-            try StoredRelations<Self, Child>.save(
+            try StoredRelations<Self, Child>.update(
                 id, entities,
                 keyPath: keyPath,
                 to: &context,
@@ -141,7 +141,7 @@ public extension EntityModelProtocol {
         in context: inout Context) throws {
 
     
-        try StoredRelations<Self, Child>.save(
+        try StoredRelations<Self, Child>.update(
             id, entities,
             keyPath: keyPath,
             inverse: inverse,

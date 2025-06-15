@@ -67,11 +67,11 @@ private extension EntityModelProtocol {
         at keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-            try StoredRelations<Self, Child>.save(
+            try StoredRelations<Self, Child>.update(
                 id, relationIds(keyPath),
                 keyPath: keyPath,
                 to: &context,
-                options: relation(keyPath).directLinkUpdateOption
+                options: relation(keyPath).directLinkUpdateOption()
             )
     }
 
@@ -80,12 +80,12 @@ private extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context) throws {
 
-        try StoredRelations<Self, Child>.save(
+        try StoredRelations<Self, Child>.update(
             id, relationIds(keyPath),
             keyPath: keyPath,
             inverse: inverse,
             to: &context,
-            options: relation(keyPath).directLinkUpdateOption
+            options: relation(keyPath).directLinkUpdateOption()
         )
     }
 }
