@@ -68,7 +68,7 @@ extension Relation {
 }
 
 extension Relation {
-    func directUpdate<Parent>() -> StoredRelations<Parent, Entity>.Option {
+    func directLink<Parent>() -> Link<Parent, Entity>.Option {
         switch state {
         case .entity, .id:
             return .replace
@@ -79,7 +79,7 @@ extension Relation {
         }
     }
 
-    static  func inverseUpdate<Parent>() -> StoredRelations<Parent, Entity>.Option {
+    static  func inverseLink<Parent>() -> Link<Parent, Entity>.Option {
         Cardinality.isToMany ? .append : .replace
     }
 

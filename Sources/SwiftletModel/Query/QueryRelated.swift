@@ -32,7 +32,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
                 return nil
             }
             
-            return StoredRelations<Entity, Child>.find(
+            return Link<Entity, Child>.find(
                 related: keyPath,
                 to: id,
                 in: context
@@ -52,7 +52,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             return []
         }
         
-        return StoredRelations<Entity, Child>.find(
+        return Link<Entity, Child>.find(
             related: keyPath,
             to: id,
             in: context

@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-extension StoredRelations {
+extension Link {
     enum Option {
         case append
         case replace
@@ -17,7 +17,7 @@ extension StoredRelations {
 }
 
 @EntityModel
-struct StoredRelations<Parent, Child>: Sendable
+struct Link<Parent, Child>: Sendable
 where
 Parent: EntityModelProtocol,
 Child: EntityModelProtocol {
@@ -75,7 +75,7 @@ Child: EntityModelProtocol {
     }
 }
 
-extension StoredRelations {
+extension Link {
     
        static func update<Cardinality, Constraint>(
            _ parent: Parent.ID,
@@ -85,18 +85,18 @@ extension StoredRelations {
            options: Option
        ) throws {
            
-           let storedRelations = StoredRelations(
+           let directLink = Link(
                parent, children,
                name: keyPath.name
            )
            
            switch options {
            case .append:
-               try storedRelations.save(to: &context, options: Self.append)
+               try directLink.save(to: &context, options: Self.append)
            case .replace:
-               try storedRelations.save(to: &context, options: Self.replace)
+               try directLink.save(to: &context, options: Self.replace)
            case .remove:
-               try storedRelations.save(to: &context, options: Self.remove)
+               try directLink.save(to: &context, options: Self.remove)
            }
        }
     
@@ -110,7 +110,7 @@ extension StoredRelations {
             
             switch options {
             case .remove:
-                try StoredRelations<Parent, Child>.updateRelation(
+                try Link<Parent, Child>.updateLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
@@ -118,7 +118,7 @@ extension StoredRelations {
                     option: .remove
                 )
             case .append:
-                try StoredRelations<Parent, Child>.updateRelation(
+                try Link<Parent, Child>.updateLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
@@ -128,11 +128,11 @@ extension StoredRelations {
             case .replace:
                 let enititesToKeep = Set(children)
                 
-                let oddChildren = StoredRelations<Parent, Child>
+                let oddChildren = Link<Parent, Child>
                     .find(related: keyPath,to: parent, in: context)
                     .filter { !enititesToKeep.contains($0) }
                 
-                try StoredRelations<Parent, Child>.updateRelation(
+                try Link<Parent, Child>.updateLink(
                     parent, oddChildren,
                     keyPath: keyPath,
                     inverse: inverse,
@@ -140,7 +140,7 @@ extension StoredRelations {
                     option: .remove
                 )
                 
-                try StoredRelations<Parent, Child>.updateRelation(
+                try Link<Parent, Child>.updateLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
@@ -152,8 +152,8 @@ extension StoredRelations {
 }
 
 
-fileprivate extension StoredRelations {
-    static func updateRelation<Cardinality, Constraint, InverseRelation, InverseConstraint>(
+fileprivate extension Link {
+    static func updateLink<Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ parent: Parent.ID,
         _ children: [Child.ID],
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
@@ -161,45 +161,45 @@ fileprivate extension StoredRelations {
         in context: inout Context,
         option: Option) throws {
             
-            let directMerge: MergeStrategy<StoredRelations<Parent, Child>>
-            let inverseMerge: MergeStrategy<StoredRelations<Child, Parent>>
+            let directMerge: MergeStrategy<Link<Parent, Child>>
+            let inverseMerge: MergeStrategy<Link<Child, Parent>>
             
             switch option {
             case .append:
-                directMerge = StoredRelations<Parent, Child>.append
+                directMerge = Link<Parent, Child>.append
             case .replace:
-                directMerge = StoredRelations<Parent, Child>.replace
+                directMerge = Link<Parent, Child>.replace
             case .remove:
-                directMerge = StoredRelations<Parent, Child>.remove
+                directMerge = Link<Parent, Child>.remove
             }
             
-            let inverseOption: StoredRelations<Child, Parent>.Option
-            inverseOption = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseUpdate()
+            let inverseOption: Link<Child, Parent>.Option
+            inverseOption = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseLink()
             
             switch (inverseOption, option) {
             case (_, .remove):
-                inverseMerge = StoredRelations<Child, Parent>.remove
+                inverseMerge = Link<Child, Parent>.remove
             case (.append, _):
-                inverseMerge = StoredRelations<Child, Parent>.append
+                inverseMerge = Link<Child, Parent>.append
             case (.replace, _):
-                inverseMerge = StoredRelations<Child, Parent>.replace
+                inverseMerge = Link<Child, Parent>.replace
             case (.remove, _):
-                inverseMerge = StoredRelations<Child, Parent>.remove
+                inverseMerge = Link<Child, Parent>.remove
             }
             
-            let directRelation = StoredRelations(
+            let directLink = Link(
                 parent, children,
                 name: keyPath.name
             )
             
-            try directRelation.save(to: &context, options: directMerge)
+            try directLink.save(to: &context, options: directMerge)
             try children.forEach {
-                let inverseRelation = StoredRelations<Child, Parent>(
+                let inverseLink = Link<Child, Parent>(
                     $0, [parent],
                     name: inverse.name
                 )
                 
-                try inverseRelation.save(
+                try inverseLink.save(
                     to: &context,
                     options: inverseMerge
                 )
