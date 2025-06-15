@@ -28,12 +28,6 @@ Child: EntityModelProtocol {
     private let parent: Parent.ID
     private(set) var children: OrderedSet<Child.ID> = []
     
-//    init(parent: Parent.ID, name: String, children: [Child.ID]) {
-//        self.parent = parent
-//        self.name = name
-//        self.children = OrderedSet(children)
-//    }
-//    
     init( _ parent: Parent.ID, _ children: [Child.ID], name: String) {
         self.parent = parent
         self.name = name
@@ -166,50 +160,46 @@ fileprivate extension StoredRelations {
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
         in context: inout Context,
         option: Option) throws {
-            let storedRelations = StoredRelations(
-                parent, children,
-                name: keyPath.name
-            )
             
-            let inverseOption: StoredRelations<Child, Parent>.Option = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseUpdate()
-            let merge: MergeStrategy<StoredRelations<Parent, Child>>
+            let directMerge: MergeStrategy<StoredRelations<Parent, Child>>
             let inverseMerge: MergeStrategy<StoredRelations<Child, Parent>>
             
             switch option {
             case .append:
-                merge = Self.append
-                switch inverseOption {
-                case .append:
-                    inverseMerge = StoredRelations<Child, Parent>.append
-                case .replace:
-                    inverseMerge = StoredRelations<Child, Parent>.replace
-                case .remove:
-                    inverseMerge = StoredRelations<Child, Parent>.remove
-                }
+                directMerge = StoredRelations<Parent, Child>.append
             case .replace:
-                merge = Self.replace
-                switch inverseOption {
-                case .append:
-                    inverseMerge = StoredRelations<Child, Parent>.append
-                case .replace:
-                    inverseMerge = StoredRelations<Child, Parent>.replace
-                case .remove:
-                    inverseMerge = StoredRelations<Child, Parent>.remove
-                }
+                directMerge = StoredRelations<Parent, Child>.replace
             case .remove:
-                merge = Self.remove
+                directMerge = StoredRelations<Parent, Child>.remove
+            }
+            
+            let inverseOption: StoredRelations<Child, Parent>.Option
+            inverseOption = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseUpdate()
+            
+            switch (inverseOption, option) {
+            case (_, .remove):
+                inverseMerge = StoredRelations<Child, Parent>.remove
+            case (.append, _):
+                inverseMerge = StoredRelations<Child, Parent>.append
+            case (.replace, _):
+                inverseMerge = StoredRelations<Child, Parent>.replace
+            case (.remove, _):
                 inverseMerge = StoredRelations<Child, Parent>.remove
             }
             
-            try storedRelations.save(to: &context, options: merge)
+            let directRelation = StoredRelations(
+                parent, children,
+                name: keyPath.name
+            )
             
+            try directRelation.save(to: &context, options: directMerge)
             try children.forEach {
-                let relation = StoredRelations<Child, Parent>(
+                let inverseRelation = StoredRelations<Child, Parent>(
                     $0, [parent],
                     name: inverse.name
                 )
                 
-                try relation.save(
+                try inverseRelation.save(
                     to: &context,
                     options: inverseMerge
                 )
