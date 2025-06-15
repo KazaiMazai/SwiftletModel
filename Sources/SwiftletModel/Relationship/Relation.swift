@@ -79,10 +79,6 @@ extension Relation {
         }
     }
 
-    static  func inverseLink<Parent>() -> Link<Parent, Entity>.Option {
-        Cardinality.isToMany ? .append : .replace
-    }
-
     var isFragment: Bool {
         switch state {
         case .entity(_, let fragment), .entities(_, _, let fragment):

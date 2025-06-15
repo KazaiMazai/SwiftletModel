@@ -42,7 +42,7 @@ Child: EntityModelProtocol {
     
     
     static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
-
+    
     static var fragmentMergeStrategy: MergeStrategy<Self> { Self.append }
     
     static var append: MergeStrategy<Self> {
@@ -56,7 +56,7 @@ Child: EntityModelProtocol {
     static var replace: MergeStrategy<Self> {
         MergeStrategy { old, new in new }
     }
-     
+    
     static var remove: MergeStrategy<Self> {
         MergeStrategy { old, new in
             var old = old
@@ -72,33 +72,33 @@ Child: EntityModelProtocol {
             query("\(parent)-\(keyPath.name)", in: context)
                 .resolve()?
                 .children.elements ?? []
-    }
+        }
 }
 
 extension Link {
     
-       static func update<Cardinality, Constraint>(
-           _ parent: Parent.ID,
-           _ children: [Child.ID],
-           keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
-           to context: inout Context,
-           options: Option
-       ) throws {
-           
-           let directLink = Link(
-               parent, children,
-               name: keyPath.name
-           )
-           
-           switch options {
-           case .append:
-               try directLink.save(to: &context, options: Self.append)
-           case .replace:
-               try directLink.save(to: &context, options: Self.replace)
-           case .remove:
-               try directLink.save(to: &context, options: Self.remove)
-           }
-       }
+    static func update<Cardinality, Constraint>(
+        _ parent: Parent.ID,
+        _ children: [Child.ID],
+        keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
+        to context: inout Context,
+        options: Option
+    ) throws {
+        
+        let directLink = Link(
+            parent, children,
+            name: keyPath.name
+        )
+        
+        switch options {
+        case .append:
+            try directLink.save(to: &context, options: Self.append)
+        case .replace:
+            try directLink.save(to: &context, options: Self.replace)
+        case .remove:
+            try directLink.save(to: &context, options: Self.remove)
+        }
+    }
     
     static func update<Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ parent: Parent.ID,
@@ -110,42 +110,46 @@ extension Link {
             
             switch options {
             case .remove:
-                try Link<Parent, Child>.updateLink(
+                try Link<Parent, Child>.updateMutualLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
                     in: &context,
-                    option: .remove
+                    directMerge: Link<Parent, Child>.remove,
+                    inverseMerge: Link<Child, Parent>.remove
                 )
             case .append:
-                try Link<Parent, Child>.updateLink(
+                try Link<Parent, Child>.updateMutualLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
                     in: &context,
-                    option: .append
+                    directMerge: Link<Parent, Child>.append,
+                    inverseMerge: inverse.typeOfValue.inverseMerge()
                 )
             case .replace:
-                let enititesToKeep = Set(children)
+                let childrenSet = Set(children)
                 
                 let oddChildren = Link<Parent, Child>
-                    .find(related: keyPath,to: parent, in: context)
-                    .filter { !enititesToKeep.contains($0) }
+                    .find(related: keyPath, to: parent, in: context)
+                    .filter { !childrenSet.contains($0) }
                 
-                try Link<Parent, Child>.updateLink(
+                try Link<Parent, Child>.updateMutualLink(
                     parent, oddChildren,
                     keyPath: keyPath,
                     inverse: inverse,
                     in: &context,
-                    option: .remove
+                    directMerge: Link<Parent, Child>.remove,
+                    inverseMerge: Link<Child, Parent>.remove
                 )
                 
-                try Link<Parent, Child>.updateLink(
+                try Link<Parent, Child>.updateMutualLink(
                     parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
                     in: &context,
-                    option: .replace
+                    directMerge: Link<Parent, Child>.replace,
+                    inverseMerge: inverse.typeOfValue.inverseMerge()
                 )
             }
         }
@@ -153,39 +157,15 @@ extension Link {
 
 
 fileprivate extension Link {
-    static func updateLink<Cardinality, Constraint, InverseRelation, InverseConstraint>(
+    
+    static func updateMutualLink<Cardinality, Constraint, InverseRelation, InverseConstraint>(
         _ parent: Parent.ID,
         _ children: [Child.ID],
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
         in context: inout Context,
-        option: Option) throws {
-            
-            let directMerge: MergeStrategy<Link<Parent, Child>>
-            let inverseMerge: MergeStrategy<Link<Child, Parent>>
-            
-            switch option {
-            case .append:
-                directMerge = Link<Parent, Child>.append
-            case .replace:
-                directMerge = Link<Parent, Child>.replace
-            case .remove:
-                directMerge = Link<Parent, Child>.remove
-            }
-            
-            let inverseOption: Link<Child, Parent>.Option
-            inverseOption = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseLink()
-            
-            switch (inverseOption, option) {
-            case (_, .remove):
-                inverseMerge = Link<Child, Parent>.remove
-            case (.append, _):
-                inverseMerge = Link<Child, Parent>.append
-            case (.replace, _):
-                inverseMerge = Link<Child, Parent>.replace
-            case (.remove, _):
-                inverseMerge = Link<Child, Parent>.remove
-            }
+        directMerge: MergeStrategy<Link<Parent, Child>>,
+        inverseMerge: MergeStrategy<Link<Child, Parent>>) throws {
             
             let directLink = Link(
                 parent, children,
@@ -207,3 +187,26 @@ fileprivate extension Link {
         }
 }
 
+extension Relation {
+    static  func inverseLink<Parent>() -> Link<Parent, Entity>.Option {
+        Cardinality.isToMany ? .append : .replace
+    }
+    
+    static  func inverseMerge<Parent>() -> MergeStrategy<Link<Parent, Entity>> {
+        let inverseOption: Link<Parent, Entity>.Option = inverseLink()
+        switch inverseOption {
+        case .append:
+            return Link<Parent, Entity>.append
+        case .replace:
+            return Link<Parent, Entity>.replace
+        case .remove:
+            return Link<Parent, Entity>.remove
+        }
+    }
+}
+
+fileprivate extension KeyPath {
+    var typeOfValue: Value.Type {
+        Value.self
+    }
+}
