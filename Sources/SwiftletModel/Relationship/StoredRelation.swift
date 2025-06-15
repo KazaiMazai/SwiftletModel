@@ -171,7 +171,7 @@ fileprivate extension StoredRelations {
                 name: keyPath.name
             )
             
-            let inverseOption: StoredRelations<Child, Parent>.Option = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseLinkUpdateOption()
+            let inverseOption: StoredRelations<Child, Parent>.Option = MutualRelation<Parent, InverseRelation, InverseConstraint>.inverseUpdate()
             let merge: MergeStrategy<StoredRelations<Parent, Child>>
             let inverseMerge: MergeStrategy<StoredRelations<Child, Parent>>
             

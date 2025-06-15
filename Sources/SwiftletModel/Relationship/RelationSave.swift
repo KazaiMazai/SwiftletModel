@@ -71,7 +71,7 @@ private extension EntityModelProtocol {
                 id, relationIds(keyPath),
                 keyPath: keyPath,
                 to: &context,
-                options: relation(keyPath).directLinkUpdateOption()
+                options: relation(keyPath).directUpdate()
             )
     }
 
@@ -85,7 +85,7 @@ private extension EntityModelProtocol {
             keyPath: keyPath,
             inverse: inverse,
             to: &context,
-            options: relation(keyPath).directLinkUpdateOption()
+            options: relation(keyPath).directUpdate()
         )
     }
 }
