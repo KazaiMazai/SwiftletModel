@@ -32,9 +32,11 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
                 return nil
             }
 
-            return context.getChildren(for: Entity.self, relationName: keyPath.name, id: id)
-                .first
-                .flatMap { Child.ID($0) }
+            return Link<Entity, Child>.findChildrenOf(
+                id, with: keyPath,
+                in: context
+            )
+            .first
         }
     }
 }
@@ -49,10 +51,11 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             return []
         }
 
-        return context
-            .getChildren(for: Entity.self, relationName: keyPath.name, id: id)
-            .compactMap { Child.ID($0) }
-            .map { Query<Child>(context: context, id: $0) }
+        return Link<Entity, Child>.findChildrenOf(
+            id, with: keyPath,
+            in: context
+        )
+        .map { Query<Child>(context: context, id: $0) }
     }
 }
 
