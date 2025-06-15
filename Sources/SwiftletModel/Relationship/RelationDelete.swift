@@ -14,9 +14,9 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         from context: inout Context) throws {
 
-        let children = StoredRelations<Self, Child>.queryChildren(
-            of: id,
-            keyPath: keyPath,
+        let children = StoredRelations<Self, Child>.find(
+            related: keyPath,
+            to: id,
             in: context
         )
 
@@ -28,9 +28,9 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         from context: inout Context) throws {
 
-            let children = StoredRelations<Self, Child>.queryChildren(
-                of: id,
-                keyPath: keyPath,
+            let children = StoredRelations<Self, Child>.find(
+                related: keyPath,
+                to: id,
                 in: context
             )
             
@@ -81,9 +81,9 @@ public extension EntityModelProtocol {
         _ keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-        let children = StoredRelations<Self, Child>.queryChildren(
-            of: id,
-            keyPath: keyPath,
+        let children = StoredRelations<Self, Child>.find(
+            related: keyPath,
+            to: id,
             in: context
         )
 
@@ -95,9 +95,9 @@ public extension EntityModelProtocol {
         inverse: KeyPath<Child, MutualRelation<Self, InverseRelation, InverseConstraint>>,
         in context: inout Context) throws {
 
-        let children = StoredRelations<Self, Child>.queryChildren(
-            of: id,
-            keyPath: keyPath,
+        let children = StoredRelations<Self, Child>.find(
+            related: keyPath,
+            to: id,
             in: context
         )
 
@@ -126,12 +126,11 @@ public extension EntityModelProtocol {
         relation keyPath: KeyPath<Self, OneWayRelation<Child, Cardinality, Constraint>>,
         in context: inout Context) throws {
 
-            try StoredRelations<Self, Child>.updateLink(
-                parentID: id,
-                children: entities,
-                option: .remove,
+            try StoredRelations<Self, Child>.save(
+                id, entities,
                 keyPath: keyPath,
-                in: &context
+                to: &context,
+                options: .remove
             )
     }
 
@@ -142,13 +141,12 @@ public extension EntityModelProtocol {
         in context: inout Context) throws {
 
     
-        try StoredRelations<Self, Child>.updateLink(
-            parentId: id,
-            children: entities,
-            option: .remove,
+        try StoredRelations<Self, Child>.save(
+            id, entities,
             keyPath: keyPath,
             inverse: inverse,
-            in: &context
+            to: &context,
+            options: .remove
         )
     }
 }

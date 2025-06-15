@@ -32,9 +32,9 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
                 return nil
             }
             
-            return StoredRelations<Entity, Child>.queryChildren(
-                of: id,
-                keyPath: keyPath,
+            return StoredRelations<Entity, Child>.find(
+                related: keyPath,
+                to: id,
                 in: context
             )
             .first
@@ -52,9 +52,9 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             return []
         }
         
-        return StoredRelations<Entity, Child>.queryChildren(
-            of: id,
-            keyPath: keyPath,
+        return StoredRelations<Entity, Child>.find(
+            related: keyPath,
+            to: id,
             in: context
         )
         .map { Query<Child>(context: context, id: $0) }

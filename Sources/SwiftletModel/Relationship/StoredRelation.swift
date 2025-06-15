@@ -57,70 +57,63 @@ Child: EntityModelProtocol {
         }
     }
     
-    static func queryChildren<Directionality, Cardinality, Constraint>(
-        of parent: Parent.ID,
-        keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
+    static func find<Directionality, Cardinality, Constraint>(
+        related keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
+        to parent: Parent.ID,
         in context: Context) -> [Child.ID] {
             query("\(parent)-\(keyPath.name)", in: context)
-            .resolve()?
-            .children.elements ?? []
+                .resolve()?
+                .children.elements ?? []
     }
 }
 
 extension StoredRelations {
-    static func updateLink<Cardinality, Constraint, InverseRelation, InverseConstraint>(
-        parentId: Parent.ID,
-        children: [Child.ID],
-        option: Option,
-        
+    static func save<Cardinality, Constraint, InverseRelation, InverseConstraint>(
+        _ parent: Parent.ID,
+        _ children: [Child.ID],
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
-        in context: inout Context) throws {
+        to context: inout Context,
+        options: Option) throws {
             
-            switch option {
+            switch options {
             case .remove:
-                try StoredRelations<Parent, Child>.update(
-                    
-                    parentId: parentId,
-                    children: children,
-                    option: .remove,
+                try StoredRelations<Parent, Child>.saveRelation(
+                    parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
-                    in: &context
+                    in: &context,
+                    option: .remove
                 )
             case .append:
-                try StoredRelations<Parent, Child>.update(
-                    parentId: parentId,
-                    children: children,
-                    option: .append,
+                try StoredRelations<Parent, Child>.saveRelation(
+                    parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
-                    in: &context
+                    in: &context,
+                    option: .append
                 )
             case .replace:
                 let enititesToKeep = Set(children)
                 
-                let odd = StoredRelations<Parent, Child>
-                    .queryChildren(of: parentId, keyPath: keyPath, in: context)
+                let oddChildren = StoredRelations<Parent, Child>
+                    .find(related: keyPath,to: parent, in: context)
                     .filter { !enititesToKeep.contains($0) }
                 
-                
-                try StoredRelations<Parent, Child>.update(
-                    parentId: parentId,
-                    children: odd,
-                    option: .remove,
+                try StoredRelations<Parent, Child>.saveRelation(
+                    parent, oddChildren,
                     keyPath: keyPath,
                     inverse: inverse,
-                    in: &context
+                    in: &context,
+                    option: .remove
                 )
                 
-                try StoredRelations<Parent, Child>.update(
-                    parentId: parentId,
-                    children: children,
-                    option: .replace,
+                try StoredRelations<Parent, Child>.saveRelation(
+                    parent, children,
                     keyPath: keyPath,
                     inverse: inverse,
-                    in: &context
+                    in: &context,
+                    option: .replace
                 )
             }
         }
@@ -129,16 +122,15 @@ extension StoredRelations {
 
 fileprivate extension StoredRelations {
     
-    static func update<Cardinality, Constraint, InverseRelation, InverseConstraint>(
-        parentId: Parent.ID,
-        children: [Child.ID],
-        option: Option,
-        
+    static func saveRelation<Cardinality, Constraint, InverseRelation, InverseConstraint>(
+        _ parent: Parent.ID,
+        _ children: [Child.ID],
         keyPath: KeyPath<Parent, MutualRelation<Child, Cardinality, Constraint>>,
         inverse: KeyPath<Child, MutualRelation<Parent, InverseRelation, InverseConstraint>>,
-        in context: inout Context) throws {
+        in context: inout Context,
+        option: Option) throws {
             let storedRelations = StoredRelations(
-                id: parentId,
+                id: parent,
                 name: keyPath.name,
                 relations: children
             )
@@ -179,7 +171,7 @@ fileprivate extension StoredRelations {
                 let relation = StoredRelations<Child, Parent>(
                     id: $0,
                     name: inverse.name,
-                    relations: [parentId]
+                    relations: [parent]
                 )
                 
                 try relation.save(
@@ -193,28 +185,28 @@ fileprivate extension StoredRelations {
 
 extension StoredRelations {
  
-    static func updateLink<Cardinality, Constraint>(
-        
-        parentID: Parent.ID,
-        children: [Child.ID],
-        option: Option,
+    static func save<Cardinality, Constraint>(
+        _ parent: Parent.ID,
+        _ children: [Child.ID],
         keyPath: KeyPath<Parent, OneWayRelation<Child, Cardinality, Constraint>>,
-        in context: inout Context) throws {
-            
-            let storedRelations = StoredRelations(
-                id: parentID,
-                name: keyPath.name,
-                relations: children
-            )
-            
-            switch option {
-            case .append:
-                try storedRelations.save(to: &context, options: Self.append)
-            case .replace:
-                try storedRelations.save(to: &context, options: Self.replace)
-            case .remove:
-                try storedRelations.save(to: &context, options: Self.remove)
-            }
+        to context: inout Context,
+        options: Option
+    ) throws {
+        
+        let storedRelations = StoredRelations(
+            id: parent,
+            name: keyPath.name,
+            relations: children
+        )
+        
+        switch options {
+        case .append:
+            try storedRelations.save(to: &context, options: Self.append)
+        case .replace:
+            try storedRelations.save(to: &context, options: Self.replace)
+        case .remove:
+            try storedRelations.save(to: &context, options: Self.remove)
+        }
     }
 }
 
