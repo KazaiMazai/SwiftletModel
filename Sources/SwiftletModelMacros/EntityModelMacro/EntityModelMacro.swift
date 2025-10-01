@@ -549,6 +549,7 @@ private extension VariableDeclSyntax {
             return nil
         }
 
+        let isMutable = bindingSpecifier.tokenKind == .keyword(.var)
         for binding in bindings {
             guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
                   let typeAnnotation = binding.typeAnnotation?.type else {
@@ -560,7 +561,7 @@ private extension VariableDeclSyntax {
                 continue
             }
 
-            return PropertyAttributes(propertyName: propertyName)
+            return PropertyAttributes(propertyName: propertyName, isMutable: isMutable)
 
         }
         return nil
