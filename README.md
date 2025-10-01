@@ -1260,7 +1260,7 @@ try user.save(to: &context)
 
 Fragment merge strategy patches existing models in the context. 
 In other words, it updates only non-nil values. 
-It's automatically generated via macro so you don't have to do anything.
+It's automatically generated for all mutable nullable properties via macro so you don't have to do anything.
 
 
 ```swift
