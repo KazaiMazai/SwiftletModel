@@ -9,4 +9,5 @@ import Foundation
 
 struct PropertyAttributes {
     let propertyName: String
+    let isMutable: Bool
 }

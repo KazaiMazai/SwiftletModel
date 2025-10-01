@@ -47,7 +47,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 .memberBlock
                 .members
                 .compactMap { $0.decl.as(VariableDeclSyntax.self) }
-
+          
             let relationshipAttributes = variableDeclarations
                 .compactMap { $0.relationshipAttributes() }
 
@@ -321,6 +321,7 @@ extension VariableDeclSyntax {
         \(raw: accessAttributes.name) static var patch: MergeStrategy<Self> {
             MergeStrategy(
                 \(raw: attributes
+                    .filter { $0.isMutable }
                     .map { ".patch(\\.\($0.propertyName))"}
                     .joined(separator: ",\n")
                 )
@@ -399,6 +400,7 @@ private extension VariableDeclSyntax {
             return nil
         }
 
+        let isMutable = bindingSpecifier.tokenKind == .keyword(.var)
         for binding in bindings {
             guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
                   let typeAnnotation = binding.typeAnnotation?.type else {
@@ -406,11 +408,12 @@ private extension VariableDeclSyntax {
             }
 
             let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
+            
             guard isOptional else {
                 continue
             }
 
-            return PropertyAttributes(propertyName: propertyName)
+            return PropertyAttributes(propertyName: propertyName, isMutable: isMutable)
 
         }
         return nil
