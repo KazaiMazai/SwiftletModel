@@ -62,10 +62,14 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 
             let optionalProperties = variableDeclarations
                 .compactMap { $0.optionalPropertiesAttributes() }
-
+            
+            let properties = variableDeclarations
+                .compactMap { $0.propertiesAttributes() }
+             
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
+                properties: properties,
                 relationshipAttributes: relationshipAttributes,
                 optionalProperties: optionalProperties,
                 indexAttributes: indexAttributes,
@@ -81,6 +85,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
+                                    properties: [PropertyAttributes],
                                     relationshipAttributes: [RelationshipAttributes],
                                     optionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
@@ -101,6 +106,8 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
+            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, optionalProperties))
+                    
         }
         """
         )
@@ -205,6 +212,27 @@ extension FunctionDeclSyntax {
                 .map { "$\($0.propertyName).normalize()" }
                 .joined(separator: "\n")
             )
+        }
+        """
+        )
+    }
+    
+    static func propertyName(
+        _ accessAttributes: AccessAttribute,
+        _ attributes: [PropertyAttributes]
+    ) throws -> FunctionDeclSyntax {
+
+        try FunctionDeclSyntax(
+        """
+
+        \(raw: accessAttributes.name) static func propertyName<Value>(_ keyPath: KeyPath<Self, Value>) -> String {
+            return switch keyPath {
+               \(raw: attributes
+                    .map { "case \\.\($0.propertyName): \"\($0.propertyName)\"" }
+                    .joined(separator: "\n")
+                )
+                default: ""
+            }
         }
         """
         )
@@ -413,6 +441,33 @@ private extension VariableDeclSyntax {
                 continue
             }
 
+            return PropertyAttributes(propertyName: propertyName, isMutable: isMutable)
+
+        }
+        return nil
+    }
+    
+    func propertiesAttributes() -> PropertyAttributes? {
+        for attribute in attributes {
+
+            if let customAttribute = attribute.as(AttributeSyntax.self),
+               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+               let _ = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
+                return nil
+            }
+        }
+
+        guard modifiers.first?.name.text != "static" else {
+            return nil
+        }
+
+        let isMutable = bindingSpecifier.tokenKind == .keyword(.var)
+        for binding in bindings {
+            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+                  let typeAnnotation = binding.typeAnnotation?.type else {
+                continue
+            }
+            
             return PropertyAttributes(propertyName: propertyName, isMutable: isMutable)
 
         }
