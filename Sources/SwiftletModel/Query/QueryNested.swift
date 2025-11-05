@@ -14,6 +14,7 @@ public typealias QueryListModifier<T: EntityModelProtocol> = (QueryList<T>) -> Q
 // MARK: - Nested Entity Query
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
@@ -106,6 +107,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 // MARK: - Private Nested Queries
 
 extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    @inline(never)
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         fragment: Bool,
@@ -121,6 +123,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             }
         }
 
+    @inline(never)
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool,
@@ -138,6 +141,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             }
         }
 
+    @inline(never)
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool) -> Self {
