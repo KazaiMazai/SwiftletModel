@@ -45,6 +45,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         self.result = { _, _ in entity() }
     }
 
+    @inline(never)
     func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
         Query(context: context, id: id) {
             guard let entity = resolve() else {
