@@ -10,8 +10,8 @@ extension KeyPath {
         Value.self
     }
 }
-
-extension PartialKeyPath {
+ 
+extension KeyPath where Root: EntityModelProtocol {
     var name: String {
         String(describing: self)
     }
