@@ -71,7 +71,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 conformingTo: protocols,
                 properties: properties,
                 relationshipAttributes: relationshipAttributes,
-                optionalProperties: storedOptionalProperties,
+                storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
                 uniqueAttributes: uniqueAttributes,
                 fullTextIndexAttributes: fullTextIndexAttributes,
