@@ -63,13 +63,13 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
             
-            let properties = variableDeclarations
-                .compactMap { $0.propertiesAttributes() }
+            let allProperties = variableDeclarations
+                .compactMap { $0.allPropertiesAttributes() }
              
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
-                properties: properties,
+                allProperties: allProperties,
                 relationshipAttributes: relationshipAttributes,
                 storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
@@ -85,7 +85,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
-                                    properties: [PropertyAttributes],
+                                    allProperties: [PropertyAttributes],
                                     relationshipAttributes: [RelationshipAttributes],
                                     storedOptionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
@@ -106,7 +106,7 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
-            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, properties))
+            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, allProperties, relationshipAttributes))
                     
         }
         """
@@ -219,19 +219,37 @@ extension FunctionDeclSyntax {
     
     static func propertyName(
         _ accessAttributes: AccessAttribute,
-        _ attributes: [PropertyAttributes]
+        _ propertyAttributes: [PropertyAttributes],
+        _ relationshipAttributes: [RelationshipAttributes],
     ) throws -> FunctionDeclSyntax {
 
-        try FunctionDeclSyntax(
+        guard !propertyAttributes.isEmpty || !relationshipAttributes.isEmpty else {
+            return try FunctionDeclSyntax(
+            """
+
+            \(raw: accessAttributes.name) static func propertyName<Value>(_ keyPath: KeyPath<Self, Value>) -> String {
+                ""
+            }
+            """
+            )
+        }
+        
+        return try FunctionDeclSyntax(
         """
 
         \(raw: accessAttributes.name) static func propertyName<Value>(_ keyPath: KeyPath<Self, Value>) -> String {
-            return switch keyPath {
-               \(raw: attributes
-                    .map { "case \\.\($0.propertyName): \"\($0.propertyName)\"" }
+            switch keyPath {
+               \(raw: propertyAttributes
+                    .map { "case \\.\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
-                default: ""
+                \(raw: relationshipAttributes
+                    .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
+                    .joined(separator: "\n")
+                )
+                default: 
+                   print(\"keyPath unsupported: \\(String(reflecting: keyPath))") 
+                   return String(reflecting: keyPath)
             }
         }
         """
@@ -452,12 +470,11 @@ private extension VariableDeclSyntax {
         return nil
     }
     
-    func propertiesAttributes() -> PropertyAttributes? {
+    func allPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
-               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
-               let _ = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text) {
+               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self) {
                 return nil
             }
         }
@@ -469,7 +486,7 @@ private extension VariableDeclSyntax {
         let isMutable = bindingSpecifier.tokenKind == .keyword(.var)
         for binding in bindings {
             guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
-                  let typeAnnotation = binding.typeAnnotation?.type else {
+                  let _ = binding.typeAnnotation?.type else {
                 continue
             }
             
