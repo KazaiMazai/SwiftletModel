@@ -13,6 +13,6 @@ extension KeyPath {
  
 extension KeyPath where Root: EntityModelProtocol {
     var name: String {
-        Root.propertyName(self)
+        Root.indexedKeyPathName(self)
     }
 }

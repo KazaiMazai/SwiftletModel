@@ -106,8 +106,14 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
-            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, allProperties, relationshipAttributes))
-                    
+            \(raw: FunctionDeclSyntax.indexedKeyPathName(
+                accessAttribute,
+                allProperties,
+                relationshipAttributes,
+                indexAttributes,
+                uniqueAttributes,
+                fullTextIndexAttributes)
+            )
         }
         """
         )
@@ -217,17 +223,29 @@ extension FunctionDeclSyntax {
         )
     }
     
-    static func propertyName(
+    static func indexedKeyPathName(
         _ accessAttributes: AccessAttribute,
         _ propertyAttributes: [PropertyAttributes],
         _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes],
+        _ fullTextIndexAttributes: [FullTextIndexAttributes]
+
     ) throws -> FunctionDeclSyntax {
 
-        guard !propertyAttributes.isEmpty || !relationshipAttributes.isEmpty else {
+        let attributesCollections: [any Collection] = [
+            propertyAttributes,
+            relationshipAttributes,
+            indexAttributes,
+            uniqueAttributes,
+            fullTextIndexAttributes
+        ]
+        
+        guard !attributesCollections.allSatisfy({ $0.isEmpty }) else {
             return try FunctionDeclSyntax(
             """
-
-            \(raw: accessAttributes.name) static func propertyName<Value>(_ keyPath: KeyPath<Self, Value>) -> String {
+            
+            \(raw: accessAttributes.name) static func propertyName<T>(_ keyPath: KeyPath<Self, T>) -> String {
                 ""
             }
             """
@@ -237,7 +255,7 @@ extension FunctionDeclSyntax {
         return try FunctionDeclSyntax(
         """
 
-        \(raw: accessAttributes.name) static func propertyName<Value>(_ keyPath: KeyPath<Self, Value>) -> String {
+        \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
             switch keyPath {
                \(raw: propertyAttributes
                     .map { "case \\.\($0.propertyName): return \"\($0.propertyName)\"" }
@@ -247,9 +265,20 @@ extension FunctionDeclSyntax {
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
+                \(raw: indexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: fullTextIndexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: uniqueAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
                 default: 
-                   print(\"keyPath unsupported: \\(String(reflecting: keyPath))") 
-                   return String(reflecting: keyPath)
+                   return ""
             }
         }
         """
@@ -474,7 +503,7 @@ private extension VariableDeclSyntax {
         for attribute in attributes {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
-               let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self) {
+               let _ = customAttribute.attributeName.as(IdentifierTypeSyntax.self) {
                 return nil
             }
         }
