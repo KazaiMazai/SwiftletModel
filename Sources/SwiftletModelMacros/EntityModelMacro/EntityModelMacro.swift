@@ -60,14 +60,15 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
 
-            let optionalProperties = variableDeclarations
-                .compactMap { $0.optionalPropertiesAttributes() }
-
+            let storedOptionalProperties = variableDeclarations
+                .compactMap { $0.storedOptionalPropertiesAttributes() }
+            
+        
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
-                optionalProperties: optionalProperties,
+                storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
                 uniqueAttributes: uniqueAttributes,
                 fullTextIndexAttributes: fullTextIndexAttributes,
@@ -82,7 +83,7 @@ extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
                                     relationshipAttributes: [RelationshipAttributes],
-                                    optionalProperties: [PropertyAttributes],
+                                    storedOptionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
                                     uniqueAttributes: [UniqueAttributes],
                                     fullTextIndexAttributes: [FullTextIndexAttributes],
@@ -100,7 +101,14 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
-            \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
+            \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
+            \(raw: FunctionDeclSyntax.indexedKeyPathName(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                uniqueAttributes,
+                fullTextIndexAttributes)
+            )
         }
         """
         )
@@ -205,6 +213,62 @@ extension FunctionDeclSyntax {
                 .map { "$\($0.propertyName).normalize()" }
                 .joined(separator: "\n")
             )
+        }
+        """
+        )
+    }
+    
+    static func indexedKeyPathName(
+        _ accessAttributes: AccessAttribute,
+        _ relationshipAttributes: [RelationshipAttributes],
+        _ indexAttributes: [IndexAttributes],
+        _ uniqueAttributes: [UniqueAttributes],
+        _ fullTextIndexAttributes: [FullTextIndexAttributes]
+
+    ) throws -> FunctionDeclSyntax {
+
+        let attributesCollections: [any Collection] = [
+            relationshipAttributes,
+            indexAttributes,
+            uniqueAttributes,
+            fullTextIndexAttributes
+        ]
+        
+        guard !attributesCollections.allSatisfy({ $0.isEmpty }) else {
+            return try FunctionDeclSyntax(
+            """
+            
+            \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
+                ""
+            }
+            """
+            )
+        }
+        
+        return try FunctionDeclSyntax(
+        """
+
+        \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
+            switch keyPath {
+                \(raw: relationshipAttributes
+                    .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: indexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: fullTextIndexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: uniqueAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                default: 
+                   return ""
+            }
         }
         """
         )
@@ -386,7 +450,7 @@ private extension VariableDeclSyntax {
         return nil
     }
 
-    func optionalPropertiesAttributes() -> PropertyAttributes? {
+    func storedOptionalPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
@@ -408,8 +472,13 @@ private extension VariableDeclSyntax {
             }
 
             let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
-            
+
             guard isOptional else {
+                continue
+            }
+
+            // Stored properties have nil accessorBlock
+            guard binding.accessorBlock == nil else {
                 continue
             }
 
@@ -418,7 +487,7 @@ private extension VariableDeclSyntax {
         }
         return nil
     }
-
+    
     func indexAttributes() -> IndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),

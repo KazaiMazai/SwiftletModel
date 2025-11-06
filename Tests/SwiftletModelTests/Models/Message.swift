@@ -13,8 +13,8 @@ extension Schema.V1 {
     @EntityModel
     struct Message: Codable, Sendable {
 
-        @Index<Self>(\.timestamp) private static var timestampIndex
-        @FullTextIndex<Self>(\.text) private static var textSearchIndex1
+        @Index(\Message.timestamp) private static var timestampIndex
+        @FullTextIndex(\Message.text) private static var textSearchIndex1
 
         public let id: String
         let text: String

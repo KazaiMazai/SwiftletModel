@@ -24,6 +24,8 @@ extension Schema.V1 {
         private(set) var email: String
 
         var isCurrent: Bool = false
+        
+        var fullname: String? { name }
 
         @Relationship(inverse: \.users)
         var chats: [Chat]?
@@ -57,4 +59,5 @@ extension CollisionResolver where Entity == User {
             try user.save(to: &context)
         }
     }
+    
 }

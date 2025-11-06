@@ -42,6 +42,8 @@ public protocol EntityModelProtocol: Sendable {
     static func queryAll(with nested: Nested..., in context: Context) -> QueryList<Self>
 
     static func nestedQueryModifier(_ query: Query<Self>, in context: Context, nested: [Nested]) -> Query<Self>
+    
+    static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String
 }
 
 public extension EntityModelProtocol {
