@@ -14,7 +14,7 @@ extension Schema.V1 {
     struct User: Codable, Sendable {
         @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
         @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
-        @Unique<Self>(\User.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
+        @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
 
         let id: String
         private(set) var name: String?

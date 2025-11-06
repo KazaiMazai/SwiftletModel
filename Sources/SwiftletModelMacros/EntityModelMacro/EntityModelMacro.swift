@@ -63,13 +63,10 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
             
-            let allProperties = variableDeclarations
-                .compactMap { $0.allPropertiesAttributes() }
-             
+        
             let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
                 type: type,
                 conformingTo: protocols,
-                allProperties: allProperties,
                 relationshipAttributes: relationshipAttributes,
                 storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
@@ -85,7 +82,6 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 extension ExtensionDeclSyntax {
     static func entityModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
-                                    allProperties: [PropertyAttributes],
                                     relationshipAttributes: [RelationshipAttributes],
                                     storedOptionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
@@ -108,7 +104,6 @@ extension ExtensionDeclSyntax {
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
             \(raw: FunctionDeclSyntax.indexedKeyPathName(
                 accessAttribute,
-                allProperties,
                 relationshipAttributes,
                 indexAttributes,
                 uniqueAttributes,
@@ -225,7 +220,6 @@ extension FunctionDeclSyntax {
     
     static func indexedKeyPathName(
         _ accessAttributes: AccessAttribute,
-        _ propertyAttributes: [PropertyAttributes],
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes],
@@ -234,7 +228,6 @@ extension FunctionDeclSyntax {
     ) throws -> FunctionDeclSyntax {
 
         let attributesCollections: [any Collection] = [
-            propertyAttributes,
             relationshipAttributes,
             indexAttributes,
             uniqueAttributes,
@@ -245,7 +238,7 @@ extension FunctionDeclSyntax {
             return try FunctionDeclSyntax(
             """
             
-            \(raw: accessAttributes.name) static func propertyName<T>(_ keyPath: KeyPath<Self, T>) -> String {
+            \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
                 ""
             }
             """
@@ -257,10 +250,6 @@ extension FunctionDeclSyntax {
 
         \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
             switch keyPath {
-               \(raw: propertyAttributes
-                    .map { "case \\.\($0.propertyName): return \"\($0.propertyName)\"" }
-                    .joined(separator: "\n")
-                )
                 \(raw: relationshipAttributes
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
@@ -499,32 +488,6 @@ private extension VariableDeclSyntax {
         return nil
     }
     
-    func allPropertiesAttributes() -> PropertyAttributes? {
-        for attribute in attributes {
-
-            if let customAttribute = attribute.as(AttributeSyntax.self),
-               let _ = customAttribute.attributeName.as(IdentifierTypeSyntax.self) {
-                return nil
-            }
-        }
-
-        guard modifiers.first?.name.text != "static" else {
-            return nil
-        }
-
-        let isMutable = bindingSpecifier.tokenKind == .keyword(.var)
-        for binding in bindings {
-            guard let propertyName = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
-                  let _ = binding.typeAnnotation?.type else {
-                continue
-            }
-            
-            return PropertyAttributes(propertyName: propertyName, isMutable: isMutable)
-
-        }
-        return nil
-    }
-
     func indexAttributes() -> IndexAttributes? {
         for attribute in self.attributes {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
