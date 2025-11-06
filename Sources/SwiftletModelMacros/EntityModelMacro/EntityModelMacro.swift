@@ -60,8 +60,8 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
 
-            let optionalProperties = variableDeclarations
-                .compactMap { $0.optionalPropertiesAttributes() }
+            let storedOptionalProperties = variableDeclarations
+                .compactMap { $0.storedOptionalPropertiesAttributes() }
             
             let properties = variableDeclarations
                 .compactMap { $0.propertiesAttributes() }
@@ -71,7 +71,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 conformingTo: protocols,
                 properties: properties,
                 relationshipAttributes: relationshipAttributes,
-                optionalProperties: optionalProperties,
+                optionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
                 uniqueAttributes: uniqueAttributes,
                 fullTextIndexAttributes: fullTextIndexAttributes,
@@ -87,7 +87,7 @@ extension ExtensionDeclSyntax {
                                     conformingTo protocols: [SwiftSyntax.TypeSyntax],
                                     properties: [PropertyAttributes],
                                     relationshipAttributes: [RelationshipAttributes],
-                                    optionalProperties: [PropertyAttributes],
+                                    storedOptionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
                                     uniqueAttributes: [UniqueAttributes],
                                     fullTextIndexAttributes: [FullTextIndexAttributes],
@@ -105,8 +105,8 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
-            \(raw: VariableDeclSyntax.patch(accessAttribute, optionalProperties))
-            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, optionalProperties))
+            \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
+            \(raw: FunctionDeclSyntax.propertyName(accessAttribute, properties))
                     
         }
         """
@@ -414,7 +414,7 @@ private extension VariableDeclSyntax {
         return nil
     }
 
-    func optionalPropertiesAttributes() -> PropertyAttributes? {
+    func storedOptionalPropertiesAttributes() -> PropertyAttributes? {
         for attribute in attributes {
 
             if let customAttribute = attribute.as(AttributeSyntax.self),
@@ -436,8 +436,13 @@ private extension VariableDeclSyntax {
             }
 
             let isOptional = typeAnnotation.is(OptionalTypeSyntax.self)
-            
+
             guard isOptional else {
+                continue
+            }
+
+            // Stored properties have nil accessorBlock
+            guard binding.accessorBlock == nil else {
                 continue
             }
 
