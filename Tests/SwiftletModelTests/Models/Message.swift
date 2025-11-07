@@ -47,7 +47,7 @@ extension Schema.V1 {
 extension Query<Message> {
     var isMyMessage: Bool? {
         related(\.$author)
-            .resolve()?.isCurrent == true
+            .resolve(context)?.isCurrent == true
     }
 }
 

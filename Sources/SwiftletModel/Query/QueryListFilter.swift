@@ -86,14 +86,14 @@ private extension Collection {
 
         if let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
             return filter({ filterResult.contains($0.id) })
         }
 
         return self
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -110,7 +110,7 @@ private extension Collection {
 
         if predicate.method == .equal, let index = SortIndex<Entity>.HashableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
             return filter({ filterResult.contains($0.id) })
@@ -118,14 +118,14 @@ private extension Collection {
 
         if let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
             return filter({ filterResult.contains($0.id) })
         }
 
         return self
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -142,14 +142,14 @@ private extension Collection {
 
         if predicate.method == .equal, let index = SortIndex<Entity>.HashableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
             return filter({ filterResult.contains($0.id) })
         }
 
         return self
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -165,7 +165,7 @@ private extension Collection {
         }
 
         return self
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -183,7 +183,7 @@ private extension Collection {
         case let .updated(within: range):
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(predicate.indexName, in: context)
-                .resolve() {
+                .resolve(context) {
 
                 return filter { index.contains(id: $0.id, in: range) }
             }
@@ -209,7 +209,7 @@ private extension Collection {
         if predicate.method.isMatching, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return filter({ filterResult.contains($0.id) })
@@ -218,18 +218,18 @@ private extension Collection {
          if predicate.method.isIncluding, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
-            .resolve() {
+            .resolve(context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return self
                 .filter({ filterResult.contains($0.id) })
-                .resolve()
+                .resolve(context)
                 .filter(predicate.isIncluded)
                 .query(in: context)
         }
 
         return self
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }

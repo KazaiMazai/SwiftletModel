@@ -6,7 +6,6 @@
 //
 
 public struct ContextQuery<Entity: EntityModelProtocol, Result, Key> {
-    let context: Context
     let key: (Context) -> Key?
     let result: (Context, Key?) -> Result
 }

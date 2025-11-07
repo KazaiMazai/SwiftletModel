@@ -44,7 +44,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -56,7 +56,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let sortResult = TestingModels.SingleValueIndexed
             .query(in: context)
             .sorted(by: \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -68,7 +68,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf1.desc)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -80,7 +80,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let sortResult = TestingModels.EvaluatedPropertyDescIndexed
             .query(in: context)
             .sorted(by: \.numOf1.desc)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -115,7 +115,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -127,7 +127,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -139,7 +139,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -151,7 +151,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -186,7 +186,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -198,7 +198,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -210,7 +210,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -222,7 +222,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -257,7 +257,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -269,7 +269,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -281,7 +281,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.NotIndexed
             .query(in: context)
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }
@@ -293,7 +293,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let sortResult = TestingModels.ExtensivelyIndexed
             .query(in: context)
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
-            .resolve()
+            .resolve(context)
 
         XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
     }

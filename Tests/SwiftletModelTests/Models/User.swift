@@ -49,7 +49,7 @@ extension Schema.V1 {
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
         CollisionResolver { existingId, _, _, context in
-            guard var user = Entity.query(existingId, in: context).resolve(),
+            guard var user = Entity.query(existingId, in: context).resolve(context),
                   user.isCurrent
             else {
                 return

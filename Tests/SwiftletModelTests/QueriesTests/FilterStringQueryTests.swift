@@ -35,7 +35,7 @@ final class FilterMatchStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, matches: "ananas"), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -47,7 +47,7 @@ final class FilterMatchStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, matches: "ananas"), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -85,7 +85,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -97,7 +97,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -109,7 +109,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -121,7 +121,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
 
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -134,7 +134,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -146,7 +146,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -158,7 +158,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -170,7 +170,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -182,7 +182,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -194,7 +194,7 @@ class FilterStringQueryTests: XCTestCase {
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive), in: context)
-            .resolve()
+            .resolve(context)
 
         XCTAssertFalse(filterResult.isEmpty)
         XCTAssertEqual(Set(filterResult.map { $0.id }),

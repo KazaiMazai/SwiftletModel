@@ -12,60 +12,47 @@ public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Entit
 // MARK: - Resolve Query
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
-    @available(*, deprecated, renamed: "resolve(in:)", message: "Provide context explicitly")
-    func resolve() -> Entity? {
-        result(context, id)
-    }
-  
-    func resolve(in context: Context) -> Entity? {
-        result(self.context, id)
+    func resolve(_ context: Context) -> Entity? {
+        result(context, id(context))
     }
 }
 
 public extension Collection {
-    @available(*, deprecated, renamed: "resolve(in:)", message: "Provide context explicitly")
-    func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
-        compactMap { $0.resolve() }
-    }
-
-    func resolve<Entity>(in context: Context) -> [Entity] where Element == Query<Entity> {
-        compactMap { $0.resolve() }
+    func resolve<Entity>(_ context: Context) -> [Entity] where Element == Query<Entity> {
+        compactMap { $0.resolve(context) }
     }
 }
 
 extension ContextQuery where Result == Entity?, Key == Entity.ID {
-    var id: Entity.ID? { key(context) }
+    func id(_ context: Context) -> Entity.ID? { key(context) }
 
-    init(context: Context, id: Entity.ID) {
-        self.context = context
+    init(id: Entity.ID) {
         self.key = { _ in  id }
         self.result = { context, id in id.flatMap { context.find($0) }}
     }
 
-    init(context: Context, id: @escaping (Context) -> Entity.ID?) {
-        self.context = context
+    init(id: @escaping (Context) -> Entity.ID?) {
         self.key = id
         self.result = { context, id in id.flatMap { context.find($0) } }
     }
 
-    init(context: Context, id: Entity.ID?, entity: @escaping () -> Entity?) {
-        self.context = context
-        self.key = { _ in id }
-        self.result = { _, _ in entity() }
+    init(id: @escaping (Context) -> Entity.ID?, entity: @escaping (Context) -> Entity?) {
+        self.key = id
+        self.result = { context, _ in entity(context) }
     }
 
-    func whenResolved(then perform: @escaping (Entity) -> Entity?) -> Query<Entity> {
-        Query(context: context, id: id) {
-            guard let entity = resolve() else {
+    func whenResolved(then perform: @escaping (Context, Entity) -> Entity?) -> Query<Entity> {
+        Query(id: key) { 
+            guard let entity = resolve($0) else {
                 return nil
             }
 
-            return perform(entity)
+            return perform($0, entity)
         }
     }
 
     static func none(in context: Context) -> Self {
-        Self(context: context, id: nil) { nil }
+        Self(id: { _ in nil }) { _ in  nil }
     }
 }
 
@@ -77,6 +64,6 @@ extension Collection {
     Element == Entity,
     Entity: EntityModelProtocol {
 
-        map { $0.query(in: context) }
+        map { $0.query() }
     }
 }

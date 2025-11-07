@@ -39,7 +39,7 @@ public protocol EntityModelProtocol: Sendable {
 
     static var patch: MergeStrategy<Self> { get }
 
-    static func queryAll(with nested: Nested..., in context: Context) -> QueryList<Self>
+    static func queryAll(with nested: Nested...) -> QueryList<Self>
 
     static func nestedQueryModifier(_ query: Query<Self>, in context: Context, nested: [Nested]) -> Query<Self>
     
@@ -67,9 +67,9 @@ public extension EntityModelProtocol {
     }
 
     func asDeleted(in context: Context) -> Deleted<Self>? {
-        query(in: context)
+        query()
             .with(.ids)
-            .resolve()
+            .resolve(context)
             .map { Deleted($0) }
     }
 
@@ -94,31 +94,31 @@ public extension MergeStrategy where T: EntityModelProtocol {
 
 public extension EntityModelProtocol {
     static func delete(id: ID, from context: inout Context) throws {
-        try Self.query(id, in: context)
-            .resolve()?
+        try Self.query(id,)
+            .resolve(context)?
             .delete(from: &context)
     }
 }
 
 public extension EntityModelProtocol {
-    func query(in context: Context) -> Query<Self> {
-        Self.query(id, in: context)
+    func query() -> Query<Self> {
+        Self.query(id)
     }
 
-    static func query(_ id: ID, in context: Context) -> Query<Self> {
-        context.query(id)
+    static func query(_ id: ID) -> Query<Self> {
+        Query(id: id)
     }
 
-    static func query(_ ids: [ID], in context: Context) -> QueryList<Self> {
-        context.query(ids)
+    static func query(_ ids: [ID]) -> QueryList<Self> {
+        QueryList(ids: ids)
     }
 
-    static func query(in context: Context) -> QueryList<Self> {
-        context.query()
+    static func query() -> QueryList<Self> {
+        QueryList.all()
     }
 
-    static func queryAll(with nested: Nested..., in context: Context) -> QueryList<Self> {
-        Self.query(in: context)
+    static func queryAll(with nested: Nested...) -> QueryList<Self> {
+        Self.query()
             .with(nested)
     }
 }

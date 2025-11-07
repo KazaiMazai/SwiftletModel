@@ -42,7 +42,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         measure {
             _ = queries
                 .sorted(by: \.numOf1)
-                .resolve()
+                .resolve(context)
         }
     }
 
@@ -51,7 +51,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         measure {
             _ = queries
                 .sorted(by: \.numOf1)
-                .resolve()
+                .resolve(context)
         }
     }
 
@@ -60,7 +60,7 @@ final class SortIndexPerformanceTests: XCTestCase {
         measure {
             _ = queries
                 .sorted(by: \.numOf1.desc)
-                .resolve()
+                .resolve(context)
         }
     }
 

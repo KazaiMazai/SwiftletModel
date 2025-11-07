@@ -83,7 +83,7 @@ public extension ContextQuery {
             case let .updated(within: range):
                 if let index = SortIndex<Entity>.ComparableValue<Date>
                     .query(predicate.indexName, in: context)
-                    .resolve() {
+                    .resolve(context) {
 
                     return index.contains(id: entity.id, in: range) ? entity : nil
                 }
@@ -118,7 +118,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         if let index = Index<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
             .filter(predicate)
@@ -127,7 +127,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         return Entity
             .query(in: context)
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -141,7 +141,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
                 .find(predicate.value)
@@ -150,7 +150,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         if let index = Index<Entity>.ComparableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
                 .filter(predicate)
@@ -159,7 +159,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         return Entity
             .query(in: context)
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -173,7 +173,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         if predicate.method == .equal, let index = Index<Entity>.HashableValue<T>
             .query(.indexName(predicate.keyPath), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
                 .find(predicate.value)
@@ -182,7 +182,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         return Entity
             .query(in: context)
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -196,7 +196,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         Entity
             .query(in: context)
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }
@@ -209,7 +209,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
         case let .updated(within: range):
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(predicate.indexName, in: context)
-                .resolve() {
+                .resolve(context) {
 
                 return index
                     .filter(range: range)
@@ -232,7 +232,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
         if predicate.method.isMatching, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
                 .search(predicate.value)
@@ -242,19 +242,19 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
          if predicate.method.isIncluding, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths), in: context)
-            .resolve() {
+            .resolve(context) {
 
             return index
                 .search(predicate.value)
                 .map { Query<Entity>(context: context, id: $0) }
-                .resolve()
+                .resolve(context)
                 .filter(predicate.isIncluded)
                 .query(in: context)
         }
 
         return Entity
             .query(in: context)
-            .resolve()
+            .resolve(context)
             .filter(predicate.isIncluded)
             .query(in: context)
     }

@@ -13,7 +13,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     static func schemaQuery(in context: Context) -> QueryList<Entity> {
-        Entity.query(in: context)
+        Entity.query()
             .sorted(by: .updatedAt)
     }
 }

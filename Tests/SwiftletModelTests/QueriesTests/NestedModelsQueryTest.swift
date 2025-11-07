@@ -67,7 +67,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .query(in: context)
             .sorted(by: \.id)
             .with(\.$author)
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -80,7 +80,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .query(in: context)
             .sorted(by: \.id)
             .id(\.$author)
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -93,7 +93,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .query(in: context)
             .sorted(by: \.id)
             .id(\.$replies)
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -111,7 +111,7 @@ final class NestedModelsQueryTest: XCTestCase {
                     .filter(\.text.count > 3)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -129,7 +129,7 @@ final class NestedModelsQueryTest: XCTestCase {
                     .filter(\.text.count > 5)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -146,7 +146,7 @@ final class NestedModelsQueryTest: XCTestCase {
                     .sorted(by: \.text.count)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -161,7 +161,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
             }
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -174,7 +174,7 @@ final class NestedModelsQueryTest: XCTestCase {
             .query(in: context)
             .sorted(by: \.id)
             .id(slice: \.$replies)
-            .resolve()
+            .resolve(context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }

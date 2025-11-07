@@ -115,7 +115,7 @@ let chats = Chat
     .with(\.$messages) {
         $0.with(\.$author)
     }
-    .resolve()
+    .resolve(context)
 ```
 This pulls the chat and its users and messages from the context with proper denormalization.
 
@@ -440,7 +440,7 @@ let user = User
         .with(\.$users)
         .id(\.$admins)
     }
-    .resolve()
+    .resolve(context)
 ```
 
 *Wait but we've just saved a chat with users and messages.
@@ -448,7 +448,7 @@ Now we are querying things from another end, WTF?*
 
 *Exactly. That's the point of bidirectional links and normalization.*
 
-When `resolve()` is called all entities are pulled from the context storage 
+When `resolve(context)` is called all entities are pulled from the context storage 
 and put in its place according to the nested shape in denormalized form.
 
 ### Bulk nested models query
@@ -460,7 +460,7 @@ It's possible to query entity with all nested related models at once in a single
 let user = User
     .query("1", in: context)
     .with(.entities)
-    .resolve()
+    .resolve(context)
 ```
 
 It's also possible to query all nested models of the graph recursively up to a certain depth and specify, how do we want to resolve them at a certain depth: as a complete entity, as a fragment or only ids:
@@ -469,7 +469,7 @@ It's also possible to query all nested models of the graph recursively up to a c
 let user = User
     .query("1", in: context)
     .with(.entities, .fragments, .ids)
-    .resolve()
+    .resolve(context)
 ```
 
 ### Combining bulk nested models with nested models query
@@ -484,7 +484,7 @@ let user = User
     .with(\.$chats) { chat in
         chat.with(.entities)
     }
-    .resolve()
+    .resolve(context)
 ```
 
 ### Related models query
@@ -496,7 +496,7 @@ We can also query related items directly:
 let userChats: [Chat] = User
     .query("1", in: context)
     .related(\.$chats)
-    .resolve()
+    .resolve(context)
     
 ```
 
@@ -512,12 +512,12 @@ The sorting API supports both single and multi-property sorting, with options fo
 // Ascending sort (default)
 let users = User.query(in: context)
     .sorted(by: \.age)
-    .resolve()
+    .resolve(context)
 
 // Descending sort
 let users = User.query(in: context)
     .sorted(by: \.age.desc)
-    .resolve()
+    .resolve(context)
 ```
 #### Multi-Property Sorting
 
@@ -525,12 +525,12 @@ let users = User.query(in: context)
 // Sort by multiple properties
 let users = User.query(in: context)
     .sorted(by: \.lastName, \.firstName)
-    .resolve()
+    .resolve(context)
 
 // Mixed ascending/descending
 let users = User.query(in: context)
     .sorted(by: \.age.desc, \.lastName)
-    .resolve()
+    .resolve(context)
 ```
 
 ### Using Indexes for Sorting
@@ -549,12 +549,12 @@ struct User {
 // This sort will use the index
 let sortedUsers = User.query(in: context)
     .sorted(by: \.age)
-    .resolve()
+    .resolve(context)
     
 // Not indexed property sort
 let sortedUsers = User.query(in: context)
     .sorted(by: \.name)
-    .resolve()
+    .resolve(context)
 ```
 #### Compound Index
 
@@ -572,17 +572,17 @@ struct User {
 // This sort will use the compound index
 let sortedUsers = User.query(in: context)
     .sorted(by: \.lastName, \.firstName)
-    .resolve()
+    .resolve(context)
     
 // Not indexed property sort. Compound index won't be used:
 let sortedUsers = User.query(in: context)
     .sorted(by: \.lastName)
-    .resolve()
+    .resolve(context)
     
 // Not indexed property sort. Compound index won't be used:
 let sortedUsers = User.query(in: context)
     .sorted(by: \.lastName, \.age)
-    .resolve()    
+    .resolve(context)    
     
 ```
 
@@ -592,13 +592,13 @@ let sortedUsers = User.query(in: context)
 let results = User.query(in: context)
     .filter(\.age > 18)
     .sorted(by: \.lastName, \.firstName)
-    .resolve()
+    .resolve(context)
 
 // Complex sorting with filters
 let results = User.query(in: context)
     .filter(\.status == .active)
     .sorted(by: \.age.desc, \.lastName)
-    .resolve()
+    .resolve(context)
 
 ```
 
@@ -645,13 +645,13 @@ The filtering API offers various comparison methods and can leverage indexes for
 // Single property equality
 let users = User
         .filter(\.age == 25, in: context)
-        .resolve()
+        .resolve(context)
         
 // Multiple property equality chain.
 let results = User
     .filter(\.age == 25, in: context)
     .filter(\.status == .active)
-    .resolve()
+    .resolve(context)
 ```
 
 #### Comparison Filters
@@ -660,18 +660,18 @@ let results = User
 // Greater than
 let adults = User
     .filter(\.age > 18, in: context)
-    .resolve()  
+    .resolve(context)  
 
 // Less than or equal
 let juniors = User
         .filter(\.age <= 21, in: context)
-        .resolve()
+        .resolve(context)
 
 // Range combination
 let youngAdults = User
     .filter(\.age >= 18, in: context)
     .filter(\.age < 30)
-    .resolve()
+    .resolve(context)
 ```
 
 ### Complex Filters
@@ -682,18 +682,18 @@ let youngAdults = User
 // OR operation
 let results = User.filter(\.age == 25, in: context)
     .or(.filter(\.age == 30, in: context))
-    .resolve()
+    .resolve(context)
 
 // AND operation
 let results = User.filter(\.age > 18, in: context)
     .and(\.status == .active)
-    .resolve()
+    .resolve(context)
 
 // Complex combinations
 let results = User.filter(\.age == 25, in: context)
     .or(.filter(\.status == .active, in: context))
     .or(.filter(\.age > 30, in: context).and(\.level <= 4))
-    .resolve()
+    .resolve(context)
 ```
 ### Text Filtering
 #### String Operations
@@ -702,21 +702,21 @@ let results = User.filter(\.age == 25, in: context)
 // Contains
 let results = Message
     .filter(.string(\.text, contains: "hello"), in: context)
-    .resolve()
+    .resolve(context)
     
 // Prefix/Suffix
 let results = Message
     .filter(.string(\.text, hasPrefix: "Re:"), in: context)
-    .resolve()
+    .resolve(context)
     
 let results = Message
     .filter(.string(\.text, hasSuffix: "regards"), in: context)
-    .resolve()
+    .resolve(context)
 
 // Case sensitivity
 let results = Message
     .filter(.string(\.text, contains: "Hello", caseSensitive: true), in: context)
-    .resolve()
+    .resolve(context)
 
 
 ```
@@ -727,11 +727,11 @@ When using FullTextIndex, you can perform more sophisticated fuzzy mathc text se
 ```swift
 // Fuzzy matching
 let results = Article.filter(.string(\.content, matches: "search terms"), in: context)
-    .resolve()
+    .resolve(context)
 // Multiple field search
 let results = Article
     .filter(.string(\.title, \.content, matches: "search terms"), in: context)
-    .resolve()
+    .resolve(context)
 
 ```
 
@@ -755,7 +755,7 @@ struct User {
 // This query will use the age index
 let results = User
     .filter(\.age > 18, in: context)
-    .resolve()
+    .resolve(context)
 
 // This query will use both the age and status indexes 
 let results = User
@@ -812,13 +812,13 @@ let results = User
     .and(\.status == .active)
     .or(.filter(\.role == .admin, in: context))
     .and(\.lastLogin > oneWeekAgo)
-    .resolve()
+    .resolve(context)
 
 // Text search with multiple fields
 let articles = Article
     .filter(.string(\.title, \.content, matches: "swift database"), in: context)
     .filter(\.status == .published)
-    .resolve()
+    .resolve(context)
 ```
 
 ## Codable Conformance
@@ -1609,7 +1609,7 @@ struct User {
 extension CollisionResolver where Entity == User {
     static var updateCurrentUser: Self {
         CollisionResolver { existingId, _, _, context in
-            guard var user = Query<Entity>(context: context, id: existingId).resolve(),
+            guard var user = Query<Entity>(context: context, id: existingId).resolve(context),
                 user.isCurrent
             else {
                 return
@@ -1664,7 +1664,7 @@ struct Article {
 let articles = Article
     .query(in: context)
     .filter(.string(\.title, \.content, matches: "search terms"))
-    .resolve()
+    .resolve(context)
 ```
 
 ### Index Performance Considerations
@@ -1820,11 +1820,11 @@ try user.save(to: &context)
 try chat.save(to: &context)
 
 // Query entire schema with all entities and relationships
-let schemaData = Schema.fullSchemaQuery(in: context).resolve()
+let schemaData = Schema.fullSchemaQuery(in: context).resolve(context)
 
 // Query schema changes since last sync
 var lastSyncDate = Date.distantPast
-let syncChanges = Schema.fullSchemaQuery(updated: lastSyncDate...Date(), in: context).resolve()
+let syncChanges = Schema.fullSchemaQuery(updated: lastSyncDate...Date(), in: context).resolve(context)
 lastSyncDate = Date()
 ```
 
@@ -1853,7 +1853,7 @@ Example usage:
 // Query entities updated within a time range
 let recentChanges = User
     .filter(.updated(within: lastSync...Date()), in: context)
-    .resolve()
+    .resolve(context)
 
 ```
 
@@ -1879,7 +1879,7 @@ var lastSyncDate = Date.distantPast
 // Query only entities that changed since last sync
 let updatedEntities = User
     .filter(.metadata(\.updatedAt, within: lastSyncDate...Date()), in: context)
-    .resolve()
+    .resolve(context)
 
 // Update sync timestamp
 lastSyncDate = Date()
