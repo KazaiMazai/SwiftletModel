@@ -114,7 +114,7 @@ public extension EntityModelProtocol {
     }
 
     static func query() -> QueryList<Self> {
-        QueryList.all()
+        QueryList()
     }
 
     static func queryAll(with nested: Nested...) -> QueryList<Self> {

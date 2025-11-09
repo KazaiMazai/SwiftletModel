@@ -40,8 +40,8 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: Ent
         self.result = { context, _ in ids.map { context.query($0) } }
     }
     
-    static func all() -> QueryList<Entity> {
-        QueryList { context in
+    init() {
+        self = QueryList<Entity> { context in
             context.ids(Entity.self).map { context.query($0)}
         }
     }
