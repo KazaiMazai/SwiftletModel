@@ -82,7 +82,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Self {
 
-            whenResolved { context, entity in
+            then { context, entity in
                 var entity = entity
                 entity[keyPath: keyPath] = related(keyPath)
                     .id(context)
@@ -112,7 +112,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         fragment: Bool,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            whenResolved { context, entity in
+            then { context, entity in
                 var entity = entity
                 entity[keyPath: keyPath] = nested(related(keyPath))
                     .resolve(context)
@@ -128,7 +128,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         fragment: Bool,
         nested: @escaping QueryListModifier<Child>) -> Self {
 
-            whenResolved { context, entity in
+            then { context, entity in
                 var entity = entity
                 let relatedEntities = nested(related(keyPath)).resolve(context)
 
@@ -143,7 +143,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool) -> Self {
 
-            whenResolved { context, entity in
+            then { context, entity in
                 var entity = entity
                 let ids = queryRelated(in: context, keyPath).compactMap { $0.id(context) }
                 entity[keyPath: keyPath] = slice ? .appending(ids: ids) : .ids(ids)

@@ -73,7 +73,7 @@ public extension ContextQuery {
     Result == Entity?,
     Key == Entity.ID {
 
-        whenResolved { context, entity in
+        then { context, entity in
             switch predicate {
             case let .updated(within: range):
                 if let index = SortIndex<Entity>.ComparableValue<Date>
