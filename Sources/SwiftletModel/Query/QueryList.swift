@@ -59,7 +59,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 
     func last() -> Query<Entity> {
-        Query{ context in
+        Query { context in
             resolveQueries(context).last?.id(context)
         }
     }
