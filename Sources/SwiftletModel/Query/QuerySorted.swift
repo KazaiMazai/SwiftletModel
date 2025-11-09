@@ -82,7 +82,7 @@ private extension Collection {
                 .sorted { lhs, rhs in
                     lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
                 }
-                .query(in: context)
+                .query()
         }
 
         return sorted(in: context, using: index)
@@ -108,7 +108,7 @@ private extension Collection {
                     (lhs[keyPath: kp0], lhs[keyPath: kp1]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1])
                 }
-                .query(in: context)
+                .query()
         }
 
         return sorted(in: context, using: index)
@@ -136,7 +136,7 @@ private extension Collection {
                     (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2])
                 }
-                .query(in: context)
+                .query()
         }
 
         return sorted(in: context, using: index)
@@ -167,7 +167,7 @@ private extension Collection {
                     (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2], lhs[keyPath: kp3]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2], rhs[keyPath: kp3])
                 }
-                .query(in: context)
+                .query()
         }
 
         return sorted(in: context, using: index)

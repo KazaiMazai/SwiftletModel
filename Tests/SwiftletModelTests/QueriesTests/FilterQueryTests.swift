@@ -35,7 +35,7 @@ final class FilterQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.NotIndexed
-            .filter(\.numOf1 == 1, in: context)
+            .filter(\.numOf1 == 1)
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -47,7 +47,7 @@ final class FilterQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
+            .filter(\.numOf1 == 1)
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -62,7 +62,7 @@ final class FilterQueryTests: XCTestCase {
             }
 
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
+            .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(context)
 
@@ -78,7 +78,7 @@ final class FilterQueryTests: XCTestCase {
             }
 
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
+            .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(context)
 
@@ -95,8 +95,8 @@ final class FilterQueryTests: XCTestCase {
 
         let context = context
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .or(.filter(\.numOf10 == 2, in: context))
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf10 == 2))
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -112,9 +112,9 @@ final class FilterQueryTests: XCTestCase {
             }
         let context = context
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .or(.filter(\.numOf10 != 5, in: context))
-            .or(.filter(\.numOf1 > 1, in: context).and(\.numOf10 <= 4))
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf10 != 5))
+            .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -130,9 +130,9 @@ final class FilterQueryTests: XCTestCase {
             }
         let context = context
         let filterResult = TestingModels.NotIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .or(.filter(\.numOf10 != 5, in: context))
-            .or(.filter(\.numOf1 > 1, in: context).and(\.numOf10 <= 4))
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf10 != 5))
+            .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -148,9 +148,9 @@ final class FilterQueryTests: XCTestCase {
             }
         let context = context
         let filterResult = TestingModels.NotIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .or(.filter(\.numOf10 != 5, in: context))
-            .or(.filter(\.numOf1 >= 2, in: context).and(\.numOf10 < 4))
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf10 != 5))
+            .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -166,9 +166,9 @@ final class FilterQueryTests: XCTestCase {
             }
         let context = context
         let filterResult = TestingModels.NotIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .or(.filter(\.numOf10 != 5, in: context))
-            .or(.filter(\.numOf1 >= 2, in: context).and(\.numOf10 < 4))
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf10 != 5))
+            .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),

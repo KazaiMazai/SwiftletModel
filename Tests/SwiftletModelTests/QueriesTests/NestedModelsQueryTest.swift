@@ -64,7 +64,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$author)
             .resolve(context)
@@ -77,7 +77,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(\.$author)
             .resolve(context)
@@ -90,7 +90,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(\.$replies)
             .resolve(context)
@@ -103,7 +103,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
@@ -121,7 +121,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
@@ -139,7 +139,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
@@ -156,7 +156,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
@@ -171,7 +171,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(slice: \.$replies)
             .resolve(context)

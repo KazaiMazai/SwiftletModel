@@ -41,11 +41,11 @@ public protocol EntityModelProtocol: Sendable {
 
     static func queryAll(with nested: Nested...) -> QueryList<Self>
 
-    static func nestedQueryModifier(_ query: Query<Self>, in context: Context, nested: [Nested]) -> Query<Self>
+    static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
     
     static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String
 }
-
+ 
 public extension EntityModelProtocol {
 
     static var defaultMergeStrategy: MergeStrategy<Self> { .replace }
@@ -127,39 +127,34 @@ public extension EntityModelProtocol {
 
 public extension EntityModelProtocol {
     static func filter<T>(
-        _ predicate: Predicate<Self, T>,
-        in context: Context) -> QueryList<Self>
+        _ predicate: Predicate<Self, T>) -> QueryList<Self>
     where
     T: Comparable {
-        Query<Self>.filter(predicate, in: context)
+        Query<Self>.filter(predicate)
     }
 
     static func filter<T>(
-        _ predicate: EqualityPredicate<Self, T>,
-        in context: Context) -> QueryList<Self>
+        _ predicate: EqualityPredicate<Self, T>) -> QueryList<Self>
     where
     T: Hashable {
-        Query<Self>.filter(predicate, in: context)
+        Query<Self>.filter(predicate)
     }
 
     static func filter<T>(
-        _ predicate: Predicate<Self, T>,
-        in context: Context) -> QueryList<Self>
+        _ predicate: Predicate<Self, T>) -> QueryList<Self>
     where
     T: Hashable & Comparable {
-        Query<Self>.filter(predicate, in: context)
+        Query<Self>.filter(predicate)
     }
 
     static func filter(
-        _ predicate: StringPredicate<Self>,
-        in context: Context) -> QueryList<Self> {
-        Query<Self>.filter(predicate, in: context)
+        _ predicate: StringPredicate<Self>) -> QueryList<Self> {
+        Query<Self>.filter(predicate)
     }
 
     static func filter(
-        _ predicate: MetadataPredicate,
-        in context: Context) -> QueryList<Self> {
-        Query<Self>.filter(predicate, in: context)
+        _ predicate: MetadataPredicate) -> QueryList<Self> {
+        Query<Self>.filter(predicate)
     }
 }
 

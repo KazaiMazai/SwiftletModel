@@ -22,7 +22,7 @@ final class ManyToManyTests: XCTestCase {
         try! chatTwo.save(to: &context)
 
         let bobChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
             .resolve(context)
 
@@ -38,7 +38,7 @@ final class ManyToManyTests: XCTestCase {
         try! chat.save(to: &context)
 
         let chatUsers = Chat
-            .query(Chat.one.id, in: context)
+            .query(Chat.one.id)
             .related(\.$users)
             .resolve(context)
 
@@ -57,7 +57,7 @@ final class ManyToManyTests: XCTestCase {
         try! chat.save(to: &context)
 
         let bobsChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
             .resolve(context)
 

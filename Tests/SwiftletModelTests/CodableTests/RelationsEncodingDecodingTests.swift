@@ -39,7 +39,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .plain
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -73,7 +73,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .keyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -107,7 +107,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .explicitKeyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -141,7 +141,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .explicitKeyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
@@ -175,7 +175,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .keyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
@@ -209,7 +209,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .plain
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {

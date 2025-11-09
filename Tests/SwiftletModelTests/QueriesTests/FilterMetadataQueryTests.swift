@@ -32,7 +32,7 @@ final class FilterMetadataQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
+            .filter(\.numOf1 == 1)
             .resolve(context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -50,7 +50,7 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(MetadataPredicate.updated(within: range), in: context)
+            .filter(MetadataPredicate.updated(within: range))
             .resolve(context)
 
         // Then
@@ -71,7 +71,7 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(.updated(within: pastRange), in: context)
+            .filter(.updated(within: pastRange))
             .resolve(context)
 
         // Then
@@ -89,7 +89,7 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: .updatedAt)
             .last()
             .filter(MetadataPredicate.updated(within: range))

@@ -42,7 +42,7 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted { $0.numOf1 < $1.numOf1 }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1)
             .resolve(context)
 
@@ -54,7 +54,7 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted { $0.numOf1 < $1.numOf1 }
 
         let sortResult = TestingModels.SingleValueIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1)
             .resolve(context)
 
@@ -66,7 +66,7 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted { $0.numOf1 > $1.numOf1 }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1.desc)
             .resolve(context)
 
@@ -78,7 +78,7 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted { $0.numOf1 > $1.numOf1 }
 
         let sortResult = TestingModels.EvaluatedPropertyDescIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1.desc)
             .resolve(context)
 
@@ -113,7 +113,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -125,7 +125,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -137,7 +137,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(context)
 
@@ -149,7 +149,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(context)
 
@@ -184,7 +184,7 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -196,7 +196,7 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -208,7 +208,7 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(context)
 
@@ -220,7 +220,7 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(context)
 
@@ -255,7 +255,7 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -267,7 +267,7 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(context)
 
@@ -279,7 +279,7 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(context)
 
@@ -291,7 +291,7 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(context)
 

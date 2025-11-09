@@ -33,7 +33,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_RawContainTextFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.StringNotIndexed
-                .query(in: context)
+                .query()
                 .resolve(context)
                 .filter {
                     $0.text.contains("banan", caseSensitive: false)
@@ -44,7 +44,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_IndexedContainsTextFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.StringFullTextIndexed
-                .filter(.string(\.text, contains: "banan"), in: context)
+                .filter(.string(\.text, contains: "banan"))
                 .resolve(context)
         }
     }
@@ -52,7 +52,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_NotIndexedContainsTextFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.StringNotIndexed
-                .filter(.string(\.text, contains: "banan"), in: context)
+                .filter(.string(\.text, contains: "banan"))
                 .resolve(context)
         }
     }
@@ -60,7 +60,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_IndexedMatchTextFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.StringFullTextIndexed
-                .filter(.string(\.text, matches: "banan"), in: context)
+                .filter(.string(\.text, matches: "banan"))
                 .resolve(context)
         }
     }
@@ -68,7 +68,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_NotIndexedMatchTextFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.StringNotIndexed
-                .filter(.string(\.text, matches: "banan"), in: context)
+                .filter(.string(\.text, matches: "banan"))
                 .resolve(context)
         }
     }
@@ -77,7 +77,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             let tokens = "banan".makeTokens()
             _ = TestingModels.StringNotIndexed
-                .query(in: context)
+                .query()
                 .resolve(context)
                 .filter {
                     $0.text.matches(tokens: tokens)

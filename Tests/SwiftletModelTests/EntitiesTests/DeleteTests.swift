@@ -34,13 +34,13 @@ final class DeleteTests: XCTestCase {
         try! Chat.delete(id: "1", from: &context)
 
         let chat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNil(chat)
 
         let deletedChat = Deleted<Chat>
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNotNil(deletedChat)
@@ -48,14 +48,14 @@ final class DeleteTests: XCTestCase {
 
     func test_WhenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() {
         let softDeleteChat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)?
             .asDeleted(in: context)
 
         try! softDeleteChat!.save(to: &context)
 
         let chat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNil(chat)
@@ -65,12 +65,12 @@ final class DeleteTests: XCTestCase {
         try! Chat.delete(id: "1", from: &context)
 
         try! Deleted<Chat>
-            .query("1", in: context)
+            .query("1")
             .resolve(context)?
             .restore(in: &context)
 
         let chat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNotNil(chat)
@@ -80,7 +80,7 @@ final class DeleteTests: XCTestCase {
         try! Chat.delete(id: "1", from: &context)
 
         let userChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
             .resolve(context)
 
@@ -91,24 +91,24 @@ final class DeleteTests: XCTestCase {
         try! Chat.delete(id: "1", from: &context)
 
         let message = Message
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         let attachment = Attachment
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNil(message)
         XCTAssertNil(attachment)
 
         let deletedMessage = Deleted<Message>
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNotNil(deletedMessage)
 
         let deletedAttachment = Deleted<Attachment>
-            .query("1", in: context)
+            .query("1")
             .resolve(context)
 
         XCTAssertNotNil(deletedAttachment)
@@ -116,13 +116,13 @@ final class DeleteTests: XCTestCase {
 
     func test_WhenEntityIsDetached_EntityIsRemovedFromRelations() {
         let chat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)!
 
         try! chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let userChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
             .resolve(context)
 
@@ -131,13 +131,13 @@ final class DeleteTests: XCTestCase {
 
     func test_WhenEntityIsDetached_EntityIsNotRemovedFromContext() {
         let chat = Chat
-            .query("1", in: context)
+            .query("1")
             .resolve(context)!
 
         try! chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .resolve(context)
 
         XCTAssertNotNil(user)
@@ -145,13 +145,13 @@ final class DeleteTests: XCTestCase {
 
     func test_WhenEntityIsDetachedFromOneWayRelation_EntityIsRemovedFromRelations() {
         let message = Message
-            .query("1", in: context)
+            .query("1")
             .resolve(context)!
 
         try! message.detach(\.$author, in: &context)
 
         let refetchedMessage = Message
-            .query("1", in: context)
+            .query("1")
             .with(\.$author)
             .resolve(context)!
 

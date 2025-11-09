@@ -51,7 +51,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         }
     }
 
-    static func none(in context: Context) -> Self {
+    static var none: Self {
         Self(id: { _ in nil }) { _ in  nil }
     }
 }
@@ -59,7 +59,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
 // MARK: - Entities Collection Extension
 
 extension Collection {
-    func query<Entity>(in context: Context) -> [Query<Entity>]
+    func query<Entity>() -> [Query<Entity>]
     where
     Element == Entity,
     Entity: EntityModelProtocol {

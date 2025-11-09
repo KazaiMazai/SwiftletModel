@@ -13,7 +13,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     }
 
     func with(_ nested: [Nested]) -> Query<Entity> {
-        Entity.nestedQueryModifier(self, in: context, nested: nested)
+        Entity.nestedQueryModifier(self, nested: nested)
     }
 }
 
