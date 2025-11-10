@@ -36,7 +36,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     func or(_ queryList: @escaping @autoclosure () -> QueryList<Entity>) -> QueryList<Entity> {
         then { context, queries in
-            [queries, queryList().resolveQueries(context)]
+            [queries, queryList().queries(context)]
                 .flatMap { $0 }
                 .removingDuplicates(by: { $0.id(context) })
         }

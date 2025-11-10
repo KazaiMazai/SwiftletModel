@@ -11,28 +11,28 @@ public typealias QueryList<Entity: EntityModelProtocol> = ContextQuery<Entity, [
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func resolve(_ context: Context) -> [Entity] {
-        resolveQueries(context).resolve(context)
+        queries(context).resolve(context)
     }
 }
 
 extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: EntityModelProtocol {
     func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
         QueryList<T> { context in
-            let queries = resolveQueries(context)
+            let queries = queries(context)
             return perform(context, queries)
         }
     }
 
     func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [[Query<T>]]) -> QueryGroup<T> {
         QueryGroup<T> { context in
-            let queries = resolveQueries(context)
+            let queries = queries(context)
             return perform(context, queries)
         }
     }
 
-    init(queriesResolver: @escaping (Context) -> [Query<Entity>]) {
+    init(queries: @escaping (Context) -> [Query<Entity>]) {
         self.key = { _ in Void() }
-        self.value = { context, _ in queriesResolver(context) }
+        self.value = { context, _ in queries(context) }
     }
     
     init(ids: [Entity.ID]) {
@@ -46,7 +46,7 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: Ent
         }
     }
 
-    func resolveQueries(_ context: Context) -> [Query<Entity>] {
+    func queries(_ context: Context) -> [Query<Entity>] {
         value(context, key(context))
     }
 }
@@ -54,13 +54,13 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: Ent
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func first() -> Query<Entity> {
         Query { context in
-            resolveQueries(context).first?.id(context)
+            queries(context).first?.id(context)
         }
     }
 
     func last() -> Query<Entity> {
         Query { context in
-            resolveQueries(context).last?.id(context)
+            queries(context).last?.id(context)
         }
     }
     
