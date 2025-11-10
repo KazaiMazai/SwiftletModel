@@ -13,7 +13,7 @@ public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Entit
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func resolve(_ context: Context) -> Entity? {
-        value(context, id(context))
+        result(context, id(context))
     }
 }
 
@@ -28,17 +28,17 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     init(id: Entity.ID) {
         self.key = { _ in  id }
-        self.value = { context, id in id.flatMap { context.find($0) }}
+        self.result = { context, id in id.flatMap { context.find($0) }}
     }
 
     init(id: @escaping (Context) -> Entity.ID?) {
         self.key = id
-        self.value = { context, id in id.flatMap { context.find($0) } }
+        self.result = { context, id in id.flatMap { context.find($0) } }
     }
 
     init(id: @escaping (Context) -> Entity.ID?, entity: @escaping (Context) -> Entity?) {
         self.key = id
-        self.value = { context, _ in entity(context) }
+        self.result = { context, _ in entity(context) }
     }
 
     func then(perform: @escaping (Context, Entity) -> Entity?) -> Query<Entity> {

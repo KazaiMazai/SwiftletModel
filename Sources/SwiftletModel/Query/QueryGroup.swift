@@ -16,10 +16,10 @@ public extension ContextQuery where Result == [[Query<Entity>]], Key == Void {
 extension ContextQuery where Result == [[Query<Entity>]], Key == Void {
     init(queriesResolver: @escaping (Context) -> [[Query<Entity>]]) {
         self.key = { _ in Void() }
-        self.value = { context, _ in queriesResolver(context) }
+        self.result = { context, _ in queriesResolver(context) }
     }
 
     func resolveQueries(_ context: Context) -> [[Query<Entity>]] {
-        value(context, key(context))
+        result(context, key(context))
     }
 }

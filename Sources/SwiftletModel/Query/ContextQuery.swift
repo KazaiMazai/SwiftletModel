@@ -7,5 +7,5 @@
 
 public struct ContextQuery<Entity: EntityModelProtocol, Result, Key> {
     let key: (Context) -> Key?
-    let value: (Context, Key?) -> Result
+    let result: (Context, Key?) -> Result
 }
