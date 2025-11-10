@@ -10,7 +10,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, fragment: false, nested: nested) }
         }
     }
@@ -20,7 +20,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         nested: @escaping QueryListModifier<Child> = { $0 }
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, slice: false, fragment: false, nested: nested) }
         }
     }
@@ -31,7 +31,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, slice: true, fragment: false, nested: nested) }
         }
     }
@@ -46,7 +46,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, fragment: true, nested: nested) }
         }
     }
@@ -57,7 +57,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, slice: false, fragment: true, nested: nested) }
         }
     }
@@ -68,7 +68,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.with(keyPath, slice: true, fragment: true, nested: nested) }
         }
     }
@@ -82,7 +82,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.id(keyPath) }
         }
     }
@@ -92,7 +92,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.id(keyPath) }
         }
     }
@@ -102,7 +102,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 
     ) -> QueryList<Entity> {
 
-        whenResolved { _, queries in
+        then { _, queries in
             queries.map { $0.id(slice: keyPath) }
         }
     }

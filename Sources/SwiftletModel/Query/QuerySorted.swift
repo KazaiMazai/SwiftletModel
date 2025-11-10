@@ -10,7 +10,7 @@ typealias SortIndex = Index
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func sorted(by metadata: Metadata) -> QueryList<Entity> {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, by: metadata)
         }
     }
@@ -19,7 +19,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         by keyPath: KeyPath<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable & Sendable {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, by: keyPath)
         }
     }
@@ -30,7 +30,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     where
     T0: Comparable & Sendable,
     T1: Comparable & Sendable {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, by: kp0, kp1)
         }
     }
@@ -42,7 +42,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     T0: Comparable & Sendable,
     T1: Comparable & Sendable,
     T2: Comparable & Sendable {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, by: kp0, kp1, kp2)
         }
     }
@@ -57,7 +57,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     T1: Comparable & Sendable,
     T2: Comparable & Sendable,
     T3: Comparable & Sendable {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, by: kp0, kp1, kp2, kp3)
         }
     }
@@ -214,7 +214,7 @@ private extension ContextQuery where Result == [Query<Entity>], Key == Void {
     where
     T: Comparable & Sendable {
 
-        whenResolved { context, queries in
+        then { context, queries in
             queries.sorted(in: context, using: index)
         }
     }

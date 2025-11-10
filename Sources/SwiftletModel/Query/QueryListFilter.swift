@@ -18,34 +18,34 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 
     func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
     where
     T: Comparable & Hashable {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Hashable {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 
     func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
     where
     T: Equatable {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 }
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func filter( _ predicate: StringPredicate<Entity>) -> QueryList<Entity> {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 
     static func filter(
@@ -62,7 +62,7 @@ public extension ContextQuery {
     where
     Result == [Query<Entity>],
     Key == Void {
-        whenResolved { context, queries in queries.filter(predicate, in: context) }
+        then { context, queries in queries.filter(predicate, in: context) }
     }
 }
 

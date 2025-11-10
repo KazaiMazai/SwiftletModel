@@ -16,14 +16,14 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
 }
 
 extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: EntityModelProtocol {
-    func whenResolved<T>(then perform: @escaping (Context, [Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
+    func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
         QueryList<T> { context in
             let queries = resolveQueries(context)
             return perform(context, queries)
         }
     }
 
-    func whenResolved<T>(then perform: @escaping (Context, [Query<Entity>]) -> [[Query<T>]]) -> QueryGroup<T> {
+    func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [[Query<T>]]) -> QueryGroup<T> {
         QueryGroup<T> { context in
             let queries = resolveQueries(context)
             return perform(context, queries)

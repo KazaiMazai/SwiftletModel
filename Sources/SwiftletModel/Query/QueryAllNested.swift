@@ -25,7 +25,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 
     func with(_ nested: [Nested]) -> QueryList<Entity> {
-        whenResolved { context, queries in
+        then { context, queries in
             queries.map { $0.with(nested) }
         }
     }

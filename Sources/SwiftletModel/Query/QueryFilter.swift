@@ -11,10 +11,9 @@ import Foundation
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
-
     where
     T: Comparable {
-
+        
         QueryList { context in
             Query.filter(predicate, in: context)
         }
@@ -22,7 +21,6 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     static func filter<T>(
         _ predicate: Predicate<Entity, T>) -> QueryList<Entity>
-
     where
     T: Comparable & Hashable {
 
@@ -33,7 +31,6 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
-
     where
     T: Hashable {
 
@@ -44,7 +41,6 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>) -> QueryList<Entity>
-
     where
     T: Equatable {
 
@@ -106,7 +102,6 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: Predicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-
     where
     T: Comparable {
 
@@ -161,7 +156,6 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-
     where
     T: Hashable {
 
@@ -184,7 +178,6 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
     static func filter<T>(
         _ predicate: EqualityPredicate<Entity, T>,
         in context: Context) -> [Query<Entity>]
-
     where
     T: Equatable {
 
@@ -233,7 +226,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
                 .map { Query<Entity>(id: $0) }
         }
 
-         if predicate.method.isIncluding, let index = FullTextIndex<Entity>
+        if predicate.method.isIncluding, let index = FullTextIndex<Entity>
             .HashableValue<[String]>
             .query(.indexName(predicate.keyPaths))
             .resolve(context) {

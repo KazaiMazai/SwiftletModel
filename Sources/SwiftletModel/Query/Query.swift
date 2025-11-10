@@ -42,7 +42,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
     }
 
     func then(perform: @escaping (Context, Entity) -> Entity?) -> Query<Entity> {
-        Query(id: key) { context in
+        Query(id: id) { context in
             guard let entity = resolve(context) else {
                 return nil
             }
