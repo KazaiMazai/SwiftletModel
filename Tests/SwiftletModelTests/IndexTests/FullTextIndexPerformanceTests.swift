@@ -34,7 +34,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             _ = TestingModels.StringNotIndexed
                 .query()
-                .resolve(context)
+                .resolve(in: context)
                 .filter {
                     $0.text.contains("banan", caseSensitive: false)
                 }
@@ -45,7 +45,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             _ = TestingModels.StringFullTextIndexed
                 .filter(.string(\.text, contains: "banan"))
-                .resolve(context)
+                .resolve(in: context)
         }
     }
 
@@ -53,7 +53,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             _ = TestingModels.StringNotIndexed
                 .filter(.string(\.text, contains: "banan"))
-                .resolve(context)
+                .resolve(in: context)
         }
     }
 
@@ -61,7 +61,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             _ = TestingModels.StringFullTextIndexed
                 .filter(.string(\.text, matches: "banan"))
-                .resolve(context)
+                .resolve(in: context)
         }
     }
 
@@ -69,7 +69,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
         measure {
             _ = TestingModels.StringNotIndexed
                 .filter(.string(\.text, matches: "banan"))
-                .resolve(context)
+                .resolve(in: context)
         }
     }
 
@@ -78,7 +78,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
             let tokens = "banan".makeTokens()
             _ = TestingModels.StringNotIndexed
                 .query()
-                .resolve(context)
+                .resolve(in: context)
                 .filter {
                     $0.text.matches(tokens: tokens)
                 }

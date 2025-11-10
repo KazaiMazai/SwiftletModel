@@ -29,7 +29,7 @@ public extension CollisionResolver {
     static var upsert: Self {
         CollisionResolver { existing, _, _, context in
             try Query<Entity>(id: existing)
-                .resolve(context)?
+                .resolve(in: context)?
                 .delete(from: &context)
         }
     }

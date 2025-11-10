@@ -34,7 +34,7 @@ extension Index.HashableValue {
                             value: Value,
                             in context: inout Context) throws {
 
-        var index = Query(id: indexName).resolve(context) ?? Self(name: indexName)
+        var index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
         index.update(entity, value: value)
         try index.save(to: &context)
     }
@@ -43,7 +43,7 @@ extension Index.HashableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
 
-        guard var index = Query<Self>(id: indexName).resolve(context) else {
+        guard var index = Query<Self>(id: indexName).resolve(in: context) else {
             return
         }
 

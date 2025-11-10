@@ -75,7 +75,7 @@ private extension Collection {
 
         guard let index = SortIndex<Entity>.ComparableValue<T>
             .query(.indexName(keyPath))
-            .resolve(context)
+            .resolve(in: context)
         else {
             return self
                 .resolve(context)
@@ -100,7 +100,7 @@ private extension Collection {
 
         guard let index = SortIndex<Entity>.ComparableValue<Pair<T0, T1>>
             .query(.indexName(kp0, kp1))
-            .resolve(context)
+            .resolve(in: context)
         else {
             return self
                 .resolve(context)
@@ -128,7 +128,7 @@ private extension Collection {
         
         guard let index = SortIndex<Entity>.ComparableValue<Triplet<T0, T1, T2>>
             .query(.indexName(kp0, kp1, kp2))
-            .resolve(context)
+            .resolve(in: context)
         else {
             return self
                 .resolve(context)
@@ -159,7 +159,7 @@ private extension Collection {
         
         guard let index = SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>
             .query(.indexName(kp0, kp1, kp2, kp3))
-            .resolve(context)
+            .resolve(in: context)
         else {
             return self
                 .resolve(context)
@@ -181,7 +181,7 @@ private extension Collection {
         case .updatedAt:
             if let index = SortIndex<Entity>.ComparableValue<Date>
                 .query(metadata.indexName)
-                .resolve(context) {
+                .resolve(in: context) {
 
                 return sorted(in: context, using: index)
             }

@@ -27,8 +27,8 @@ final class UniqueIndexTests: XCTestCase {
         let user2 = User(id: "2", username: "@bob", email: "bobtwo@mail.com")
         try user2.save(to: &context)
 
-        XCTAssertNil(user1.query().resolve(context))
-        XCTAssertNotNil(user2.query().resolve(context))
+        XCTAssertNil(user1.query().resolve(in: context))
+        XCTAssertNotNil(user2.query().resolve(in: context))
     }
 
     func test_WhenCustomResolveCollision_ThenCollisionIsResolved() throws {
@@ -41,8 +41,8 @@ final class UniqueIndexTests: XCTestCase {
         user2.isCurrent = true
         try user2.save(to: &context)
 
-        XCTAssertTrue(user2.query().resolve(context)!.isCurrent)
-        XCTAssertFalse(user1.query().resolve(context)!.isCurrent)
+        XCTAssertTrue(user2.query().resolve(in: context)!.isCurrent)
+        XCTAssertFalse(user1.query().resolve(in: context)!.isCurrent)
     }
 }
 

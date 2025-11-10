@@ -51,7 +51,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -85,7 +85,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -119,7 +119,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -153,7 +153,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
         let decodedUser = try! decoder.decode(
@@ -187,7 +187,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -221,7 +221,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve(context)
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 

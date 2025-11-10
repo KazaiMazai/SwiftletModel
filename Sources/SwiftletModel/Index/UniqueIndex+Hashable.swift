@@ -42,9 +42,9 @@ extension Unique.HashableValue {
                             in context: inout Context,
                             resolveCollisions resolver: CollisionResolver<Entity>) throws {
 
-        var index = Query(id: indexName).resolve(context) ?? Self(name: indexName)
+        var index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
         try index.checkForCollisions(entity, value: value, in: &context, resolveCollisions: resolver)
-        index = index.query().resolve(context) ?? index
+        index = index.query().resolve(in: context) ?? index
         index.update(entity, value: value)
         try index.save(to: &context)
     }
@@ -53,7 +53,7 @@ extension Unique.HashableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
 
-        guard var index = Query<Self>(id: indexName).resolve(context) else {
+        guard var index = Query<Self>(id: indexName).resolve(in: context) else {
             return
         }
 

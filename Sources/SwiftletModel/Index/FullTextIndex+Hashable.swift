@@ -82,7 +82,7 @@ extension FullTextIndex.HashableValue {
                             value: Value,
                             in context: inout Context) throws {
 
-        var index = Query(id: indexName).resolve(context) ?? Self(name: indexName)
+        var index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
         index.update(entity, value: value)
         try index.save(to: &context)
     }
@@ -91,7 +91,7 @@ extension FullTextIndex.HashableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
 
-        var index = Query<Self>(id: indexName).resolve(context)
+        var index = Query<Self>(id: indexName).resolve(in: context)
         index?.remove(entity)
         try index?.save(to: &context)
     }

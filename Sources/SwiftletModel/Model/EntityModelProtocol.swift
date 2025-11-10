@@ -69,7 +69,7 @@ public extension EntityModelProtocol {
     func asDeleted(in context: Context) -> Deleted<Self>? {
         query()
             .with(.ids)
-            .resolve(context)
+            .resolve(in: context)
             .map { Deleted($0) }
     }
 
@@ -95,7 +95,7 @@ public extension MergeStrategy where T: EntityModelProtocol {
 public extension EntityModelProtocol {
     static func delete(id: ID, from context: inout Context) throws {
         try Self.query(id,)
-            .resolve(context)?
+            .resolve(in: context)?
             .delete(from: &context)
     }
 }

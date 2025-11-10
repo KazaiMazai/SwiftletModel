@@ -10,7 +10,7 @@ import Foundation
 public typealias QueryList<Entity: EntityModelProtocol> = ContextQuery<Entity, [Query<Entity>], Void>
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    func resolve(_ context: Context) -> [Entity] {
+    func resolve(in context: Context) -> [Entity] {
         queries(context).resolve(context)
     }
 }

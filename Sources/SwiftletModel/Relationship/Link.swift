@@ -84,7 +84,7 @@ extension Link {
         with keyPath: KeyPath<Parent, Relation<Child, Directionality, Cardinality, Constraint>>,
         in context: Context) -> [Child.ID] {
             query("\(parent)-\(keyPath.name)")
-                .resolve(context)?
+                .resolve(in: context)?
                 .children.elements ?? []
         }
 

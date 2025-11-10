@@ -12,14 +12,14 @@ public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Entit
 // MARK: - Resolve Query
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
-    func resolve(_ context: Context) -> Entity? {
+    func resolve(in context: Context) -> Entity? {
         result(context, id(context))
     }
 }
 
 public extension Collection {
     func resolve<Entity>(_ context: Context) -> [Entity] where Element == Query<Entity> {
-        compactMap { $0.resolve(context) }
+        compactMap { $0.resolve(in: context) }
     }
 }
 
@@ -43,7 +43,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     func then(perform: @escaping (Context, Entity) -> Entity?) -> Query<Entity> {
         Query(id: id) { context in
-            guard let entity = resolve(context) else {
+            guard let entity = resolve(in: context) else {
                 return nil
             }
 

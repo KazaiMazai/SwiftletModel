@@ -115,7 +115,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             then { context, entity in
                 var entity = entity
                 entity[keyPath: keyPath] = nested(related(keyPath))
-                    .resolve(context)
+                    .resolve(in: context)
                     .map { .relation($0, fragment: fragment) } ?? .none
 
                 return entity
@@ -130,7 +130,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
             then { context, entity in
                 var entity = entity
-                let relatedEntities = nested(related(keyPath)).resolve(context)
+                let relatedEntities = nested(related(keyPath)).resolve(in: context)
 
                 entity[keyPath: keyPath] = slice ?
                     .appending(relatedEntities, fragment: fragment) :

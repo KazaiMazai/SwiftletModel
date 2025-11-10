@@ -24,7 +24,7 @@ final class ToOneTests: XCTestCase {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
-            .resolve(context)
+            .resolve(in: context)
 
         XCTAssertEqual(messageForAttachment?.id, Attachment.imageOne.id)
     }
@@ -37,7 +37,7 @@ final class ToOneTests: XCTestCase {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
-            .resolve(context)
+            .resolve(in: context)
 
         XCTAssertNil(messageForAttachment)
     }
@@ -50,7 +50,7 @@ final class ToOneTests: XCTestCase {
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
-            .resolve(context)
+            .resolve(in: context)
 
         XCTAssertNil(messageForAttachment)
     }
@@ -63,7 +63,7 @@ final class ToOneTests: XCTestCase {
         let attachment = message
             .query()
             .related(\.$attachment)
-            .resolve(context)
+            .resolve(in: context)
 
         XCTAssertNil(attachment)
     }
