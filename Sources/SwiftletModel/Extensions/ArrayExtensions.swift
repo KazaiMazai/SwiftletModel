@@ -1,11 +1,21 @@
 //
-//  ArrayExtensions.swift
+//  File.swift
 //  SwiftletModel
 //
-//  Created by Serge Kazakov on 17/11/2025.
+//  Created by Serge Kazakov on 03/04/2025.
 //
 
 import Foundation
+
+extension Array {
+    func removingDuplicates<Key: Hashable>(by key: (Element) -> Key) -> [Element] {
+        var existingDict = [Key: Bool]()
+
+        return filter {
+            existingDict.updateValue(true, forKey: key($0)) == nil
+        }
+    }
+}
 
 extension Array {
     func limit(_ limit: Int, offset: Int) -> Array {
@@ -17,6 +27,6 @@ extension Array {
         }
         
         let upperBounds = Swift.min(count, offset + limit)
-        return Array(self[offset..<offset + limit])
+        return Array(self[offset..<upperBounds])
     }
 }
