@@ -19,14 +19,10 @@ extension Array {
 
 extension Array {
     func limit(_ limit: Int, offset: Int) -> Array {
-        guard limit > 0,
-              offset >= 0,
-              offset < count
+        guard limit > 0, offset >= 0
         else {
             return []
         }
-        
-        let upperBounds = Swift.min(count, offset + limit)
-        return Array(self[offset..<upperBounds])
+        return Array(dropFirst(offset).prefix(limit))
     }
 }
