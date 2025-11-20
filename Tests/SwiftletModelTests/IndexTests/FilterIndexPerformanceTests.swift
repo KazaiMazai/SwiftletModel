@@ -33,24 +33,24 @@ final class FilterPerformanceTests: XCTestCase {
     func test_NoIndex_FilterPerformance() throws {
         measure {
             _ = TestingModels.NotIndexed
-                .filter(\.numOf1 == 1, in: context)
-                .resolve()
+                .filter(\.numOf1 == 1)
+                .resolve(in: context)
         }
     }
 
     func test_Indexed_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .filter(\.numOf1 == 1, in: context)
-                .resolve()
+                .filter(\.numOf1 == 1)
+                .resolve(in: context)
         }
     }
 
     func test_RawFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .query(in: context)
-                .resolve()
+                .query()
+                .resolve(in: context)
                 .filter {
                     $0.numOf1 == 1
                 }
@@ -60,30 +60,30 @@ final class FilterPerformanceTests: XCTestCase {
     func test_NotIndexedComplexFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.NotIndexed
-                .filter(\.numOf1 == 1, in: context)
+                .filter(\.numOf1 == 1)
                 .filter(\.numOf10 != 5)
                 .filter(\.numOf100 == 4)
                 .filter(\.numOf1000 == 2)
-                .resolve()
+                .resolve(in: context)
         }
     }
 
     func test_IndexedComplexFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .filter(\.numOf1 == 1, in: context)
+                .filter(\.numOf1 == 1)
                 .filter(\.numOf10 != 5)
                 .filter(\.numOf100 == 4)
                 .filter(\.numOf1000 == 2)
-                .resolve()
+                .resolve(in: context)
         }
     }
 
     func test_RawComplexFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .query(in: context)
-                .resolve()
+                .query()
+                .resolve(in: context)
                 .filter {
                     $0.numOf1 == 1
                     && $0.numOf10 != 5
@@ -96,19 +96,19 @@ final class FilterPerformanceTests: XCTestCase {
     func test_IndexedComplexComparisonFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .filter(\.numOf1 >= 1, in: context)
+                .filter(\.numOf1 >= 1)
                 .filter(\.numOf10 <= 5)
                 .filter(\.numOf100 > 4)
                 .filter(\.numOf1000 < 2)
-                .resolve()
+                .resolve(in: context)
         }
     }
 
     func test_RawComplexComparisonFilter_FilterPerformance() throws {
         measure {
             _ = TestingModels.ExtensivelyIndexed
-                .query(in: context)
-                .resolve()
+                .query()
+                .resolve(in: context)
                 .filter {
                     $0.numOf1 >= 1
                     && $0.numOf10 <= 5

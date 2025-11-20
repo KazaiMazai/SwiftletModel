@@ -22,9 +22,9 @@ final class ManyToManyTests: XCTestCase {
         try! chatTwo.save(to: &context)
 
         let bobChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
-            .resolve()
+            .resolve(in: context)
 
         XCTAssertEqual(bobChats.compactMap { $0.id }, [Chat.one.id, Chat.two.id])
     }
@@ -38,9 +38,9 @@ final class ManyToManyTests: XCTestCase {
         try! chat.save(to: &context)
 
         let chatUsers = Chat
-            .query(Chat.one.id, in: context)
+            .query(Chat.one.id)
             .related(\.$users)
-            .resolve()
+            .resolve(in: context)
 
         let expectedChatUsers = [User.bob.id, User.alice.id, User.tom.id, User.john.id, User.michael.id]
 
@@ -57,9 +57,9 @@ final class ManyToManyTests: XCTestCase {
         try! chat.save(to: &context)
 
         let bobsChats = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .related(\.$chats)
-            .resolve()
+            .resolve(in: context)
 
         XCTAssertTrue(bobsChats.isEmpty)
     }

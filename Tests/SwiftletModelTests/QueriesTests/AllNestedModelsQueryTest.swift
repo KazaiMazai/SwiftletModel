@@ -65,9 +65,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .with(.entities)
-            .resolve()
+            .resolve(in: context)
             .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
@@ -78,9 +78,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
-            .query(in: context)
+            .query()
             .with(.fragments)
-            .resolve()
+            .resolve(in: context)
             .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
@@ -91,9 +91,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .with(.ids)
-            .resolve()
+            .resolve(in: context)
             .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
@@ -104,9 +104,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .with(.entities, .ids)
-            .resolve()
+            .resolve(in: context)
             .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
@@ -117,9 +117,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .with(.entities, .entities, .entities, .ids)
-            .resolve()
+            .resolve(in: context)
             .sorted(by: { $0.id < $1.id})
 
         assertSnapshot(of: messages, as: .json(encoder))
@@ -133,13 +133,13 @@ final class AllNestedModelsQueryTest: XCTestCase {
         let snapshotTime = Date.now
         Thread.sleep(forTimeInterval: 1.0)
 
-        try! Chat.query("1", in: context)
-            .resolve()?
+        try! Chat.query("1")
+            .resolve(in: context)?
             .save(to: &context)
 
         let schema = Schema
-            .fullSchemaQuery(updated: snapshotTime...Date.distantFuture, in: context)
-            .resolve()
+            .fullSchemaQuery(updated: snapshotTime...Date.distantFuture)
+            .resolve(in: context)
 
         assertSnapshot(of: schema, as: .json(encoder))
     }
@@ -152,13 +152,13 @@ final class AllNestedModelsQueryTest: XCTestCase {
         let snapshotTime = Date.now
         Thread.sleep(forTimeInterval: 1.0)
 
-        try! Chat.query("1", in: context)
-            .resolve()?
+        try! Chat.query("1")
+            .resolve(in: context)?
             .save(to: &context)
 
         let schema = Schema
-            .fullSchemaQuery(updated: Date.distantPast...snapshotTime, in: context)
-            .resolve()
+            .fullSchemaQuery(updated: Date.distantPast...snapshotTime)
+            .resolve(in: context)
 
         assertSnapshot(of: schema, as: .json(encoder))
     }
@@ -168,8 +168,8 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let schema = Schema
-            .fullSchemaQuery(in: context)
-            .resolve()
+            .fullSchemaQuery()
+            .resolve(in: context)
 
         assertSnapshot(of: schema, as: .json(encoder))
     }
@@ -179,8 +179,8 @@ final class AllNestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let schema = Schema
-            .fullSchemaQuery(in: context)
-            .resolve()
+            .fullSchemaQuery()
+            .resolve(in: context)
 
         assertSnapshot(of: schema, as: .json(encoder))
     }

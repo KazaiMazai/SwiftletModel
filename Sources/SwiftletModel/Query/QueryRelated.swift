@@ -14,8 +14,8 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
     ) -> QueryList<Child> {
 
-        QueryList(context: context) {
-            queryRelated(keyPath)
+        QueryList { context in
+            queryRelated(in: context, keyPath)
         }
     }
 }
@@ -27,8 +27,8 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
     ) -> Query<Child> {
 
-        Query(context: context) { context in
-            guard let id = id else {
+        Query { context in
+            guard let id = id(context) else {
                 return nil
             }
 
@@ -43,11 +43,12 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
 extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func queryRelated<Child, Directionality, Constraints>(
+        in context: Context,
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>
 
     ) -> [Query<Child>] {
 
-        guard let id = id else {
+        guard let id = id(context) else {
             return []
         }
 
@@ -55,7 +56,7 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
             id, with: keyPath,
             in: context
         )
-        .map { Query<Child>(context: context, id: $0) }
+        .map { Query<Child>(id: $0) }
     }
 }
 
@@ -66,16 +67,16 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>) -> QueryGroup<Child> {
 
-        whenResolved {
-            $0.map { $0.queryRelated(keyPath) }
+        then { context, queries in
+            queries.map { $0.queryRelated(in: context, keyPath) }
         }
     }
 
     func related<Child, Directionality, Constraints>(
         _ keyPath: KeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> QueryList<Child> {
 
-            whenResolved {
-                $0.map { $0.related(keyPath) }
+            then { context, queries in
+                queries.map { $0.related(keyPath) }
             }
     }
 }

@@ -82,10 +82,11 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func id<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>) -> Self {
 
-            whenResolved {
-                var entity = $0
+            then { context, entity in
+                var entity = entity
                 entity[keyPath: keyPath] = related(keyPath)
-                    .id.map { .id($0)} ?? .none
+                    .id(context)
+                    .map { .id($0)} ?? .none
                 return entity
             }
         }
@@ -111,12 +112,11 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         fragment: Bool,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            whenResolved {
-                var entity = $0
+            then { context, entity in
+                var entity = entity
                 entity[keyPath: keyPath] = nested(related(keyPath))
-                    .resolve()
+                    .resolve(in: context)
                     .map { .relation($0, fragment: fragment) } ?? .none
-
                 return entity
             }
         }
@@ -127,9 +127,9 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         fragment: Bool,
         nested: @escaping QueryListModifier<Child>) -> Self {
 
-            whenResolved {
-                var entity = $0
-                let relatedEntities = nested(related(keyPath)).resolve()
+            then { context, entity in
+                var entity = entity
+                let relatedEntities = nested(related(keyPath)).resolve(in: context)
 
                 entity[keyPath: keyPath] = slice ?
                     .appending(relatedEntities, fragment: fragment) :
@@ -142,9 +142,9 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool) -> Self {
 
-            whenResolved {
-                var entity = $0
-                let ids = queryRelated(keyPath).compactMap { $0.id }
+            then { context, entity in
+                var entity = entity
+                let ids = queryRelated(in: context, keyPath).compactMap { $0.id(context) }
                 entity[keyPath: keyPath] = slice ? .appending(ids: ids) : .ids(ids)
                 return entity
             }

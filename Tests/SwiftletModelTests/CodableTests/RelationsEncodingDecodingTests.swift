@@ -39,7 +39,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .plain
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -51,7 +51,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -73,7 +73,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .keyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -85,7 +85,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -107,7 +107,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .explicitKeyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(\.$messages) {
                     $0.with(\.$attachment) {
@@ -119,7 +119,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(\.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -141,7 +141,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .explicitKeyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
@@ -153,7 +153,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
         let decodedUser = try! decoder.decode(
@@ -175,7 +175,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .keyedContainer
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
@@ -187,7 +187,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 
@@ -209,7 +209,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         decoder.relationDecodingStrategy = .plain
 
         let user = User
-            .query(User.bob.id, in: context)
+            .query(User.bob.id)
             .with(\.$chats) {
                 $0.with(slice: \.$messages) {
                     $0.with(\.$attachment) {
@@ -221,7 +221,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
                 .id(slice: \.$users)
                 .id(\.$admins)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
 

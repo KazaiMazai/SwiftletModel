@@ -10,57 +10,62 @@ import Foundation
 public typealias QueryList<Entity: EntityModelProtocol> = ContextQuery<Entity, [Query<Entity>], Void>
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    @available(*, deprecated, renamed: "resolve(in:)", message: "Provide context explicitly")
-    func resolve() -> [Entity] {
-        resolveQueries().resolve()
-    }
-    
     func resolve(in context: Context) -> [Entity] {
-        resolveQueries().resolve()
+        queries(context).resolve(in: context)
     }
 }
 
-extension ContextQuery where Result == [Query<Entity>], Key == Void {
-    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
-        QueryList<T>(context: context) {
-            let queries = resolveQueries()
-            return perform(queries)
+extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: EntityModelProtocol {
+    func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [Query<T>]) -> QueryList<T> {
+        QueryList<T> { context in
+            let queries = queries(context)
+            return perform(context, queries)
         }
     }
 
-    func whenResolved<T>(then perform: @escaping ([Query<Entity>]) -> [[Query<T>]]) -> QueryGroup<T> {
-        QueryGroup<T>(context: context) {
-            let queries = resolveQueries()
-            return perform(queries)
+    func then<T>(perform: @escaping (Context, [Query<Entity>]) -> [[Query<T>]]) -> QueryGroup<T> {
+        QueryGroup<T> { context in
+            let queries = queries(context)
+            return perform(context, queries)
         }
     }
 
-    init(context: Context, queriesResolver: @escaping () -> [Query<Entity>]) {
-        self.context = context
+    init(queries: @escaping (Context) -> [Query<Entity>]) {
         self.key = { _ in Void() }
-        self.result = { _, _ in queriesResolver() }
+        self.result = { context, _ in queries(context) }
+    }
+    
+    init(ids: [Entity.ID]) {
+        self.key = { _ in Void() }
+        self.result = { context, _ in ids.map { context.query($0) } }
+    }
+    
+    init() {
+        self = QueryList<Entity> { context in
+            context.ids(Entity.self).map { context.query($0)}
+        }
     }
 
-    func resolveQueries() -> [Query<Entity>] {
+    func queries(_ context: Context) -> [Query<Entity>] {
         result(context, key(context))
     }
 }
 
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func first() -> Query<Entity> {
-        Query(context: context) { _ in
-            resolveQueries().first?.id
+        Query { context in
+            queries(context).first?.id(context)
         }
     }
 
     func last() -> Query<Entity> {
-        Query(context: context) { _ in
-            resolveQueries().last?.id
+        Query { context in
+            queries(context).last?.id(context)
         }
     }
     
     func limit(_ limit: Int, offset: Int = 0) -> QueryList<Entity> {
-        whenResolved { queries in
+        then { context, queries  in
             queries.limit(limit, offset: offset)
         }
     }

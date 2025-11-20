@@ -64,10 +64,10 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$author)
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -77,10 +77,10 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(\.$author)
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -90,10 +90,10 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(\.$replies)
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -103,7 +103,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
@@ -111,7 +111,7 @@ final class NestedModelsQueryTest: XCTestCase {
                     .filter(\.text.count > 3)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -121,7 +121,7 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
@@ -129,7 +129,7 @@ final class NestedModelsQueryTest: XCTestCase {
                     .filter(\.text.count > 5)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -139,14 +139,14 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .plain
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(\.$replies) { replies in
                 replies
                     .sorted(by: \.text.count)
                     .id(\.$replyTo)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -156,12 +156,12 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .with(slice: \.$replies) {
                 $0.id(\.$replyTo)
             }
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }
@@ -171,10 +171,10 @@ final class NestedModelsQueryTest: XCTestCase {
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
         let messages = Message
-            .query(in: context)
+            .query()
             .sorted(by: \.id)
             .id(slice: \.$replies)
-            .resolve()
+            .resolve(in: context)
 
         assertSnapshot(of: messages, as: .json(encoder))
     }

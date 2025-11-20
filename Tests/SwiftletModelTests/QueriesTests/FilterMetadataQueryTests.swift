@@ -32,8 +32,8 @@ final class FilterMetadataQueryTests: XCTestCase {
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(\.numOf1 == 1, in: context)
-            .resolve()
+            .filter(\.numOf1 == 1)
+            .resolve(in: context)
 
         XCTAssertEqual(Set(filterResult.map { $0.id }),
                        Set(expected.map { $0.id }))
@@ -50,8 +50,8 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(MetadataPredicate.updated(within: range), in: context)
-            .resolve()
+            .filter(MetadataPredicate.updated(within: range))
+            .resolve(in: context)
 
         // Then
         XCTAssertEqual(Set(filterResult.map { $0.id }),
@@ -71,8 +71,8 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .filter(.updated(within: pastRange), in: context)
-            .resolve()
+            .filter(.updated(within: pastRange))
+            .resolve(in: context)
 
         // Then
         XCTAssertTrue(filterResult.isEmpty)
@@ -89,11 +89,11 @@ final class FilterMetadataQueryTests: XCTestCase {
 
         // When
         let filterResult = TestingModels.ExtensivelyIndexed
-            .query(in: context)
+            .query()
             .sorted(by: .updatedAt)
             .last()
             .filter(MetadataPredicate.updated(within: range))
-            .resolve()
+            .resolve(in: context)
 
         // Then
         XCTAssertNotNil(filterResult)

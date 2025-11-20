@@ -44,24 +44,21 @@ extension Schema {
 }
 
 extension Schema {
-    static func fullSchemaQuery(updated range: ClosedRange<Date>, in context: Context) -> QueryList<Self> {
+    static func fullSchemaQuery(updated range: ClosedRange<Date>) -> QueryList<Self> {
         Schema.queryAll(
-            with: .entities, .schemaEntities(filter: .updated(within: range)), .ids,
-            in: context
+            with: .entities, .schemaEntities(filter: .updated(within: range)), .ids
         )
     }
     
-    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
+    static func fullSchemaQuery() -> QueryList<Self> {
         Schema.queryAll(
-            with: .entities, .schemaEntities, .ids,
-            in: context
+            with: .entities, .schemaEntities, .ids
         )
     }
     
-    static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
+    static func fullSchemaQueryFragments() -> QueryList<Self> {
         Schema.queryAll(
-            with: .entities, .schemaFragments, .ids,
-            in: context
+            with: .entities, .schemaFragments, .ids
         )
     }
 }
