@@ -82,7 +82,7 @@ private extension Collection {
             .resolve(in: context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
-            return filter({ filterResult.contains($0.id(context)) })
+            return filter { filterResult.contains($0.id(context)) }
         }
 
         return self
@@ -104,7 +104,7 @@ private extension Collection {
             .resolve(in: context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
-            return filter({ filterResult.contains($0.id(context)) })
+            return filter { filterResult.contains($0.id(context)) }
         }
 
         if let index = SortIndex<Entity>.ComparableValue<T>
@@ -112,7 +112,7 @@ private extension Collection {
             .resolve(in: context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.filter(predicate))
-            return filter({ filterResult.contains($0.id(context)) })
+            return filter { filterResult.contains($0.id(context)) }
         }
 
         return self
@@ -133,7 +133,7 @@ private extension Collection {
             .resolve(in: context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.find(predicate.value))
-            return filter({ filterResult.contains($0.id(context)) })
+            return filter { filterResult.contains($0.id(context)) }
         }
 
         return self
@@ -191,7 +191,7 @@ private extension Collection {
             .resolve(in: context) {
 
             let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
-            return filter({ filterResult.contains($0.id(context)) })
+            return filter { filterResult.contains($0.id(context)) }
         }
 
          if predicate.method.isIncluding, let index = FullTextIndex<Entity>
@@ -201,7 +201,7 @@ private extension Collection {
 
             let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return self
-                .filter({ filterResult.contains($0.id(context)) })
+                .filter { filterResult.contains($0.id(context)) }
                 .resolve(context)
                 .filter(predicate.isIncluded)
                 .query()

@@ -117,7 +117,6 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
                 entity[keyPath: keyPath] = nested(related(keyPath))
                     .resolve(in: context)
                     .map { .relation($0, fragment: fragment) } ?? .none
-
                 return entity
             }
         }

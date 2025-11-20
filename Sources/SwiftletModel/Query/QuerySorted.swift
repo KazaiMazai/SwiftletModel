@@ -156,7 +156,6 @@ private extension Collection {
     T2: Comparable & Sendable,
     T3: Comparable & Sendable {
 
-        
         guard let index = SortIndex<Entity>.ComparableValue<Quadruple<T0, T1, T2, T3>>
             .query(.indexName(kp0, kp1, kp2, kp3))
             .resolve(in: context)
