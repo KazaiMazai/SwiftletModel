@@ -177,6 +177,7 @@ This approach is a clear embodiment of **Functional Core, Imperative Shell**.
   * [Bulk nested models query](#bulk-nested-models-query)
   * [Combining bulk nested models with nested models query](#combining-bulk-nested-models-with-nested-models-query)
   * [Related models query](#related-models-query)
+  * [Limiting and Paginating Results](#limiting-and-paginating-results)
 - [How to use Sort Queries](#how-to-use-sort-queries)
   * [Basic Sorting](#basic-sorting)
     + [Single Property Sorting](#single-property-sorting)
@@ -497,8 +498,37 @@ let userChats: [Chat] = User
     .query("1")
     .related(\.$chats)
     .resolve(in: context)
-    
+
 ```
+
+### Limiting and Paginating Results
+
+You can limit the number of results and skip a certain number of entities using the `limit(_:offset:)` method:
+
+```swift
+// Get first 10 users
+let firstPage = User.query()
+    .limit(10)
+    .resolve(in: context)
+
+// Get next 10 users (pagination)
+let secondPage = User.query()
+    .limit(10, offset: 10)
+    .resolve(in: context)
+
+// Combined with sorting and filtering
+let topActiveUsers = User.query()
+    .filter(\.status == .active)
+    .sorted(by: \.age.desc)
+    .limit(5)
+    .resolve(in: context)
+```
+
+The `limit(_:offset:)` method is particularly useful for:
+- Implementing pagination in your UI
+- Reducing memory usage by loading only what's needed
+- Getting top N results from sorted queries
+- Loading data in batches for performance
 
 ## How to use Sort Queries
 
