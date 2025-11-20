@@ -12,7 +12,12 @@ public typealias Query<Entity: EntityModelProtocol> = ContextQuery<Entity, Entit
 // MARK: - Resolve Query
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    @available(*, deprecated, renamed: "resolve(in:)", message: "Provide context explicitly")
     func resolve() -> Entity? {
+        result(context, id)
+    }
+  
+    func resolve(in context: Context) -> Entity? {
         result(context, id)
     }
 }
