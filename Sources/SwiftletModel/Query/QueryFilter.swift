@@ -234,7 +234,7 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
             return index
                 .search(predicate.value)
                 .map { Query<Entity>(id: $0) }
-                .resolve(context)
+                .resolve(in: context)
                 .filter(predicate.isIncluded)
                 .query()
         }
