@@ -94,7 +94,7 @@ public extension MergeStrategy where T: EntityModelProtocol {
 
 public extension EntityModelProtocol {
     static func delete(id: ID, from context: inout Context) throws {
-        try Self.query(id,)
+        try Self.query(id)
             .resolve(in: context)?
             .delete(from: &context)
     }
