@@ -8,8 +8,8 @@
 public typealias QueryGroup<Entity: EntityModelProtocol> = ContextQuery<Entity, [[Query<Entity>]], Void>
 
 public extension ContextQuery where Result == [[Query<Entity>]], Key == Void {
-    func resolve(_ context: Context) -> [[Entity]] {
-        resolveQueries(context).compactMap { $0.resolve(context) }
+    func resolve(in context: Context) -> [[Entity]] {
+        resolveQueries(context).compactMap { $0.resolve(in: context) }
     }
 }
 

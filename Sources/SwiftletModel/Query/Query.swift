@@ -18,7 +18,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 }
 
 public extension Collection {
-    func resolve<Entity>(_ context: Context) -> [Entity] where Element == Query<Entity> {
+    func resolve<Entity>(in context: Context) -> [Entity] where Element == Query<Entity> {
         compactMap { $0.resolve(in: context) }
     }
 }
