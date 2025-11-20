@@ -78,7 +78,7 @@ private extension Collection {
             .resolve(in: context)
         else {
             return self
-                .resolve(context)
+                .resolve(in: context)
                 .sorted { lhs, rhs in
                     lhs[keyPath: keyPath] < rhs[keyPath: keyPath]
                 }
@@ -103,7 +103,7 @@ private extension Collection {
             .resolve(in: context)
         else {
             return self
-                .resolve(context)
+                .resolve(in: context)
                 .sorted { lhs, rhs in
                     (lhs[keyPath: kp0], lhs[keyPath: kp1]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1])
@@ -131,7 +131,7 @@ private extension Collection {
             .resolve(in: context)
         else {
             return self
-                .resolve(context)
+                .resolve(in: context)
                 .sorted { lhs, rhs in
                     (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2])
@@ -161,7 +161,7 @@ private extension Collection {
             .resolve(in: context)
         else {
             return self
-                .resolve(context)
+                .resolve(in: context)
                 .sorted { lhs, rhs in
                     (lhs[keyPath: kp0], lhs[keyPath: kp1], lhs[keyPath: kp2], lhs[keyPath: kp3]) <
                     (rhs[keyPath: kp0], rhs[keyPath: kp1], rhs[keyPath: kp2], rhs[keyPath: kp3])

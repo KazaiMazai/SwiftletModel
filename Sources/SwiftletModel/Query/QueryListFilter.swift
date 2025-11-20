@@ -86,7 +86,7 @@ private extension Collection {
         }
 
         return self
-            .resolve(context)
+            .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
@@ -116,7 +116,7 @@ private extension Collection {
         }
 
         return self
-            .resolve(context)
+            .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
@@ -137,7 +137,7 @@ private extension Collection {
         }
 
         return self
-            .resolve(context)
+            .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
@@ -150,7 +150,7 @@ private extension Collection {
     T: Equatable {
 
         return self
-            .resolve(context)
+            .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
@@ -202,13 +202,13 @@ private extension Collection {
             let filterResult: Set<Entity.ID?> = Set(index.search(predicate.value))
             return self
                 .filter { filterResult.contains($0.id(context)) }
-                .resolve(context)
+                .resolve(in: context)
                 .filter(predicate.isIncluded)
                 .query()
         }
 
         return self
-            .resolve(context)
+            .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
