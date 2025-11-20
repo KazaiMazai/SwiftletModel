@@ -18,15 +18,19 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     }
   
     func resolve(in context: Context) -> Entity? {
-        result(context, id)
+        result(self.context, id)
     }
 }
 
 public extension Collection {
+    @available(*, deprecated, renamed: "resolve(in:)", message: "Provide context explicitly")
     func resolve<Entity>() -> [Entity] where Element == Query<Entity> {
         compactMap { $0.resolve() }
     }
 
+    func resolve<Entity>(in context: Context) -> [Entity] where Element == Query<Entity> {
+        compactMap { $0.resolve() }
+    }
 }
 
 extension ContextQuery where Result == Entity?, Key == Entity.ID {
