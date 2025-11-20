@@ -65,7 +65,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
     
     func limit(_ limit: Int, offset: Int = 0) -> QueryList<Entity> {
-        whenResolved { queries in
+        then { context, queries  in
             queries.limit(limit, offset: offset)
         }
     }
