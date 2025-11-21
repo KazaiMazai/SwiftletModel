@@ -58,13 +58,13 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
             try container.encode(value, forKey: .id)
         case .entity(let value, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .entity)
+            try container.encode(value(), forKey: .entity)
         case .ids(let value, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
             try container.encode(value, forKey: .ids)
         case .entities(let value, _, _):
             var container = encoder.container(keyedBy: RelationCodingKeys.self)
-            try container.encode(value, forKey: .entities)
+            try container.encode(value(), forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
             try container.encodeNil()
@@ -84,13 +84,13 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
             return Relation(state: .id(id: value))
         case .entity:
             let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value, fragment: false))
+            return Relation(state: .entity(entity: { value }, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
             return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+            return Relation(state: .entities(entities: { value }, slice: false, fragment: false))
         case .none:
             return .none
         }
@@ -116,19 +116,23 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             try container.encode(value, forKey: .id)
         case .entity(let value, _):
-            var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
-            try container.encode(value, forKey: .entity)
+            if let value = value() {
+                var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
+                try container.encode(value, forKey: .entity)
+            } else {
+                var container = encoder.singleValueContainer()
+                try container.encodeNil()
+            }
         case .ids(let value, let slice):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ?
             try container.encode(value, forKey: .idsSlice)
             : try container.encode(value, forKey: .ids)
-
         case .entities(let value, let slice, _):
             var container = encoder.container(keyedBy: RelationExplicitCodingKeys.self)
             slice ?
-            try container.encode(value, forKey: .slice)
-            : try container.encode(value, forKey: .entities)
+            try container.encode(value(), forKey: .slice)
+            : try container.encode(value(), forKey: .entities)
         case .none:
             var container = encoder.singleValueContainer()
             try container.encodeNil()
@@ -148,19 +152,19 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
             return Relation(state: .id(id: value))
         case .entity:
             let value = try? container.decode(Entity?.self, forKey: .entity)
-            return Relation(state: .entity(entity: value, fragment: false))
+            return Relation(state: .entity(entity: { value }, fragment: false))
         case .ids:
             let value = try container.decode([Entity.ID].self, forKey: .ids)
             return Relation(state: .ids(ids: value, slice: false))
         case .entities:
             let value = try container.decode([Entity].self, forKey: .entities)
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+            return Relation(state: .entities(entities: { value }, slice: false, fragment: false))
         case .idsSlice:
             let value = try container.decode([Entity.ID].self, forKey: .idsSlice)
             return Relation(state: .ids(ids: value, slice: true))
         case .slice:
             let value = try container.decode([Entity].self, forKey: .slice)
-            return Relation(state: .entities(entities: value, slice: true, fragment: false))
+            return Relation(state: .entities(entities: { value }, slice: true, fragment: false))
         case .none:
             return .none
         }
@@ -185,11 +189,11 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
         case .id(let value):
             try container.encode(value.map { ID(id: $0) })
         case .entity(let value, _):
-            try container.encode(value)
+            try container.encode(value())
         case .ids(let value, _):
             try container.encode(value.map { ID(id: $0) })
         case .entities(let value, _, _):
-            try container.encode(value)
+            try container.encode(value())
         case .none:
             try container.encodeNil()
         }
@@ -201,7 +205,7 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
         }
 
         if let value = try? container.decode(Entity?.self) {
-            return Relation(state: .entity(entity: value, fragment: false))
+            return Relation(state: .entity(entity:  { value }, fragment: false))
         }
 
         if let value = try? container.decode(ID?.self) {
@@ -209,7 +213,7 @@ extension Relation where Entity: Codable, Entity.ID: Codable {
         }
 
         if let value = try? container.decode([Entity].self) {
-            return Relation(state: .entities(entities: value, slice: false, fragment: false))
+            return Relation(state: .entities(entities: { value }, slice: false, fragment: false))
         }
 
         if let value = try? container.decode([ID].self) {

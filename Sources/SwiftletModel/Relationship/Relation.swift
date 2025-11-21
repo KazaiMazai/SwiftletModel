@@ -42,17 +42,17 @@ public extension Relation {
 }
 
 extension Relation where Cardinality == Relations.ToMany<Entity> {
-    static func appending(_ entities: [Entity], fragment: Bool) -> Self {
+    static func appending(_ entities: @Sendable @escaping () -> [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, slice: true, fragment: fragment))
     }
 
-    static func relation(_ entities: [Entity], fragment: Bool) -> Self {
+    static func relation(_ entities: @Sendable @escaping () -> [Entity], fragment: Bool) -> Self {
         Relation(state: State(entities, slice: false, fragment: fragment))
     }
 }
 
 extension Relation where Cardinality == Relations.ToOne<Entity> {
-    static func relation(_ entity: Entity, fragment: Bool) -> Self {
+    static func relation(_ entity: @Sendable @escaping () -> Entity?, fragment: Bool) -> Self {
         Relation(state: State(entity, fragment: fragment))
     }
 }
@@ -101,10 +101,6 @@ extension Relation {
     }
 }
 
-// MARK: - Codable
-
-extension Relation.State: Codable where T: Codable, T.ID: Codable { }
-
 // MARK: - Sendable
 
 extension Relation: Sendable where Entity: Sendable, Entity.ID: Sendable { }
@@ -117,12 +113,12 @@ extension Relation {
 
     indirect enum State<T: EntityModelProtocol>: Hashable {
         case id(id: T.ID?)
-        case entity(entity: T?, fragment: Bool)
+        case entity(entity: @Sendable () -> T?, fragment: Bool)
         case ids(ids: [T.ID], slice: Bool)
-        case entities(entities: [T], slice: Bool, fragment: Bool)
+        case entities(entities: @Sendable () -> [T], slice: Bool, fragment: Bool)
         case none
 
-        init(_ items: [T], slice: Bool, fragment: Bool) {
+        init(_ items: @Sendable @escaping () -> [T], slice: Bool, fragment: Bool) {
             self = .entities(entities: items, slice: slice, fragment: fragment)
         }
 
@@ -134,7 +130,7 @@ extension Relation {
             self = .id(id: id)
         }
 
-        init(_ entity: T?, fragment: Bool) {
+        init(_ entity: @Sendable @escaping () -> T?, fragment: Bool) {
             self = .entity(entity: entity, fragment: fragment)
         }
     }
@@ -146,11 +142,11 @@ private extension Relation.State {
         case .id(let id):
             return [id].compactMap { $0 }
         case .entity(let entity, _):
-            return [entity].compactMap { $0?.id }
+            return [entity()].compactMap { $0?.id }
         case .ids(let ids, _):
             return ids
         case .entities(let entities, _, _):
-            return entities.map { $0.id }
+            return entities().map { $0.id }
         case .none:
             return []
         }
@@ -161,9 +157,9 @@ private extension Relation.State {
         case .id, .ids:
             return []
         case .entity(let entity, _):
-            return [entity].compactMap { $0 }
+            return [entity()].compactMap { $0 }
         case .entities(let entities, _, _):
-            return entities
+            return entities()
         case .none:
             return []
         }
