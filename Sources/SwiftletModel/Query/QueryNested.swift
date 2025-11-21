@@ -18,7 +18,7 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: false, nested: nested)
+            with(keyPath, fragment: false, lazy: false, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
@@ -26,21 +26,52 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
 
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: false, fragment: false, nested: nested)
+            with(keyPath, slice: false, fragment: false, lazy: false, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: true, fragment: false, nested: nested)
+            with(keyPath, slice: true, fragment: false, lazy: false, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: false, nested: nested)
+            with(keyPath, fragment: false, lazy: false, nested: nested)
+        }
+}
+
+public extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    func lazy<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, fragment: false, lazy: true, nested: nested)
+        }
+
+    func lazy<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, slice: false, fragment: false, lazy: true, nested: nested)
+        }
+
+    func lazy<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, slice: true, fragment: false, lazy: true, nested: nested)
+        }
+
+    func lazy<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, fragment: false, lazy: true, nested: nested)
         }
 }
 
@@ -51,28 +82,58 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: true, nested: nested)
+            with(keyPath, fragment: true, lazy: false, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: false, fragment: true, nested: nested)
+            with(keyPath, slice: false, fragment: true, lazy: false, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: true, fragment: true, nested: nested)
+            with(keyPath, slice: true, fragment: true, lazy: false, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: true, nested: nested)
+            with(keyPath, fragment: true, lazy: false, nested: nested)
+    }
+}
+
+public extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    func lazyFragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, fragment: true, lazy: true, nested: nested)
+        }
+
+    func lazyFragment<Child, Directionality, Constraints>(
+        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, slice: false, fragment: true, lazy: true, nested: nested)
+        }
+
+    func lazyFragment<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, slice: true, fragment: true, lazy: true, nested: nested)
+        }
+
+    func lazyFragment<Child, Directionality, Constraints>(
+        slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
+
+            with(keyPath, fragment: true, lazy: true, nested: nested)
     }
 }
 
@@ -110,12 +171,20 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
         fragment: Bool,
+        lazy: Bool,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
             then { context, entity in
                 var entity = entity
-                entity[keyPath: keyPath] =
-                    .relation({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment)
+                if lazy {
+                    entity[keyPath: keyPath] =
+                        .relation({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment)
+                } else {
+                    let resolvedRelated = nested(related(keyPath)).resolve(in: context)
+                    entity[keyPath: keyPath] =
+                        .relation({ resolvedRelated }, fragment: fragment)
+                }
+                
                 return entity
             }
         }
@@ -124,13 +193,22 @@ extension ContextQuery where Result == Entity?, Key == Entity.ID {
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
         slice: Bool,
         fragment: Bool,
+        lazy: Bool,
         nested: @escaping QueryListModifier<Child>) -> Self {
 
             then { context, entity in
                 var entity = entity
-                entity[keyPath: keyPath] = slice ?
-                    .appending({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment) :
-                    .relation({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment)
+                if lazy {
+                    entity[keyPath: keyPath] = slice ?
+                        .appending({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment) :
+                        .relation({ nested(related(keyPath)).resolve(in: context) }, fragment: fragment)
+                } else {
+                    let resolvedRelated = nested(related(keyPath)).resolve(in: context)
+                    entity[keyPath: keyPath] = slice ?
+                        .appending({ resolvedRelated }, fragment: fragment) :
+                        .relation({ resolvedRelated }, fragment: fragment)
+                }
+              
                 return entity
             }
         }
