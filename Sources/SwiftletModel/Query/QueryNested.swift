@@ -16,127 +16,74 @@ public typealias QueryListModifier<T: EntityModelProtocol> = (QueryList<T>) -> Q
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: false, lazy: false, nested: nested)
+            with(keyPath, fragment: false, lazy: lazy, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-
+        lazy: Bool = false,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: false, fragment: false, lazy: false, nested: nested)
+            with(keyPath, slice: false, fragment: false, lazy: lazy, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: true, fragment: false, lazy: false, nested: nested)
+            with(keyPath, slice: true, fragment: false, lazy: lazy, nested: nested)
         }
 
     func with<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: false, lazy: false, nested: nested)
+            with(keyPath, fragment: false, lazy: lazy, nested: nested)
         }
 }
-
-public extension ContextQuery where Result == Entity?, Key == Entity.ID {
-    func lazy<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, fragment: false, lazy: true, nested: nested)
-        }
-
-    func lazy<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-
-        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, slice: false, fragment: false, lazy: true, nested: nested)
-        }
-
-    func lazy<Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, slice: true, fragment: false, lazy: true, nested: nested)
-        }
-
-    func lazy<Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, fragment: false, lazy: true, nested: nested)
-        }
-}
+ 
 
 // MARK: - Nested Fragment Query
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: true, lazy: false, nested: nested)
+            with(keyPath, fragment: true, lazy: lazy, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: false, fragment: true, lazy: false, nested: nested)
+            with(keyPath, slice: false, fragment: true, lazy: lazy, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, slice: true, fragment: true, lazy: false, nested: nested)
+            with(keyPath, slice: true, fragment: true, lazy: lazy, nested: nested)
         }
 
     func fragment<Child, Directionality, Constraints>(
         slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
+        lazy: Bool = false,
         nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
 
-            with(keyPath, fragment: true, lazy: false, nested: nested)
+            with(keyPath, fragment: true, lazy: lazy, nested: nested)
     }
 }
-
-public extension ContextQuery where Result == Entity?, Key == Entity.ID {
-    func lazyFragment<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, fragment: true, lazy: true, nested: nested)
-        }
-
-    func lazyFragment<Child, Directionality, Constraints>(
-        _ keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, slice: false, fragment: true, lazy: true, nested: nested)
-        }
-
-    func lazyFragment<Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToManyRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryListModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, slice: true, fragment: true, lazy: true, nested: nested)
-        }
-
-    func lazyFragment<Child, Directionality, Constraints>(
-        slice keyPath: WritableKeyPath<Entity, ToOneRelation<Child, Directionality, Constraints>>,
-        nested: @escaping QueryModifier<Child> = { $0 }) -> Self {
-
-            with(keyPath, fragment: true, lazy: true, nested: nested)
-    }
-}
-
+ 
 // MARK: - Query Nested Ids
 
 public extension ContextQuery where Result == Entity?, Key == Entity.ID {
