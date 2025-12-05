@@ -164,7 +164,7 @@ public extension View {
 }
 
 public final class ObservableContext: ObservableObject {
-    @Published var mainContext: Context
+    @Published public private(set) var mainContext: Context
     private let backgroundContext: ActorOf<Context>
     
     public init(_ context: Context = Context()) {
@@ -172,13 +172,13 @@ public final class ObservableContext: ObservableObject {
         self.backgroundContext = ActorOf(context)
     }
     
-    func update(_ operation: @escaping (inout Context) throws -> Void) {
+    public func update(_ operation: @escaping (inout Context) throws -> Void) {
         Task { @MainActor in
             mainContext = try await backgroundContext.write(operation)
         }
     }
     
-    func read<T>(_ operation: @escaping (Context) -> T) async -> T {
+    public func read<T>(_ operation: @escaping (Context) -> T) async -> T {
         await backgroundContext.read(operation)
     }
 }
