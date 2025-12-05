@@ -8,7 +8,7 @@ let package = Package(
     name: "SwiftletModel",
     platforms: [
        .iOS(.v12),
-       .macOS(.v10_15),
+       .macOS(.v14),
        .tvOS(.v12),
        .watchOS(.v7)
     ],
@@ -25,7 +25,8 @@ let package = Package(
 
         .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"601.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.12.0"),
-        .package(url: "https://github.com/attaswift/BTree", from: "4.0.0")
+        .package(url: "https://github.com/attaswift/BTree", from: "4.0.0"),
+        .package(url: "https://github.com/KazaiMazai/Crocodil", from: "0.0.1")
     ],
     targets: [
         .macro(
@@ -42,6 +43,22 @@ let package = Package(
                 "SwiftletModelMacros",
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "BTree", package: "BTree")
+            ]
+        ),
+        .target(
+            name: "SwiftletModelUI",
+
+            dependencies: [
+                "SwiftletModelUIMacros",
+                "SwiftletModel",
+                "Crocodil"
+            ]
+        ),
+        .macro(
+            name: "SwiftletModelUIMacros",
+            dependencies: [
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
 
