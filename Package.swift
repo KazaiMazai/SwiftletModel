@@ -7,7 +7,7 @@ import CompilerPluginSupport
 let package = Package(
     name: "SwiftletModel",
     platforms: [
-       .iOS(.v12),
+       .iOS(.v13),
        .macOS(.v14),
        .tvOS(.v12),
        .watchOS(.v7)
