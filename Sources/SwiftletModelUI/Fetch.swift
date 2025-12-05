@@ -51,12 +51,12 @@ struct Avatar: Codable {
 }
 
 @propertyWrapper
-struct FetchQuery<Value> {
-    var wrappedValue: Value
+public struct FetchQuery<Value> {
+    public var wrappedValue: Value
     
     private var cancellables = Set<AnyCancellable>()
      
-    init<Entity>(_ query: QueryList<Entity>) where Value == Array<Entity>, Entity: EntityModelProtocol {
+    public init<Entity>(_ query: QueryList<Entity>) where Value == Array<Entity>, Entity: EntityModelProtocol {
         wrappedValue = query.resolve(in: Dependency[\.observableContext].mainContext)
         
         Dependency[\.observableContext]
@@ -77,7 +77,7 @@ struct FetchQuery<Value> {
             .store(in: &cancellables)
     }
     
-    init<Entity>(_ query: Query<Entity>) where  Value == Optional<Entity>, Entity: EntityModelProtocol {
+    public init<Entity>(_ query: Query<Entity>) where  Value == Optional<Entity>, Entity: EntityModelProtocol {
         wrappedValue = query.resolve(in: Dependency[\.observableContext].mainContext)
         
         Dependency[\.observableContext]
@@ -157,17 +157,17 @@ func foo() {
     )
 }
 
-extension View {
+public extension View {
     func contextContainer() -> some View {
         environmentObject(Dependencies[\.observableContext])
     }
 }
 
-final class ObservableContext: ObservableObject {
+public final class ObservableContext: ObservableObject {
     @Published var mainContext: Context
     private let backgroundContext: ActorOf<Context>
     
-    init(_ context: Context = Context()) {
+    public init(_ context: Context = Context()) {
         self.mainContext = context
         self.backgroundContext = ActorOf(context)
     }
@@ -183,20 +183,18 @@ final class ObservableContext: ObservableObject {
     }
 }
 
-typealias UpdateContext = ((inout Context) throws -> Void)
+public typealias UpdateContext = ((inout Context) throws -> Void)
 
-extension Dependencies {
+public extension Dependencies {
     @DependencyEntry var observableContext: ObservableContext = ObservableContext(Context())
 
     @DependencyEntry var updateContext: (@escaping UpdateContext) -> Void = { operation in
         Dependencies[\.observableContext].update(operation)
     }
-    
-    
 }
 
  
-extension EnvironmentValues {
+public extension EnvironmentValues {
     @Entry var updateContext: (@escaping UpdateContext) -> Void = Dependency[\.updateContext]
 }
   
