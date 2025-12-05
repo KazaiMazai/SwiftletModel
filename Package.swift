@@ -15,7 +15,10 @@ let package = Package(
     products: [
         .library(
             name: "SwiftletModel",
-            targets: ["SwiftletModel"])
+            targets: ["SwiftletModel"]),
+        .library(
+            name: "SwiftletModelUI",
+            targets: ["SwiftletModelUI"])
     ],
     dependencies: [
         .package(
@@ -47,7 +50,6 @@ let package = Package(
         ),
         .target(
             name: "SwiftletModelUI",
-
             dependencies: [
                 "SwiftletModelUIMacros",
                 "SwiftletModel",
