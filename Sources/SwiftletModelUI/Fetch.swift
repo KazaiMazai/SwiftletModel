@@ -50,7 +50,7 @@ struct Avatar: Codable {
 }
 
 @propertyWrapper
-public struct FetchQuery<Value> {
+public final class FetchQuery<Value> {
     public var wrappedValue: Value
     
     private var cancellables = Set<AnyCancellable>()
@@ -62,14 +62,12 @@ public struct FetchQuery<Value> {
             .$mainContext
             .receive(on: DispatchQueue.global(qos: .userInteractive))
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.global(qos: .userInteractive))
-            .map { query.resolve(in: $0) }
-            .sink {
-                wrappedValue = $0
-                Task {
+            .sink { _ in
+                Task { [weak self] in
                     let value = await Dependency[\.observableContext].read {
                         query.resolve(in: $0)
                     }
-                    wrappedValue = value
+                    self?.wrappedValue = value
                 }
                 
             }
@@ -84,7 +82,7 @@ public struct FetchQuery<Value> {
             .receive(on: DispatchQueue.global(qos: .userInteractive))
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.global(qos: .userInteractive))
             .map { query.resolve(in: $0) }
-            .sink { wrappedValue = $0 }
+            .sink { [weak self] in self?.wrappedValue = $0 }
             .store(in: &cancellables)
     }
 }
@@ -148,13 +146,6 @@ struct SomeView2: View {
     }
 }
 
-func foo() {
-    #Fetch(
-        User
-        .filter(\.isCurrent == true)
-        .sorted(by: \.username)
-    )
-}
 
 public extension View {
     func contextContainer() -> some View {
