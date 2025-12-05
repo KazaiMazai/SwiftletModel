@@ -39,6 +39,13 @@ let package = Package(
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
+        .macro(
+            name: "SwiftletModelUIMacros",
+            dependencies: [
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+            ]
+        ),
         .target(
             name: "SwiftletModel",
 
@@ -53,17 +60,12 @@ let package = Package(
             dependencies: [
                 "SwiftletModelUIMacros",
                 "SwiftletModel",
-                "Crocodil"
-            ]
-        ),
-        .macro(
-            name: "SwiftletModelUIMacros",
-            dependencies: [
+                .product(name: "Crocodil", package: "Crocodil"),
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
-
+        
         .testTarget(
             name: "SwiftletModelTests",
             dependencies: [
