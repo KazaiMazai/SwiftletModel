@@ -8,7 +8,6 @@
 import SwiftletModel
 import SwiftUI
 import Crocodil
-import SwiftletModelUIMacros
 import Combine
 
 @EntityModel
