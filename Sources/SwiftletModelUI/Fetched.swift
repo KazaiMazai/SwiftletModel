@@ -5,7 +5,7 @@
 //  Created by Serge Kazakov on 05/12/2025.
 //
 
-import SwiftletModelUIMacros
+import Foundation
 import SwiftletModel
 
 @freestanding(expression)
