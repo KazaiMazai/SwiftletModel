@@ -8,7 +8,6 @@
 import Foundation
 import BTree
 import Collections
-import os
 
 extension Index {
     @EntityRefModel
@@ -17,7 +16,7 @@ extension Index {
         var id: String { name }
 
         let name: String
-        private let lock = OSAllocatedUnfairLock()
+        private let lock = NSLock()
         private var index: Map<Value, OrderedSet<Entity.ID>> = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
 
