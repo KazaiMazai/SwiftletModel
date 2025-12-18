@@ -11,6 +11,6 @@ import SwiftSyntaxMacros
 @main
 struct MacrosPlugin: CompilerPlugin {
   let providingMacros: [Macro.Type] = [
-    EntityModelMacro.self
+    EntityModelMacro.self, EntityRefModelMacro.self
   ]
 }

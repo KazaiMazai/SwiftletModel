@@ -8,7 +8,7 @@ let package = Package(
     name: "SwiftletModel",
     platforms: [
        .iOS(.v12),
-       .macOS(.v10_15),
+       .macOS(.v13),
        .tvOS(.v12),
        .watchOS(.v7)
     ],
