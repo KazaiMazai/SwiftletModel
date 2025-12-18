@@ -9,11 +9,6 @@ import Foundation
 import BTree
 import Collections
 import os
-/**
- Map is backed with CoW BTree storage.
- Should not blow up since index entities live inside Context and not accessible elsewhere.
-*/
-//extension Map: @unchecked @retroactive Sendable { }
 
 extension Index {
     @EntityRefModel
