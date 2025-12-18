@@ -8,20 +8,21 @@
 import Foundation
 import BTree
 import Collections
-
+import os
 /**
  Map is backed with CoW BTree storage.
  Should not blow up since index entities live inside Context and not accessible elsewhere.
 */
-extension Map: @unchecked @retroactive Sendable { }
+//extension Map: @unchecked @retroactive Sendable { }
 
 extension Index {
-    @EntityModel
-    struct ComparableValue<Value: Comparable & Sendable> {
+    @EntityRefModel
+    final class ComparableValue<Value: Comparable & Sendable>: @unchecked Sendable {
+        typealias `Self` = Index.ComparableValue<Value>
         var id: String { name }
 
         let name: String
-
+        private let lock = OSAllocatedUnfairLock()
         private var index: Map<Value, OrderedSet<Entity.ID>> = [:]
         private var indexedValues: [Entity.ID: Value] = [:]
 
@@ -47,7 +48,7 @@ extension Index.ComparableValue {
                             value: Value,
                             in context: inout Context) throws {
 
-        var index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
+        let index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
         index.update(entity, value: value)
         try index.save(to: &context)
     }
@@ -56,7 +57,7 @@ extension Index.ComparableValue {
                                 _ entity: Entity,
                                 in context: inout Context) throws {
 
-        var index = Query<Self>(id: indexName).resolve(in: context)
+        let index = Query<Self>(id: indexName).resolve(in: context)
         index?.remove(entity)
         try index?.save(to: &context)
     }
@@ -64,6 +65,38 @@ extension Index.ComparableValue {
 
 extension Index.ComparableValue {
     func filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
+        lock.withLock {
+            _filter(predicate)
+        }
+    }
+
+    func filter(range: Range<Value>) -> [Entity.ID] {
+        lock.withLock {
+            _filter(range: range)
+        }
+    }
+
+    func filter(range: ClosedRange<Value>) -> [Entity.ID] {
+        lock.withLock {
+            _filter(range: range)
+        }
+    }
+
+    func contains(id: Entity.ID?, in range: ClosedRange<Value>) -> Bool {
+        lock.withLock {
+            _contains(id: id, in: range)
+        }
+    }
+
+    func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
+        lock.withLock {
+            _grouped()
+        }
+    }
+}
+
+private extension Index.ComparableValue {
+    func _filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
         switch predicate.method {
         case .equal:
             return index[predicate.value]?.elements ?? []
@@ -107,21 +140,21 @@ extension Index.ComparableValue {
         }
     }
 
-    func filter(range: Range<Value>) -> [Entity.ID] {
+    func _filter(range: Range<Value>) -> [Entity.ID] {
         index
             .submap(from: range.lowerBound, to: range.upperBound)
             .map { $1.elements }
             .flatMap { $0 }
     }
 
-    func filter(range: ClosedRange<Value>) -> [Entity.ID] {
+    func _filter(range: ClosedRange<Value>) -> [Entity.ID] {
         index
             .submap(from: range.lowerBound, through: range.upperBound)
             .map { $1.elements }
             .flatMap { $0 }
     }
 
-    func contains(id: Entity.ID?, in range: ClosedRange<Value>) -> Bool {
+    func _contains(id: Entity.ID?, in range: ClosedRange<Value>) -> Bool {
         guard let id, let value = indexedValues[id] else {
             return false
         }
@@ -129,15 +162,28 @@ extension Index.ComparableValue {
         return range.contains(value)
     }
 
-    func grouped() -> [Value: [Entity.ID]] where Value: Hashable {
+    func _grouped() -> [Value: [Entity.ID]] where Value: Hashable {
         Dictionary(index.map { ($0, $1.elements) },
                    uniquingKeysWith: { $1 })
     }
 }
 
 private extension Index.ComparableValue {
+    func update(_ entity: Entity, value: Value) {
+        lock.withLock {
+            _update(entity, value: value)
+        }
+    }
+    
+    func remove(_ entity: Entity) {
+        lock.withLock {
+            _remove(entity)
+        }
+    }
+}
 
-    mutating func update(_ entity: Entity, value: Value) {
+private extension Index.ComparableValue {
+    func _update(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
 
         guard existingValue != value else {
@@ -160,7 +206,7 @@ private extension Index.ComparableValue {
         indexedValues[entity.id] = value
     }
 
-    mutating func remove(_ entity: Entity) {
+    func _remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
               var ids = index[value]
         else {
