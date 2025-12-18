@@ -25,10 +25,6 @@ extension Index {
             self.name = name
         }
 
-        var sorted: [Entity.ID] {
-            index.flatMap { $0.1.elements }
-        }
-
         func asDeleted(in context: Context) -> Deleted<Self>? { nil }
 
         func saveMetadata(to context: inout Context) throws { }
@@ -59,6 +55,15 @@ extension Index.ComparableValue {
 }
 
 extension Index.ComparableValue {
+    var sorted: [Entity.ID] {
+        lock.withLock {
+            index.flatMap { $0.1.elements }
+        }
+    }
+    
+}
+extension Index.ComparableValue {
+    
     func filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
         lock.withLock {
             _filter(predicate)
