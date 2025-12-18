@@ -33,6 +33,24 @@ public struct EntityModelMacro: ExtensionMacro {
         }
 }
 
+public struct EntityRefModelMacro: ExtensionMacro {
+    public static func expansion(
+        of node: SwiftSyntax.AttributeSyntax,
+        attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
+        providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
+        conformingTo protocols: [SwiftSyntax.TypeSyntax],
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
+
+            return try ExtensionDeclSyntax.entityRefModelMacro(
+                of: node,
+                attachedTo: declaration,
+                providingExtensionsOf: type,
+                conformingTo: protocols,
+                in: context
+            )
+        }
+}
+
 extension SwiftSyntax.ExtensionDeclSyntax {
     static func entityModelMacro(
         of node: SwiftSyntax.AttributeSyntax,
@@ -42,7 +60,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
         in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
 
             let accessAttribute = declaration.accessAttribute()
-
+            let isClass = declaration.is(ClassDeclSyntax.self)
             let variableDeclarations = declaration
                 .memberBlock
                 .members
@@ -63,8 +81,21 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
             
-        
-            let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
+            guard isClass else {
+                let entityModelProtocol = try ExtensionDeclSyntax.entityModelProtocol(
+                    type: type,
+                    conformingTo: protocols,
+                    relationshipAttributes: relationshipAttributes,
+                    storedOptionalProperties: storedOptionalProperties,
+                    indexAttributes: indexAttributes,
+                    uniqueAttributes: uniqueAttributes,
+                    fullTextIndexAttributes: fullTextIndexAttributes,
+                    accessAttribute: accessAttribute
+                )
+                return [entityModelProtocol]
+            }
+            
+            let entityModelProtocol = try ExtensionDeclSyntax.entityRefModelProtocol(
                 type: type,
                 conformingTo: protocols,
                 relationshipAttributes: relationshipAttributes,
@@ -74,7 +105,49 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 fullTextIndexAttributes: fullTextIndexAttributes,
                 accessAttribute: accessAttribute
             )
+            return [entityModelProtocol]
+            
+        }
+    
+    static func entityRefModelMacro(
+        of node: SwiftSyntax.AttributeSyntax,
+        attachedTo declaration: some SwiftSyntax.DeclGroupSyntax,
+        providingExtensionsOf type: some SwiftSyntax.TypeSyntaxProtocol,
+        conformingTo protocols: [SwiftSyntax.TypeSyntax],
+        in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.ExtensionDeclSyntax] {
 
+            let accessAttribute = declaration.accessAttribute()
+            let variableDeclarations = declaration
+                .memberBlock
+                .members
+                .compactMap { $0.decl.as(VariableDeclSyntax.self) }
+          
+            let relationshipAttributes = variableDeclarations
+                .compactMap { $0.relationshipAttributes() }
+
+            let indexAttributes = variableDeclarations
+                .compactMap { $0.indexAttributes() }
+
+            let fullTextIndexAttributes = variableDeclarations
+                .compactMap { $0.fullTextIndexAttributes() }
+
+            let uniqueAttributes = variableDeclarations
+                .compactMap { $0.uniqueAttributes() }
+
+            let storedOptionalProperties = variableDeclarations
+                .compactMap { $0.storedOptionalPropertiesAttributes() }
+            
+            
+            let entityModelProtocol = try ExtensionDeclSyntax.entityRefModelProtocol(
+                type: type,
+                conformingTo: protocols,
+                relationshipAttributes: relationshipAttributes,
+                storedOptionalProperties: storedOptionalProperties,
+                indexAttributes: indexAttributes,
+                uniqueAttributes: uniqueAttributes,
+                fullTextIndexAttributes: fullTextIndexAttributes,
+                accessAttribute: accessAttribute
+            )
             return [entityModelProtocol]
         }
 }
@@ -100,6 +173,40 @@ extension ExtensionDeclSyntax {
             \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, fullTextIndexAttributes))
             \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
+            \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
+            \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
+            \(raw: FunctionDeclSyntax.indexedKeyPathName(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                uniqueAttributes,
+                fullTextIndexAttributes)
+            )
+        }
+        """
+        )
+    }
+    
+    static func entityRefModelProtocol(type: some SwiftSyntax.TypeSyntaxProtocol,
+                                       conformingTo protocols: [SwiftSyntax.TypeSyntax],
+                                       relationshipAttributes: [RelationshipAttributes],
+                                       storedOptionalProperties: [PropertyAttributes],
+                                       indexAttributes: [IndexAttributes],
+                                       uniqueAttributes: [UniqueAttributes],
+                                       fullTextIndexAttributes: [FullTextIndexAttributes],
+                                       accessAttribute: AccessAttribute
+
+    ) throws -> ExtensionDeclSyntax {
+        let protocolsString = protocols.map { "\($0)" }
+            .joined(separator: ",")
+            .trimmingCharacters(in: .whitespaces)
+
+        return try ExtensionDeclSyntax(
+        """
+        extension \(raw: type): \(raw: protocolsString) {
+            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, fullTextIndexAttributes))
+            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.normalizeNoMutating(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
             \(raw: FunctionDeclSyntax.indexedKeyPathName(
@@ -209,6 +316,24 @@ extension FunctionDeclSyntax {
         """
 
         \(raw: accessAttributes.name) mutating func normalize() {
+           \(raw: attributes
+                .map { "$\($0.propertyName).normalize()" }
+                .joined(separator: "\n")
+            )
+        }
+        """
+        )
+    }
+    
+    static func normalizeNoMutating(
+        _ accessAttributes: AccessAttribute,
+        _ attributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+
+        try FunctionDeclSyntax(
+        """
+
+        \(raw: accessAttributes.name) func normalize() {
            \(raw: attributes
                 .map { "$\($0.propertyName).normalize()" }
                 .joined(separator: "\n")

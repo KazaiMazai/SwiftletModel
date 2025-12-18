@@ -12,3 +12,9 @@ public macro EntityModel() =
   #externalMacro(
     module: "SwiftletModelMacros", type: "EntityModelMacro"
   )
+
+@attached(extension, conformances: EntityModelProtocol, names: arbitrary)
+internal macro EntityRefModel() =
+  #externalMacro(
+    module: "SwiftletModelMacros", type: "EntityRefModelMacro"
+  )
