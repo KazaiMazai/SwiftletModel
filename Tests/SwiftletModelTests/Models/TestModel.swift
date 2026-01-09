@@ -14,6 +14,19 @@ enum TestingModels {
 
 extension TestingModels {
     @EntityModel
+    struct PlainValueIndexed {
+        @Index<Self>(\.value) private static var valueIndex
+
+        let id: String
+        let value: Int
+
+        init(id: String, value: Int) {
+            self.id = id
+            self.value = value
+        }
+    }
+    
+    @EntityModel
     struct SingleValueIndexed {
         @Index<Self>(\.numOf1) private static var valueIndex
 
