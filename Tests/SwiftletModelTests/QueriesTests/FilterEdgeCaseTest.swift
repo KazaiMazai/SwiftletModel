@@ -44,4 +44,24 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
         
         XCTAssertTrue(filteredResult.isEmpty)
     }
+    
+    func test_WhenIncludingFilterOutOfUpperBound_ThenEmptyResult() throws {
+        let max = models.max(by: { $0.value < $1.value })!
+        let filteredResult = TestingModels
+            .PlainValueIndexed
+            .filter(\.value >= max.value + 1)
+            .resolve(in: context)
+        
+        XCTAssertTrue(filteredResult.isEmpty)
+    }
+    
+    func test_WhenIncludingFilterOutOfLowerBound_ThenEmptyResult() throws {
+        let min = models.min(by: { $0.value < $1.value })!
+        let filteredResult = TestingModels
+            .PlainValueIndexed
+            .filter(\.value <= min.value - 1)
+            .resolve(in: context)
+        
+        XCTAssertTrue(filteredResult.isEmpty)
+    }
 }
