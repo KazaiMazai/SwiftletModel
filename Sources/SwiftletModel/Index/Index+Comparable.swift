@@ -100,7 +100,9 @@ private extension Index.ComparableValue {
         case .equal:
             return index[predicate.value]?.elements ?? []
         case .lessThan:
-            guard let first = index.keys.first else {
+            guard let first = index.keys.first,
+                    first <= predicate.value
+            else {
                 return []
             }
 
@@ -108,7 +110,9 @@ private extension Index.ComparableValue {
                 .submap(from: first, to: predicate.value)
                 .flatMap { $1.elements }
         case .lessThanOrEqual:
-            guard let first = index.keys.first else {
+            guard let first = index.keys.first,
+                    first <= predicate.value
+            else {
                 return []
             }
 
@@ -116,7 +120,9 @@ private extension Index.ComparableValue {
                 .submap(from: first, through: predicate.value)
                 .flatMap { $1.elements }
         case .greaterThan:
-            guard let last = index.keys.last else {
+            guard let last = index.keys.last,
+                  predicate.value <= last
+            else {
                 return []
             }
 
@@ -125,7 +131,9 @@ private extension Index.ComparableValue {
                 .excluding(SortedSet(arrayLiteral: predicate.value))
                 .flatMap { $1.elements }
         case .greaterThanOrEqual:
-            guard let last = index.keys.last else {
+            guard let last = index.keys.last,
+                  predicate.value <= last
+            else {
                 return []
             }
 
