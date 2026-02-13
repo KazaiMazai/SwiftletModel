@@ -178,6 +178,76 @@ extension TestingModels {
         let id: String
         let text: String
     }
+
+    // MARK: - HashIndex Test Models
+
+    @EntityModel
+    struct HashIndexed: Sendable {
+        @HashIndex<Self>(\.category) private static var categoryIndex
+
+        let id: String
+        let category: String
+        let value: Int
+
+        init(id: String, category: String, value: Int) {
+            self.id = id
+            self.category = category
+            self.value = value
+        }
+    }
+
+    @EntityModel
+    struct HashIndexedPair: Sendable {
+        @HashIndex<Self>(\.category, \.subcategory) private static var compoundIndex
+
+        let id: String
+        let category: String
+        let subcategory: String
+        let value: Int
+
+        init(id: String, category: String, subcategory: String, value: Int) {
+            self.id = id
+            self.category = category
+            self.subcategory = subcategory
+            self.value = value
+        }
+    }
+
+    @EntityModel
+    struct HashIndexedTriplet: Sendable {
+        @HashIndex<Self>(\.region, \.category, \.subcategory) private static var compoundIndex
+
+        let id: String
+        let region: String
+        let category: String
+        let subcategory: String
+
+        init(id: String, region: String, category: String, subcategory: String) {
+            self.id = id
+            self.region = region
+            self.category = category
+            self.subcategory = subcategory
+        }
+    }
+
+    @EntityModel
+    struct HashIndexedQuadruple: Sendable {
+        @HashIndex<Self>(\.region, \.country, \.category, \.subcategory) private static var compoundIndex
+
+        let id: String
+        let region: String
+        let country: String
+        let category: String
+        let subcategory: String
+
+        init(id: String, region: String, country: String, category: String, subcategory: String) {
+            self.id = id
+            self.region = region
+            self.country = country
+            self.category = category
+            self.subcategory = subcategory
+        }
+    }
 }
 
 extension TestingModels.NotIndexed {
@@ -227,6 +297,15 @@ extension TestingModels.StringNotIndexed {
         .enumerated()
         .map { idx, text in TestingModels.StringNotIndexed(id: "\(idx)", text: text) }
         .shuffled()
+    }
+}
+
+extension TestingModels.HashIndexed {
+    static func shuffled(_ count: Int) -> [TestingModels.HashIndexed] {
+        let categories = ["A", "B", "C", "D", "E"]
+        return (0..<count)
+            .map { idx in TestingModels.HashIndexed(id: "\(idx)", category: categories[idx % 5], value: idx) }
+            .shuffled()
     }
 }
 
