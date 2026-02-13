@@ -71,12 +71,18 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
-
+           
+            let hashIndexAttributes = variableDeclarations
+                .compactMap { $0.hashIndexAttributes() }
+            
             let fullTextIndexAttributes = variableDeclarations
                 .compactMap { $0.fullTextIndexAttributes() }
 
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
+            
+            
+            
 
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
@@ -88,6 +94,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                     relationshipAttributes: relationshipAttributes,
                     storedOptionalProperties: storedOptionalProperties,
                     indexAttributes: indexAttributes,
+                    hashIndexAttributes: hashIndexAttributes,
                     uniqueAttributes: uniqueAttributes,
                     fullTextIndexAttributes: fullTextIndexAttributes,
                     accessAttribute: accessAttribute
@@ -101,6 +108,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 relationshipAttributes: relationshipAttributes,
                 storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
+                hashIndexAttributes: hashIndexAttributes,
                 uniqueAttributes: uniqueAttributes,
                 fullTextIndexAttributes: fullTextIndexAttributes,
                 accessAttribute: accessAttribute
@@ -127,6 +135,9 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 
             let indexAttributes = variableDeclarations
                 .compactMap { $0.indexAttributes() }
+            
+            let hashIndexAttributes = variableDeclarations
+                .compactMap { $0.hashIndexAttributes() }
 
             let fullTextIndexAttributes = variableDeclarations
                 .compactMap { $0.fullTextIndexAttributes() }
@@ -144,6 +155,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 relationshipAttributes: relationshipAttributes,
                 storedOptionalProperties: storedOptionalProperties,
                 indexAttributes: indexAttributes,
+                hashIndexAttributes: hashIndexAttributes,
                 uniqueAttributes: uniqueAttributes,
                 fullTextIndexAttributes: fullTextIndexAttributes,
                 accessAttribute: accessAttribute
@@ -158,6 +170,7 @@ extension ExtensionDeclSyntax {
                                     relationshipAttributes: [RelationshipAttributes],
                                     storedOptionalProperties: [PropertyAttributes],
                                     indexAttributes: [IndexAttributes],
+                                    hashIndexAttributes: [IndexAttributes],
                                     uniqueAttributes: [UniqueAttributes],
                                     fullTextIndexAttributes: [FullTextIndexAttributes],
                                     accessAttribute: AccessAttribute
@@ -170,8 +183,21 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, fullTextIndexAttributes))
-            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.save(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                hashIndexAttributes,
+                uniqueAttributes,
+                fullTextIndexAttributes)
+            )
+            \(raw: FunctionDeclSyntax.delete(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                hashIndexAttributes,
+                uniqueAttributes)
+            )
             \(raw: FunctionDeclSyntax.normalize(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
@@ -179,6 +205,7 @@ extension ExtensionDeclSyntax {
                 accessAttribute,
                 relationshipAttributes,
                 indexAttributes,
+                hashIndexAttributes,
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
@@ -192,6 +219,7 @@ extension ExtensionDeclSyntax {
                                        relationshipAttributes: [RelationshipAttributes],
                                        storedOptionalProperties: [PropertyAttributes],
                                        indexAttributes: [IndexAttributes],
+                                       hashIndexAttributes: [IndexAttributes],
                                        uniqueAttributes: [UniqueAttributes],
                                        fullTextIndexAttributes: [FullTextIndexAttributes],
                                        accessAttribute: AccessAttribute
@@ -204,8 +232,21 @@ extension ExtensionDeclSyntax {
         return try ExtensionDeclSyntax(
         """
         extension \(raw: type): \(raw: protocolsString) {
-            \(raw: FunctionDeclSyntax.save(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes, fullTextIndexAttributes))
-            \(raw: FunctionDeclSyntax.delete(accessAttribute, relationshipAttributes, indexAttributes, uniqueAttributes))
+            \(raw: FunctionDeclSyntax.save(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                hashIndexAttributes,
+                uniqueAttributes,
+                fullTextIndexAttributes)
+            )
+            \(raw: FunctionDeclSyntax.delete(
+                accessAttribute,
+                relationshipAttributes,
+                indexAttributes,
+                hashIndexAttributes,
+                uniqueAttributes)
+            )
             \(raw: FunctionDeclSyntax.normalizeNoMutating(accessAttribute, relationshipAttributes))
             \(raw: FunctionDeclSyntax.nestedQueryModifier(accessAttribute, relationshipAttributes))
             \(raw: VariableDeclSyntax.patch(accessAttribute, storedOptionalProperties))
@@ -213,6 +254,7 @@ extension ExtensionDeclSyntax {
                 accessAttribute,
                 relationshipAttributes,
                 indexAttributes,
+                hashIndexAttributes,
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
@@ -227,6 +269,7 @@ extension FunctionDeclSyntax {
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
+        _ hashIndexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes],
         _ fullTextIndexAttributes: [FullTextIndexAttributes]
     ) throws -> FunctionDeclSyntax {
@@ -244,6 +287,10 @@ extension FunctionDeclSyntax {
             )
             \(raw: indexAttributes
                 .map { "try copy.updateIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: hashIndexAttributes
+                .map { "try copy.updateHashIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             \(raw: fullTextIndexAttributes
@@ -268,6 +315,7 @@ extension FunctionDeclSyntax {
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
+        _ hashIndexAttributes: [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes]
     ) throws -> FunctionDeclSyntax {
 
@@ -285,6 +333,10 @@ extension FunctionDeclSyntax {
             )
             \(raw: indexAttributes
                 .map { "try removeFromIndex(\($0.keyPathAttributes.attribute), in: &context)" }
+                .joined(separator: "\n")
+            )
+            \(raw: hashIndexAttributes
+                .map { "try removeFromHashIndex(\($0.keyPathAttributes.attribute), in: &context)" }
                 .joined(separator: "\n")
             )
             context.remove(Self.self, id: id)
@@ -347,19 +399,20 @@ extension FunctionDeclSyntax {
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],
         _ indexAttributes: [IndexAttributes],
+        _ hashIndexAttributes:  [IndexAttributes],
         _ uniqueAttributes: [UniqueAttributes],
         _ fullTextIndexAttributes: [FullTextIndexAttributes]
 
     ) throws -> FunctionDeclSyntax {
 
-        let attributesCollections: [any Collection] = [
-            relationshipAttributes,
-            indexAttributes,
-            uniqueAttributes,
-            fullTextIndexAttributes
-        ]
+        let allIndexAttributes = [
+            indexAttributes.map { $0.keyPathAttributes.attribute },
+            hashIndexAttributes.map { $0.keyPathAttributes.attribute },
+            uniqueAttributes.map { $0.keyPathAttributes.attribute },
+            fullTextIndexAttributes.map { $0.keyPathAttributes.attribute }
+        ].flatMap { $0 }
         
-        guard !attributesCollections.allSatisfy({ $0.isEmpty }) else {
+        guard !relationshipAttributes.isEmpty || !allIndexAttributes.isEmpty else {
             return try FunctionDeclSyntax(
             """
             
@@ -370,6 +423,8 @@ extension FunctionDeclSyntax {
             )
         }
         
+        let allIndexAttributesSet = Set(allIndexAttributes)
+               
         return try FunctionDeclSyntax(
         """
 
@@ -379,16 +434,8 @@ extension FunctionDeclSyntax {
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
-                \(raw: indexAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
-                    .joined(separator: "\n")
-                )
-                \(raw: fullTextIndexAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
-                    .joined(separator: "\n")
-                )
-                \(raw: uniqueAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                \(raw: allIndexAttributesSet
+                    .map { "case \($0): return \"\($0.cleanedKeyPath())\"" }
                     .joined(separator: "\n")
                 )
                 default: 
@@ -619,6 +666,42 @@ private extension VariableDeclSyntax {
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                   let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
                   wrapperType == .index,
+                  modifiers.isStaticProperty
+            else {
+                continue
+            }
+
+            guard let binding = bindings.first(where: { $0.pattern.as(IdentifierPatternSyntax.self)?.identifier.text != nil }),
+                  let property = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+            else {
+                return nil
+            }
+
+            guard let keyPathsExprList = customAttribute
+                .arguments?
+                .as(LabeledExprListSyntax.self) else {
+
+                return nil
+            }
+
+            return IndexAttributes(
+                relationWrapperType: wrapperType,
+                propertyName: property,
+                keyPathAttributes: IndexAttributes.KeyPathAttributes(
+                    propertyIdentifier: property,
+                    labeledExprListSyntax: keyPathsExprList
+                )
+            )
+        }
+        return nil
+    }
+    
+    func hashIndexAttributes() -> IndexAttributes? {
+        for attribute in self.attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                  wrapperType == .hashIndex,
                   modifiers.isStaticProperty
             else {
                 continue
