@@ -423,8 +423,13 @@ extension FunctionDeclSyntax {
             )
         }
         
-        let allIndexAttributesSet = Set(allIndexAttributes)
-               
+        // Sort by number of keypaths (fewest first) to ensure single keypaths match before compound ones
+        // This prevents `case \.a,\.b,\.c:` from matching `\.a` before `case \.a:` does
+        let sortedIndexAttributes = Set(allIndexAttributes)
+            .sorted { lhs, rhs in
+                lhs.filter { $0 == "," }.count < rhs.filter { $0 == "," }.count
+            }
+
         return try FunctionDeclSyntax(
         """
 
@@ -434,11 +439,11 @@ extension FunctionDeclSyntax {
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
-                \(raw: allIndexAttributesSet
+                \(raw: sortedIndexAttributes
                     .map { "case \($0): return \"\($0.cleanedKeyPath())\"" }
                     .joined(separator: "\n")
                 )
-                default: 
+                default:
                    return ""
             }
         }
