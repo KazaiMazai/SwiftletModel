@@ -9,9 +9,9 @@ import Foundation
 
 @propertyWrapper
 public struct HashIndex<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
-    public var wrappedValue: Never? { nil }
+    public var wrappedValue: Never.Type? { nil }
 
-    public init(wrappedValue: Never?) { }
+    public init(wrappedValue: Never.Type?) { }
 
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
     where T0: Hashable { }

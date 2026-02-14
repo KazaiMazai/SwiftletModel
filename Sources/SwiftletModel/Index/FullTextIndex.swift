@@ -9,9 +9,9 @@ import Foundation
 
 @propertyWrapper
 public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
-    public var wrappedValue: Never? { nil }
+    public var wrappedValue: Never.Type? { nil }
 
-    public init(wrappedValue: Never?) { }
+    public init(wrappedValue: Never.Type?) { }
 
     public init(_ keypaths: KeyPath<Entity, String>...) { }
 }

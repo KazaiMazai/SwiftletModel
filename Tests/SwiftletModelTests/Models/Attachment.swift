@@ -12,12 +12,11 @@ extension Schema.V1 {
 
     @EntityModel
     struct Attachment: Codable, Sendable {
-        @HashIndex<Self>(\.kind) static var kindIndex
+        @HashIndex<Self>(\.kind) var kindIndex
         
         let id: String
         var kind: Kind
-        
-
+    
         @Relationship(.required, inverse: \.attachment)
         var message: Message?
         
