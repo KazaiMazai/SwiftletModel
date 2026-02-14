@@ -773,38 +773,41 @@ The filtering system automatically utilizes available indexes when possible:
 ```swift
 @EntityModel
 struct User {
-    @Index<Self>(\.age) private static var ageIndex
-    @Index<Self>(\.status) private static var statusLevelIndex
-    
+    @Index<Self>(\.age) private static var ageIndex          // B-tree index for range queries
+    @HashIndex<Self>(\.status) private static var statusIndex // Hash index for equality lookups
+
     let id: String
     let age: Int
     let status: UserStatus
     let level: Int
 }
 
-// This query will use the age index
+// This query will use the age index (O(log n))
 let results = User
     .filter(\.age > 18)
     .resolve(in: context)
 
-// This query will use both the age and status indexes 
+// This query will use the status hash index (O(1))
 let results = User
     .filter(\.status == .active)
-    .filter(\.level == 3)
+    .resolve(in: context)
 ```
 
-Non Indexed queries are significantly slower because they require full collection scan. 
-Indexed property queries are insanely fast. 
- 
-| Operation Type | Value Type | Indexed | Not Indexed | Notes |
-|---------------|------------|----------|-------------|--------|
-| Equality (==) | Hashable | O(1) | O(n) | Uses hash-based lookup for indexed values |
-| Equality (==) | Comparable | O(log n) | O(n) | Uses B-tree for indexed comparable values |
-| Comparison (>, <, >=, <=) | Hashable | O(n) | O(n) | Hash indexes don't help with range queries |
-| Comparison (>, <, >=, <=) | Comparable | O(log n) | O(n) | B-tree enables efficient range queries |
+Non Indexed queries are significantly slower because they require full collection scan.
+Indexed property queries are insanely fast.
+
+| Operation Type | Index Type | Value Type | Indexed | Not Indexed | Notes |
+|---------------|------------|------------|----------|-------------|--------|
+| Equality (==) | `HashIndex` | Hashable | O(1) | O(n) | Hash-based lookup |
+| Equality (==) | `Index` | Comparable | O(log n) | O(n) | B-tree lookup |
+| Comparison (>, <, >=, <=) | `HashIndex` | Hashable | O(n) | O(n) | Hash indexes don't support range queries |
+| Comparison (>, <, >=, <=) | `Index` | Comparable | O(log n) | O(n) | B-tree enables efficient range queries |
+| Sorting | `Index` | Comparable | O(1) | O(n log n) | B-tree maintains sorted order |
 
 ### Filters Best Practices
 1. Index Selection:
+- Use `HashIndex` for equality-only queries (O(1) lookups)
+- Use `Index` for range queries and sorting (O(log n) lookups)
 - Add indexes for frequently filtered properties
 - Balance between query performance and memory usage
 - Balance between read query and index update performance
@@ -1564,10 +1567,10 @@ Set relation accordingly to the case to carry out a proper relation update when 
 
 
 ## Indexing
-SwiftletModel provides three types of indexes to optimize data access and enforce uniqueness constraints: `Index`, `Unique`, and `FullTextIndex`. Each serves a different purpose and offers specific functionality.
+SwiftletModel provides four types of indexes to optimize data access and enforce uniqueness constraints: `Index`, `HashIndex`, `Unique`, and `FullTextIndex`. Each serves a different purpose and offers specific functionality.
 
 ### Index
-The Index property wrapper enables efficient querying and sorting of entity properties.
+The Index property wrapper enables efficient range querying and sorting of entity properties using a B-tree data structure.
 
 ```swift
 @Index<Entity>(\.propertyName)
@@ -1575,10 +1578,11 @@ private static var propertyIndex
 ```
 
 Features:
-- Supports both Comparable and Hashable types
+- Requires `Comparable` property types
 - Allows compound indexes up to 4 properties
-- Maintains sorted order for Comparable types
-- Enables fast lookups for Hashable types
+- Maintains sorted order for efficient range queries
+- Supports comparison operators: `==`, `<`, `<=`, `>`, `>=`, `!=`
+- O(log n) lookup performance
 
 Example:
 
@@ -1587,13 +1591,66 @@ Example:
 struct User {
     @Index<Self>(\.age) private static var ageIndex
     @Index<Self>(\.lastName, \.firstName) private static var nameIndex
-    
+
     let id: String
     let firstName: String
     let lastName: String
     let age: Int
 }
+
+// Range queries
+let adults = User.filter(\.age >= 18).resolve(in: context)
+let seniors = User.filter(\.age > 65).resolve(in: context)
+let teens = User.filter(\.age >= 13 && \.age < 20).resolve(in: context)
+
+// Sorting
+let sortedByAge = User.query().sorted(by: \.age).resolve(in: context)
 ```
+
+### HashIndex
+The HashIndex property wrapper enables O(1) equality lookups using a hash-based data structure.
+
+```swift
+@HashIndex<Entity>(\.propertyName)
+private static var propertyIndex
+```
+
+Features:
+- Requires `Hashable` property types
+- Allows compound indexes up to 4 properties
+- O(1) constant-time equality lookups
+- Only supports equality (`==`) queries
+- More efficient than Index for equality-only queries
+
+Example:
+
+```swift
+@EntityModel
+struct User {
+    @HashIndex<Self>(\.status) private static var statusIndex
+    @HashIndex<Self>(\.region, \.department) private static var regionDeptIndex
+
+    let id: String
+    let status: String
+    let region: String
+    let department: String
+}
+
+// Equality lookups
+let activeUsers = User.filter(\.status == "active").resolve(in: context)
+let salesTeam = User
+    .filter(\.region == "US" && \.department == "Sales")
+    .resolve(in: context)
+```
+
+**When to use Index vs HashIndex:**
+| Use Case | Recommended Index |
+|----------|-------------------|
+| Equality queries only | `HashIndex` (O(1)) |
+| Range queries (`<`, `>`, `<=`, `>=`) | `Index` (O(log n)) |
+| Sorting | `Index` |
+| Both equality and range queries | `Index` |
+
 ### Unique
 The Unique property wrapper enforces uniqueness constraints on entity properties.
 
@@ -1699,34 +1756,43 @@ let articles = Article
 
 ### Index Performance Considerations
 1. Index Selection:
-    - Use Index for general querying and sorting
-    - Use Unique when uniqueness must be enforced
-    - Use FullTextIndex for text search functionality
+    - Use `HashIndex` for equality-only queries (O(1) lookup)
+    - Use `Index` for range queries and sorting (O(log n) lookup)
+    - Use `Unique` when uniqueness must be enforced
+    - Use `FullTextIndex` for text search functionality
 2. Compound Indexes:
     - Limited to 4 properties for performance reasons
     - Consider the order of properties in compound indexes
     - More indexes increase write overhead
 3. Memory Usage:
     - Each index type maintains its own data structures
+    - `Index` uses B-tree structures for ordered storage
+    - `HashIndex` uses hash tables for direct lookups
     - Full-text indexes require more memory for token storage
     - Consider the trade-off between query performance and memory usage
 4. Performance
     - Each index requires time to build and update that is executed when model is saved
+    - `HashIndex` has O(1) read and write performance
+    - `Index` has O(log n) read and write performance
     - Consider the trade-off between query read performance and index update performance
 
 Best Practices
 1. Index Sparingly:
-- Only index properties that need to be queried or sorted
-- Avoid redundant indexes
-- Consider query patterns when designing indexes
-2. Collision Handling:
+    - Only index properties that need to be queried or sorted
+    - Avoid redundant indexes
+    - Consider query patterns when designing indexes
+2. Choose the Right Index Type:
+    - Prefer `HashIndex` when you only need equality checks
+    - Use `Index` when you need range queries or sorting
+    - Don't use both `Index` and `HashIndex` on the same property
+3. Collision Handling:
     - Use .throw for strict uniqueness enforcement
     - Use .upsert when replacing existing records is acceptable
-    - Use collistion resolver for custom replacement logic
-3. Full-Text Search:
+    - Use collision resolver for custom replacement logic
+4. Full-Text Search:
     - Index only text fields that need to be searched
-    -  Consider the length of indexed content
-    -  Test search relevance with representative data
+    - Consider the length of indexed content
+    - Test search relevance with representative data
 
 ## Schema 
 
