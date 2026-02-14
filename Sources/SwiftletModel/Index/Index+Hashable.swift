@@ -86,6 +86,6 @@ private extension Index.HashableValue {
 
         indexedValues[entity.id] = nil
         ids.remove(entity.id)
-        index[value] = ids
+        index[value] = ids.isEmpty ? nil : ids
     }
 }
