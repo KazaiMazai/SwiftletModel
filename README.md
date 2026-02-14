@@ -1583,6 +1583,7 @@ Features:
 - Maintains sorted order for efficient range queries
 - Supports comparison operators: `==`, `<`, `<=`, `>`, `>=`, `!=`
 - O(log n) lookup performance
+- Can be declared as `static` (recommended) or instance property (required for generic types)
 
 Example:
 
@@ -1621,6 +1622,7 @@ Features:
 - O(1) constant-time equality lookups
 - Only supports equality (`==`) queries
 - More efficient than Index for equality-only queries
+- Can be declared as `static` (recommended) or instance property (required for generic types)
 
 Example:
 
@@ -1651,6 +1653,22 @@ let salesTeam = User
 | Sorting | `Index` |
 | Both equality and range queries | `Index` |
 
+#### Generic Types with Indexes
+
+For generic entity models, indexes must be declared as instance properties since Swift doesn't allow static properties with generic constraints:
+
+```swift
+@EntityModel
+struct GenericAttachment<T: Codable & Sendable & Hashable>: Codable, Sendable {
+    @HashIndex<Self>(\.kind) private var kindIndex
+
+    let id: String
+    var kind: T
+
+    @Relationship
+    var message: Message? = .none
+}
+```
 ### Unique
 The Unique property wrapper enforces uniqueness constraints on entity properties.
 
@@ -1667,6 +1685,7 @@ Features:
     - upsert: Replaces existing entity
     - custom collision handling
 - Works with both Comparable and Hashable types
+- Can be declared as `static` (recommended) or instance property (required for generic types)
 
 
 Example:
@@ -1734,6 +1753,7 @@ Features:
 - Automatic tokenization and indexing
 - Optimized for search performance
 - Used for `match`, `contains`, `prefix`, `suffix` text search queries
+- Can be declared as `static` (recommended) or instance property (required for generic types)
 
 Example:
 
@@ -1785,11 +1805,14 @@ Best Practices
     - Prefer `HashIndex` when you only need equality checks
     - Use `Index` when you need range queries or sorting
     - Don't use both `Index` and `HashIndex` on the same property
-3. Collision Handling:
+3. Static vs Instance Properties:
+    - Use `static` for index properties when possible (standard non-generic types)
+    - Use instance properties for generic entity types where static properties with generic constraints aren't allowed
+4. Collision Handling:
     - Use .throw for strict uniqueness enforcement
     - Use .upsert when replacing existing records is acceptable
     - Use collision resolver for custom replacement logic
-4. Full-Text Search:
+5. Full-Text Search:
     - Index only text fields that need to be searched
     - Consider the length of indexed content
     - Test search relevance with representative data
