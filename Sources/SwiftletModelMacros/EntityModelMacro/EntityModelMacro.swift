@@ -668,8 +668,7 @@ private extension VariableDeclSyntax {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                   let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
-                  wrapperType == .index,
-                  modifiers.isStaticProperty
+                  wrapperType == .index
             else {
                 continue
             }
@@ -740,8 +739,7 @@ private extension VariableDeclSyntax {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                   let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                   let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
-                  wrapperType == .unique,
-                  modifiers.isStaticProperty
+                  wrapperType == .unique
             else {
                 continue
             }
@@ -784,8 +782,7 @@ private extension VariableDeclSyntax {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                   let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                   let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
-                  wrapperType == .fullTextIndex,
-                  modifiers.isStaticProperty
+                  wrapperType == .fullTextIndex
             else {
                 continue
             }
