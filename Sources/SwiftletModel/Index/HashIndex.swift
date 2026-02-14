@@ -9,38 +9,28 @@ import Foundation
 
 @propertyWrapper
 public struct HashIndex<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
-    public var wrappedValue: Indexed?
+    public var wrappedValue: Never? { nil }
 
-    public init(wrappedValue: Indexed?) {
-        self.wrappedValue = wrappedValue
-    }
+    public init(wrappedValue: Never?) { }
 
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
-    where T0: Hashable {
-        self.wrappedValue = .marker
-    }
+    where T0: Hashable { }
 
     public init<T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>)
-    where T0: Hashable, T1: Hashable {
-        self.wrappedValue = .marker
-    }
+    where T0: Hashable, T1: Hashable { }
 
     public init<T0, T1, T2>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>)
-    where T0: Hashable, T1: Hashable, T2: Hashable {
-        self.wrappedValue = .marker
-    }
+    where T0: Hashable, T1: Hashable, T2: Hashable { }
 
     public init<T0, T1, T2, T3>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
         _ kp3: KeyPath<Entity, T3>)
-    where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable {
-        self.wrappedValue = .marker
-    }
+    where T0: Hashable, T1: Hashable, T2: Hashable, T3: Hashable { }
 }

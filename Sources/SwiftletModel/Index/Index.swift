@@ -9,38 +9,28 @@ import Foundation
 
 @propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
-    public var wrappedValue: Indexed?
+    public var wrappedValue: Never? { nil }
 
-    public init(wrappedValue: Indexed?) {
-        self.wrappedValue = wrappedValue
-    }
+    public init(wrappedValue: Never?) { }
 
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
-    where T0: Comparable {
-        self.wrappedValue = .marker
-    }
+    where T0: Comparable { }
 
     public init<T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>)
-    where T0: Comparable, T1: Comparable {
-        self.wrappedValue = .marker
-    }
+    where T0: Comparable, T1: Comparable { }
 
     public init<T0, T1, T2>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>)
-    where T0: Comparable, T1: Comparable, T2: Comparable {
-        self.wrappedValue = .marker
-    }
+    where T0: Comparable, T1: Comparable, T2: Comparable { }
 
     public init<T0, T1, T2, T3>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
         _ kp3: KeyPath<Entity, T3>)
-    where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
-        self.wrappedValue = .marker
-    }
+    where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable { }
 }
