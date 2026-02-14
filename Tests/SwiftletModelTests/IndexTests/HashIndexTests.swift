@@ -94,6 +94,24 @@ final class HashIndexTests: XCTestCase {
         XCTAssertTrue(result.isEmpty)
     }
 
+    func test_WhenOneOfMultipleEntitiesDeleted_ThenOthersRemainInIndex() throws {
+        let entities = [
+            TestingModels.HashIndexed(id: "1", category: "A", value: 10),
+            TestingModels.HashIndexed(id: "2", category: "A", value: 20),
+            TestingModels.HashIndexed(id: "3", category: "A", value: 30)
+        ]
+        try entities.forEach { try $0.save(to: &context) }
+
+        try TestingModels.HashIndexed.delete(id: "1", from: &context)
+
+        let result = TestingModels.HashIndexed
+            .filter(\.category == "A")
+            .resolve(in: context)
+
+        XCTAssertEqual(Set(result.map { $0.id }), Set(["2", "3"]),
+            "Deleting one entity should not remove others with same indexed value")
+    }
+
     func test_WhenLastEntityInBucketDeleted_ThenBucketCleanup() throws {
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
