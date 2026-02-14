@@ -76,14 +76,16 @@ private extension Index.HashableValue {
         indexedValues[entity.id] = value
     }
 
+    
     mutating func remove(_ entity: Entity) {
         guard let value = indexedValues[entity.id],
-              index[value] != nil
+              var ids = index[value]
         else {
             return
         }
 
         indexedValues[entity.id] = nil
-        index[value] = nil
+        ids.remove(entity.id)
+        index[value] = ids
     }
 }
