@@ -404,20 +404,21 @@ extension FunctionDeclSyntax {
         _ fullTextIndexAttributes: [FullTextIndexAttributes]
 
     ) throws -> FunctionDeclSyntax {
-        
-        let attributesCollections: [any Collection] = [
-            relationshipAttributes,
-            indexAttributes,
-            hashIndexAttributes,
-            uniqueAttributes,
-            fullTextIndexAttributes
+
+        let allIndexAttributesKeyPaths = [
+            indexAttributes.map { $0.keyPathAttributes.attribute },
+            hashIndexAttributes.map { $0.keyPathAttributes.attribute },
+            uniqueAttributes.map { $0.keyPathAttributes.attribute },
+            fullTextIndexAttributes.map { $0.keyPathAttributes.attribute }
         ]
-
-        guard !attributesCollections.allSatisfy({ $0.isEmpty }) else {
-
+        .flatMap { $0 }
+        .flatMap { $0.split(separator: ",") }
+        .map { String($0) }
+        
+        guard !relationshipAttributes.isEmpty || !allIndexAttributesKeyPaths.isEmpty else {
             return try FunctionDeclSyntax(
             """
-            
+
             \(raw: accessAttributes.name) static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String {
                 ""
             }
@@ -425,7 +426,7 @@ extension FunctionDeclSyntax {
             )
         }
         
-         
+        let allIndexAttributesKeyPathsSet = Set(allIndexAttributesKeyPaths)
         return try FunctionDeclSyntax(
         """
 
@@ -435,23 +436,10 @@ extension FunctionDeclSyntax {
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
-                \(raw: indexAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                \(raw: allIndexAttributesKeyPaths
+                    .map { "case \($0): return \"\($0.cleanedKeyPath())\"" }
                     .joined(separator: "\n")
                 )
-                \(raw: hashIndexAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
-                    .joined(separator: "\n")
-                )
-                \(raw: fullTextIndexAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
-                    .joined(separator: "\n")
-                )
-                \(raw: uniqueAttributes
-                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
-                    .joined(separator: "\n")
-                )
-
                 default:
                    return ""
             }
@@ -459,6 +447,7 @@ extension FunctionDeclSyntax {
         """
         )
     }
+    
 
     static func nestedQueryModifier(
         _ accessAttributes: AccessAttribute,
