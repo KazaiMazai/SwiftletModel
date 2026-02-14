@@ -9,6 +9,7 @@
         case fullTextIndex = "FullTextIndex"
         case unique = "Unique"
         case index = "Index"
+        case hashIndex = "HashIndex"
         case relationship = "Relationship"
 
         var title: String {

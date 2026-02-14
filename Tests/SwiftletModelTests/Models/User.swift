@@ -12,6 +12,8 @@ extension Schema.V1 {
 
     @EntityModel
     struct User: Codable, Sendable {
+        @HashIndex<Self>(\.username) static var userNameIndex
+        
         @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
         @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
         @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex

@@ -38,7 +38,7 @@ extension Index.ComparableValue {
                             value: Value,
                             in context: inout Context) throws {
 
-        let index = Query(id: indexName).resolve(in: context) ?? Self(name: indexName)
+        let index = Query<Self>(id: indexName).resolve(in: context) ?? Self(name: indexName)
         index.update(entity, value: value)
         try index.save(to: &context)
     }
