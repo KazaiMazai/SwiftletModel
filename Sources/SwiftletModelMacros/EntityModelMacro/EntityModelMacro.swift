@@ -404,15 +404,17 @@ extension FunctionDeclSyntax {
         _ fullTextIndexAttributes: [FullTextIndexAttributes]
 
     ) throws -> FunctionDeclSyntax {
-
-        let allIndexAttributes = [
-            indexAttributes.map { $0.keyPathAttributes.attribute },
-            hashIndexAttributes.map { $0.keyPathAttributes.attribute },
-            uniqueAttributes.map { $0.keyPathAttributes.attribute },
-            fullTextIndexAttributes.map { $0.keyPathAttributes.attribute }
-        ].flatMap { $0 }
         
-        guard !relationshipAttributes.isEmpty || !allIndexAttributes.isEmpty else {
+        let attributesCollections: [any Collection] = [
+            relationshipAttributes,
+            indexAttributes,
+            hashIndexAttributes,
+            uniqueAttributes,
+            fullTextIndexAttributes
+        ]
+
+        guard !attributesCollections.allSatisfy({ $0.isEmpty }) else {
+
             return try FunctionDeclSyntax(
             """
             
@@ -423,13 +425,7 @@ extension FunctionDeclSyntax {
             )
         }
         
-        // Sort by number of keypaths (fewest first) to ensure single keypaths match before compound ones
-        // This prevents `case \.a,\.b,\.c:` from matching `\.a` before `case \.a:` does
-        let sortedIndexAttributes = Set(allIndexAttributes)
-            .sorted { lhs, rhs in
-                lhs.filter { $0 == "," }.count < rhs.filter { $0 == "," }.count
-            }
-
+         
         return try FunctionDeclSyntax(
         """
 
@@ -439,10 +435,23 @@ extension FunctionDeclSyntax {
                     .map { "case \\.$\($0.propertyName): return \"\($0.propertyName)\"" }
                     .joined(separator: "\n")
                 )
-                \(raw: sortedIndexAttributes
-                    .map { "case \($0): return \"\($0.cleanedKeyPath())\"" }
+                \(raw: indexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
                     .joined(separator: "\n")
                 )
+                \(raw: hashIndexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: fullTextIndexAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+                \(raw: uniqueAttributes
+                    .map { "case \($0.keyPathAttributes.attribute): return \"\($0.keyPathAttributes.attribute.cleanedKeyPath())\"" }
+                    .joined(separator: "\n")
+                )
+
                 default:
                    return ""
             }
