@@ -22,7 +22,7 @@ struct IndexDiagnostic: DiagnosticMessage {
 
     static var preferInstanceProperty: IndexDiagnostic {
         IndexDiagnostic(
-            message: "Index should be declared as instance properties",
+            message: "Index should be declared as instance property",
             diagnosticID: MessageID(domain: "SwiftletModel", id: "staticIndexDeprecated"),
             severity: .warning
         )
