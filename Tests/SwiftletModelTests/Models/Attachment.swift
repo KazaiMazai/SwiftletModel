@@ -20,7 +20,7 @@ extension Schema.V1 {
 
         @Relationship(.required, inverse: \.attachment)
         var message: Message?
-
+        
         enum Kind: Codable, Hashable {
             case image(url: URL)
             case video(url: URL)

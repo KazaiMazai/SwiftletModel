@@ -10,8 +10,8 @@ import Foundation
 @MainActor
 @propertyWrapper
 public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
-    public var wrappedValue: Index<Entity>.Type {
-        Self.self
+    public var wrappedValue: Never.Type {
+        Never.self
     }
 
     public init<T0>(_ kp0: KeyPath<Entity, T0>)

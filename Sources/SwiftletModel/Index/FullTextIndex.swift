@@ -11,8 +11,8 @@ import Foundation
 @propertyWrapper
 public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, Codable {
 
-    public var wrappedValue: FullTextIndex<Entity> {
-        self
+    public var wrappedValue: Never.Type {
+        Never.self
     }
 
     public init(_ keypaths: KeyPath<Entity, String>...) {
