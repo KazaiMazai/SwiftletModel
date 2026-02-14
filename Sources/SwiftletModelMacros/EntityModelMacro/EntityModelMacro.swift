@@ -51,6 +51,7 @@ public struct EntityRefModelMacro: ExtensionMacro {
         }
 }
 
+
 extension SwiftSyntax.ExtensionDeclSyntax {
     static func entityModelMacro(
         of node: SwiftSyntax.AttributeSyntax,
@@ -80,8 +81,9 @@ extension SwiftSyntax.ExtensionDeclSyntax {
 
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
-            
-            
+
+            // Emit warnings for static index properties
+            variableDeclarations.staticIndexDeclararionGuard(in: context)
             
 
             let storedOptionalProperties = variableDeclarations
@@ -145,10 +147,13 @@ extension SwiftSyntax.ExtensionDeclSyntax {
             let uniqueAttributes = variableDeclarations
                 .compactMap { $0.uniqueAttributes() }
 
+            // Emit warnings for static index properties
+            variableDeclarations.staticIndexDeclararionGuard(in: context)
+
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
-            
-            
+
+
             let entityModelProtocol = try ExtensionDeclSyntax.entityRefModelProtocol(
                 type: type,
                 conformingTo: protocols,
@@ -703,8 +708,7 @@ private extension VariableDeclSyntax {
             guard let customAttribute = attribute.as(AttributeSyntax.self),
                 let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
                   let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
-                  wrapperType == .hashIndex,
-                  modifiers.isStaticProperty
+                  wrapperType == .hashIndex
             else {
                 continue
             }
@@ -842,5 +846,36 @@ private extension VariableDeclSyntax {
 
         }
         return nil
+    }
+
+    func staticIndexAttributeNode() -> AttributeSyntax? {
+        guard modifiers.isStaticProperty else { return nil }
+
+        for attribute in attributes {
+            guard let customAttribute = attribute.as(AttributeSyntax.self),
+                  let identifierTypeSyntax = customAttribute.attributeName.as(IdentifierTypeSyntax.self),
+                  let wrapperType = PropertyWrapperAttributes(rawValue: identifierTypeSyntax.name.text),
+                  PropertyWrapperAttributes.indexAttributes.contains(wrapperType)
+            else {
+                continue
+            }
+            return customAttribute
+        }
+        return nil
+    }
+}
+
+extension Collection where Element == VariableDeclSyntax {
+    func staticIndexDeclararionGuard(in context: some SwiftSyntaxMacros.MacroExpansionContext) {
+        for varDecl in self {
+            if let staticIndexNode = varDecl.staticIndexAttributeNode() {
+                context.diagnose(
+                    Diagnostic(
+                        node: staticIndexNode,
+                        message: IndexDiagnostic.preferInstanceProperty
+                    )
+                )
+            }
+        }
     }
 }

@@ -12,6 +12,12 @@
         case hashIndex = "HashIndex"
         case relationship = "Relationship"
 
+         static var indexAttributes: [PropertyWrapperAttributes] {
+             [.index, .hashIndex, .unique , .fullTextIndex]
+         }
+             
+         
+     
         var title: String {
             rawValue
         }
