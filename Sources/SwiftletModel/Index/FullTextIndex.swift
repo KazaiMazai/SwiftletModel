@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  FullTextIndex.swift
 //  SwiftletModel
 //
 //  Created by Serge Kazakov on 08/03/2025.
@@ -7,15 +7,15 @@
 
 import Foundation
 
-@MainActor
 @propertyWrapper
-public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, Codable {
+public struct FullTextIndex<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
+    public var wrappedValue: Indexed?
 
-    public var wrappedValue: Never.Type {
-        Never.self
+    public init(wrappedValue: Indexed?) {
+        self.wrappedValue = wrappedValue
     }
 
     public init(_ keypaths: KeyPath<Entity, String>...) {
-
+        self.wrappedValue = .marker
     }
 }

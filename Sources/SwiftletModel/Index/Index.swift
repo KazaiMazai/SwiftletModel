@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Index.swift
 //  SwiftletModel
 //
 //  Created by Serge Kazakov on 08/03/2025.
@@ -7,38 +7,32 @@
 
 import Foundation
 
-@MainActor
 @propertyWrapper
-public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
-    public var wrappedValue: Never.Type {
-        Never.self
+public struct Index<Entity: EntityModelProtocol>: Sendable, OmitableFromCoding {
+    public var wrappedValue: Indexed?
+
+    public init(wrappedValue: Indexed?) {
+        self.wrappedValue = wrappedValue
     }
 
     public init<T0>(_ kp0: KeyPath<Entity, T0>)
-    where
-    T0: Comparable {
-
+    where T0: Comparable {
+        self.wrappedValue = .marker
     }
 
     public init<T0, T1>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>)
-    where
-    T0: Comparable,
-    T1: Comparable {
-
+    where T0: Comparable, T1: Comparable {
+        self.wrappedValue = .marker
     }
 
     public init<T0, T1, T2>(
         _ kp0: KeyPath<Entity, T0>,
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>)
-
-    where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable {
-
+    where T0: Comparable, T1: Comparable, T2: Comparable {
+        self.wrappedValue = .marker
     }
 
     public init<T0, T1, T2, T3>(
@@ -46,12 +40,7 @@ public struct Index<Entity: EntityModelProtocol>: Sendable, Codable {
         _ kp1: KeyPath<Entity, T1>,
         _ kp2: KeyPath<Entity, T2>,
         _ kp3: KeyPath<Entity, T3>)
-
-    where
-    T0: Comparable,
-    T1: Comparable,
-    T2: Comparable,
-    T3: Comparable {
-
+    where T0: Comparable, T1: Comparable, T2: Comparable, T3: Comparable {
+        self.wrappedValue = .marker
     }
 }
