@@ -12,11 +12,11 @@ extension Schema.V1 {
 
     @EntityModel
     struct User: Codable, Sendable {
-        @HashIndex<Self>(\.username) static var userNameIndex
+        @HashIndex<Self>(\.username) var userNameIndex
         
-        @Unique<Self>(\.username, collisions: .upsert) static var uniqueUsername
-        @Unique<Self>(\.email, collisions: .throw) static var uniqueEmail
-        @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) static var currentUserIndex
+        @Unique<Self>(\.username, collisions: .upsert) var uniqueUsername
+        @Unique<Self>(\.email, collisions: .throw) var uniqueEmail
+        @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) var currentUserIndex
 
         let id: String
         private(set) var name: String?

@@ -1,5 +1,5 @@
 //
-//  Unique.ComparableValueIndex 2.swift
+//  Unique.ComparableValueIndex.swift
 //  SwiftletModel
 //
 //  Created by Serge Kazakov on 12/03/2025.

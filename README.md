@@ -569,7 +569,7 @@ let users = User.query()
 ```swift
 @EntityModel
 struct User {
-    @Index<Self>(\.age) private static var ageIndex
+    @Index<Self>(\.age) private var ageIndex
     
     let id: String
     let age: Int
@@ -591,7 +591,7 @@ let sortedUsers = User.query()
 ```swift
 @EntityModel
 struct User {
-    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    @Index<Self>(\.lastName, \.firstName) private var nameIndex
     
     let id: String
     let firstName: String
@@ -773,8 +773,8 @@ The filtering system automatically utilizes available indexes when possible:
 ```swift
 @EntityModel
 struct User {
-    @Index<Self>(\.age) private static var ageIndex          // B-tree index for range queries
-    @HashIndex<Self>(\.status) private static var statusIndex // Hash index for equality lookups
+    @Index<Self>(\.age) private var ageIndex          // B-tree index for range queries
+    @HashIndex<Self>(\.status) private var statusIndex // Hash index for equality lookups
 
     let id: String
     let age: Int
@@ -1574,7 +1574,7 @@ The Index property wrapper enables efficient range querying and sorting of entit
 
 ```swift
 @Index<Entity>(\.propertyName)
-private static var propertyIndex
+private var propertyIndex
 ```
 
 Features:
@@ -1583,14 +1583,15 @@ Features:
 - Maintains sorted order for efficient range queries
 - Supports comparison operators: `==`, `<`, `<=`, `>`, `>=`, `!=`
 - O(log n) lookup performance
+- Declared as instance property (required for generic types, recommended for consistency)
 
 Example:
 
 ```swift
 @EntityModel
 struct User {
-    @Index<Self>(\.age) private static var ageIndex
-    @Index<Self>(\.lastName, \.firstName) private static var nameIndex
+    @Index<Self>(\.age) private var ageIndex
+    @Index<Self>(\.lastName, \.firstName) private var nameIndex
 
     let id: String
     let firstName: String
@@ -1612,7 +1613,7 @@ The HashIndex property wrapper enables O(1) equality lookups using a hash-based 
 
 ```swift
 @HashIndex<Entity>(\.propertyName)
-private static var propertyIndex
+private var propertyIndex
 ```
 
 Features:
@@ -1621,14 +1622,15 @@ Features:
 - O(1) constant-time equality lookups
 - Only supports equality (`==`) queries
 - More efficient than Index for equality-only queries
+- Declared as instance property (required for generic types, recommended for consistency)
 
 Example:
 
 ```swift
 @EntityModel
 struct User {
-    @HashIndex<Self>(\.status) private static var statusIndex
-    @HashIndex<Self>(\.region, \.department) private static var regionDeptIndex
+    @HashIndex<Self>(\.status) private var statusIndex
+    @HashIndex<Self>(\.region, \.department) private var regionDeptIndex
 
     let id: String
     let status: String
@@ -1651,12 +1653,28 @@ let salesTeam = User
 | Sorting | `Index` |
 | Both equality and range queries | `Index` |
 
+#### Generic Types with Indexes
+
+For generic entity models, indexes must be declared as instance properties since Swift doesn't allow static properties with generic constraints:
+
+```swift
+@EntityModel
+struct GenericAttachment<T: Codable & Sendable & Hashable>: Codable, Sendable {
+    @HashIndex<Self>(\.kind) private var kindIndex
+
+    let id: String
+    var kind: T
+
+    @Relationship
+    var message: Message? = .none
+}
+```
 ### Unique
 The Unique property wrapper enforces uniqueness constraints on entity properties.
 
 ```swift
 @Unique<Entity>(\.propertyName, collisions: .throw)
-private static var uniqueIndex
+private var uniqueIndex
 ```
 
 Features:
@@ -1667,6 +1685,7 @@ Features:
     - upsert: Replaces existing entity
     - custom collision handling
 - Works with both Comparable and Hashable types
+- Declared as instance property (required for generic types, recommended for consistency)
 
 
 Example:
@@ -1676,15 +1695,15 @@ Example:
 struct User {
     // Unique username with upsert on collision
     @Unique<Self>(\.username, collisions: .upsert) 
-    private static var uniqueUsername
+    private var uniqueUsername
     
     // Unique email that throws on collision
     @Unique<Self>(\.email, collisions: .throw) 
-    private static var uniqueEmail
+    private var uniqueEmail
     
     // Custom collision handling for current user
     @Unique<Self>(\.isCurrent, collisions: .updateCurrentUser) 
-    private static var currentUserIndex
+    private var currentUserIndex
     
     let id: String
     let username: String
@@ -1723,7 +1742,7 @@ The FullTextIndex property wrapper implements full-text search capabilities usin
 
 ```swift
 @FullTextIndex<Entity>(\.propertyName)
-private static var searchIndex
+private var searchIndex
 ```
 
 Features:
@@ -1734,13 +1753,14 @@ Features:
 - Automatic tokenization and indexing
 - Optimized for search performance
 - Used for `match`, `contains`, `prefix`, `suffix` text search queries
+- Declared as instance property (required for generic types, recommended for consistency)
 
 Example:
 
 ```swift
 @EntityModel
 struct Article {
-    @FullTextIndex<Self>(\.title, \.content) private static var contentIndex
+    @FullTextIndex<Self>(\.title, \.content) private var contentIndex
     
     let id: String
     let title: String
@@ -1785,11 +1805,15 @@ Best Practices
     - Prefer `HashIndex` when you only need equality checks
     - Use `Index` when you need range queries or sorting
     - Don't use both `Index` and `HashIndex` on the same property
-3. Collision Handling:
+3. Instance Properties for Indexes:
+    - Always use instance properties for index declarations
+    - Required for generic types, recommended for all types for consistency
+    - Index properties are omitted from Codable encoding/decoding automatically
+4. Collision Handling:
     - Use .throw for strict uniqueness enforcement
     - Use .upsert when replacing existing records is acceptable
     - Use collision resolver for custom replacement logic
-4. Full-Text Search:
+5. Full-Text Search:
     - Index only text fields that need to be searched
     - Consider the length of indexed content
     - Test search relevance with representative data

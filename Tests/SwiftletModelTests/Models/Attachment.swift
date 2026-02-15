@@ -9,18 +9,16 @@ import SwiftletModel
 import Foundation
 
 extension Schema.V1 {
-
     @EntityModel
     struct Attachment: Codable, Sendable {
-        @HashIndex<Self>(\.kind) static var kindIndex
+        @HashIndex<Self>(\.kind) var kindIndex
         
         let id: String
         var kind: Kind
-        
-
+    
         @Relationship(.required, inverse: \.attachment)
         var message: Message?
-
+        
         enum Kind: Codable, Hashable {
             case image(url: URL)
             case video(url: URL)
@@ -28,4 +26,5 @@ extension Schema.V1 {
         }
     }
 }
+
 
