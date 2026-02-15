@@ -83,7 +83,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 .compactMap { $0.uniqueAttributes() }
 
             // Emit warnings for static index properties
-            variableDeclarations.staticIndexDeclararionGuard(in: context)
+            variableDeclarations.staticIndexDeclarationGuard(in: context)
             
 
             let storedOptionalProperties = variableDeclarations
@@ -148,7 +148,7 @@ extension SwiftSyntax.ExtensionDeclSyntax {
                 .compactMap { $0.uniqueAttributes() }
 
             // Emit warnings for static index properties
-            variableDeclarations.staticIndexDeclararionGuard(in: context)
+            variableDeclarations.staticIndexDeclarationGuard(in: context)
 
             let storedOptionalProperties = variableDeclarations
                 .compactMap { $0.storedOptionalPropertiesAttributes() }
@@ -866,7 +866,7 @@ private extension VariableDeclSyntax {
 }
 
 extension Collection where Element == VariableDeclSyntax {
-    func staticIndexDeclararionGuard(in context: some SwiftSyntaxMacros.MacroExpansionContext) {
+    func staticIndexDeclarationGuard(in context: some SwiftSyntaxMacros.MacroExpansionContext) {
         for varDecl in self {
             if let staticIndexNode = varDecl.staticIndexAttributeNode() {
                 context.diagnose(
