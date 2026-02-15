@@ -15,7 +15,7 @@ enum TestingModels {
 extension TestingModels {
     @EntityModel
     struct PlainValueIndexed {
-        @Index<Self>(\.value) private static var valueIndex
+        @Index<Self>(\.value) private var valueIndex
 
         let id: String
         let value: Int
@@ -28,7 +28,7 @@ extension TestingModels {
     
     @EntityModel
     struct SingleValueIndexed {
-        @Index<Self>(\.numOf1) private static var valueIndex
+        @Index<Self>(\.numOf1) private var valueIndex
 
         let id: String
         let numOf1: Int
@@ -47,19 +47,19 @@ extension TestingModels {
 
     @EntityModel
     struct ExtensivelyIndexed {
-        @Index<Self>(\.numOf1) private static var numOf1Index
-        @Index<Self>(\.numOf10) private static var numOf10Index
-        @Index<Self>(\.numOf100) private static var numOf100Index
-        @Index<Self>(\.numOf1000) private static var numOf1000Index
+        @Index<Self>(\.numOf1) private var numOf1Index
+        @Index<Self>(\.numOf10) private var numOf10Index
+        @Index<Self>(\.numOf100) private var numOf100Index
+        @Index<Self>(\.numOf1000) private var numOf1000Index
 
-        @Index<Self>(\.numOf10, \.numOf1) private static var valueIndex2
-        @Index<Self>(\.numOf10.desc, \.numOf1) private static var valueIndexDesc2
+        @Index<Self>(\.numOf10, \.numOf1) private var valueIndex2
+        @Index<Self>(\.numOf10.desc, \.numOf1) private var valueIndexDesc2
 
-        @Index<Self>(\.numOf100, \.numOf10, \.numOf1) private static var valueIndex3
-        @Index<Self>(\.numOf100, \.numOf10.desc, \.numOf1) private static var valueIndexDesc3
+        @Index<Self>(\.numOf100, \.numOf10, \.numOf1) private var valueIndex3
+        @Index<Self>(\.numOf100, \.numOf10.desc, \.numOf1) private var valueIndexDesc3
 
-        @Index<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1) private static var valueIndex4
-        @Index<Self>(\.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1) private static var valueIndexDesc4
+        @Index<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1) private var valueIndex4
+        @Index<Self>(\.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1) private var valueIndexDesc4
 
         let id: String
         let numOf1: Int
@@ -78,7 +78,7 @@ extension TestingModels {
 
     @EntityModel
     struct EvaluatedPropertyDescIndexed {
-        @Index<Self>(\.numOf1.desc) private static var valueIndexDesc
+        @Index<Self>(\.numOf1.desc) private var valueIndexDesc
 
         let id: String
         let numOf1: Int
@@ -114,10 +114,10 @@ extension TestingModels {
 
     @EntityModel
     struct UniquelyIndexed {
-        @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
-        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
-        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
-        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
+        @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
+        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
+        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
+        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex4
 
         let id: String
         let numOf1: Int
@@ -128,10 +128,10 @@ extension TestingModels {
 
     @EntityModel
     struct UniquelyIndexedComparable {
-        @Unique<Self>(\.numOf1, collisions: .throw) private static var valueIndex
-        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private static var valueIndex2
-        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex3
-        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private static var valueIndex4
+        @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
+        @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
+        @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
+        @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex4
 
         let id: String
         let numOf1: ComparableBox<Int>
@@ -167,7 +167,7 @@ extension TestingModels {
 
     @EntityModel
     struct StringFullTextIndexed {
-        @FullTextIndex<Self>(\.text) private static var valueIndex
+        @FullTextIndex<Self>(\.text) private var valueIndex
 
         let id: String
         let text: String
@@ -183,7 +183,7 @@ extension TestingModels {
 
     @EntityModel
     struct HashIndexed: Sendable {
-        @HashIndex<Self>(\.category) private static var categoryIndex
+        @HashIndex<Self>(\.category) private var categoryIndex
 
         let id: String
         let category: String
@@ -198,7 +198,7 @@ extension TestingModels {
 
     @EntityModel
     struct HashIndexedPair: Sendable {
-        @HashIndex<Self>(\.category, \.subcategory) private static var compoundIndex
+        @HashIndex<Self>(\.category, \.subcategory) private var compoundIndex
 
         let id: String
         let category: String
@@ -215,7 +215,7 @@ extension TestingModels {
 
     @EntityModel
     struct HashIndexedTriplet: Sendable {
-        @HashIndex<Self>(\.region, \.category, \.subcategory) private static var compoundIndex
+        @HashIndex<Self>(\.region, \.category, \.subcategory) private var compoundIndex
 
         let id: String
         let region: String
@@ -232,7 +232,7 @@ extension TestingModels {
 
     @EntityModel
     struct HashIndexedQuadruple: Sendable {
-        @HashIndex<Self>(\.region, \.country, \.category, \.subcategory) private static var compoundIndex
+        @HashIndex<Self>(\.region, \.country, \.category, \.subcategory) private var compoundIndex
 
         let id: String
         let region: String

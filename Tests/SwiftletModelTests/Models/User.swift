@@ -12,7 +12,7 @@ extension Schema.V1 {
 
     @EntityModel
     struct User: Codable, Sendable {
-        @HashIndex<Self>(\.username) static var userNameIndex
+        @HashIndex<Self>(\.username) var userNameIndex
         
         @Unique<Self>(\.username, collisions: .upsert) var uniqueUsername
         @Unique<Self>(\.email, collisions: .throw) var uniqueEmail

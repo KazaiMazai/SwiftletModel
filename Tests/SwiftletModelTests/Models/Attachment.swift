@@ -9,7 +9,6 @@ import SwiftletModel
 import Foundation
 
 extension Schema.V1 {
-
     @EntityModel
     struct Attachment: Codable, Sendable {
         @HashIndex<Self>(\.kind) var kindIndex
