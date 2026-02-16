@@ -1,20 +1,20 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Serge Kazakov on 02/08/2024.
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 import SnapshotTesting
 
-final class NestedModelsQueryTest: XCTestCase {
-    var context = Context()
+@Suite
+struct NestedModelsQueryTest {
 
-    override func setUpWithError() throws {
-
+    private func makeContext() throws -> Context {
+        var context = Context()
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -57,9 +57,12 @@ final class NestedModelsQueryTest: XCTestCase {
         )
 
         try chat.save(to: &context)
+        return context
     }
 
-    func test_WhenQueryWithNestedModel_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModel_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -72,7 +75,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModelId_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModelId_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -85,7 +90,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModelIds_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModelIds_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -98,7 +105,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModels_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModels_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -116,7 +125,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModelsAndFilter_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModelsAndFilter_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -134,7 +145,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModelsAndSort_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModelsAndSort_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -151,7 +164,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedModelsSlice_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedModelsSlice_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -166,7 +181,9 @@ final class NestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedIdsSlice_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedIdsSlice_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 

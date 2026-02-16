@@ -1,18 +1,19 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Serge Kazakov on 24/07/2024.
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 
-final class DeleteTests: XCTestCase {
-    var context = Context()
+@Suite
+struct DeleteTests {
 
-    override func setUpWithError() throws {
+    private func makeContext() throws -> Context {
+        var context = Context()
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -28,43 +29,50 @@ final class DeleteTests: XCTestCase {
         )
 
         try chat.save(to: &context)
+        return context
     }
 
-    func test_WhenEntityIsDeleted_EntityIsRemovedFromContext() {
-        try! Chat.delete(id: "1", from: &context)
+    @Test
+    func whenEntityIsDeleted_EntityIsRemovedFromContext() throws {
+        var context = try makeContext()
+        try Chat.delete(id: "1", from: &context)
 
         let chat = Chat
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNil(chat)
+        #expect(chat == nil)
 
         let deletedChat = Deleted<Chat>
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNotNil(deletedChat)
+        #expect(deletedChat != nil)
     }
 
-    func test_WhenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() {
+    @Test
+    func whenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() throws {
+        var context = try makeContext()
         let softDeleteChat = Chat
             .query("1")
             .resolve(in: context)?
             .asDeleted(in: context)
 
-        try! softDeleteChat!.save(to: &context)
+        try softDeleteChat!.save(to: &context)
 
         let chat = Chat
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNil(chat)
+        #expect(chat == nil)
     }
 
-    func test_WhenSoftDeleteEntityIsRestored_EntityIsRestoredInContext() {
-        try! Chat.delete(id: "1", from: &context)
+    @Test
+    func whenSoftDeleteEntityIsRestored_EntityIsRestoredInContext() throws {
+        var context = try makeContext()
+        try Chat.delete(id: "1", from: &context)
 
-        try! Deleted<Chat>
+        try Deleted<Chat>
             .query("1")
             .resolve(in: context)?
             .restore(in: &context)
@@ -73,22 +81,26 @@ final class DeleteTests: XCTestCase {
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNotNil(chat)
+        #expect(chat != nil)
     }
 
-    func test_WhenEntityIsDeleted_EntityIsRemovedFromRelations() {
-        try! Chat.delete(id: "1", from: &context)
+    @Test
+    func whenEntityIsDeleted_EntityIsRemovedFromRelations() throws {
+        var context = try makeContext()
+        try Chat.delete(id: "1", from: &context)
 
         let userChats = User
             .query(User.bob.id)
             .related(\.$chats)
             .resolve(in: context)
 
-        XCTAssertTrue(userChats.isEmpty)
+        #expect(userChats.isEmpty)
     }
 
-    func test_WhenEntityIsDeleted_CascadeDeleteIsFullfilled() {
-        try! Chat.delete(id: "1", from: &context)
+    @Test
+    func whenEntityIsDeleted_CascadeDeleteIsFullfilled() throws {
+        var context = try makeContext()
+        try Chat.delete(id: "1", from: &context)
 
         let message = Message
             .query("1")
@@ -98,63 +110,69 @@ final class DeleteTests: XCTestCase {
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNil(message)
-        XCTAssertNil(attachment)
+        #expect(message == nil)
+        #expect(attachment == nil)
 
         let deletedMessage = Deleted<Message>
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNotNil(deletedMessage)
+        #expect(deletedMessage != nil)
 
         let deletedAttachment = Deleted<Attachment>
             .query("1")
             .resolve(in: context)
 
-        XCTAssertNotNil(deletedAttachment)
+        #expect(deletedAttachment != nil)
     }
 
-    func test_WhenEntityIsDetached_EntityIsRemovedFromRelations() {
+    @Test
+    func whenEntityIsDetached_EntityIsRemovedFromRelations() throws {
+        var context = try makeContext()
         let chat = Chat
             .query("1")
             .resolve(in: context)!
 
-        try! chat.detach(\.$users, inverse: \.$chats, in: &context)
+        try chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let userChats = User
             .query(User.bob.id)
             .related(\.$chats)
             .resolve(in: context)
 
-        XCTAssertTrue(userChats.isEmpty)
+        #expect(userChats.isEmpty)
     }
 
-    func test_WhenEntityIsDetached_EntityIsNotRemovedFromContext() {
+    @Test
+    func whenEntityIsDetached_EntityIsNotRemovedFromContext() throws {
+        var context = try makeContext()
         let chat = Chat
             .query("1")
             .resolve(in: context)!
 
-        try! chat.detach(\.$users, inverse: \.$chats, in: &context)
+        try chat.detach(\.$users, inverse: \.$chats, in: &context)
 
         let user = User
             .query(User.bob.id)
             .resolve(in: context)
 
-        XCTAssertNotNil(user)
+        #expect(user != nil)
     }
 
-    func test_WhenEntityIsDetachedFromOneWayRelation_EntityIsRemovedFromRelations() {
+    @Test
+    func whenEntityIsDetachedFromOneWayRelation_EntityIsRemovedFromRelations() throws {
+        var context = try makeContext()
         let message = Message
             .query("1")
             .resolve(in: context)!
 
-        try! message.detach(\.$author, in: &context)
+        try message.detach(\.$author, in: &context)
 
         let refetchedMessage = Message
             .query("1")
             .with(\.$author)
             .resolve(in: context)!
 
-        XCTAssertNil(refetchedMessage.author)
+        #expect(refetchedMessage.author == nil)
     }
 }

@@ -6,15 +6,16 @@
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 import SnapshotTesting
 import SnapshotTestingCustomDump
 
-final class AllNestedModelsQueryTest: XCTestCase {
-    var context = Context()
+@Suite
+struct AllNestedModelsQueryTest {
 
-    override func setUpWithError() throws {
+    private func makeContext() throws -> Context {
+        var context = Context()
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -58,9 +59,12 @@ final class AllNestedModelsQueryTest: XCTestCase {
 
         try chat.save(to: &context)
         try Schema().save(to: &context)
+        return context
     }
 
-    func test_WhenQueryWithNestedEntities_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedEntities_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -73,7 +77,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedFragments_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedFragments_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -86,7 +92,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedIds_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedIds_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -99,7 +107,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedEntitiesAndIds_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedEntitiesAndIds_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -112,7 +122,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQueryWithNestedEntitiesEntitiesAndIds_EqualExpectedJSON() {
+    @Test
+    func whenQueryWithNestedEntitiesEntitiesAndIds_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -125,7 +137,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    func test_WhenQuerySchemaLatestRange_IncludesEntitiesUpdatedWithinRange() {
+    @Test
+    func whenQuerySchemaLatestRange_IncludesEntitiesUpdatedWithinRange() throws {
+        var context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -133,7 +147,7 @@ final class AllNestedModelsQueryTest: XCTestCase {
         let snapshotTime = Date.now
         Thread.sleep(forTimeInterval: 1.0)
 
-        try! Chat.query("1")
+        try Chat.query("1")
             .resolve(in: context)?
             .save(to: &context)
 
@@ -144,7 +158,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    func test_WhenQuerySchemaOlderRange_IncludesEntitiesUpdatedWithinRange() {
+    @Test
+    func whenQuerySchemaOlderRange_IncludesEntitiesUpdatedWithinRange() throws {
+        var context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -152,7 +168,7 @@ final class AllNestedModelsQueryTest: XCTestCase {
         let snapshotTime = Date.now
         Thread.sleep(forTimeInterval: 1.0)
 
-        try! Chat.query("1")
+        try Chat.query("1")
             .resolve(in: context)?
             .save(to: &context)
 
@@ -163,7 +179,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    func test_WhenQueryFullSchema_IncludesAllEntities() {
+    @Test
+    func whenQueryFullSchema_IncludesAllEntities() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -174,7 +192,9 @@ final class AllNestedModelsQueryTest: XCTestCase {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    func test_WhenQueryFullSchemaFragments_IncludesAllEntities() {
+    @Test
+    func whenQueryFullSchemaFragments_IncludesAllEntities() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -184,5 +204,4 @@ final class AllNestedModelsQueryTest: XCTestCase {
 
         assertSnapshot(of: schema, as: .json(encoder))
     }
-
 }

@@ -1,41 +1,45 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Serge Kazakov on 13/07/2024.
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 
-final class ManyToManyTests: XCTestCase {
-    var context = Context()
+@Suite
+struct ManyToManyTests {
 
-    func test_WhenDirectAdded_InverseIsAdded() {
+    @Test
+    func whenDirectAdded_InverseIsAdded() throws {
+        var context = Context()
         var chatOne = Chat.one
         chatOne.$users = .relation([.bob])
-        try! chatOne.save(to: &context)
+        try chatOne.save(to: &context)
 
         var chatTwo = Chat.two
         chatTwo.$users = .relation([.bob])
-        try! chatTwo.save(to: &context)
+        try chatTwo.save(to: &context)
 
         let bobChats = User
             .query(User.bob.id)
             .related(\.$chats)
             .resolve(in: context)
 
-        XCTAssertEqual(bobChats.compactMap { $0.id }, [Chat.one.id, Chat.two.id])
+        #expect(bobChats.compactMap { $0.id } == [Chat.one.id, Chat.two.id])
     }
 
-    func test_WhenRelationUpdatedWithInsert_NewRelationsInserted() {
+    @Test
+    func whenRelationUpdatedWithInsert_NewRelationsInserted() throws {
+        var context = Context()
         var chat = Chat.one
         chat.$users = .relation([.bob, .alice, .tom])
-        try! chat.save(to: &context)
+        try chat.save(to: &context)
 
         chat.$users = .appending(relation: [.john, .michael])
-        try! chat.save(to: &context)
+        try chat.save(to: &context)
 
         let chatUsers = Chat
             .query(Chat.one.id)
@@ -44,23 +48,24 @@ final class ManyToManyTests: XCTestCase {
 
         let expectedChatUsers = [User.bob.id, User.alice.id, User.tom.id, User.john.id, User.michael.id]
 
-        XCTAssertEqual(chatUsers.compactMap { $0.id },
-                       expectedChatUsers)
+        #expect(chatUsers.compactMap { $0.id } == expectedChatUsers)
     }
 
-    func test_WhenDirectReplaced_InverseIsUpdated() {
+    @Test
+    func whenDirectReplaced_InverseIsUpdated() throws {
+        var context = Context()
         var chat = Chat.one
         chat.$users = .relation([.bob, .alice, .tom])
-        try! chat.save(to: &context)
+        try chat.save(to: &context)
 
         chat.$users = .relation([.john, .michael])
-        try! chat.save(to: &context)
+        try chat.save(to: &context)
 
         let bobsChats = User
             .query(User.bob.id)
             .related(\.$chats)
             .resolve(in: context)
 
-        XCTAssertTrue(bobsChats.isEmpty)
+        #expect(bobsChats.isEmpty)
     }
 }

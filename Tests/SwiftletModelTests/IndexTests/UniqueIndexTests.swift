@@ -7,19 +7,24 @@
 
 import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
-final class UniqueIndexTests: XCTestCase {
-    func test_WhenThrowingCollision_ThenErrorIsThrown() throws {
+@Suite
+struct UniqueIndexTests {
+    @Test
+    func whenThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
         try user1.save(to: &context)
 
         let user2 = User(id: "2", username: "@bob_cat", email: "bob@mail.com")
-        XCTAssertThrowsError(try user2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try user2.save(to: &context)
+        }
     }
 
-    func test_WhenUpsertResolveCollision_ThenCollisionIsResolved() throws {
+    @Test
+    func whenUpsertResolveCollision_ThenCollisionIsResolved() throws {
         var context = Context()
         let user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
         try user1.save(to: &context)
@@ -27,11 +32,12 @@ final class UniqueIndexTests: XCTestCase {
         let user2 = User(id: "2", username: "@bob", email: "bobtwo@mail.com")
         try user2.save(to: &context)
 
-        XCTAssertNil(user1.query().resolve(in: context))
-        XCTAssertNotNil(user2.query().resolve(in: context))
+        #expect(user1.query().resolve(in: context) == nil)
+        #expect(user2.query().resolve(in: context) != nil)
     }
 
-    func test_WhenCustomResolveCollision_ThenCollisionIsResolved() throws {
+    @Test
+    func whenCustomResolveCollision_ThenCollisionIsResolved() throws {
         var context = Context()
         var user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
         user1.isCurrent = true
@@ -41,14 +47,16 @@ final class UniqueIndexTests: XCTestCase {
         user2.isCurrent = true
         try user2.save(to: &context)
 
-        XCTAssertTrue(user2.query().resolve(in: context)!.isCurrent)
-        XCTAssertFalse(user1.query().resolve(in: context)!.isCurrent)
+        #expect(user2.query().resolve(in: context)!.isCurrent)
+        #expect(!user1.query().resolve(in: context)!.isCurrent)
     }
 }
 
-final class CompoundUniqueIndexTests: XCTestCase {
+@Suite
+struct CompoundUniqueIndexTests {
 
-    func test_WhenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
             id: "0",
@@ -66,10 +74,13 @@ final class CompoundUniqueIndexTests: XCTestCase {
             numOf100: 30,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
             id: "0",
@@ -87,10 +98,13 @@ final class CompoundUniqueIndexTests: XCTestCase {
             numOf100: 30,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
             id: "0",
@@ -108,10 +122,13 @@ final class CompoundUniqueIndexTests: XCTestCase {
             numOf100: 3,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
             id: "0",
@@ -129,10 +146,13 @@ final class CompoundUniqueIndexTests: XCTestCase {
             numOf100: 3,
             numOf1000: 4
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenNoIndexUniqueIndexCollision_ThenNoError() throws {
+    @Test
+    func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
             id: "0",
@@ -151,13 +171,17 @@ final class CompoundUniqueIndexTests: XCTestCase {
             numOf1000: 4
         )
 
-        XCTAssertNoThrow(try model2.save(to: &context))
+        #expect(throws: Never.self) {
+            try model2.save(to: &context)
+        }
     }
 }
 
-final class CompoundUniqueComparableIndexTests: XCTestCase {
+@Suite
+struct CompoundUniqueComparableIndexTests {
 
-    func test_WhenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
             id: "0",
@@ -175,10 +199,13 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
             numOf100: 30,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
             id: "0",
@@ -196,10 +223,13 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
             numOf100: 30,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
             id: "0",
@@ -217,10 +247,13 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
             numOf100: 3,
             numOf1000: 40
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
+    @Test
+    func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
             id: "0",
@@ -238,10 +271,13 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
             numOf100: 3,
             numOf1000: 4
         )
-        XCTAssertThrowsError(try model2.save(to: &context))
+        #expect(throws: (any Error).self) {
+            try model2.save(to: &context)
+        }
     }
 
-    func test_WhenNoIndexUniqueIndexCollision_ThenNoError() throws {
+    @Test
+    func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
             id: "0",
@@ -260,6 +296,8 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
             numOf1000: 4
         )
 
-        XCTAssertNoThrow(try model2.save(to: &context))
+        #expect(throws: Never.self) {
+            try model2.save(to: &context)
+        }
     }
 }

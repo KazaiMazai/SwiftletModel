@@ -7,197 +7,370 @@
 
 @testable import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
-final class FilterMatchStringQueryTests: XCTestCase {
-    var context = Context()
+@Suite
+struct FilterMatchStringQueryTests {
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.StringNotIndexed] {
         TestingModels.StringNotIndexed.shuffled()
-    }()
-
-    lazy var indexedModels = {
-        TestingModels.StringFullTextIndexed.shuffled()
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
     }
 
-    func test_WhenMatchFilterNoIndex_ThenEqualPlainFitlering() throws {
-        let expected = notIndexedModels
+    var indexedModels: [TestingModels.StringFullTextIndexed] {
+        TestingModels.StringFullTextIndexed.shuffled()
+    }
+
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenMatchFilterNoIndex_ThenEqualPlainFitlering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { $0.text.matches(fuzzy: "ananas") }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenMatchFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenMatchFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { $0.text.matches(fuzzy: "ananas") }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 }
 
-final class FilterStringCaseSensitiveQueryTests: FilterStringQueryTests {
-    override var caseSensitive: Bool { true }
-}
+// Using parameterized tests for case sensitivity instead of inheritance
+@Suite(.tags(.caseSensitive))
+struct FilterStringCaseSensitiveQueryTests {
+    let caseSensitive = true
 
-class FilterStringQueryTests: XCTestCase {
-    var context = Context()
-    var caseSensitive: Bool { false }
-
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.StringNotIndexed] {
         TestingModels.StringNotIndexed.shuffled()
-    }()
+    }
 
-    lazy var indexedModels = {
+    var indexedModels: [TestingModels.StringFullTextIndexed] {
         TestingModels.StringFullTextIndexed.shuffled()
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
     }
 
-    func test_WhenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
-        let expected = notIndexedModels
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+    @Test
+    func whenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
 
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+    @Test
+    func whenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+    @Test
+    func whenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+    @Test
+    func whenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringNotIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test
+    func whenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
         let filterResult = TestingModels.StringFullTextIndexed
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
 
-        XCTAssertFalse(filterResult.isEmpty)
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+}
+
+extension Tag {
+    @Tag static var caseSensitive: Self
+}
+
+@Suite
+struct FilterStringQueryTests {
+    let caseSensitive = false
+
+    var notIndexedModels: [TestingModels.StringNotIndexed] {
+        TestingModels.StringNotIndexed.shuffled()
+    }
+
+    var indexedModels: [TestingModels.StringFullTextIndexed] {
+        TestingModels.StringFullTextIndexed.shuffled()
+    }
+
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
+            .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
+            .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
+            .resolve(in: context)
+
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
+            .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
+            .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
+            .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringNotIndexed
+            .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test
+    func whenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
+
+        let filterResult = TestingModels.StringFullTextIndexed
+            .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
+            .resolve(in: context)
+
+        #expect(!filterResult.isEmpty)
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 }

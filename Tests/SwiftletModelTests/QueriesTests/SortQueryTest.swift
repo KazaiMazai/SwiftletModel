@@ -7,38 +7,41 @@
 
 import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
-class SortByOnePathQueryTests: XCTestCase {
+@Suite
+struct SortByOnePathQueryTests {
     let count = 10
-    var context = Context()
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.NotIndexed] {
         TestingModels.NotIndexed.shuffled(count)
-    }()
-
-    lazy var indexedModels = {
-        TestingModels.SingleValueIndexed.shuffled(count)
-    }()
-
-    lazy var evalPropertyIndexedModels = {
-        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try evalPropertyIndexedModels
-            .forEach { try $0.save(to: &context) }
     }
 
-    func test_WhenSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = notIndexedModels
+    var indexedModels: [TestingModels.SingleValueIndexed] {
+        TestingModels.SingleValueIndexed.shuffled(count)
+    }
+
+    var evalPropertyIndexedModels: [TestingModels.EvaluatedPropertyDescIndexed] {
+        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
+    }
+
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.SingleValueIndexed], evalPropertyIndexed: [TestingModels.EvaluatedPropertyDescIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+        let evalPropertyIndexed = evalPropertyIndexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+        try evalPropertyIndexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed, evalPropertyIndexed)
+    }
+
+    @Test
+    func whenSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, notIndexed, _, _) = try makeContext()
+        let expected = notIndexed
             .sorted { $0.numOf1 < $1.numOf1 }
 
         let sortResult = TestingModels.NotIndexed
@@ -46,11 +49,13 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted(by: \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed, _) = try makeContext()
+        let expected = indexed
             .sorted { $0.numOf1 < $1.numOf1 }
 
         let sortResult = TestingModels.SingleValueIndexed
@@ -58,11 +63,13 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted(by: \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = notIndexedModels
+    @Test
+    func whenDescSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, notIndexed, _, _) = try makeContext()
+        let expected = notIndexed
             .sorted { $0.numOf1 > $1.numOf1 }
 
         let sortResult = TestingModels.NotIndexed
@@ -70,11 +77,13 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortIndexed_ThenEqualPlainSort() throws {
-        let expected = evalPropertyIndexedModels
+    @Test
+    func whenDescSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, _, evalPropertyIndexed) = try makeContext()
+        let expected = evalPropertyIndexed
             .sorted { $0.numOf1 > $1.numOf1 }
 
         let sortResult = TestingModels.EvaluatedPropertyDescIndexed
@@ -82,34 +91,37 @@ class SortByOnePathQueryTests: XCTestCase {
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 }
 
-class SortByTwoPathsQueryTests: XCTestCase {
+@Suite
+struct SortByTwoPathsQueryTests {
     let count = 15
-    var context = Context()
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.NotIndexed] {
         TestingModels.NotIndexed.shuffled(count)
-    }()
+    }
 
-    lazy var indexedModels = {
+    var indexedModels: [TestingModels.ExtensivelyIndexed] {
         TestingModels.ExtensivelyIndexed.shuffled(count)
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
-
     }
 
-    func test_WhenSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = notIndexedModels
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -117,11 +129,13 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -129,11 +143,13 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -141,11 +157,13 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -153,34 +171,37 @@ class SortByTwoPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 }
 
-class SortByThreePathsQueryTests: XCTestCase {
+@Suite
+struct SortByThreePathsQueryTests {
     let count = 120
-    var context = Context()
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.NotIndexed] {
         TestingModels.NotIndexed.shuffled(count)
-    }()
+    }
 
-    lazy var indexedModels = {
+    var indexedModels: [TestingModels.ExtensivelyIndexed] {
         TestingModels.ExtensivelyIndexed.shuffled(count)
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
-
     }
 
-    func test_WhenSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = notIndexedModels
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -188,11 +209,13 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -200,11 +223,13 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -212,11 +237,13 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -224,34 +251,37 @@ class SortByThreePathsQueryTests: XCTestCase {
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 }
 
-class SortByFourPathsQueryTests: XCTestCase {
+@Suite
+struct SortByFourPathsQueryTests {
     let count = 1200
-    var context = Context()
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.NotIndexed] {
         TestingModels.NotIndexed.shuffled(count)
-    }()
+    }
 
-    lazy var indexedModels = {
+    var indexedModels: [TestingModels.ExtensivelyIndexed] {
         TestingModels.ExtensivelyIndexed.shuffled(count)
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
-
     }
 
-    func test_WhenSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = notIndexedModels
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test
+    func whenSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -259,11 +289,13 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -271,11 +303,13 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortNoIndex_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortNoIndex_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.NotIndexed
@@ -283,11 +317,13 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    func test_WhenDescSortIndexed_ThenEqualPlainSort() throws {
-        let expected = indexedModels
+    @Test
+    func whenDescSortIndexed_ThenEqualPlainSort() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
         let sortResult = TestingModels.ExtensivelyIndexed
@@ -295,7 +331,7 @@ class SortByFourPathsQueryTests: XCTestCase {
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
 
-        XCTAssertEqual(sortResult.map { $0.id }, expected.map { $0.id })
+        #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 }
 
