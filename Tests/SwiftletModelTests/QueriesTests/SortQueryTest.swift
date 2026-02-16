@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite(.tags(.query, .sort))
+@Suite("Sort by One Path", .tags(.query, .sort))
 struct SortByOnePathQueryTests {
     let count = 10
 
@@ -95,7 +95,7 @@ struct SortByOnePathQueryTests {
     }
 }
 
-@Suite(.tags(.query, .sort))
+@Suite("Sort by Two Paths", .tags(.query, .sort))
 struct SortByTwoPathsQueryTests {
     let count = 15
 
@@ -175,7 +175,7 @@ struct SortByTwoPathsQueryTests {
     }
 }
 
-@Suite(.tags(.query, .sort))
+@Suite("Sort by Three Paths", .tags(.query, .sort))
 struct SortByThreePathsQueryTests {
     let count = 120
 
@@ -255,7 +255,7 @@ struct SortByThreePathsQueryTests {
     }
 }
 
-@Suite(.tags(.query, .sort))
+@Suite("Sort by Four Paths", .tags(.query, .sort))
 struct SortByFourPathsQueryTests {
     let count = 1200
 

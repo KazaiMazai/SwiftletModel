@@ -9,7 +9,7 @@ import Foundation
 import Testing
 import SwiftletModel
 
-@Suite(.tags(.relations, .toMany, .mutual))
+@Suite("Many-to-Many Relations", .tags(.relations, .toMany, .mutual))
 struct ManyToManyTests {
 
     @Test("Direct relation adds inverse relation")

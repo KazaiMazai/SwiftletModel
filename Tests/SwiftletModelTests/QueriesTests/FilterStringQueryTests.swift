@@ -9,7 +9,7 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.query, .filter))
+@Suite("Filter String Match", .tags(.query, .filter))
 struct FilterMatchStringQueryTests {
 
     var notIndexedModels: [TestingModels.StringNotIndexed] {
@@ -58,7 +58,7 @@ struct FilterMatchStringQueryTests {
     }
 }
 
-@Suite(.tags(.query, .filter))
+@Suite("Filter String Case-Sensitive", .tags(.query, .filter))
 struct FilterStringCaseSensitiveQueryTests {
     let caseSensitive = true
 
@@ -214,7 +214,7 @@ struct FilterStringCaseSensitiveQueryTests {
     }
 }
 
-@Suite(.tags(.query, .filter))
+@Suite("Filter String Case-Insensitive", .tags(.query, .filter))
 struct FilterStringQueryTests {
     let caseSensitive = false
 

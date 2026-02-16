@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite(.tags(.index, .uniqueIndex))
+@Suite("Unique Index", .tags(.index, .uniqueIndex))
 struct UniqueIndexTests {
     @Test("Throwing collision strategy throws error on duplicate")
     func whenThrowingCollision_ThenErrorIsThrown() throws {
@@ -52,7 +52,7 @@ struct UniqueIndexTests {
     }
 }
 
-@Suite(.tags(.index, .uniqueIndex))
+@Suite("Compound Unique Index", .tags(.index, .uniqueIndex))
 struct CompoundUniqueIndexTests {
 
     @Test("One key path collision throws error")
@@ -177,7 +177,7 @@ struct CompoundUniqueIndexTests {
     }
 }
 
-@Suite(.tags(.index, .uniqueIndex))
+@Suite("Compound Unique Comparable Index", .tags(.index, .uniqueIndex))
 struct CompoundUniqueComparableIndexTests {
 
     @Test("One key path comparable collision throws error")

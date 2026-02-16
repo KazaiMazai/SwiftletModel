@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite(.tags(.query, .filter))
+@Suite("Filter Index Out of Bounds", .tags(.query, .filter))
 struct FilterIndexOutOfBoundsTests {
 
     var models: [TestingModels.PlainValueIndexed] {

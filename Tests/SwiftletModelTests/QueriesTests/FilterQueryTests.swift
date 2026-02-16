@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite(.tags(.query, .filter))
+@Suite("Filter Query", .tags(.query, .filter))
 struct FilterQueryTests {
     let count = 100
 

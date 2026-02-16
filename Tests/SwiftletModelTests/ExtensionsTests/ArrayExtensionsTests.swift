@@ -9,7 +9,7 @@
 import Foundation
 import Testing
 
-@Suite
+@Suite("Array Extensions")
 struct ArrayExtensionsTests {
 
     // MARK: - removingDuplicates(by:) tests

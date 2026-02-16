@@ -10,7 +10,7 @@ import Testing
 import SwiftletModel
 import SnapshotTesting
 
-@Suite(.tags(.query, .relations))
+@Suite("Nested Models Query", .tags(.query, .relations))
 struct NestedModelsQueryTest {
 
     private func makeContext() throws -> Context {

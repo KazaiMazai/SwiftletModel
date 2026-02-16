@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite(.tags(.query, .filter, .metadata))
+@Suite("Filter by Metadata", .tags(.query, .filter, .metadata))
 struct FilterMetadataQueryTests {
     let count = 100
 
