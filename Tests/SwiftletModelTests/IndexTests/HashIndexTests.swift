@@ -11,7 +11,7 @@ import Testing
 
 // MARK: - Single Property HashIndex Tests
 
-@Suite
+@Suite(.tags(.query, .filter, .index, .hashIndex))
 struct HashIndexTests {
 
     @Test
@@ -150,7 +150,7 @@ struct HashIndexTests {
 
 // MARK: - Compound HashIndex Tests
 
-@Suite
+@Suite(.tags(.query, .filter, .index, .hashIndex))
 struct CompoundHashIndexTests {
 
     // MARK: - Pair (Two Properties) Tests
@@ -265,7 +265,7 @@ struct CompoundHashIndexTests {
 
 // MARK: - HashIndex Query Integration Tests
 
-@Suite
+@Suite(.tags(.query, .filter, .index, .hashIndex))
 struct HashIndexQueryTests {
     let count = 100
 

@@ -9,7 +9,7 @@ import Foundation
 import Testing
 import SwiftletModel
 
-@Suite
+@Suite(.tags(.delete, .relations))
 struct DeleteTests {
 
     private func makeContext() throws -> Context {

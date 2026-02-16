@@ -9,7 +9,7 @@
 import Foundation
 import Testing
 
-@Suite
+@Suite(.tags(.query, .filter))
 struct FilterMatchStringQueryTests {
 
     var notIndexedModels: [TestingModels.StringNotIndexed] {
@@ -58,8 +58,7 @@ struct FilterMatchStringQueryTests {
     }
 }
 
-// Using parameterized tests for case sensitivity instead of inheritance
-@Suite(.tags(.caseSensitive))
+@Suite(.tags(.query, .filter))
 struct FilterStringCaseSensitiveQueryTests {
     let caseSensitive = true
 
@@ -215,11 +214,7 @@ struct FilterStringCaseSensitiveQueryTests {
     }
 }
 
-extension Tag {
-    @Tag static var caseSensitive: Self
-}
-
-@Suite
+@Suite(.tags(.query, .filter))
 struct FilterStringQueryTests {
     let caseSensitive = false
 

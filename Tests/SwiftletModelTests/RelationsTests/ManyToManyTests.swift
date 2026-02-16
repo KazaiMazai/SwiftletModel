@@ -9,7 +9,7 @@ import Foundation
 import Testing
 import SwiftletModel
 
-@Suite
+@Suite(.tags(.relations, .toMany, .mutual))
 struct ManyToManyTests {
 
     @Test

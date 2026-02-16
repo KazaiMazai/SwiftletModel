@@ -11,7 +11,7 @@ import SwiftletModel
 import SnapshotTesting
 import SnapshotTestingCustomDump
 
-@Suite
+@Suite(.tags(.query, .relations))
 struct AllNestedModelsQueryTest {
 
     private func makeContext() throws -> Context {

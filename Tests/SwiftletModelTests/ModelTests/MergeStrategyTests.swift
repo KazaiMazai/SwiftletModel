@@ -9,7 +9,7 @@ import Testing
 @testable import SwiftletModel
 import Foundation
 
-@Suite
+@Suite(.tags(.mergeStrategy))
 struct MergeStrategyTests {
 
     struct TestModel: Equatable, Sendable {

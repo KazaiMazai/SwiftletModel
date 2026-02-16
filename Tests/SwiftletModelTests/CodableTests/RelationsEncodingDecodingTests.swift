@@ -10,7 +10,7 @@ import Testing
 import SwiftletModel
 import SnapshotTesting
 
-@Suite
+@Suite(.tags(.coding, .encoding, .decoding, .relations))
 struct RelationsEncodingDecodingTests {
 
     private func makeContext() throws -> Context {

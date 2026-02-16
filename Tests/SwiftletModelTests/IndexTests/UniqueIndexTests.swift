@@ -9,7 +9,7 @@ import SwiftletModel
 import Foundation
 import Testing
 
-@Suite
+@Suite(.tags(.index, .uniqueIndex))
 struct UniqueIndexTests {
     @Test
     func whenThrowingCollision_ThenErrorIsThrown() throws {
@@ -52,7 +52,7 @@ struct UniqueIndexTests {
     }
 }
 
-@Suite
+@Suite(.tags(.index, .uniqueIndex))
 struct CompoundUniqueIndexTests {
 
     @Test
@@ -177,7 +177,7 @@ struct CompoundUniqueIndexTests {
     }
 }
 
-@Suite
+@Suite(.tags(.index, .uniqueIndex))
 struct CompoundUniqueComparableIndexTests {
 
     @Test

@@ -9,7 +9,7 @@ import Foundation
 import Testing
 import SwiftletModel
 
-@Suite
+@Suite(.tags(.relations, .toOne, .mutual))
 struct ToOneTests {
     let initialMessage: Message = Message(
         id: "1", text: "hello",
