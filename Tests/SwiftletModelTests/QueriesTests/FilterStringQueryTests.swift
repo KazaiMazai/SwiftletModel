@@ -31,7 +31,7 @@ struct FilterMatchStringQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Match filter without index equals plain filtering")
     func whenMatchFilterNoIndex_ThenEqualPlainFitlering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -44,7 +44,7 @@ struct FilterMatchStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Match filter with index equals plain filtering")
     func whenMatchFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -81,7 +81,7 @@ struct FilterStringCaseSensitiveQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Contains filter without index equals plain filtering (case-sensitive)")
     func whenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -94,7 +94,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Contains filter with index equals plain filtering (case-sensitive)")
     func whenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -107,7 +107,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Prefix filter without index equals plain filtering (case-sensitive)")
     func whenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -120,7 +120,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Prefix filter with index equals plain filtering (case-sensitive)")
     func whenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -134,7 +134,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Suffix filter without index equals plain filtering (case-sensitive)")
     func whenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -147,7 +147,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Suffix filter with index equals plain filtering (case-sensitive)")
     func whenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -160,7 +160,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having prefix filter without index equals plain filtering (case-sensitive)")
     func whenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -173,7 +173,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having prefix filter with index equals plain filtering (case-sensitive)")
     func whenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -186,7 +186,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having suffix filter without index equals plain filtering (case-sensitive)")
     func whenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -199,7 +199,7 @@ struct FilterStringCaseSensitiveQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having suffix filter with index equals plain filtering (case-sensitive)")
     func whenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -237,7 +237,7 @@ struct FilterStringQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Contains filter without index equals plain filtering (case-insensitive)")
     func whenContainsFilterNoIndex_ThenEqualPlainFitlering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -250,7 +250,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Contains filter with index equals plain filtering (case-insensitive)")
     func whenContainsFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -263,7 +263,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Prefix filter without index equals plain filtering (case-insensitive)")
     func whenPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -276,7 +276,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Prefix filter with index equals plain filtering (case-insensitive)")
     func whenPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -290,7 +290,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Suffix filter without index equals plain filtering (case-insensitive)")
     func whenSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -303,7 +303,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Suffix filter with index equals plain filtering (case-insensitive)")
     func whenSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -316,7 +316,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having prefix filter without index equals plain filtering (case-insensitive)")
     func whenNotHavingPrefixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -329,7 +329,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having prefix filter with index equals plain filtering (case-insensitive)")
     func whenNotHavingPrefixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -342,7 +342,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having suffix filter without index equals plain filtering (case-insensitive)")
     func whenNotHavingSuffixFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -355,7 +355,7 @@ struct FilterStringQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Not having suffix filter with index equals plain filtering (case-insensitive)")
     func whenNotHavingSuffixFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed

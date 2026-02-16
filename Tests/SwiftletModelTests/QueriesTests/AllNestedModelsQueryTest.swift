@@ -62,7 +62,7 @@ struct AllNestedModelsQueryTest {
         return context
     }
 
-    @Test
+    @Test("Query with nested entities matches expected JSON")
     func whenQueryWithNestedEntities_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -77,7 +77,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested fragments matches expected JSON")
     func whenQueryWithNestedFragments_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -92,7 +92,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested IDs matches expected JSON")
     func whenQueryWithNestedIds_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -107,7 +107,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested entities and IDs matches expected JSON")
     func whenQueryWithNestedEntitiesAndIds_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -122,7 +122,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with deeply nested entities and IDs matches expected JSON")
     func whenQueryWithNestedEntitiesEntitiesAndIds_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -137,7 +137,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Schema query with latest range includes recently updated entities")
     func whenQuerySchemaLatestRange_IncludesEntitiesUpdatedWithinRange() throws {
         var context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -158,7 +158,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    @Test
+    @Test("Schema query with older range includes entities updated within range")
     func whenQuerySchemaOlderRange_IncludesEntitiesUpdatedWithinRange() throws {
         var context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -179,7 +179,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    @Test
+    @Test("Full schema query includes all entities")
     func whenQueryFullSchema_IncludesAllEntities() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -192,7 +192,7 @@ struct AllNestedModelsQueryTest {
         assertSnapshot(of: schema, as: .json(encoder))
     }
 
-    @Test
+    @Test("Full schema fragments query includes all entities")
     func whenQueryFullSchemaFragments_IncludesAllEntities() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting

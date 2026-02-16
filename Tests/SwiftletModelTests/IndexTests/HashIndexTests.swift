@@ -14,7 +14,7 @@ import Testing
 @Suite(.tags(.query, .filter, .index, .hashIndex))
 struct HashIndexTests {
 
-    @Test
+    @Test("Saved entity is added to hash index")
     func whenEntitySaved_ThenIndexContainsEntity() throws {
         var context = Context()
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -27,7 +27,7 @@ struct HashIndexTests {
         #expect(Set(result.map { $0.id }) == Set(["1"]))
     }
 
-    @Test
+    @Test("Multiple entities with same value are in same bucket")
     func whenMultipleEntitiesWithSameValue_ThenAllInSameBucket() throws {
         var context = Context()
         let entities = [
@@ -50,7 +50,7 @@ struct HashIndexTests {
         #expect(Set(resultB.map { $0.id }) == Set(["3"]))
     }
 
-    @Test
+    @Test("Entity value update migrates to new bucket")
     func whenEntityValueUpdated_ThenBucketMigration() throws {
         var context = Context()
         var entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -71,7 +71,7 @@ struct HashIndexTests {
         #expect(Set(resultB.map { $0.id }) == Set(["1"]))
     }
 
-    @Test
+    @Test("Saving entity with same value does not duplicate")
     func whenEntitySavedWithSameValue_ThenNoRedundantUpdate() throws {
         var context = Context()
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -86,7 +86,7 @@ struct HashIndexTests {
         #expect(result.first?.id == "1")
     }
 
-    @Test
+    @Test("Deleted entity is removed from index")
     func whenEntityDeleted_ThenRemovedFromIndex() throws {
         var context = Context()
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -100,7 +100,7 @@ struct HashIndexTests {
         #expect(result.isEmpty)
     }
 
-    @Test
+    @Test("Deleting one entity preserves others in index")
     func whenOneOfMultipleEntitiesDeleted_ThenOthersRemainInIndex() throws {
         var context = Context()
         let entities = [
@@ -120,7 +120,7 @@ struct HashIndexTests {
             "Deleting one entity should not remove others with same indexed value")
     }
 
-    @Test
+    @Test("Deleting last entity in bucket cleans up bucket")
     func whenLastEntityInBucketDeleted_ThenBucketCleanup() throws {
         var context = Context()
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -134,7 +134,7 @@ struct HashIndexTests {
         #expect(result.isEmpty)
     }
 
-    @Test
+    @Test("Filter by non-existent value returns empty")
     func whenFilterByNonExistentValue_ThenReturnsEmpty() throws {
         var context = Context()
         let entity = TestingModels.HashIndexed(id: "1", category: "A", value: 10)
@@ -155,7 +155,7 @@ struct CompoundHashIndexTests {
 
     // MARK: - Pair (Two Properties) Tests
 
-    @Test
+    @Test("Pair index requires both properties to match")
     func whenPairIndex_ThenBothPropertiesMustMatch() throws {
         var context = Context()
         let entities = [
@@ -174,7 +174,7 @@ struct CompoundHashIndexTests {
         #expect(Set(result.map { $0.id }) == Set(["1"]))
     }
 
-    @Test
+    @Test("Pair index value update migrates to new bucket")
     func whenPairIndexValueUpdated_ThenMigratesToNewBucket() throws {
         var context = Context()
         var entity = TestingModels.HashIndexedPair(
@@ -203,7 +203,7 @@ struct CompoundHashIndexTests {
 
     // MARK: - Triplet (Three Properties) Tests
 
-    @Test
+    @Test("Triplet index requires all three properties to match")
     func whenTripletIndex_ThenAllThreeMatch() throws {
         var context = Context()
         let entity = TestingModels.HashIndexedTriplet(
@@ -223,7 +223,7 @@ struct CompoundHashIndexTests {
 
     // MARK: - Quadruple (Four Properties) Tests
 
-    @Test
+    @Test("Quadruple index requires all four properties to match")
     func whenQuadrupleIndex_ThenAllFourMatch() throws {
         var context = Context()
         let entity = TestingModels.HashIndexedQuadruple(
@@ -243,7 +243,7 @@ struct CompoundHashIndexTests {
         #expect(result.first?.id == "1")
     }
 
-    @Test
+    @Test("Quadruple partial match returns no results")
     func whenQuadruplePartialMatch_ThenNoResults() throws {
         var context = Context()
         let entity = TestingModels.HashIndexedQuadruple(
@@ -276,7 +276,7 @@ struct HashIndexQueryTests {
         return (context, models)
     }
 
-    @Test
+    @Test("Hash indexed filter equals plain filtering")
     func whenHashIndexedVsPlainFilter_ThenSameResults() throws {
         let (context, models) = try makeContext()
         let expected = models.filter { $0.category == "A" }
@@ -288,7 +288,7 @@ struct HashIndexQueryTests {
         #expect(Set(result.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("OR predicate with hash index returns correct results")
     func whenOrPredicateWithHashIndex_ThenCorrectResults() throws {
         let (context, models) = try makeContext()
         let expected = models.filter { $0.category == "A" || $0.category == "B" }
@@ -301,7 +301,7 @@ struct HashIndexQueryTests {
         #expect(Set(result.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Existing User model hash index query works")
     func whenExistingUserModelHashIndex_ThenQueryWorks() throws {
         var userContext = Context()
         let users = [

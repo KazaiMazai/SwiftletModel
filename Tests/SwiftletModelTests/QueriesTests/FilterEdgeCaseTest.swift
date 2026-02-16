@@ -27,7 +27,7 @@ struct FilterIndexOutOfBoundsTests {
         return (context, models)
     }
 
-    @Test
+    @Test("Filter above upper bound returns empty result")
     func whenFilterOutOfUpperBound_ThenEmptyResult() throws {
         let (context, models) = try makeContext()
         let max = models.max(by: { $0.value < $1.value })!
@@ -39,7 +39,7 @@ struct FilterIndexOutOfBoundsTests {
         #expect(filteredResult.isEmpty)
     }
 
-    @Test
+    @Test("Filter below lower bound returns empty result")
     func whenFilterOutOfLowerBound_ThenEmptyResult() throws {
         let (context, models) = try makeContext()
         let min = models.min(by: { $0.value < $1.value })!
@@ -51,7 +51,7 @@ struct FilterIndexOutOfBoundsTests {
         #expect(filteredResult.isEmpty)
     }
 
-    @Test
+    @Test("Inclusive filter above upper bound returns empty result")
     func whenIncludingFilterOutOfUpperBound_ThenEmptyResult() throws {
         let (context, models) = try makeContext()
         let max = models.max(by: { $0.value < $1.value })!
@@ -63,7 +63,7 @@ struct FilterIndexOutOfBoundsTests {
         #expect(filteredResult.isEmpty)
     }
 
-    @Test
+    @Test("Inclusive filter below lower bound returns empty result")
     func whenIncludingFilterOutOfLowerBound_ThenEmptyResult() throws {
         let (context, models) = try makeContext()
         let min = models.min(by: { $0.value < $1.value })!

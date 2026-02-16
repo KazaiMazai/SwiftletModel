@@ -32,7 +32,7 @@ struct FilterQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Filter without index equals plain filtering")
     func whenFilterNoIndex_ThenEqualPlainFitlering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -45,7 +45,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Filter with index equals plain filtering")
     func whenFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -58,7 +58,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Chained indexed filters equal plain filtering")
     func whenChainedFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -75,7 +75,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("AND predicate indexed filter equals plain filtering")
     func whenAndPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -92,7 +92,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("OR predicate indexed filter equals plain filtering")
     func whenOrPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -109,7 +109,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Complex indexed filter equals plain filtering")
     func whenComplexFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -128,7 +128,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Complex non-indexed filter equals plain filtering")
     func whenComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -147,7 +147,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Complex comparison indexed filter equals plain filtering")
     func whenCompareComplexFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -166,7 +166,7 @@ struct FilterQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Complex comparison non-indexed filter equals plain filtering")
     func whenCompareComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed

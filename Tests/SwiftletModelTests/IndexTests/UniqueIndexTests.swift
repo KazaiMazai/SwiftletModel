@@ -11,7 +11,7 @@ import Testing
 
 @Suite(.tags(.index, .uniqueIndex))
 struct UniqueIndexTests {
-    @Test
+    @Test("Throwing collision strategy throws error on duplicate")
     func whenThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
@@ -23,7 +23,7 @@ struct UniqueIndexTests {
         }
     }
 
-    @Test
+    @Test("Upsert strategy resolves collision by replacing")
     func whenUpsertResolveCollision_ThenCollisionIsResolved() throws {
         var context = Context()
         let user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
@@ -36,7 +36,7 @@ struct UniqueIndexTests {
         #expect(user2.query().resolve(in: context) != nil)
     }
 
-    @Test
+    @Test("Custom strategy resolves collision")
     func whenCustomResolveCollision_ThenCollisionIsResolved() throws {
         var context = Context()
         var user1 = User(id: "1", username: "@bob", email: "bob@mail.com")
@@ -55,7 +55,7 @@ struct UniqueIndexTests {
 @Suite(.tags(.index, .uniqueIndex))
 struct CompoundUniqueIndexTests {
 
-    @Test
+    @Test("One key path collision throws error")
     func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
@@ -79,7 +79,7 @@ struct CompoundUniqueIndexTests {
         }
     }
 
-    @Test
+    @Test("Two key path collision throws error")
     func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
@@ -103,7 +103,7 @@ struct CompoundUniqueIndexTests {
         }
     }
 
-    @Test
+    @Test("Three key path collision throws error")
     func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
@@ -127,7 +127,7 @@ struct CompoundUniqueIndexTests {
         }
     }
 
-    @Test
+    @Test("Four key path collision throws error")
     func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
@@ -151,7 +151,7 @@ struct CompoundUniqueIndexTests {
         }
     }
 
-    @Test
+    @Test("No collision when keys differ")
     func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexed(
@@ -180,7 +180,7 @@ struct CompoundUniqueIndexTests {
 @Suite(.tags(.index, .uniqueIndex))
 struct CompoundUniqueComparableIndexTests {
 
-    @Test
+    @Test("One key path comparable collision throws error")
     func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
@@ -204,7 +204,7 @@ struct CompoundUniqueComparableIndexTests {
         }
     }
 
-    @Test
+    @Test("Two key path comparable collision throws error")
     func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
@@ -228,7 +228,7 @@ struct CompoundUniqueComparableIndexTests {
         }
     }
 
-    @Test
+    @Test("Three key path comparable collision throws error")
     func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
@@ -252,7 +252,7 @@ struct CompoundUniqueComparableIndexTests {
         }
     }
 
-    @Test
+    @Test("Four key path comparable collision throws error")
     func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(
@@ -276,7 +276,7 @@ struct CompoundUniqueComparableIndexTests {
         }
     }
 
-    @Test
+    @Test("No comparable collision when keys differ")
     func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
         let model1 = TestingModels.UniquelyIndexedComparable(

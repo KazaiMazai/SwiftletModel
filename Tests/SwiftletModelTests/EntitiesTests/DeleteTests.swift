@@ -32,7 +32,7 @@ struct DeleteTests {
         return context
     }
 
-    @Test
+    @Test("Deleted entity is removed from context")
     func whenEntityIsDeleted_EntityIsRemovedFromContext() throws {
         var context = try makeContext()
         try Chat.delete(id: "1", from: &context)
@@ -50,7 +50,7 @@ struct DeleteTests {
         #expect(deletedChat != nil)
     }
 
-    @Test
+    @Test("Soft deleted entity is removed from context")
     func whenSoftDeleteEntityIsSaved_EntityIsRemovedFromContext() throws {
         var context = try makeContext()
         let softDeleteChat = Chat
@@ -67,7 +67,7 @@ struct DeleteTests {
         #expect(chat == nil)
     }
 
-    @Test
+    @Test("Soft deleted entity can be restored")
     func whenSoftDeleteEntityIsRestored_EntityIsRestoredInContext() throws {
         var context = try makeContext()
         try Chat.delete(id: "1", from: &context)
@@ -84,7 +84,7 @@ struct DeleteTests {
         #expect(chat != nil)
     }
 
-    @Test
+    @Test("Deleted entity is removed from relations")
     func whenEntityIsDeleted_EntityIsRemovedFromRelations() throws {
         var context = try makeContext()
         try Chat.delete(id: "1", from: &context)
@@ -97,7 +97,7 @@ struct DeleteTests {
         #expect(userChats.isEmpty)
     }
 
-    @Test
+    @Test("Cascade delete removes related entities")
     func whenEntityIsDeleted_CascadeDeleteIsFullfilled() throws {
         var context = try makeContext()
         try Chat.delete(id: "1", from: &context)
@@ -126,7 +126,7 @@ struct DeleteTests {
         #expect(deletedAttachment != nil)
     }
 
-    @Test
+    @Test("Detached entity is removed from relations")
     func whenEntityIsDetached_EntityIsRemovedFromRelations() throws {
         var context = try makeContext()
         let chat = Chat
@@ -143,7 +143,7 @@ struct DeleteTests {
         #expect(userChats.isEmpty)
     }
 
-    @Test
+    @Test("Detached entity remains in context")
     func whenEntityIsDetached_EntityIsNotRemovedFromContext() throws {
         var context = try makeContext()
         let chat = Chat
@@ -159,7 +159,7 @@ struct DeleteTests {
         #expect(user != nil)
     }
 
-    @Test
+    @Test("Detaching from one-way relation removes entity from relation")
     func whenEntityIsDetachedFromOneWayRelation_EntityIsRemovedFromRelations() throws {
         var context = try makeContext()
         let message = Message

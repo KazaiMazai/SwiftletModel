@@ -22,7 +22,7 @@ struct ToOneTests {
         return context
     }
 
-    @Test
+    @Test("Direct relation adds inverse relation")
     func whenDirectAdded_InverseIsAdded() throws {
         let context = try makeContext()
         let messageForAttachment = Attachment
@@ -33,7 +33,7 @@ struct ToOneTests {
         #expect(messageForAttachment?.id == Attachment.imageOne.id)
     }
 
-    @Test
+    @Test("Replacing direct relation updates inverse")
     func whenDirectReplaced_InverseIsUpdated() throws {
         var context = try makeContext()
         var message = initialMessage
@@ -48,7 +48,7 @@ struct ToOneTests {
         #expect(messageForAttachment == nil)
     }
 
-    @Test
+    @Test("Nullifying relation removes inverse")
     func whenNullify_InverseIsRemoved() throws {
         var context = try makeContext()
         var message = initialMessage
@@ -63,7 +63,7 @@ struct ToOneTests {
         #expect(messageForAttachment == nil)
     }
 
-    @Test
+    @Test("Nullifying relation removes the relation")
     func whenNullify_RelationIsRemoved() throws {
         var context = try makeContext()
         var message = initialMessage

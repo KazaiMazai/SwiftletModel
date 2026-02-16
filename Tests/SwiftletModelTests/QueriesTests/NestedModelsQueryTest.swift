@@ -60,7 +60,7 @@ struct NestedModelsQueryTest {
         return context
     }
 
-    @Test
+    @Test("Query with nested model matches expected JSON")
     func whenQueryWithNestedModel_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -75,7 +75,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested model ID matches expected JSON")
     func whenQueryWithNestedModelId_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -90,7 +90,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested model IDs matches expected JSON")
     func whenQueryWithNestedModelIds_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -105,7 +105,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested models matches expected JSON")
     func whenQueryWithNestedModels_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -125,7 +125,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested models and filter matches expected JSON")
     func whenQueryWithNestedModelsAndFilter_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -145,7 +145,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested models and sort matches expected JSON")
     func whenQueryWithNestedModelsAndSort_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -164,7 +164,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested models slice matches expected JSON")
     func whenQueryWithNestedModelsSlice_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -181,7 +181,7 @@ struct NestedModelsQueryTest {
         assertSnapshot(of: messages, as: .json(encoder))
     }
 
-    @Test
+    @Test("Query with nested IDs slice matches expected JSON")
     func whenQueryWithNestedIdsSlice_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting

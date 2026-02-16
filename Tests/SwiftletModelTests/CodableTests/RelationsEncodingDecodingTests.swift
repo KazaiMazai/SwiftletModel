@@ -33,7 +33,7 @@ struct RelationsEncodingDecodingTests {
         return context
     }
 
-    @Test
+    @Test("Default coding matches expected JSON")
     func whenDefaultCoding_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -69,7 +69,7 @@ struct RelationsEncodingDecodingTests {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    @Test
+    @Test("Explicit coding matches expected JSON")
     func whenExplicitCoding_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -105,7 +105,7 @@ struct RelationsEncodingDecodingTests {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    @Test
+    @Test("Exact coding matches expected JSON")
     func whenExactCoding_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -141,7 +141,7 @@ struct RelationsEncodingDecodingTests {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    @Test
+    @Test("Exact encoding slice matches expected JSON")
     func whenExactEncodingSlice_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -176,7 +176,7 @@ struct RelationsEncodingDecodingTests {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    @Test
+    @Test("Explicit encoding slice matches expected JSON")
     func whenExplicitEncodingSlice_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
@@ -212,7 +212,7 @@ struct RelationsEncodingDecodingTests {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    @Test
+    @Test("Default encoding slice matches expected JSON")
     func whenDefaultEncodingSlice_EqualExpectedJSON() throws {
         let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting

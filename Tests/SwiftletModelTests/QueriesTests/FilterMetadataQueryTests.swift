@@ -28,7 +28,7 @@ struct FilterMetadataQueryTests {
         return (context, models)
     }
 
-    @Test
+    @Test("Indexed filter equals plain filtering")
     func whenFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, indexedModels) = try makeContext()
         let expected = indexedModels
@@ -41,7 +41,7 @@ struct FilterMetadataQueryTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    @Test
+    @Test("Filter by updatedAt range returns recently updated models")
     func whenFilterByUpdatedAtRange_ThenReturnsRecentlyUpdatedModels() throws {
         var (context, indexedModels) = try makeContext()
         // Given
@@ -66,7 +66,7 @@ struct FilterMetadataQueryTests {
         #expect(resultIds.isDisjoint(with: nonUpdatedIds))
     }
 
-    @Test
+    @Test("Filter by past updatedAt range returns no models")
     func whenFilterByUpdatedAtRange_WithPastRange_ThenReturnsNoModels() throws {
         let (context, _) = try makeContext()
         // Given
@@ -83,7 +83,7 @@ struct FilterMetadataQueryTests {
         #expect(filterResult.isEmpty)
     }
 
-    @Test
+    @Test("Last then filter by updatedAt range filters last model")
     func whenLastThenFilterByUpdatedAtRange_ThenFiltersLastModel() throws {
         var (context, indexedModels) = try makeContext()
         // Given

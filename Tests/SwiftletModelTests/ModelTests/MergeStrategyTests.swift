@@ -33,7 +33,7 @@ struct MergeStrategyTests {
         }
     }
 
-    @Test
+    @Test("Replace strategy returns new value")
     func whenUsingReplaceStrategy_ThenReturnsNewValue() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
@@ -43,7 +43,7 @@ struct MergeStrategyTests {
         #expect(result == new)
     }
 
-    @Test
+    @Test("Patch strategy preserves old value if new is nil")
     func whenPatchingOptionalProperty_ThenPreservesOldValueIfNewIsNil() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
@@ -54,28 +54,28 @@ struct MergeStrategyTests {
         #expect(result.name == "old")
     }
 
-    @Test
+    @Test("Patch keeps old value if new is nil")
     func whenPatchingOptionalValue_ThenKeepsOldValueIfNewIsNil() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge("old", nil)
         #expect(result == "old")
     }
 
-    @Test
+    @Test("Patch uses new value if present")
     func whenPatchingOptionalValue_ThenUsesNewValueIfPresent() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge(nil, "new")
         #expect(result == "new")
     }
 
-    @Test
+    @Test("Patch prefers new value over old")
     func whenPatchingOptionalValue_ThenPreferencesNewValueOverOld() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge("old", "new")
         #expect(result == "new")
     }
 
-    @Test
+    @Test("Append strategy concatenates arrays")
     func whenAppendingArrayProperty_ThenConcatenatesArrays() {
         let old = TestModel(id: 1, name: "old", numbers: nil, tags: ["a", "b"], lastModified: Date())
         let new = TestModel(id: 1, name: "new", numbers: nil, tags: ["c"], lastModified: Date())
@@ -86,7 +86,7 @@ struct MergeStrategyTests {
         #expect(result.tags == ["a", "b", "c"])
     }
 
-    @Test
+    @Test("Append concatenates non-nil optional arrays")
     func whenAppendingOptionalArrayProperty_ThenConcatenatesNonNilArrays() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: "new", numbers: [3], tags: ["b"], lastModified: Date())
@@ -97,7 +97,7 @@ struct MergeStrategyTests {
         #expect(result.numbers == [1, 2, 3])
     }
 
-    @Test
+    @Test("Append preserves existing array if new is nil")
     func whenAppendingOptionalArrayProperty_ThenPreservesExistingArrayIfNewIsNil() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let nilNew = TestModel(id: 1, name: nil, numbers: nil, tags: ["c"], lastModified: Date())
@@ -108,7 +108,7 @@ struct MergeStrategyTests {
         #expect(result.numbers == [1, 2])
     }
 
-    @Test
+    @Test("Last write wins applies strategies when new is higher")
     func whenUsingLastWriteWins_ThenAppliesStrategiesWhenNewIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
@@ -128,7 +128,7 @@ struct MergeStrategyTests {
         #expect(result.numbers == [1, 2, 3])
     }
 
-    @Test
+    @Test("Last write wins applies strategies when old is higher")
     func whenUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
@@ -149,7 +149,7 @@ struct MergeStrategyTests {
         #expect(result.lastModified == newDate)
     }
 
-    @Test
+    @Test("Comparable last write wins applies strategies when old is higher")
     func whenComparableUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
@@ -169,7 +169,7 @@ struct MergeStrategyTests {
         #expect(result.lastModified == newDate)
     }
 
-    @Test
+    @Test("Combined strategies are applied in order")
     func whenCombiningMultipleStrategies_ThenAppliesThemInOrder() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: [3], tags: ["b"], lastModified: Date())

@@ -38,7 +38,7 @@ struct SortByOnePathQueryTests {
         return (context, notIndexed, indexed, evalPropertyIndexed)
     }
 
-    @Test
+    @Test("Sort by one path without index equals plain sort")
     func whenSortNoIndex_ThenEqualPlainSort() throws {
         let (context, notIndexed, _, _) = try makeContext()
         let expected = notIndexed
@@ -52,7 +52,7 @@ struct SortByOnePathQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Sort by one path with index equals plain sort")
     func whenSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed, _) = try makeContext()
         let expected = indexed
@@ -66,7 +66,7 @@ struct SortByOnePathQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by one path without index equals plain sort")
     func whenDescSortNoIndex_ThenEqualPlainSort() throws {
         let (context, notIndexed, _, _) = try makeContext()
         let expected = notIndexed
@@ -80,7 +80,7 @@ struct SortByOnePathQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by one path with index equals plain sort")
     func whenDescSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, _, evalPropertyIndexed) = try makeContext()
         let expected = evalPropertyIndexed
@@ -118,7 +118,7 @@ struct SortByTwoPathsQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Sort by two paths without index equals plain sort")
     func whenSortNoIndex_ThenEqualPlainSort() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -132,7 +132,7 @@ struct SortByTwoPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Sort by two paths with index equals plain sort")
     func whenSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -146,7 +146,7 @@ struct SortByTwoPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by two paths without index equals plain sort")
     func whenDescSortNoIndex_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -160,7 +160,7 @@ struct SortByTwoPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by two paths with index equals plain sort")
     func whenDescSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -198,7 +198,7 @@ struct SortByThreePathsQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Sort by three paths without index equals plain sort")
     func whenSortNoIndex_ThenEqualPlainSort() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -212,7 +212,7 @@ struct SortByThreePathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Sort by three paths with index equals plain sort")
     func whenSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -226,7 +226,7 @@ struct SortByThreePathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by three paths without index equals plain sort")
     func whenDescSortNoIndex_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -240,7 +240,7 @@ struct SortByThreePathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by three paths with index equals plain sort")
     func whenDescSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -278,7 +278,7 @@ struct SortByFourPathsQueryTests {
         return (context, notIndexed, indexed)
     }
 
-    @Test
+    @Test("Sort by four paths without index equals plain sort")
     func whenSortNoIndex_ThenEqualPlainSort() throws {
         let (context, notIndexed, _) = try makeContext()
         let expected = notIndexed
@@ -292,7 +292,7 @@ struct SortByFourPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Sort by four paths with index equals plain sort")
     func whenSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -306,7 +306,7 @@ struct SortByFourPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by four paths without index equals plain sort")
     func whenDescSortNoIndex_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed
@@ -320,7 +320,7 @@ struct SortByFourPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 
-    @Test
+    @Test("Descending sort by four paths with index equals plain sort")
     func whenDescSortIndexed_ThenEqualPlainSort() throws {
         let (context, _, indexed) = try makeContext()
         let expected = indexed

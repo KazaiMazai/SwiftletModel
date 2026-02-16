@@ -12,7 +12,7 @@ import SwiftletModel
 @Suite(.tags(.relations, .toMany, .mutual))
 struct ManyToManyTests {
 
-    @Test
+    @Test("Direct relation adds inverse relation")
     func whenDirectAdded_InverseIsAdded() throws {
         var context = Context()
         var chatOne = Chat.one
@@ -31,7 +31,7 @@ struct ManyToManyTests {
         #expect(bobChats.compactMap { $0.id } == [Chat.one.id, Chat.two.id])
     }
 
-    @Test
+    @Test("Relation update with insert adds new relations")
     func whenRelationUpdatedWithInsert_NewRelationsInserted() throws {
         var context = Context()
         var chat = Chat.one
@@ -51,7 +51,7 @@ struct ManyToManyTests {
         #expect(chatUsers.compactMap { $0.id } == expectedChatUsers)
     }
 
-    @Test
+    @Test("Replacing direct relation updates inverse")
     func whenDirectReplaced_InverseIsUpdated() throws {
         var context = Context()
         var chat = Chat.one
