@@ -14,11 +14,11 @@ final class FilterQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.Plain.shuffled(count)
+        TestingModels.NotIndexed.Model.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.Indexed.Extensively.shuffled(count)
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -34,7 +34,7 @@ final class FilterQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.NotIndexed.Plain
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -46,7 +46,7 @@ final class FilterQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.Indexed.Extensively
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -61,7 +61,7 @@ final class FilterQueryTests: XCTestCase {
                 && $0.numOf10 == 2
             }
 
-        let filterResult = TestingModels.Indexed.Extensively
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(in: context)
@@ -77,7 +77,7 @@ final class FilterQueryTests: XCTestCase {
                 && $0.numOf10 == 2
             }
 
-        let filterResult = TestingModels.Indexed.Extensively
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(in: context)
@@ -94,7 +94,7 @@ final class FilterQueryTests: XCTestCase {
             }
 
         let context = context
-        let filterResult = TestingModels.Indexed.Extensively
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 == 2))
             .resolve(in: context)
@@ -111,7 +111,7 @@ final class FilterQueryTests: XCTestCase {
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
         let context = context
-        let filterResult = TestingModels.Indexed.Extensively
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
@@ -129,7 +129,7 @@ final class FilterQueryTests: XCTestCase {
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
         let context = context
-        let filterResult = TestingModels.NotIndexed.Plain
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
@@ -147,7 +147,7 @@ final class FilterQueryTests: XCTestCase {
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
         let context = context
-        let filterResult = TestingModels.NotIndexed.Plain
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
@@ -165,7 +165,7 @@ final class FilterQueryTests: XCTestCase {
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
         let context = context
-        let filterResult = TestingModels.NotIndexed.Plain
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))

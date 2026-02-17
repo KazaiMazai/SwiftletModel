@@ -25,22 +25,9 @@ enum TestingModels {
 
 extension TestingModels.Indexed {
     @EntityModel
-    struct PlainValue {
-        @Index<Self>(\.value) private var valueIndex
-
-        let id: String
-        let value: Int
-
-        init(id: String, value: Int) {
-            self.id = id
-            self.value = value
-        }
-    }
-
-    @EntityModel
-    struct SingleValue {
-        @Index<Self>(\.numOf1) private var valueIndex
-
+    struct SingleProperty {
+        @Index<Self>(\.numOf1) private var numOf1Index
+        
         let id: String
         let numOf1: Int
         let numOf1000: Int
@@ -57,7 +44,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct Extensively {
+    struct ManyProperties {
         @Index<Self>(\.numOf1) private var numOf1Index
         @Index<Self>(\.numOf10) private var numOf10Index
         @Index<Self>(\.numOf100) private var numOf100Index
@@ -88,7 +75,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct EvaluatedPropertyDesc {
+    struct SingleEvaluatedPropertyDesc {
         @Index<Self>(\.numOf1.desc) private var valueIndexDesc
 
         let id: String
@@ -107,7 +94,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct Uniquely {
+    struct ManyUniqueProperties {
         @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
@@ -121,7 +108,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct UniquelyComparable {
+    struct ManyUniqueComparableProperties {
         @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
@@ -153,7 +140,7 @@ extension TestingModels.Indexed {
     // MARK: - HashIndex Models
 
     @EntityModel
-    struct Hash: Sendable {
+    struct HashSingleProperty: Sendable {
         @HashIndex<Self>(\.category) private var categoryIndex
 
         let id: String
@@ -168,7 +155,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct HashPair: Sendable {
+    struct HashPropertyPair: Sendable {
         @HashIndex<Self>(\.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -185,7 +172,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct HashTriplet: Sendable {
+    struct HashPropertyTriplet: Sendable {
         @HashIndex<Self>(\.region, \.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -202,7 +189,7 @@ extension TestingModels.Indexed {
     }
 
     @EntityModel
-    struct HashQuadruple: Sendable {
+    struct HashPropertyQuadruple: Sendable {
         @HashIndex<Self>(\.region, \.country, \.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -225,7 +212,7 @@ extension TestingModels.Indexed {
 
 extension TestingModels.NotIndexed {
     @EntityModel
-    struct Plain {
+    struct Model {
         let id: String
         let numOf1: Int
         let numOf1000: Int
@@ -242,7 +229,7 @@ extension TestingModels.NotIndexed {
     }
 
     @EntityModel
-    struct Comparable {
+    struct ComparablePropertiesModel {
         let id: String
         let numOf1: TestingModels.ComparableBox<Int>
         let numOf10: TestingModels.ComparableBox<Int>
@@ -251,7 +238,7 @@ extension TestingModels.NotIndexed {
     }
 
     @EntityModel
-    struct StringPlain {
+    struct StringModel {
         let id: String
         let text: String
     }
@@ -259,34 +246,34 @@ extension TestingModels.NotIndexed {
 
 // MARK: - Factory Methods
 
-extension TestingModels.NotIndexed.Plain {
-    static func shuffled(_ count: Int) -> [TestingModels.NotIndexed.Plain] {
+extension TestingModels.NotIndexed.Model {
+    static func shuffled(_ count: Int) -> [TestingModels.NotIndexed.Model] {
         (0..<count)
-            .map { idx in TestingModels.NotIndexed.Plain(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.NotIndexed.Model(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.Indexed.SingleValue {
-    static func shuffled(_ count: Int) -> [TestingModels.Indexed.SingleValue] {
+extension TestingModels.Indexed.SingleProperty {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.SingleProperty] {
         (0..<count)
-            .map { idx in TestingModels.Indexed.SingleValue(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.SingleProperty(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.Indexed.EvaluatedPropertyDesc {
-    static func shuffled(_ count: Int) -> [TestingModels.Indexed.EvaluatedPropertyDesc] {
+extension TestingModels.Indexed.SingleEvaluatedPropertyDesc {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.SingleEvaluatedPropertyDesc] {
         (0..<count)
-            .map { idx in TestingModels.Indexed.EvaluatedPropertyDesc(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.SingleEvaluatedPropertyDesc(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.Indexed.Extensively {
-    static func shuffled(_ count: Int) -> [TestingModels.Indexed.Extensively] {
+extension TestingModels.Indexed.ManyProperties {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.ManyProperties] {
         (0..<count)
-            .map { idx in TestingModels.Indexed.Extensively(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.ManyProperties(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
@@ -300,20 +287,20 @@ extension TestingModels.Indexed.StringFullText {
     }
 }
 
-extension TestingModels.NotIndexed.StringPlain {
-    static func shuffled() -> [TestingModels.NotIndexed.StringPlain] {
+extension TestingModels.NotIndexed.StringModel {
+    static func shuffled() -> [TestingModels.NotIndexed.StringModel] {
        Array.fruitTexts
         .enumerated()
-        .map { idx, text in TestingModels.NotIndexed.StringPlain(id: "\(idx)", text: text) }
+        .map { idx, text in TestingModels.NotIndexed.StringModel(id: "\(idx)", text: text) }
         .shuffled()
     }
 }
 
-extension TestingModels.Indexed.Hash {
-    static func shuffled(_ count: Int) -> [TestingModels.Indexed.Hash] {
+extension TestingModels.Indexed.HashSingleProperty {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.HashSingleProperty] {
         let categories = ["A", "B", "C", "D", "E"]
         return (0..<count)
-            .map { idx in TestingModels.Indexed.Hash(id: "\(idx)", category: categories[idx % 5], value: idx) }
+            .map { idx in TestingModels.Indexed.HashSingleProperty(id: "\(idx)", category: categories[idx % 5], value: idx) }
             .shuffled()
     }
 }

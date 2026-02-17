@@ -19,10 +19,10 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenEntitySaved_ThenIndexContainsEntity() throws {
-        let entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -31,18 +31,18 @@ final class HashIndexTests: XCTestCase {
 
     func test_WhenMultipleEntitiesWithSameValue_ThenAllInSameBucket() throws {
         let entities = [
-            TestingModels.Indexed.Hash(id: "1", category: "A", value: 10),
-            TestingModels.Indexed.Hash(id: "2", category: "A", value: 20),
-            TestingModels.Indexed.Hash(id: "3", category: "B", value: 30)
+            TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10),
+            TestingModels.Indexed.HashSingleProperty(id: "2", category: "A", value: 20),
+            TestingModels.Indexed.HashSingleProperty(id: "3", category: "B", value: 30)
         ]
 
         try entities.forEach { try $0.save(to: &context) }
 
-        let resultA = TestingModels.Indexed.Hash
+        let resultA = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
-        let resultB = TestingModels.Indexed.Hash
+        let resultB = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "B")
             .resolve(in: context)
 
@@ -51,17 +51,17 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenEntityValueUpdated_ThenBucketMigration() throws {
-        var entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        var entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
-        entity = TestingModels.Indexed.Hash(id: "1", category: "B", value: 10)
+        entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "B", value: 10)
         try entity.save(to: &context)
 
-        let resultA = TestingModels.Indexed.Hash
+        let resultA = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
-        let resultB = TestingModels.Indexed.Hash
+        let resultB = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "B")
             .resolve(in: context)
 
@@ -70,11 +70,11 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenEntitySavedWithSameValue_ThenNoRedundantUpdate() throws {
-        let entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -83,11 +83,11 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenEntityDeleted_ThenRemovedFromIndex() throws {
-        let entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
-        try TestingModels.Indexed.Hash.delete(id: "1", from: &context)
+        try TestingModels.Indexed.HashSingleProperty.delete(id: "1", from: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -96,15 +96,15 @@ final class HashIndexTests: XCTestCase {
 
     func test_WhenOneOfMultipleEntitiesDeleted_ThenOthersRemainInIndex() throws {
         let entities = [
-            TestingModels.Indexed.Hash(id: "1", category: "A", value: 10),
-            TestingModels.Indexed.Hash(id: "2", category: "A", value: 20),
-            TestingModels.Indexed.Hash(id: "3", category: "A", value: 30)
+            TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10),
+            TestingModels.Indexed.HashSingleProperty(id: "2", category: "A", value: 20),
+            TestingModels.Indexed.HashSingleProperty(id: "3", category: "A", value: 30)
         ]
         try entities.forEach { try $0.save(to: &context) }
 
-        try TestingModels.Indexed.Hash.delete(id: "1", from: &context)
+        try TestingModels.Indexed.HashSingleProperty.delete(id: "1", from: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -113,11 +113,11 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenLastEntityInBucketDeleted_ThenBucketCleanup() throws {
-        let entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
-        try TestingModels.Indexed.Hash.delete(id: "1", from: &context)
+        try TestingModels.Indexed.HashSingleProperty.delete(id: "1", from: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -125,10 +125,10 @@ final class HashIndexTests: XCTestCase {
     }
 
     func test_WhenFilterByNonExistentValue_ThenReturnsEmpty() throws {
-        let entity = TestingModels.Indexed.Hash(id: "1", category: "A", value: 10)
+        let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "Z")
             .resolve(in: context)
 
@@ -149,14 +149,14 @@ final class CompoundHashIndexTests: XCTestCase {
 
     func test_WhenPairIndex_ThenBothPropertiesMustMatch() throws {
         let entities = [
-            TestingModels.Indexed.HashPair(id: "1", category: "A", subcategory: "X", value: 10),
-            TestingModels.Indexed.HashPair(id: "2", category: "A", subcategory: "Y", value: 20),
-            TestingModels.Indexed.HashPair(id: "3", category: "B", subcategory: "X", value: 30)
+            TestingModels.Indexed.HashPropertyPair(id: "1", category: "A", subcategory: "X", value: 10),
+            TestingModels.Indexed.HashPropertyPair(id: "2", category: "A", subcategory: "Y", value: 20),
+            TestingModels.Indexed.HashPropertyPair(id: "3", category: "B", subcategory: "X", value: 30)
         ]
 
         try entities.forEach { try $0.save(to: &context) }
 
-        let result = TestingModels.Indexed.HashPair
+        let result = TestingModels.Indexed.HashPropertyPair
             .filter(\.category == "A")
             .filter(\.subcategory == "X")
             .resolve(in: context)
@@ -165,22 +165,22 @@ final class CompoundHashIndexTests: XCTestCase {
     }
 
     func test_WhenPairIndexValueUpdated_ThenMigratesToNewBucket() throws {
-        var entity = TestingModels.Indexed.HashPair(
+        var entity = TestingModels.Indexed.HashPropertyPair(
             id: "1", category: "A", subcategory: "X", value: 10
         )
         try entity.save(to: &context)
 
-        entity = TestingModels.Indexed.HashPair(
+        entity = TestingModels.Indexed.HashPropertyPair(
             id: "1", category: "A", subcategory: "Y", value: 10
         )
         try entity.save(to: &context)
 
-        let oldResult = TestingModels.Indexed.HashPair
+        let oldResult = TestingModels.Indexed.HashPropertyPair
             .filter(\.category == "A")
             .filter(\.subcategory == "X")
             .resolve(in: context)
 
-        let newResult = TestingModels.Indexed.HashPair
+        let newResult = TestingModels.Indexed.HashPropertyPair
             .filter(\.category == "A")
             .filter(\.subcategory == "Y")
             .resolve(in: context)
@@ -192,12 +192,12 @@ final class CompoundHashIndexTests: XCTestCase {
     // MARK: - Triplet (Three Properties) Tests
 
     func test_WhenTripletIndex_ThenAllThreeMatch() throws {
-        let entity = TestingModels.Indexed.HashTriplet(
+        let entity = TestingModels.Indexed.HashPropertyTriplet(
             id: "1", region: "US", category: "Tech", subcategory: "Software"
         )
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.HashTriplet
+        let result = TestingModels.Indexed.HashPropertyTriplet
             .filter(\.region == "US")
             .filter(\.category == "Tech")
             .filter(\.subcategory == "Software")
@@ -210,13 +210,13 @@ final class CompoundHashIndexTests: XCTestCase {
     // MARK: - Quadruple (Four Properties) Tests
 
     func test_WhenQuadrupleIndex_ThenAllFourMatch() throws {
-        let entity = TestingModels.Indexed.HashQuadruple(
+        let entity = TestingModels.Indexed.HashPropertyQuadruple(
             id: "1", region: "Americas", country: "US",
             category: "Tech", subcategory: "Software"
         )
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.HashQuadruple
+        let result = TestingModels.Indexed.HashPropertyQuadruple
             .filter(\.region == "Americas")
             .filter(\.country == "US")
             .filter(\.category == "Tech")
@@ -228,13 +228,13 @@ final class CompoundHashIndexTests: XCTestCase {
     }
 
     func test_WhenQuadruplePartialMatch_ThenNoResults() throws {
-        let entity = TestingModels.Indexed.HashQuadruple(
+        let entity = TestingModels.Indexed.HashPropertyQuadruple(
             id: "1", region: "Americas", country: "US",
             category: "Tech", subcategory: "Software"
         )
         try entity.save(to: &context)
 
-        let result = TestingModels.Indexed.HashQuadruple
+        let result = TestingModels.Indexed.HashPropertyQuadruple
             .filter(\.region == "Americas")
             .filter(\.country == "Canada")
             .filter(\.category == "Tech")
@@ -250,18 +250,18 @@ final class CompoundHashIndexTests: XCTestCase {
 final class HashIndexQueryTests: XCTestCase {
     let count = 100
     var context = Context()
-    var models: [TestingModels.Indexed.Hash] = []
+    var models: [TestingModels.Indexed.HashSingleProperty] = []
 
     override func setUp() async throws {
         context = Context()
-        models = TestingModels.Indexed.Hash.shuffled(count)
+        models = TestingModels.Indexed.HashSingleProperty.shuffled(count)
         try models.forEach { try $0.save(to: &context) }
     }
 
     func test_WhenHashIndexedVsPlainFilter_ThenSameResults() throws {
         let expected = models.filter { $0.category == "A" }
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
@@ -271,7 +271,7 @@ final class HashIndexQueryTests: XCTestCase {
     func test_WhenOrPredicateWithHashIndex_ThenCorrectResults() throws {
         let expected = models.filter { $0.category == "A" || $0.category == "B" }
 
-        let result = TestingModels.Indexed.Hash
+        let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .or(.filter(\.category == "B"))
             .resolve(in: context)
