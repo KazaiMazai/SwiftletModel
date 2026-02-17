@@ -6,65 +6,75 @@
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 
-final class ToOneTests: XCTestCase {
-    var context = Context()
+@Suite("To-One Relations", .tags(.relations, .toOne, .mutual))
+struct ToOneTests {
     let initialMessage: Message = Message(
         id: "1", text: "hello",
         attachment: .relation(Attachment.imageOne)
     )
 
-    override func setUp() async throws {
-        try! initialMessage.save(to: &context)
+    private func makeContext() throws -> Context {
+        var context = Context()
+        try initialMessage.save(to: &context)
+        return context
     }
 
-    func test_WhenDirectAdded_InverseIsAdded() {
+    @Test("Direct relation adds inverse relation")
+    func whenDirectAdded_InverseIsAdded() throws {
+        let context = try makeContext()
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
             .resolve(in: context)
 
-        XCTAssertEqual(messageForAttachment?.id, Attachment.imageOne.id)
+        #expect(messageForAttachment?.id == Attachment.imageOne.id)
     }
 
-    func test_WhenDirectReplaced_InverseIsUpdated() {
+    @Test("Replacing direct relation updates inverse")
+    func whenDirectReplaced_InverseIsUpdated() throws {
+        var context = try makeContext()
         var message = initialMessage
         message.$attachment = .relation(Attachment.imageTwo)
-        try! message.save(to: &context)
+        try message.save(to: &context)
 
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
             .resolve(in: context)
 
-        XCTAssertNil(messageForAttachment)
+        #expect(messageForAttachment == nil)
     }
 
-    func test_WhenNullify_InverseIsRemoved() {
+    @Test("Nullifying relation removes inverse")
+    func whenNullify_InverseIsRemoved() throws {
+        var context = try makeContext()
         var message = initialMessage
         message.$attachment = .null
-        try! message.save(to: &context)
+        try message.save(to: &context)
 
         let messageForAttachment = Attachment
             .query(Attachment.imageOne.id)
             .related(\.$message)
             .resolve(in: context)
 
-        XCTAssertNil(messageForAttachment)
+        #expect(messageForAttachment == nil)
     }
 
-    func test_WhenNullify_RelationIsRemoved() {
+    @Test("Nullifying relation removes the relation")
+    func whenNullify_RelationIsRemoved() throws {
+        var context = try makeContext()
         var message = initialMessage
         message.$attachment = .null
-        try! message.save(to: &context)
+        try message.save(to: &context)
 
         let attachment = message
             .query()
             .related(\.$attachment)
             .resolve(in: context)
 
-        XCTAssertNil(attachment)
+        #expect(attachment == nil)
     }
 }

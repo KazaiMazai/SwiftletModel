@@ -7,27 +7,30 @@
 
 import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
-final class FilterMetadataQueryTests: XCTestCase {
+@Suite("Filter by Metadata", .tags(.query, .filter, .metadata))
+struct FilterMetadataQueryTests {
     let count = 100
-    var context = Context()
 
-    lazy var indexedModels = {
+    var indexedModels: [TestingModels.ExtensivelyIndexed] {
         TestingModels.ExtensivelyIndexed.shuffled(count)
-    }()
+    }
 
-    override func setUpWithError() throws {
-        context = Context()
+    private func makeContext() throws -> (context: Context, indexedModels: [TestingModels.ExtensivelyIndexed]) {
+        var context = Context()
+        let models = indexedModels
 
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
+        try models.forEach { try $0.save(to: &context) }
 
         // Wait to ensure initial saves have an older timestamp
         Thread.sleep(forTimeInterval: 1.0)
+        return (context, models)
     }
 
-    func test_WhenFilterIndexed_ThenEqualPlainFiltering() throws {
+    @Test("Indexed filter equals plain filtering")
+    func whenFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, indexedModels) = try makeContext()
         let expected = indexedModels
             .filter { $0.numOf1 == 1 }
 
@@ -35,11 +38,12 @@ final class FilterMetadataQueryTests: XCTestCase {
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenFilterByUpdatedAtRange_ThenReturnsRecentlyUpdatedModels() throws {
+    @Test("Filter by updatedAt range returns recently updated models")
+    func whenFilterByUpdatedAtRange_ThenReturnsRecentlyUpdatedModels() throws {
+        var (context, indexedModels) = try makeContext()
         // Given
         let modelsToUpdate = Array(indexedModels.prefix(5))
         try modelsToUpdate.forEach { try $0.save(to: &context) }
@@ -54,16 +58,17 @@ final class FilterMetadataQueryTests: XCTestCase {
             .resolve(in: context)
 
         // Then
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(modelsToUpdate.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(modelsToUpdate.map { $0.id }))
 
         // Verify that non-updated models are not included
         let nonUpdatedIds = Set(indexedModels.dropFirst(5).map { $0.id })
         let resultIds = Set(filterResult.map { $0.id })
-        XCTAssertTrue(resultIds.isDisjoint(with: nonUpdatedIds))
+        #expect(resultIds.isDisjoint(with: nonUpdatedIds))
     }
 
-    func test_WhenFilterByUpdatedAtRange_WithPastRange_ThenReturnsNoModels() throws {
+    @Test("Filter by past updatedAt range returns no models")
+    func whenFilterByUpdatedAtRange_WithPastRange_ThenReturnsNoModels() throws {
+        let (context, _) = try makeContext()
         // Given
         let twoDaysAgo = Date().addingTimeInterval(-172800) // 48 hours ago
         let oneDayAgo = Date().addingTimeInterval(-86400) // 24 hours ago
@@ -75,10 +80,12 @@ final class FilterMetadataQueryTests: XCTestCase {
             .resolve(in: context)
 
         // Then
-        XCTAssertTrue(filterResult.isEmpty)
+        #expect(filterResult.isEmpty)
     }
 
-    func test_WhenLastThenFilterByUpdatedAtRange_ThenFiltersLastModel() throws {
+    @Test("Last then filter by updatedAt range filters last model")
+    func whenLastThenFilterByUpdatedAtRange_ThenFiltersLastModel() throws {
+        var (context, indexedModels) = try makeContext()
         // Given
         let modelsToUpdate = Array(indexedModels.prefix(5))
         try modelsToUpdate.forEach { try $0.save(to: &context) }
@@ -96,7 +103,7 @@ final class FilterMetadataQueryTests: XCTestCase {
             .resolve(in: context)
 
         // Then
-        XCTAssertNotNil(filterResult)
-        XCTAssertEqual(filterResult?.id, modelsToUpdate.last?.id)
+        #expect(filterResult != nil)
+        #expect(filterResult?.id == modelsToUpdate.last?.id)
     }
 }

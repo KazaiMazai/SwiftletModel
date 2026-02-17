@@ -5,10 +5,12 @@
 //  Created by Sergey Kazakov on 26/04/2025.
 //
 
-import XCTest
+import Testing
 @testable import SwiftletModel
+import Foundation
 
-final class MergeStrategyTests: XCTestCase {
+@Suite("Merge Strategies", .tags(.mergeStrategy))
+struct MergeStrategyTests {
 
     struct TestModel: Equatable, Sendable {
         var id: Int
@@ -25,80 +27,89 @@ final class MergeStrategyTests: XCTestCase {
         var tags: [String]
         var lastModified: Date
 
-        static func < (lhs: MergeStrategyTests.ComparableTestModel,
-                       rhs: MergeStrategyTests.ComparableTestModel) -> Bool {
+        static func < (lhs: ComparableTestModel,
+                       rhs: ComparableTestModel) -> Bool {
             lhs.lastModified < rhs.lastModified
         }
     }
 
-    func test_WhenUsingReplaceStrategy_ThenReturnsNewValue() {
+    @Test("Replace strategy returns new value")
+    func whenUsingReplaceStrategy_ThenReturnsNewValue() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.replace
         let result = strategy.merge(old, new)
-        XCTAssertEqual(result, new)
+        #expect(result == new)
     }
 
-    func test_WhenPatchingOptionalProperty_ThenPreservesOldValueIfNewIsNil() {
+    @Test("Patch strategy preserves old value if new is nil")
+    func whenPatchingOptionalProperty_ThenPreservesOldValueIfNewIsNil() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.patch(\TestModel.name)
         let result = strategy.merge(old, new)
 
-        XCTAssertEqual(result.name, "old")
+        #expect(result.name == "old")
     }
 
-    func test_WhenPatchingOptionalValue_ThenKeepsOldValueIfNewIsNil() {
+    @Test("Patch keeps old value if new is nil")
+    func whenPatchingOptionalValue_ThenKeepsOldValueIfNewIsNil() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge("old", nil)
-        XCTAssertEqual(result, "old")
+        #expect(result == "old")
     }
 
-    func test_WhenPatchingOptionalValue_ThenUsesNewValueIfPresent() {
+    @Test("Patch uses new value if present")
+    func whenPatchingOptionalValue_ThenUsesNewValueIfPresent() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge(nil, "new")
-        XCTAssertEqual(result, "new")
+        #expect(result == "new")
     }
 
-    func test_WhenPatchingOptionalValue_ThenPreferencesNewValueOverOld() {
+    @Test("Patch prefers new value over old")
+    func whenPatchingOptionalValue_ThenPreferencesNewValueOverOld() {
         let strategy = MergeStrategy<String?>.patch()
         let result = strategy.merge("old", "new")
-        XCTAssertEqual(result, "new")
+        #expect(result == "new")
     }
 
-    func test_WhenAppendingArrayProperty_ThenConcatenatesArrays() {
+    @Test("Append strategy concatenates arrays")
+    func whenAppendingArrayProperty_ThenConcatenatesArrays() {
         let old = TestModel(id: 1, name: "old", numbers: nil, tags: ["a", "b"], lastModified: Date())
         let new = TestModel(id: 1, name: "new", numbers: nil, tags: ["c"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.tags)
         let result = strategy.merge(old, new)
 
-        XCTAssertEqual(result.tags, ["a", "b", "c"])
+        #expect(result.tags == ["a", "b", "c"])
     }
 
-    func test_WhenAppendingOptionalArrayProperty_ThenConcatenatesNonNilArrays() {
+    @Test("Append concatenates non-nil optional arrays")
+    func whenAppendingOptionalArrayProperty_ThenConcatenatesNonNilArrays() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: "new", numbers: [3], tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.numbers)
         let result = strategy.merge(old, new)
 
-        XCTAssertEqual(result.numbers, [1, 2, 3])
+        #expect(result.numbers == [1, 2, 3])
     }
 
-    func test_WhenAppendingOptionalArrayProperty_ThenPreservesExistingArrayIfNewIsNil() {
+    @Test("Append preserves existing array if new is nil")
+    func whenAppendingOptionalArrayProperty_ThenPreservesExistingArrayIfNewIsNil() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let nilNew = TestModel(id: 1, name: nil, numbers: nil, tags: ["c"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.numbers)
         let result = strategy.merge(old, nilNew)
 
-        XCTAssertEqual(result.numbers, [1, 2])
+        #expect(result.numbers == [1, 2])
     }
 
-    func test_WhenUsingLastWriteWins_ThenAppliesStrategiesWhenNewIsHigher() {
+    @Test("Last write wins applies strategies when new is higher")
+    func whenUsingLastWriteWins_ThenAppliesStrategiesWhenNewIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
 
@@ -112,12 +123,13 @@ final class MergeStrategyTests: XCTestCase {
         )
 
         let result = strategy.merge(old, new)
-        XCTAssertEqual(result.id, 1)
-        XCTAssertEqual(result.name, "new")
-        XCTAssertEqual(result.numbers, [1, 2, 3])
+        #expect(result.id == 1)
+        #expect(result.name == "new")
+        #expect(result.numbers == [1, 2, 3])
     }
 
-    func test_WhenUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
+    @Test("Last write wins applies strategies when old is higher")
+    func whenUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
 
@@ -131,13 +143,14 @@ final class MergeStrategyTests: XCTestCase {
         )
 
         let result = strategy.merge(oldHigher, new)
-        XCTAssertEqual(result.id, 1)
-        XCTAssertEqual(result.name, "older")
-        XCTAssertEqual(result.numbers, [3, 4])
-        XCTAssertEqual(result.lastModified, newDate)
+        #expect(result.id == 1)
+        #expect(result.name == "older")
+        #expect(result.numbers == [3, 4])
+        #expect(result.lastModified == newDate)
     }
 
-    func test_WhenComparableUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
+    @Test("Comparable last write wins applies strategies when old is higher")
+    func whenComparableUsingLastWriteWins_ThenAppliesStrategiesWhenOldIsHigher() {
         let oldDate = Date.distantPast
         let newDate = Date()
 
@@ -150,13 +163,14 @@ final class MergeStrategyTests: XCTestCase {
         )
 
         let result = strategy.merge(oldHigher, new)
-        XCTAssertEqual(result.id, 1)
-        XCTAssertEqual(result.name, "older")
-        XCTAssertEqual(result.numbers, [3, 4])
-        XCTAssertEqual(result.lastModified, newDate)
+        #expect(result.id == 1)
+        #expect(result.name == "older")
+        #expect(result.numbers == [3, 4])
+        #expect(result.lastModified == newDate)
     }
 
-    func test_WhenCombiningMultipleStrategies_ThenAppliesThemInOrder() {
+    @Test("Combined strategies are applied in order")
+    func whenCombiningMultipleStrategies_ThenAppliesThemInOrder() {
         let old = TestModel(id: 1, name: "old", numbers: [1, 2], tags: ["a"], lastModified: Date())
         let new = TestModel(id: 1, name: nil, numbers: [3], tags: ["b"], lastModified: Date())
 
@@ -166,8 +180,8 @@ final class MergeStrategyTests: XCTestCase {
         )
 
         let result = strategy.merge(old, new)
-        XCTAssertEqual(result.id, 1)
-        XCTAssertEqual(result.name, "old")
-        XCTAssertEqual(result.numbers, [1, 2, 3])
+        #expect(result.id == 1)
+        #expect(result.name == "old")
+        #expect(result.numbers == [1, 2, 3])
     }
 }
