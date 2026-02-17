@@ -14,11 +14,11 @@ final class FilterPerformanceTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+        TestingModels.Indexed.Extensively.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -32,7 +32,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_NoIndex_FilterPerformance() throws {
         measure {
-            _ = TestingModels.NotIndexed
+            _ = TestingModels.NotIndexed.Plain
                 .filter(\.numOf1 == 1)
                 .resolve(in: context)
         }
@@ -40,7 +40,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_Indexed_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .filter(\.numOf1 == 1)
                 .resolve(in: context)
         }
@@ -48,7 +48,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_RawFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .query()
                 .resolve(in: context)
                 .filter {
@@ -59,7 +59,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_NotIndexedComplexFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.NotIndexed
+            _ = TestingModels.NotIndexed.Plain
                 .filter(\.numOf1 == 1)
                 .filter(\.numOf10 != 5)
                 .filter(\.numOf100 == 4)
@@ -70,7 +70,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_IndexedComplexFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .filter(\.numOf1 == 1)
                 .filter(\.numOf10 != 5)
                 .filter(\.numOf100 == 4)
@@ -81,7 +81,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_RawComplexFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .query()
                 .resolve(in: context)
                 .filter {
@@ -95,7 +95,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_IndexedComplexComparisonFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .filter(\.numOf1 >= 1)
                 .filter(\.numOf10 <= 5)
                 .filter(\.numOf100 > 4)
@@ -106,7 +106,7 @@ final class FilterPerformanceTests: XCTestCase {
 
     func test_RawComplexComparisonFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.ExtensivelyIndexed
+            _ = TestingModels.Indexed.Extensively
                 .query()
                 .resolve(in: context)
                 .filter {

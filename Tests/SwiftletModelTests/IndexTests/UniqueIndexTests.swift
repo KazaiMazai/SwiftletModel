@@ -50,7 +50,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
 
     func test_WhenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.Uniquely(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -59,7 +59,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.Uniquely(
             id: "1",
             numOf1: 1,
             numOf10: 20,
@@ -71,7 +71,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
 
     func test_WhenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.Uniquely(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -80,7 +80,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.Uniquely(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -92,7 +92,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
 
     func test_WhenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.Uniquely(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -101,7 +101,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.Uniquely(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -113,7 +113,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
 
     func test_WhenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.Uniquely(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -122,7 +122,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.Uniquely(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -134,7 +134,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
 
     func test_WhenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.Uniquely(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -143,7 +143,7 @@ final class CompoundUniqueIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.Uniquely(
             id: "1",
             numOf1: 10,
             numOf10: 2,
@@ -159,7 +159,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
 
     func test_WhenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.UniquelyComparable(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -168,7 +168,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.UniquelyComparable(
             id: "1",
             numOf1: 1,
             numOf10: 20,
@@ -180,7 +180,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
 
     func test_WhenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.UniquelyComparable(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -189,7 +189,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.UniquelyComparable(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -201,7 +201,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
 
     func test_WhenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.UniquelyComparable(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -210,7 +210,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.UniquelyComparable(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -222,7 +222,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
 
     func test_WhenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.UniquelyComparable(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -231,7 +231,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.UniquelyComparable(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -243,7 +243,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
 
     func test_WhenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.UniquelyComparable(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -252,7 +252,7 @@ final class CompoundUniqueComparableIndexTests: XCTestCase {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.UniquelyComparable(
             id: "1",
             numOf1: 10,
             numOf10: 2,

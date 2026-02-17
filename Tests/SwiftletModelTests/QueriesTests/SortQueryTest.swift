@@ -14,15 +14,15 @@ class SortByOnePathQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.SingleValueIndexed.shuffled(count)
+        TestingModels.Indexed.SingleValue.shuffled(count)
     }()
 
     lazy var evalPropertyIndexedModels = {
-        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
+        TestingModels.Indexed.EvaluatedPropertyDesc.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -41,7 +41,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let expected = notIndexedModels
             .sorted { $0.numOf1 < $1.numOf1 }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf1)
             .resolve(in: context)
@@ -53,7 +53,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { $0.numOf1 < $1.numOf1 }
 
-        let sortResult = TestingModels.SingleValueIndexed
+        let sortResult = TestingModels.Indexed.SingleValue
             .query()
             .sorted(by: \.numOf1)
             .resolve(in: context)
@@ -65,7 +65,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let expected = notIndexedModels
             .sorted { $0.numOf1 > $1.numOf1 }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
@@ -77,7 +77,7 @@ class SortByOnePathQueryTests: XCTestCase {
         let expected = evalPropertyIndexedModels
             .sorted { $0.numOf1 > $1.numOf1 }
 
-        let sortResult = TestingModels.EvaluatedPropertyDescIndexed
+        let sortResult = TestingModels.Indexed.EvaluatedPropertyDesc
             .query()
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
@@ -91,11 +91,11 @@ class SortByTwoPathsQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+        TestingModels.Indexed.Extensively.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -112,7 +112,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let expected = notIndexedModels
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -124,7 +124,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -136,7 +136,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -148,7 +148,7 @@ class SortByTwoPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -162,11 +162,11 @@ class SortByThreePathsQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+        TestingModels.Indexed.Extensively.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -183,7 +183,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let expected = notIndexedModels
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -195,7 +195,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -207,7 +207,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -219,7 +219,7 @@ class SortByThreePathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -233,11 +233,11 @@ class SortByFourPathsQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+        TestingModels.Indexed.Extensively.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -254,7 +254,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let expected = notIndexedModels
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -266,7 +266,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -278,7 +278,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Plain
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -290,7 +290,7 @@ class SortByFourPathsQueryTests: XCTestCase {
         let expected = indexedModels
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)

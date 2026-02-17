@@ -14,7 +14,7 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
     
     lazy var models = {
         Range(0...10).map {
-            TestingModels.PlainValueIndexed(id: "\($0)", value: $0)
+            TestingModels.Indexed.PlainValue(id: "\($0)", value: $0)
         }
     }()
     
@@ -28,7 +28,7 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
     func test_WhenFilterOutOfUpperBound_ThenEmptyResult() throws {
         let max = models.max(by: { $0.value < $1.value })!
         let filteredResult = TestingModels
-            .PlainValueIndexed
+            .Indexed.PlainValue
             .filter(\.value > max.value + 1)
             .resolve(in: context)
         
@@ -38,7 +38,7 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
     func test_WhenFilterOutOfLowerBound_ThenEmptyResult() throws {
         let min = models.min(by: { $0.value < $1.value })!
         let filteredResult = TestingModels
-            .PlainValueIndexed
+            .Indexed.PlainValue
             .filter(\.value < min.value - 1)
             .resolve(in: context)
         
@@ -48,7 +48,7 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
     func test_WhenIncludingFilterOutOfUpperBound_ThenEmptyResult() throws {
         let max = models.max(by: { $0.value < $1.value })!
         let filteredResult = TestingModels
-            .PlainValueIndexed
+            .Indexed.PlainValue
             .filter(\.value >= max.value + 1)
             .resolve(in: context)
         
@@ -58,7 +58,7 @@ final class FilterIndexOutOfBoundsTests: XCTestCase {
     func test_WhenIncludingFilterOutOfLowerBound_ThenEmptyResult() throws {
         let min = models.min(by: { $0.value < $1.value })!
         let filteredResult = TestingModels
-            .PlainValueIndexed
+            .Indexed.PlainValue
             .filter(\.value <= min.value - 1)
             .resolve(in: context)
         

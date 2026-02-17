@@ -14,7 +14,7 @@ final class FilterMetadataQueryTests: XCTestCase {
     var context = Context()
 
     lazy var indexedModels = {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+        TestingModels.Indexed.Extensively.shuffled(count)
     }()
 
     override func setUpWithError() throws {
@@ -31,7 +31,7 @@ final class FilterMetadataQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.Extensively
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -49,7 +49,7 @@ final class FilterMetadataQueryTests: XCTestCase {
         let range = pastDate...now
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.Extensively
             .filter(MetadataPredicate.updated(within: range))
             .resolve(in: context)
 
@@ -70,7 +70,7 @@ final class FilterMetadataQueryTests: XCTestCase {
         let pastRange = twoDaysAgo...oneDayAgo
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.Extensively
             .filter(.updated(within: pastRange))
             .resolve(in: context)
 
@@ -88,7 +88,7 @@ final class FilterMetadataQueryTests: XCTestCase {
         let range = pastDate...now
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.Extensively
             .query()
             .sorted(by: .updatedAt)
             .last()

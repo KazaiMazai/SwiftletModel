@@ -13,11 +13,11 @@ final class FilterMatchStringQueryTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.StringNotIndexed.shuffled()
+        TestingModels.NotIndexed.StringPlain.shuffled()
     }()
 
     lazy var indexedModels = {
-        TestingModels.StringFullTextIndexed.shuffled()
+        TestingModels.Indexed.StringFullText.shuffled()
     }()
 
     override func setUp() async throws {
@@ -33,7 +33,7 @@ final class FilterMatchStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { $0.text.matches(fuzzy: "ananas") }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -45,7 +45,7 @@ final class FilterMatchStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.text.matches(fuzzy: "ananas") }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -63,11 +63,11 @@ class FilterStringQueryTests: XCTestCase {
     var caseSensitive: Bool { false }
 
     lazy var notIndexedModels = {
-        TestingModels.StringNotIndexed.shuffled()
+        TestingModels.NotIndexed.StringPlain.shuffled()
     }()
 
     lazy var indexedModels = {
-        TestingModels.StringFullTextIndexed.shuffled()
+        TestingModels.Indexed.StringFullText.shuffled()
     }()
 
     override func setUp() async throws {
@@ -83,7 +83,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -95,7 +95,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -107,7 +107,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -119,7 +119,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
 
@@ -132,7 +132,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -144,7 +144,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -156,7 +156,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -168,7 +168,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -180,7 +180,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = notIndexedModels
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringPlain
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         XCTAssertFalse(filterResult.isEmpty)
@@ -192,7 +192,7 @@ class FilterStringQueryTests: XCTestCase {
         let expected = indexedModels
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
 

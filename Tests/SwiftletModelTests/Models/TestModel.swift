@@ -9,12 +9,23 @@ import SwiftletModel
 import Foundation
 
 enum TestingModels {
+    enum Indexed {}
+    enum NotIndexed {}
 
+    struct ComparableBox<T: Comparable>: Comparable, Sendable where T: Sendable {
+        let value: T
+
+        static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.value < rhs.value
+        }
+    }
 }
 
-extension TestingModels {
+// MARK: - Indexed Models
+
+extension TestingModels.Indexed {
     @EntityModel
-    struct PlainValueIndexed {
+    struct PlainValue {
         @Index<Self>(\.value) private var valueIndex
 
         let id: String
@@ -25,9 +36,9 @@ extension TestingModels {
             self.value = value
         }
     }
-    
+
     @EntityModel
-    struct SingleValueIndexed {
+    struct SingleValue {
         @Index<Self>(\.numOf1) private var valueIndex
 
         let id: String
@@ -46,7 +57,7 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct ExtensivelyIndexed {
+    struct Extensively {
         @Index<Self>(\.numOf1) private var numOf1Index
         @Index<Self>(\.numOf10) private var numOf10Index
         @Index<Self>(\.numOf100) private var numOf100Index
@@ -66,12 +77,6 @@ extension TestingModels {
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
-        
-        /**Not  index properties equivalents**/
-        let _numOf1: Int
-        let _numOf1000: Int
-        let _numOf100: Int
-        let _numOf10: Int
 
         init(id: String, value: Int) {
             self.id = id
@@ -79,16 +84,11 @@ extension TestingModels {
             self.numOf10 = (value / 10) % 10
             self.numOf100 = (value / 100) % 10
             self.numOf1000 = value / 1000
-            
-            _numOf1 = numOf1
-            _numOf10 = numOf10
-            _numOf100 = numOf100
-            _numOf1000 = numOf1000
         }
     }
 
     @EntityModel
-    struct EvaluatedPropertyDescIndexed {
+    struct EvaluatedPropertyDesc {
         @Index<Self>(\.numOf1.desc) private var valueIndexDesc
 
         let id: String
@@ -107,24 +107,7 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct NotIndexed {
-        let id: String
-        let numOf1: Int
-        let numOf1000: Int
-        let numOf100: Int
-        let numOf10: Int
-
-        init(id: String, value: Int) {
-            self.id = id
-            self.numOf1 = value % 10
-            self.numOf1000 = value / 1000
-            self.numOf100 = value / 100
-            self.numOf10 = value / 10
-        }
-    }
-
-    @EntityModel
-    struct UniquelyIndexed {
+    struct Uniquely {
         @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
@@ -138,62 +121,39 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct UniquelyIndexedComparable {
+    struct UniquelyComparable {
         @Unique<Self>(\.numOf1, collisions: .throw) private var valueIndex
         @Unique<Self>(\.numOf10, \.numOf1, collisions: .throw) private var valueIndex2
         @Unique<Self>(\.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex3
         @Unique<Self>(\.numOf1000, \.numOf100, \.numOf10, \.numOf1, collisions: .throw) private var valueIndex4
 
         let id: String
-        let numOf1: ComparableBox<Int>
-        let numOf10: ComparableBox<Int>
-        let numOf100: ComparableBox<Int>
-        let numOf1000: ComparableBox<Int>
+        let numOf1: TestingModels.ComparableBox<Int>
+        let numOf10: TestingModels.ComparableBox<Int>
+        let numOf100: TestingModels.ComparableBox<Int>
+        let numOf1000: TestingModels.ComparableBox<Int>
 
         init(id: String, numOf1: Int, numOf10: Int, numOf100: Int, numOf1000: Int) {
             self.id = id
-            self.numOf1 = ComparableBox(value: numOf1)
-            self.numOf10 = ComparableBox(value: numOf10)
-            self.numOf100 = ComparableBox(value: numOf100)
-            self.numOf1000 = ComparableBox(value: numOf1000)
+            self.numOf1 = TestingModels.ComparableBox(value: numOf1)
+            self.numOf10 = TestingModels.ComparableBox(value: numOf10)
+            self.numOf100 = TestingModels.ComparableBox(value: numOf100)
+            self.numOf1000 = TestingModels.ComparableBox(value: numOf1000)
         }
     }
 
     @EntityModel
-    struct NotIndexedComparable {
-        let id: String
-        let numOf1: ComparableBox<Int>
-        let numOf10: ComparableBox<Int>
-        let numOf100: ComparableBox<Int>
-        let numOf1000: ComparableBox<Int>
-    }
-
-    struct ComparableBox<T: Comparable>: Comparable, Sendable where T: Sendable {
-        let value: T
-
-        static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.value < rhs.value
-        }
-    }
-
-    @EntityModel
-    struct StringFullTextIndexed {
+    struct StringFullText {
         @FullTextIndex<Self>(\.text) private var valueIndex
 
         let id: String
         let text: String
     }
 
-    @EntityModel
-    struct StringNotIndexed {
-        let id: String
-        let text: String
-    }
-
-    // MARK: - HashIndex Test Models
+    // MARK: - HashIndex Models
 
     @EntityModel
-    struct HashIndexed: Sendable {
+    struct Hash: Sendable {
         @HashIndex<Self>(\.category) private var categoryIndex
 
         let id: String
@@ -208,7 +168,7 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct HashIndexedPair: Sendable {
+    struct HashPair: Sendable {
         @HashIndex<Self>(\.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -225,7 +185,7 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct HashIndexedTriplet: Sendable {
+    struct HashTriplet: Sendable {
         @HashIndex<Self>(\.region, \.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -242,7 +202,7 @@ extension TestingModels {
     }
 
     @EntityModel
-    struct HashIndexedQuadruple: Sendable {
+    struct HashQuadruple: Sendable {
         @HashIndex<Self>(\.region, \.country, \.category, \.subcategory) private var compoundIndex
 
         let id: String
@@ -261,61 +221,99 @@ extension TestingModels {
     }
 }
 
+// MARK: - NotIndexed Models
+
 extension TestingModels.NotIndexed {
-    static func shuffled(_ count: Int) -> [TestingModels.NotIndexed] {
+    @EntityModel
+    struct Plain {
+        let id: String
+        let numOf1: Int
+        let numOf1000: Int
+        let numOf100: Int
+        let numOf10: Int
+
+        init(id: String, value: Int) {
+            self.id = id
+            self.numOf1 = value % 10
+            self.numOf1000 = value / 1000
+            self.numOf100 = value / 100
+            self.numOf10 = value / 10
+        }
+    }
+
+    @EntityModel
+    struct Comparable {
+        let id: String
+        let numOf1: TestingModels.ComparableBox<Int>
+        let numOf10: TestingModels.ComparableBox<Int>
+        let numOf100: TestingModels.ComparableBox<Int>
+        let numOf1000: TestingModels.ComparableBox<Int>
+    }
+
+    @EntityModel
+    struct StringPlain {
+        let id: String
+        let text: String
+    }
+}
+
+// MARK: - Factory Methods
+
+extension TestingModels.NotIndexed.Plain {
+    static func shuffled(_ count: Int) -> [TestingModels.NotIndexed.Plain] {
         (0..<count)
-            .map { idx in TestingModels.NotIndexed(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.NotIndexed.Plain(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.SingleValueIndexed {
-    static func shuffled(_ count: Int) -> [TestingModels.SingleValueIndexed] {
+extension TestingModels.Indexed.SingleValue {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.SingleValue] {
         (0..<count)
-            .map { idx in TestingModels.SingleValueIndexed(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.SingleValue(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.EvaluatedPropertyDescIndexed {
-    static func shuffled(_ count: Int) -> [TestingModels.EvaluatedPropertyDescIndexed] {
+extension TestingModels.Indexed.EvaluatedPropertyDesc {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.EvaluatedPropertyDesc] {
         (0..<count)
-            .map { idx in TestingModels.EvaluatedPropertyDescIndexed(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.EvaluatedPropertyDesc(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.ExtensivelyIndexed {
-    static func shuffled(_ count: Int) -> [TestingModels.ExtensivelyIndexed] {
+extension TestingModels.Indexed.Extensively {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.Extensively] {
         (0..<count)
-            .map { idx in TestingModels.ExtensivelyIndexed(id: "\(idx)", value: idx) }
+            .map { idx in TestingModels.Indexed.Extensively(id: "\(idx)", value: idx) }
             .shuffled()
     }
 }
 
-extension TestingModels.StringFullTextIndexed {
-    static func shuffled() -> [TestingModels.StringFullTextIndexed] {
+extension TestingModels.Indexed.StringFullText {
+    static func shuffled() -> [TestingModels.Indexed.StringFullText] {
        Array.fruitTexts
         .enumerated()
-        .map { idx, text in TestingModels.StringFullTextIndexed(id: "\(idx)", text: text) }
+        .map { idx, text in TestingModels.Indexed.StringFullText(id: "\(idx)", text: text) }
         .shuffled()
     }
 }
 
-extension TestingModels.StringNotIndexed {
-    static func shuffled() -> [TestingModels.StringNotIndexed] {
+extension TestingModels.NotIndexed.StringPlain {
+    static func shuffled() -> [TestingModels.NotIndexed.StringPlain] {
        Array.fruitTexts
         .enumerated()
-        .map { idx, text in TestingModels.StringNotIndexed(id: "\(idx)", text: text) }
+        .map { idx, text in TestingModels.NotIndexed.StringPlain(id: "\(idx)", text: text) }
         .shuffled()
     }
 }
 
-extension TestingModels.HashIndexed {
-    static func shuffled(_ count: Int) -> [TestingModels.HashIndexed] {
+extension TestingModels.Indexed.Hash {
+    static func shuffled(_ count: Int) -> [TestingModels.Indexed.Hash] {
         let categories = ["A", "B", "C", "D", "E"]
         return (0..<count)
-            .map { idx in TestingModels.HashIndexed(id: "\(idx)", category: categories[idx % 5], value: idx) }
+            .map { idx in TestingModels.Indexed.Hash(id: "\(idx)", category: categories[idx % 5], value: idx) }
             .shuffled()
     }
 }

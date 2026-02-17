@@ -14,15 +14,15 @@ final class SortIndexPerformanceTests: XCTestCase {
     var context = Context()
 
     lazy var notIndexedModels = {
-        TestingModels.NotIndexed.shuffled(count)
+        TestingModels.NotIndexed.Plain.shuffled(count)
     }()
 
     lazy var indexedModels = {
-        TestingModels.SingleValueIndexed.shuffled(count)
+        TestingModels.Indexed.SingleValue.shuffled(count)
     }()
 
     lazy var evalPropertyIndexedModels = {
-        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
+        TestingModels.Indexed.EvaluatedPropertyDesc.shuffled(count)
     }()
 
     override func setUp() async throws {
@@ -38,7 +38,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
 
     func test_NoIndex_SortPerformance() throws {
-        let queries: QueryList<TestingModels.NotIndexed> = TestingModels.NotIndexed.query()
+        let queries: QueryList<TestingModels.NotIndexed.Plain> = TestingModels.NotIndexed.Plain.query()
         measure {
             _ = queries
                 .sorted(by: \.numOf1)
@@ -47,7 +47,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
 
     func test_Indexed_SortPerformance() throws {
-        let queries: QueryList<TestingModels.SingleValueIndexed> = TestingModels.SingleValueIndexed.query()
+        let queries: QueryList<TestingModels.Indexed.SingleValue> = TestingModels.Indexed.SingleValue.query()
         measure {
             _ = queries
                 .sorted(by: \.numOf1)
@@ -56,7 +56,7 @@ final class SortIndexPerformanceTests: XCTestCase {
     }
 
     func test_EvalProperyIndexed_SortPerformance() throws {
-        let queries: QueryList<TestingModels.EvaluatedPropertyDescIndexed> = TestingModels.EvaluatedPropertyDescIndexed.query()
+        let queries: QueryList<TestingModels.Indexed.EvaluatedPropertyDesc> = TestingModels.Indexed.EvaluatedPropertyDesc.query()
         measure {
             _ = queries
                 .sorted(by: \.numOf1.desc)
