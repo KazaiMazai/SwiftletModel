@@ -66,6 +66,12 @@ extension TestingModels {
         let numOf1000: Int
         let numOf100: Int
         let numOf10: Int
+        
+        /**Not  index properties equivalents**/
+        let _numOf1: Int
+        let _numOf1000: Int
+        let _numOf100: Int
+        let _numOf10: Int
 
         init(id: String, value: Int) {
             self.id = id
@@ -73,6 +79,11 @@ extension TestingModels {
             self.numOf10 = (value / 10) % 10
             self.numOf100 = (value / 100) % 10
             self.numOf1000 = value / 1000
+            
+            _numOf1 = numOf1
+            _numOf10 = numOf10
+            _numOf100 = numOf100
+            _numOf1000 = numOf1000
         }
     }
 
