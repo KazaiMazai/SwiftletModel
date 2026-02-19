@@ -7,55 +7,61 @@
 
 import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
-final class FilterQueryTests: XCTestCase {
+@Suite("Filter Query", .tags(.query, .filter))
+struct FilterQueryTests {
     let count = 100
-    var context = Context()
 
-    lazy var notIndexedModels = {
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
         TestingModels.NotIndexed.Model.shuffled(count)
-    }()
-
-    lazy var indexedModels = {
-        TestingModels.Indexed.ManyProperties.shuffled(count)
-    }()
-
-    override func setUp() async throws {
-        context = Context()
-        try notIndexedModels
-            .forEach { try $0.save(to: &context) }
-
-        try indexedModels
-            .forEach { try $0.save(to: &context) }
     }
 
-    func test_WhenFilterNoIndex_ThenEqualPlainFitlering() throws {
-        let expected = notIndexedModels
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
+    }
+
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.ManyProperties]) {
+        var context = Context()
+        let notIndexed = notIndexedModels
+        let indexed = indexedModels
+
+        try notIndexed.forEach { try $0.save(to: &context) }
+        try indexed.forEach { try $0.save(to: &context) }
+
+        return (context, notIndexed, indexed)
+    }
+
+    @Test("Filter without index equals plain filtering")
+    func whenFilterNoIndex_ThenEqualPlainFitlering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("Filter with index equals plain filtering")
+    func whenFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter { $0.numOf1 == 1 }
 
         let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenChainedFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("Chained indexed filters equal plain filtering")
+    func whenChainedFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 && $0.numOf10 == 2
@@ -66,12 +72,13 @@ final class FilterQueryTests: XCTestCase {
             .filter(\.numOf10 == 2)
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenAndPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("AND predicate indexed filter equals plain filtering")
+    func whenAndPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 && $0.numOf10 == 2
@@ -82,96 +89,99 @@ final class FilterQueryTests: XCTestCase {
             .filter(\.numOf10 == 2)
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenOrPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("OR predicate indexed filter equals plain filtering")
+    func whenOrPredicateFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 || $0.numOf10 == 2
             }
 
-        let context = context
         let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 == 2))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenComplexFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("Complex indexed filter equals plain filtering")
+    func whenComplexFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
-        let context = context
+
         let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
-        let expected = notIndexedModels
+    @Test("Complex non-indexed filter equals plain filtering")
+    func whenComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let expected = notIndexed
             .filter {
                 $0.numOf1 == 1
                 || $0.numOf10 != 5
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
-        let context = context
+
         let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenCompareComplexFilterIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("Complex comparison indexed filter equals plain filtering")
+    func whenCompareComplexFilterIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
-        let context = context
+
         let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenCompareComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
-        let expected = indexedModels
+    @Test("Complex comparison non-indexed filter equals plain filtering")
+    func whenCompareComplexFilterNotIndexed_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
             .filter {
                 $0.numOf1 == 1
                 ||  $0.numOf10 != 5
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
-        let context = context
+
         let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(filterResult.map { $0.id }),
-                       Set(expected.map { $0.id }))
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 }

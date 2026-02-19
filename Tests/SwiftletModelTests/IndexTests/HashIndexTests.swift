@@ -7,18 +7,16 @@
 
 import SwiftletModel
 import Foundation
-import XCTest
+import Testing
 
 // MARK: - Single Property HashIndex Tests
 
-final class HashIndexTests: XCTestCase {
-    var context = Context()
+@Suite("Hash Index", .tags(.query, .filter, .index, .hashIndex))
+struct HashIndexTests {
 
-    override func setUp() async throws {
-        context = Context()
-    }
-
-    func test_WhenEntitySaved_ThenIndexContainsEntity() throws {
+    @Test("Saved entity is added to hash index")
+    func whenEntitySaved_ThenIndexContainsEntity() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
@@ -26,10 +24,12 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertEqual(Set(result.map { $0.id }), Set(["1"]))
+        #expect(Set(result.map { $0.id }) == Set(["1"]))
     }
 
-    func test_WhenMultipleEntitiesWithSameValue_ThenAllInSameBucket() throws {
+    @Test("Multiple entities with same value are in same bucket")
+    func whenMultipleEntitiesWithSameValue_ThenAllInSameBucket() throws {
+        var context = Context()
         let entities = [
             TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10),
             TestingModels.Indexed.HashSingleProperty(id: "2", category: "A", value: 20),
@@ -46,11 +46,13 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "B")
             .resolve(in: context)
 
-        XCTAssertEqual(Set(resultA.map { $0.id }), Set(["1", "2"]))
-        XCTAssertEqual(Set(resultB.map { $0.id }), Set(["3"]))
+        #expect(Set(resultA.map { $0.id }) == Set(["1", "2"]))
+        #expect(Set(resultB.map { $0.id }) == Set(["3"]))
     }
 
-    func test_WhenEntityValueUpdated_ThenBucketMigration() throws {
+    @Test("Entity value update migrates to new bucket")
+    func whenEntityValueUpdated_ThenBucketMigration() throws {
+        var context = Context()
         var entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
@@ -65,11 +67,13 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "B")
             .resolve(in: context)
 
-        XCTAssertTrue(resultA.isEmpty, "Entity should no longer be in bucket A")
-        XCTAssertEqual(Set(resultB.map { $0.id }), Set(["1"]))
+        #expect(resultA.isEmpty, "Entity should no longer be in bucket A")
+        #expect(Set(resultB.map { $0.id }) == Set(["1"]))
     }
 
-    func test_WhenEntitySavedWithSameValue_ThenNoRedundantUpdate() throws {
+    @Test("Saving entity with same value does not duplicate")
+    func whenEntitySavedWithSameValue_ThenNoRedundantUpdate() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
         try entity.save(to: &context)
@@ -78,11 +82,13 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertEqual(result.count, 1, "Should still have exactly one entity")
-        XCTAssertEqual(result.first?.id, "1")
+        #expect(result.count == 1, "Should still have exactly one entity")
+        #expect(result.first?.id == "1")
     }
 
-    func test_WhenEntityDeleted_ThenRemovedFromIndex() throws {
+    @Test("Deleted entity is removed from index")
+    func whenEntityDeleted_ThenRemovedFromIndex() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
         try TestingModels.Indexed.HashSingleProperty.delete(id: "1", from: &context)
@@ -91,10 +97,12 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertTrue(result.isEmpty)
+        #expect(result.isEmpty)
     }
 
-    func test_WhenOneOfMultipleEntitiesDeleted_ThenOthersRemainInIndex() throws {
+    @Test("Deleting one entity preserves others in index")
+    func whenOneOfMultipleEntitiesDeleted_ThenOthersRemainInIndex() throws {
+        var context = Context()
         let entities = [
             TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10),
             TestingModels.Indexed.HashSingleProperty(id: "2", category: "A", value: 20),
@@ -108,11 +116,13 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertEqual(Set(result.map { $0.id }), Set(["2", "3"]),
+        #expect(Set(result.map { $0.id }) == Set(["2", "3"]),
             "Deleting one entity should not remove others with same indexed value")
     }
 
-    func test_WhenLastEntityInBucketDeleted_ThenBucketCleanup() throws {
+    @Test("Deleting last entity in bucket cleans up bucket")
+    func whenLastEntityInBucketDeleted_ThenBucketCleanup() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
         try TestingModels.Indexed.HashSingleProperty.delete(id: "1", from: &context)
@@ -121,10 +131,12 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertTrue(result.isEmpty)
+        #expect(result.isEmpty)
     }
 
-    func test_WhenFilterByNonExistentValue_ThenReturnsEmpty() throws {
+    @Test("Filter by non-existent value returns empty")
+    func whenFilterByNonExistentValue_ThenReturnsEmpty() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashSingleProperty(id: "1", category: "A", value: 10)
         try entity.save(to: &context)
 
@@ -132,22 +144,20 @@ final class HashIndexTests: XCTestCase {
             .filter(\.category == "Z")
             .resolve(in: context)
 
-        XCTAssertTrue(result.isEmpty)
+        #expect(result.isEmpty)
     }
 }
 
 // MARK: - Compound HashIndex Tests
 
-final class CompoundHashIndexTests: XCTestCase {
-    var context = Context()
-
-    override func setUp() async throws {
-        context = Context()
-    }
+@Suite("Compound Hash Index", .tags(.query, .filter, .index, .hashIndex))
+struct CompoundHashIndexTests {
 
     // MARK: - Pair (Two Properties) Tests
 
-    func test_WhenPairIndex_ThenBothPropertiesMustMatch() throws {
+    @Test("Pair index requires both properties to match")
+    func whenPairIndex_ThenBothPropertiesMustMatch() throws {
+        var context = Context()
         let entities = [
             TestingModels.Indexed.HashPropertyPair(id: "1", category: "A", subcategory: "X", value: 10),
             TestingModels.Indexed.HashPropertyPair(id: "2", category: "A", subcategory: "Y", value: 20),
@@ -161,10 +171,12 @@ final class CompoundHashIndexTests: XCTestCase {
             .filter(\.subcategory == "X")
             .resolve(in: context)
 
-        XCTAssertEqual(Set(result.map { $0.id }), Set(["1"]))
+        #expect(Set(result.map { $0.id }) == Set(["1"]))
     }
 
-    func test_WhenPairIndexValueUpdated_ThenMigratesToNewBucket() throws {
+    @Test("Pair index value update migrates to new bucket")
+    func whenPairIndexValueUpdated_ThenMigratesToNewBucket() throws {
+        var context = Context()
         var entity = TestingModels.Indexed.HashPropertyPair(
             id: "1", category: "A", subcategory: "X", value: 10
         )
@@ -185,13 +197,15 @@ final class CompoundHashIndexTests: XCTestCase {
             .filter(\.subcategory == "Y")
             .resolve(in: context)
 
-        XCTAssertTrue(oldResult.isEmpty)
-        XCTAssertEqual(Set(newResult.map { $0.id }), Set(["1"]))
+        #expect(oldResult.isEmpty)
+        #expect(Set(newResult.map { $0.id }) == Set(["1"]))
     }
 
     // MARK: - Triplet (Three Properties) Tests
 
-    func test_WhenTripletIndex_ThenAllThreeMatch() throws {
+    @Test("Triplet index requires all three properties to match")
+    func whenTripletIndex_ThenAllThreeMatch() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashPropertyTriplet(
             id: "1", region: "US", category: "Tech", subcategory: "Software"
         )
@@ -203,13 +217,15 @@ final class CompoundHashIndexTests: XCTestCase {
             .filter(\.subcategory == "Software")
             .resolve(in: context)
 
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(result.first?.id, "1")
+        #expect(result.count == 1)
+        #expect(result.first?.id == "1")
     }
 
     // MARK: - Quadruple (Four Properties) Tests
 
-    func test_WhenQuadrupleIndex_ThenAllFourMatch() throws {
+    @Test("Quadruple index requires all four properties to match")
+    func whenQuadrupleIndex_ThenAllFourMatch() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashPropertyQuadruple(
             id: "1", region: "Americas", country: "US",
             category: "Tech", subcategory: "Software"
@@ -223,11 +239,13 @@ final class CompoundHashIndexTests: XCTestCase {
             .filter(\.subcategory == "Software")
             .resolve(in: context)
 
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(result.first?.id, "1")
+        #expect(result.count == 1)
+        #expect(result.first?.id == "1")
     }
 
-    func test_WhenQuadruplePartialMatch_ThenNoResults() throws {
+    @Test("Quadruple partial match returns no results")
+    func whenQuadruplePartialMatch_ThenNoResults() throws {
+        var context = Context()
         let entity = TestingModels.Indexed.HashPropertyQuadruple(
             id: "1", region: "Americas", country: "US",
             category: "Tech", subcategory: "Software"
@@ -241,34 +259,38 @@ final class CompoundHashIndexTests: XCTestCase {
             .filter(\.subcategory == "Software")
             .resolve(in: context)
 
-        XCTAssertTrue(result.isEmpty)
+        #expect(result.isEmpty)
     }
 }
 
 // MARK: - HashIndex Query Integration Tests
 
-final class HashIndexQueryTests: XCTestCase {
+@Suite("Hash Index Query Integration", .tags(.query, .filter, .index, .hashIndex))
+struct HashIndexQueryTests {
     let count = 100
-    var context = Context()
-    var models: [TestingModels.Indexed.HashSingleProperty] = []
 
-    override func setUp() async throws {
-        context = Context()
-        models = TestingModels.Indexed.HashSingleProperty.shuffled(count)
+    private func makeContext() throws -> (context: Context, models: [TestingModels.Indexed.HashSingleProperty]) {
+        var context = Context()
+        let models = TestingModels.Indexed.HashSingleProperty.shuffled(count)
         try models.forEach { try $0.save(to: &context) }
+        return (context, models)
     }
 
-    func test_WhenHashIndexedVsPlainFilter_ThenSameResults() throws {
+    @Test("Hash indexed filter equals plain filtering")
+    func whenHashIndexedVsPlainFilter_ThenSameResults() throws {
+        let (context, models) = try makeContext()
         let expected = models.filter { $0.category == "A" }
 
         let result = TestingModels.Indexed.HashSingleProperty
             .filter(\.category == "A")
             .resolve(in: context)
 
-        XCTAssertEqual(Set(result.map { $0.id }), Set(expected.map { $0.id }))
+        #expect(Set(result.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenOrPredicateWithHashIndex_ThenCorrectResults() throws {
+    @Test("OR predicate with hash index returns correct results")
+    func whenOrPredicateWithHashIndex_ThenCorrectResults() throws {
+        let (context, models) = try makeContext()
         let expected = models.filter { $0.category == "A" || $0.category == "B" }
 
         let result = TestingModels.Indexed.HashSingleProperty
@@ -276,10 +298,11 @@ final class HashIndexQueryTests: XCTestCase {
             .or(.filter(\.category == "B"))
             .resolve(in: context)
 
-        XCTAssertEqual(Set(result.map { $0.id }), Set(expected.map { $0.id }))
+        #expect(Set(result.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
-    func test_WhenExistingUserModelHashIndex_ThenQueryWorks() throws {
+    @Test("Existing User model hash index query works")
+    func whenExistingUserModelHashIndex_ThenQueryWorks() throws {
         var userContext = Context()
         let users = [
             User(id: "1", username: "@alice", email: "alice@test.com"),
@@ -293,7 +316,7 @@ final class HashIndexQueryTests: XCTestCase {
             .filter(\.username == "@alice")
             .resolve(in: userContext)
 
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(result.first?.id, "1")
+        #expect(result.count == 1)
+        #expect(result.first?.id == "1")
     }
 }

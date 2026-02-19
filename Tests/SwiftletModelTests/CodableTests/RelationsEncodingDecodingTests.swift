@@ -1,19 +1,20 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Serge Kazakov on 19/07/2024.
 //
 
 import Foundation
-import XCTest
+import Testing
 import SwiftletModel
 import SnapshotTesting
 
-final class RelationsEncodingDecodingTests: XCTestCase {
-    var context = Context()
+@Suite("Relations Encoding and Decoding", .tags(.coding, .encoding, .decoding, .relations))
+struct RelationsEncodingDecodingTests {
 
-    override func setUpWithError() throws {
+    private func makeContext() throws -> Context {
+        var context = Context()
         let chat = Chat(
             id: "1",
             users: .relation([.bob, .alice, .tom, .john, .michael]),
@@ -29,9 +30,12 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         )
 
         try chat.save(to: &context)
+        return context
     }
 
-    func test_WhenDefaultCoding_EqualExpectedJSON() {
+    @Test("Default coding matches expected JSON")
+    func whenDefaultCoding_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -55,7 +59,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
 
         assertSnapshot(of: user, as: .json(encoder))
 
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
@@ -65,7 +69,9 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    func test_WhenExplicitCoding_EqualExpectedJSON() {
+    @Test("Explicit coding matches expected JSON")
+    func whenExplicitCoding_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
 
@@ -89,7 +95,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
 
         assertSnapshot(of: user, as: .json(encoder))
 
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
@@ -99,7 +105,9 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    func test_WhenExactCoding_EqualExpectedJSON() {
+    @Test("Exact coding matches expected JSON")
+    func whenExactCoding_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -123,7 +131,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
 
         assertSnapshot(of: user, as: .json(encoder))
 
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
@@ -133,7 +141,9 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    func test_WhenExactEncodingSlice_EqualExpectedJSON() {
+    @Test("Exact encoding slice matches expected JSON")
+    func whenExactEncodingSlice_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .explicitKeyedContainer
 
@@ -156,7 +166,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
             .resolve(in: context)
 
         assertSnapshot(of: user, as: .json(encoder))
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
@@ -166,8 +176,9 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    func test_WhenExplicitEncodingSlice_EqualExpectedJSON() {
-
+    @Test("Explicit encoding slice matches expected JSON")
+    func whenExplicitEncodingSlice_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .keyedContainer
 
@@ -191,7 +202,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
 
         assertSnapshot(of: user, as: .json(encoder))
 
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
@@ -201,7 +212,9 @@ final class RelationsEncodingDecodingTests: XCTestCase {
         assertSnapshot(of: decodedUser, as: .json(encoder))
     }
 
-    func test_WhenDefaultEncodingSlice_EqualExpectedJSON() {
+    @Test("Default encoding slice matches expected JSON")
+    func whenDefaultEncodingSlice_EqualExpectedJSON() throws {
+        let context = try makeContext()
         let encoder = JSONEncoder.prettyPrinting
         encoder.relationEncodingStrategy = .plain
 
@@ -225,7 +238,7 @@ final class RelationsEncodingDecodingTests: XCTestCase {
 
         assertSnapshot(of: user, as: .json(encoder))
 
-        let decodedUser = try! decoder.decode(
+        let decodedUser = try decoder.decode(
             User.self,
             from: user
                 .prettyDescription(with: encoder)!
