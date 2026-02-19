@@ -58,7 +58,7 @@ struct CompoundUniqueIndexTests {
     @Test("One key path collision throws error")
     func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.ManyUniqueProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -67,7 +67,7 @@ struct CompoundUniqueIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.ManyUniqueProperties(
             id: "1",
             numOf1: 1,
             numOf10: 20,
@@ -82,7 +82,7 @@ struct CompoundUniqueIndexTests {
     @Test("Two key path collision throws error")
     func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.ManyUniqueProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -91,7 +91,7 @@ struct CompoundUniqueIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.ManyUniqueProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -106,7 +106,7 @@ struct CompoundUniqueIndexTests {
     @Test("Three key path collision throws error")
     func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.ManyUniqueProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -115,7 +115,7 @@ struct CompoundUniqueIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.ManyUniqueProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -130,7 +130,7 @@ struct CompoundUniqueIndexTests {
     @Test("Four key path collision throws error")
     func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.ManyUniqueProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -139,7 +139,7 @@ struct CompoundUniqueIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.ManyUniqueProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -154,7 +154,7 @@ struct CompoundUniqueIndexTests {
     @Test("No collision when keys differ")
     func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexed(
+        let model1 = TestingModels.Indexed.ManyUniqueProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -163,7 +163,7 @@ struct CompoundUniqueIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexed(
+        let model2 = TestingModels.Indexed.ManyUniqueProperties(
             id: "1",
             numOf1: 10,
             numOf10: 2,
@@ -183,7 +183,7 @@ struct CompoundUniqueComparableIndexTests {
     @Test("One key path comparable collision throws error")
     func whenOneKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -192,7 +192,7 @@ struct CompoundUniqueComparableIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "1",
             numOf1: 1,
             numOf10: 20,
@@ -207,7 +207,7 @@ struct CompoundUniqueComparableIndexTests {
     @Test("Two key path comparable collision throws error")
     func whenTwoKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -216,7 +216,7 @@ struct CompoundUniqueComparableIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -231,7 +231,7 @@ struct CompoundUniqueComparableIndexTests {
     @Test("Three key path comparable collision throws error")
     func whenThreeKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -240,7 +240,7 @@ struct CompoundUniqueComparableIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -255,7 +255,7 @@ struct CompoundUniqueComparableIndexTests {
     @Test("Four key path comparable collision throws error")
     func whenFourKeyPathThrowingCollision_ThenErrorIsThrown() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -264,7 +264,7 @@ struct CompoundUniqueComparableIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "1",
             numOf1: 1,
             numOf10: 2,
@@ -279,7 +279,7 @@ struct CompoundUniqueComparableIndexTests {
     @Test("No comparable collision when keys differ")
     func whenNoIndexUniqueIndexCollision_ThenNoError() throws {
         var context = Context()
-        let model1 = TestingModels.UniquelyIndexedComparable(
+        let model1 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "0",
             numOf1: 1,
             numOf10: 2,
@@ -288,7 +288,7 @@ struct CompoundUniqueComparableIndexTests {
         )
         try model1.save(to: &context)
 
-        let model2 = TestingModels.UniquelyIndexedComparable(
+        let model2 = TestingModels.Indexed.ManyUniqueComparableProperties(
             id: "1",
             numOf1: 10,
             numOf10: 2,

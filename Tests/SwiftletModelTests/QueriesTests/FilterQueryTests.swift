@@ -13,15 +13,15 @@ import Testing
 struct FilterQueryTests {
     let count = 100
 
-    var notIndexedModels: [TestingModels.NotIndexed] {
-        TestingModels.NotIndexed.shuffled(count)
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
+        TestingModels.NotIndexed.Model.shuffled(count)
     }
 
-    var indexedModels: [TestingModels.ExtensivelyIndexed] {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.ManyProperties]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -38,7 +38,7 @@ struct FilterQueryTests {
         let expected = notIndexed
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.NotIndexed
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -51,7 +51,7 @@ struct FilterQueryTests {
         let expected = indexed
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -67,7 +67,7 @@ struct FilterQueryTests {
                 && $0.numOf10 == 2
             }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(in: context)
@@ -84,7 +84,7 @@ struct FilterQueryTests {
                 && $0.numOf10 == 2
             }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .filter(\.numOf10 == 2)
             .resolve(in: context)
@@ -101,7 +101,7 @@ struct FilterQueryTests {
                 || $0.numOf10 == 2
             }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 == 2))
             .resolve(in: context)
@@ -119,7 +119,7 @@ struct FilterQueryTests {
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
@@ -138,7 +138,7 @@ struct FilterQueryTests {
                 || ($0.numOf1 > 1 && $0.numOf10 <= 4)
             }
 
-        let filterResult = TestingModels.NotIndexed
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 > 1).and(\.numOf10 <= 4))
@@ -157,7 +157,7 @@ struct FilterQueryTests {
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
 
-        let filterResult = TestingModels.NotIndexed
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))
@@ -176,7 +176,7 @@ struct FilterQueryTests {
                 || ($0.numOf1 >= 2 && $0.numOf10 < 4)
             }
 
-        let filterResult = TestingModels.NotIndexed
+        let filterResult = TestingModels.NotIndexed.Model
             .filter(\.numOf1 == 1)
             .or(.filter(\.numOf10 != 5))
             .or(.filter(\.numOf1 >= 2).and(\.numOf10 < 4))

@@ -13,11 +13,11 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     var context = Context()
 
     lazy var indexedModels = {
-        TestingModels.StringFullTextIndexed.shuffled()
+        TestingModels.Indexed.StringFullText.shuffled()
     }()
 
     lazy var notIndexeddModels = {
-        TestingModels.StringNotIndexed.shuffled()
+        TestingModels.NotIndexed.StringModel.shuffled()
     }()
 
     override func setUp() async throws {
@@ -32,7 +32,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
 
     func test_RawContainTextFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.StringNotIndexed
+            _ = TestingModels.NotIndexed.StringModel
                 .query()
                 .resolve(in: context)
                 .filter {
@@ -43,7 +43,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
 
     func test_IndexedContainsTextFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.StringFullTextIndexed
+            _ = TestingModels.Indexed.StringFullText
                 .filter(.string(\.text, contains: "banan"))
                 .resolve(in: context)
         }
@@ -51,7 +51,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
 
     func test_NotIndexedContainsTextFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.StringNotIndexed
+            _ = TestingModels.NotIndexed.StringModel
                 .filter(.string(\.text, contains: "banan"))
                 .resolve(in: context)
         }
@@ -59,7 +59,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
 
     func test_IndexedMatchTextFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.StringFullTextIndexed
+            _ = TestingModels.Indexed.StringFullText
                 .filter(.string(\.text, matches: "banan"))
                 .resolve(in: context)
         }
@@ -67,7 +67,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
 
     func test_NotIndexedMatchTextFilter_FilterPerformance() throws {
         measure {
-            _ = TestingModels.StringNotIndexed
+            _ = TestingModels.NotIndexed.StringModel
                 .filter(.string(\.text, matches: "banan"))
                 .resolve(in: context)
         }
@@ -76,7 +76,7 @@ final class FullTextIndexPerformanceTests: XCTestCase {
     func test_RawMatchTextFilter_FilterPerformance() throws {
         measure {
             let tokens = "banan".makeTokens()
-            _ = TestingModels.StringNotIndexed
+            _ = TestingModels.NotIndexed.StringModel
                 .query()
                 .resolve(in: context)
                 .filter {

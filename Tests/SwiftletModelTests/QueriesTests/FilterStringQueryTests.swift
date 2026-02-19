@@ -12,15 +12,15 @@ import Testing
 @Suite("Filter String Match", .tags(.query, .filter))
 struct FilterMatchStringQueryTests {
 
-    var notIndexedModels: [TestingModels.StringNotIndexed] {
-        TestingModels.StringNotIndexed.shuffled()
+    var notIndexedModels: [TestingModels.NotIndexed.StringModel] {
+        TestingModels.NotIndexed.StringModel.shuffled()
     }
 
-    var indexedModels: [TestingModels.StringFullTextIndexed] {
-        TestingModels.StringFullTextIndexed.shuffled()
+    var indexedModels: [TestingModels.Indexed.StringFullText] {
+        TestingModels.Indexed.StringFullText.shuffled()
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.StringModel], indexed: [TestingModels.Indexed.StringFullText]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -37,7 +37,7 @@ struct FilterMatchStringQueryTests {
         let expected = notIndexed
             .filter { $0.text.matches(fuzzy: "ananas") }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -50,7 +50,7 @@ struct FilterMatchStringQueryTests {
         let expected = indexed
             .filter { $0.text.matches(fuzzy: "ananas") }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, matches: "ananas"))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -62,15 +62,15 @@ struct FilterMatchStringQueryTests {
 struct FilterStringCaseSensitiveQueryTests {
     let caseSensitive = true
 
-    var notIndexedModels: [TestingModels.StringNotIndexed] {
-        TestingModels.StringNotIndexed.shuffled()
+    var notIndexedModels: [TestingModels.NotIndexed.StringModel] {
+        TestingModels.NotIndexed.StringModel.shuffled()
     }
 
-    var indexedModels: [TestingModels.StringFullTextIndexed] {
-        TestingModels.StringFullTextIndexed.shuffled()
+    var indexedModels: [TestingModels.Indexed.StringFullText] {
+        TestingModels.Indexed.StringFullText.shuffled()
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.StringModel], indexed: [TestingModels.Indexed.StringFullText]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -87,7 +87,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = notIndexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -100,7 +100,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = indexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -113,7 +113,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = notIndexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -126,7 +126,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = indexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
 
@@ -140,7 +140,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = notIndexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -153,7 +153,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = indexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -166,7 +166,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = notIndexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -179,7 +179,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = indexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -192,7 +192,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = notIndexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -205,7 +205,7 @@ struct FilterStringCaseSensitiveQueryTests {
         let expected = indexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
 
@@ -218,15 +218,15 @@ struct FilterStringCaseSensitiveQueryTests {
 struct FilterStringQueryTests {
     let caseSensitive = false
 
-    var notIndexedModels: [TestingModels.StringNotIndexed] {
-        TestingModels.StringNotIndexed.shuffled()
+    var notIndexedModels: [TestingModels.NotIndexed.StringModel] {
+        TestingModels.NotIndexed.StringModel.shuffled()
     }
 
-    var indexedModels: [TestingModels.StringFullTextIndexed] {
-        TestingModels.StringFullTextIndexed.shuffled()
+    var indexedModels: [TestingModels.Indexed.StringFullText] {
+        TestingModels.Indexed.StringFullText.shuffled()
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.StringNotIndexed], indexed: [TestingModels.StringFullTextIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.StringModel], indexed: [TestingModels.Indexed.StringFullText]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -243,7 +243,7 @@ struct FilterStringQueryTests {
         let expected = notIndexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -256,7 +256,7 @@ struct FilterStringQueryTests {
         let expected = indexed
             .filter { $0.text.contains("ananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, contains: "ananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -269,7 +269,7 @@ struct FilterStringQueryTests {
         let expected = notIndexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -282,7 +282,7 @@ struct FilterStringQueryTests {
         let expected = indexed
             .filter { $0.text.hasPrefix("Sweet", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasPrefix: "Sweet", caseSensitive: caseSensitive))
             .resolve(in: context)
 
@@ -296,7 +296,7 @@ struct FilterStringQueryTests {
         let expected = notIndexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -309,7 +309,7 @@ struct FilterStringQueryTests {
         let expected = indexed
             .filter { $0.text.hasSuffix("selection", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, hasSuffix: "selection", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -322,7 +322,7 @@ struct FilterStringQueryTests {
         let expected = notIndexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -335,7 +335,7 @@ struct FilterStringQueryTests {
         let expected = indexed
             .filter { !$0.text.hasPrefix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingPrefix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -348,7 +348,7 @@ struct FilterStringQueryTests {
         let expected = notIndexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringNotIndexed
+        let filterResult = TestingModels.NotIndexed.StringModel
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
         #expect(!filterResult.isEmpty)
@@ -361,7 +361,7 @@ struct FilterStringQueryTests {
         let expected = indexed
             .filter { !$0.text.hasSuffix("bananas", caseSensitive: caseSensitive) }
 
-        let filterResult = TestingModels.StringFullTextIndexed
+        let filterResult = TestingModels.Indexed.StringFullText
             .filter(.string(\.text, notHavingSuffix: "bananas", caseSensitive: caseSensitive))
             .resolve(in: context)
 

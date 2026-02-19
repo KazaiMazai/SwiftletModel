@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(while read f)",
-      "Bash(do rm \"$f\")",
-      "Bash(done)"
-    ]
-  }
-}

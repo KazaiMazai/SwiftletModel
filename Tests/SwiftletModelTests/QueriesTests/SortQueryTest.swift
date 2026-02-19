@@ -13,19 +13,19 @@ import Testing
 struct SortByOnePathQueryTests {
     let count = 10
 
-    var notIndexedModels: [TestingModels.NotIndexed] {
-        TestingModels.NotIndexed.shuffled(count)
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
+        TestingModels.NotIndexed.Model.shuffled(count)
     }
 
-    var indexedModels: [TestingModels.SingleValueIndexed] {
-        TestingModels.SingleValueIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.SingleProperty] {
+        TestingModels.Indexed.SingleProperty.shuffled(count)
     }
 
-    var evalPropertyIndexedModels: [TestingModels.EvaluatedPropertyDescIndexed] {
-        TestingModels.EvaluatedPropertyDescIndexed.shuffled(count)
+    var evalPropertyIndexedModels: [TestingModels.Indexed.SingleEvaluatedPropertyDesc] {
+        TestingModels.Indexed.SingleEvaluatedPropertyDesc.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.SingleValueIndexed], evalPropertyIndexed: [TestingModels.EvaluatedPropertyDescIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.SingleProperty], evalPropertyIndexed: [TestingModels.Indexed.SingleEvaluatedPropertyDesc]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -44,7 +44,7 @@ struct SortByOnePathQueryTests {
         let expected = notIndexed
             .sorted { $0.numOf1 < $1.numOf1 }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf1)
             .resolve(in: context)
@@ -58,7 +58,7 @@ struct SortByOnePathQueryTests {
         let expected = indexed
             .sorted { $0.numOf1 < $1.numOf1 }
 
-        let sortResult = TestingModels.SingleValueIndexed
+        let sortResult = TestingModels.Indexed.SingleProperty
             .query()
             .sorted(by: \.numOf1)
             .resolve(in: context)
@@ -72,7 +72,7 @@ struct SortByOnePathQueryTests {
         let expected = notIndexed
             .sorted { $0.numOf1 > $1.numOf1 }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
@@ -86,7 +86,7 @@ struct SortByOnePathQueryTests {
         let expected = evalPropertyIndexed
             .sorted { $0.numOf1 > $1.numOf1 }
 
-        let sortResult = TestingModels.EvaluatedPropertyDescIndexed
+        let sortResult = TestingModels.Indexed.SingleEvaluatedPropertyDesc
             .query()
             .sorted(by: \.numOf1.desc)
             .resolve(in: context)
@@ -99,15 +99,15 @@ struct SortByOnePathQueryTests {
 struct SortByTwoPathsQueryTests {
     let count = 15
 
-    var notIndexedModels: [TestingModels.NotIndexed] {
-        TestingModels.NotIndexed.shuffled(count)
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
+        TestingModels.NotIndexed.Model.shuffled(count)
     }
 
-    var indexedModels: [TestingModels.ExtensivelyIndexed] {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.ManyProperties]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -124,7 +124,7 @@ struct SortByTwoPathsQueryTests {
         let expected = notIndexed
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -138,7 +138,7 @@ struct SortByTwoPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf10, $0.numOf1) < ($1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -152,7 +152,7 @@ struct SortByTwoPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -166,7 +166,7 @@ struct SortByTwoPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf10.desc, $0.numOf1) < ($1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -179,15 +179,15 @@ struct SortByTwoPathsQueryTests {
 struct SortByThreePathsQueryTests {
     let count = 120
 
-    var notIndexedModels: [TestingModels.NotIndexed] {
-        TestingModels.NotIndexed.shuffled(count)
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
+        TestingModels.NotIndexed.Model.shuffled(count)
     }
 
-    var indexedModels: [TestingModels.ExtensivelyIndexed] {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.ManyProperties]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -204,7 +204,7 @@ struct SortByThreePathsQueryTests {
         let expected = notIndexed
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -218,7 +218,7 @@ struct SortByThreePathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -232,7 +232,7 @@ struct SortByThreePathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -246,7 +246,7 @@ struct SortByThreePathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -259,15 +259,15 @@ struct SortByThreePathsQueryTests {
 struct SortByFourPathsQueryTests {
     let count = 1200
 
-    var notIndexedModels: [TestingModels.NotIndexed] {
-        TestingModels.NotIndexed.shuffled(count)
+    var notIndexedModels: [TestingModels.NotIndexed.Model] {
+        TestingModels.NotIndexed.Model.shuffled(count)
     }
 
-    var indexedModels: [TestingModels.ExtensivelyIndexed] {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed], indexed: [TestingModels.ExtensivelyIndexed]) {
+    private func makeContext() throws -> (context: Context, notIndexed: [TestingModels.NotIndexed.Model], indexed: [TestingModels.Indexed.ManyProperties]) {
         var context = Context()
         let notIndexed = notIndexedModels
         let indexed = indexedModels
@@ -284,7 +284,7 @@ struct SortByFourPathsQueryTests {
         let expected = notIndexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -298,7 +298,7 @@ struct SortByFourPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10, \.numOf1)
             .resolve(in: context)
@@ -312,7 +312,7 @@ struct SortByFourPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.NotIndexed
+        let sortResult = TestingModels.NotIndexed.Model
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -326,7 +326,7 @@ struct SortByFourPathsQueryTests {
         let expected = indexed
             .sorted { ($0.numOf1000, $0.numOf100, $0.numOf10.desc, $0.numOf1) < ($1.numOf1000, $1.numOf100, $1.numOf10.desc, $1.numOf1) }
 
-        let sortResult = TestingModels.ExtensivelyIndexed
+        let sortResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: \.numOf1000, \.numOf100, \.numOf10.desc, \.numOf1)
             .resolve(in: context)
@@ -334,4 +334,3 @@ struct SortByFourPathsQueryTests {
         #expect(sortResult.map { $0.id } == expected.map { $0.id })
     }
 }
-

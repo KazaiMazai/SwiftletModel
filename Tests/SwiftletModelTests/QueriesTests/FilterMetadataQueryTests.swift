@@ -13,11 +13,11 @@ import Testing
 struct FilterMetadataQueryTests {
     let count = 100
 
-    var indexedModels: [TestingModels.ExtensivelyIndexed] {
-        TestingModels.ExtensivelyIndexed.shuffled(count)
+    var indexedModels: [TestingModels.Indexed.ManyProperties] {
+        TestingModels.Indexed.ManyProperties.shuffled(count)
     }
 
-    private func makeContext() throws -> (context: Context, indexedModels: [TestingModels.ExtensivelyIndexed]) {
+    private func makeContext() throws -> (context: Context, indexedModels: [TestingModels.Indexed.ManyProperties]) {
         var context = Context()
         let models = indexedModels
 
@@ -34,7 +34,7 @@ struct FilterMetadataQueryTests {
         let expected = indexedModels
             .filter { $0.numOf1 == 1 }
 
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(\.numOf1 == 1)
             .resolve(in: context)
 
@@ -53,7 +53,7 @@ struct FilterMetadataQueryTests {
         let range = pastDate...now
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(MetadataPredicate.updated(within: range))
             .resolve(in: context)
 
@@ -75,7 +75,7 @@ struct FilterMetadataQueryTests {
         let pastRange = twoDaysAgo...oneDayAgo
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .filter(.updated(within: pastRange))
             .resolve(in: context)
 
@@ -95,7 +95,7 @@ struct FilterMetadataQueryTests {
         let range = pastDate...now
 
         // When
-        let filterResult = TestingModels.ExtensivelyIndexed
+        let filterResult = TestingModels.Indexed.ManyProperties
             .query()
             .sorted(by: .updatedAt)
             .last()
