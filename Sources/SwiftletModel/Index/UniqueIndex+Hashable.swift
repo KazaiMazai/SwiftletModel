@@ -71,7 +71,7 @@ private extension Unique.HashableValue {
             return
         }
 
-        try resolver.resolveCollision(existing: existingId, new: entity.id, indexName: name, in: &context)
+        try resolver.resolveCollision(existing: existingId, new: entity, indexName: name, in: &context)
     }
 
     mutating func update(_ entity: Entity,

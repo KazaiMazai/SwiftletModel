@@ -8,10 +8,14 @@
 import Foundation
 
 public struct MergeStrategy<T>: Sendable {
-    let merge: @Sendable (_ old: T, _ new: T) -> T
+    let handler: @Sendable (_ old: T, _ new: T) -> T
 
     public init(merge: @Sendable @escaping (T, T) -> T) {
-        self.merge = merge
+        self.handler = merge
+    }
+    
+    public func merge(_ existing: T, new: T) -> T {
+        handler(existing, new)
     }
 }
 
@@ -23,9 +27,9 @@ public extension MergeStrategy {
 
 public extension MergeStrategy {
     init(_ strategies: MergeStrategy<T>...) {
-        merge = { old, new in
+        handler = { old, new in
             strategies.reduce(new) { result, strategy in
-                strategy.merge(old, result)
+                strategy.merge(old, new: result)
             }
         }
     }
@@ -52,8 +56,8 @@ public extension MergeStrategy {
 
         MergeStrategy { old, new in
             old[keyPath: keyPath()] < new[keyPath: keyPath()]
-            ? strategies.reduce(new) { result, strategy in strategy.merge(old, result) }
-            : strategies.reduce(old) { result, strategy in strategy.merge(new, result) }
+            ? strategies.reduce(new) { result, strategy in strategy.merge(old, new: result) }
+            : strategies.reduce(old) { result, strategy in strategy.merge(new, new: result) }
 
         }
     }

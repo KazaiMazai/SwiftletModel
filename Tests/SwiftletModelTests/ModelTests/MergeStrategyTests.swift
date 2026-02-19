@@ -39,7 +39,7 @@ struct MergeStrategyTests {
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.replace
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
         #expect(result == new)
     }
 
@@ -49,7 +49,7 @@ struct MergeStrategyTests {
         let new = TestModel(id: 1, name: nil, numbers: nil, tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.patch(\TestModel.name)
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
 
         #expect(result.name == "old")
     }
@@ -57,21 +57,21 @@ struct MergeStrategyTests {
     @Test("Patch keeps old value if new is nil")
     func whenPatchingOptionalValue_ThenKeepsOldValueIfNewIsNil() {
         let strategy = MergeStrategy<String?>.patch()
-        let result = strategy.merge("old", nil)
+        let result = strategy.merge("old", new: nil)
         #expect(result == "old")
     }
 
     @Test("Patch uses new value if present")
     func whenPatchingOptionalValue_ThenUsesNewValueIfPresent() {
         let strategy = MergeStrategy<String?>.patch()
-        let result = strategy.merge(nil, "new")
+        let result = strategy.merge(nil, new: "new")
         #expect(result == "new")
     }
 
     @Test("Patch prefers new value over old")
     func whenPatchingOptionalValue_ThenPreferencesNewValueOverOld() {
         let strategy = MergeStrategy<String?>.patch()
-        let result = strategy.merge("old", "new")
+        let result = strategy.merge("old", new: "new")
         #expect(result == "new")
     }
 
@@ -81,7 +81,7 @@ struct MergeStrategyTests {
         let new = TestModel(id: 1, name: "new", numbers: nil, tags: ["c"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.tags)
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
 
         #expect(result.tags == ["a", "b", "c"])
     }
@@ -92,7 +92,7 @@ struct MergeStrategyTests {
         let new = TestModel(id: 1, name: "new", numbers: [3], tags: ["b"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.numbers)
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
 
         #expect(result.numbers == [1, 2, 3])
     }
@@ -103,7 +103,7 @@ struct MergeStrategyTests {
         let nilNew = TestModel(id: 1, name: nil, numbers: nil, tags: ["c"], lastModified: Date())
 
         let strategy = MergeStrategy<TestModel>.append(\TestModel.numbers)
-        let result = strategy.merge(old, nilNew)
+        let result = strategy.merge(old, new: nilNew)
 
         #expect(result.numbers == [1, 2])
     }
@@ -122,7 +122,7 @@ struct MergeStrategyTests {
             comparedBy: \.lastModified
         )
 
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
         #expect(result.id == 1)
         #expect(result.name == "new")
         #expect(result.numbers == [1, 2, 3])
@@ -142,7 +142,7 @@ struct MergeStrategyTests {
             comparedBy: \.lastModified
         )
 
-        let result = strategy.merge(oldHigher, new)
+        let result = strategy.merge(oldHigher, new: new)
         #expect(result.id == 1)
         #expect(result.name == "older")
         #expect(result.numbers == [3, 4])
@@ -162,7 +162,7 @@ struct MergeStrategyTests {
             .append(\.numbers)
         )
 
-        let result = strategy.merge(oldHigher, new)
+        let result = strategy.merge(oldHigher, new: new)
         #expect(result.id == 1)
         #expect(result.name == "older")
         #expect(result.numbers == [3, 4])
@@ -179,7 +179,7 @@ struct MergeStrategyTests {
             .append(\.numbers)
         )
 
-        let result = strategy.merge(old, new)
+        let result = strategy.merge(old, new: new)
         #expect(result.id == 1)
         #expect(result.name == "old")
         #expect(result.numbers == [1, 2, 3])

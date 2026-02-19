@@ -8,13 +8,13 @@
 import Foundation
 
 public struct CollisionResolver<Entity: EntityModelProtocol> {
-    let resolveCollisionHandler: (Entity.ID, Entity.ID, String, inout Context) throws -> Void
+    let resolveCollisionHandler: (Entity.ID, Entity, String, inout Context) throws -> Void
 
-    func resolveCollision(existing: Entity.ID, new: Entity.ID, indexName: String, in context: inout Context) throws {
+    func resolveCollision(existing: Entity.ID, new: Entity, indexName: String, in context: inout Context) throws {
         try resolveCollisionHandler(existing, new, indexName, &context)
     }
 
-    public init(resolveCollisionHandler: @escaping (Entity.ID, Entity.ID, String, inout Context) throws -> Void) {
+    public init(resolveCollisionHandler: @escaping (Entity.ID, Entity, String, inout Context) throws -> Void) {
         self.resolveCollisionHandler = resolveCollisionHandler
     }
 }
@@ -22,7 +22,7 @@ public struct CollisionResolver<Entity: EntityModelProtocol> {
 public extension CollisionResolver {
     static var `throw`: Self {
         CollisionResolver { existing, new, indexName, _ in
-            throw Errors.uniqueValueIndexViolation(existing: existing, new: new, indexName: indexName)
+            throw Errors.uniqueValueIndexViolation(existing: existing, new: new.id, indexName: indexName)
         }
     }
 
