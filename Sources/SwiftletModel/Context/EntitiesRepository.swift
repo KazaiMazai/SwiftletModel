@@ -62,7 +62,7 @@ extension EntitiesRepository {
             return
         }
 
-        let merged = options.merge(existing, entity)
+        let merged = options.merge(existing, new: entity)
 
         storage[entity.id.description] = merged
         storages[key] = storage
