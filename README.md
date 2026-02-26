@@ -1881,20 +1881,21 @@ Here's how to define and use schema queries:
 
 ```swift
 extension Schema {
-    /** 
+    /**
         - Query all available schemas
         - For each schema query all related versions
         - For each version query all available entities
         - For each entity query all related entities' IDs
         - is enough to restore the entire schema and all relations.
     */
-    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: .entities, .schemaEntities, .ids
-        )
+    static func fullSchemaQuery() -> QueryList<Self> {
+        Schema
+            .queryAll(
+                with: .entities, .schemaEntities, .ids,
+            )
     }
-    
-    /** 
+
+    /**
         - Query all available schemas
         - For each schema query all related versions
         - For each version query all available entities with `updatedAt` within a specific time range
@@ -1902,24 +1903,29 @@ extension Schema {
         - is enough to restore the entire schema and all relations.
     */
 
-    static func fullSchemaQuery(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: .entities, .schemaEntities, .ids
-        )
+    static func fullSchemaQuery(updated: ClosedRange<Date>) -> QueryList<Self> {
+        Schema
+            .queryAll(
+                with: .entities, .schemaEntities, .ids,
+            )
+            .filter(
+                .updated(within: updated),
+            )
     }
-    
-    
-    /** 
+
+
+    /**
         - Query all available schemas
         - For each schema query all related versions
         - For each version query all available entities as `fragments` with `updatedAt` within a specific time range
         - For each entity query all related entities' IDs
         - is enough to restore the entire schema and all relations.
     */
-    static func fullSchemaQueryFragments(in context: Context) -> QueryList<Self> {
-        Schema.queryAll(
-            with: .entities, .schemaFragments, .ids
-        )
+    static func fullSchemaQueryFragments() -> QueryList<Self> {
+        Schema
+            .queryAll(
+                with: .entities, .schemaFragments, .ids,
+            )
     }
 }
 
