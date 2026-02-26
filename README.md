@@ -1880,7 +1880,7 @@ SwiftletModel provides powerful bulk query capabilities for your schema, which a
 Here's how to define and use schema queries:
 
 ```swift
-public extension Schema {
+extension Schema {
     /**
         - Query all available schemas
         - For each schema query all related versions
