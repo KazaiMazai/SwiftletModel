@@ -802,7 +802,7 @@ Indexed property queries are insanely fast.
 | Equality (==) | `Index` | Comparable | O(log n) | O(n) | B-tree lookup |
 | Comparison (>, <, >=, <=) | `HashIndex` | Hashable | O(n) | O(n) | Hash indexes don't support range queries |
 | Comparison (>, <, >=, <=) | `Index` | Comparable | O(log n) | O(n) | B-tree enables efficient range queries |
-| Sorting | `Index` | Comparable | O(1) | O(n log n) | B-tree maintains sorted order |
+| Sorting | `Index` | Comparable | O(n) | O(n log n) | B-tree maintains sorted order |
 
 ### Filters Best Practices
 1. Index Selection:
