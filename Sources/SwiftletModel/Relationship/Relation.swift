@@ -67,6 +67,17 @@ extension Relation {
     }
 }
 
+public extension Relation {
+    var isNone: Bool {
+        switch state {
+        case .none:
+            return true
+        case .id, .ids, .entity, .entities:
+            return false
+        }
+    }
+}
+
 extension Relation {
     var isFragment: Bool {
         switch state {
@@ -87,7 +98,6 @@ extension Relation {
             return true
         }
     }
-
 }
 
 extension Relation {
