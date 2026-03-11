@@ -206,6 +206,39 @@ extension TestingModels.Indexed {
             self.subcategory = subcategory
         }
     }
+
+    @EntityModel
+    struct RichProperty: Sendable {
+        @Index<Self>(\.age) private var ageIndex
+        @Index<Self>(\.createdAt) private var dateIndex
+        @HashIndex<Self>(\.isActive) private var activeIndex
+        @HashIndex<Self>(\.status) private var statusIndex
+        @FullTextIndex<Self>(\.title, \.description) private var textIndex
+
+        let id: String
+        let age: Int
+        let isActive: Bool
+        let status: Status
+        let createdAt: Date
+        let title: String
+        let description: String
+        let optionalTag: String?
+
+        enum Status: String, Hashable, Sendable, Codable {
+            case draft, published, archived
+        }
+
+        init(id: String, age: Int, isActive: Bool, status: Status, createdAt: Date, title: String, description: String, optionalTag: String? = nil) {
+            self.id = id
+            self.age = age
+            self.isActive = isActive
+            self.status = status
+            self.createdAt = createdAt
+            self.title = title
+            self.description = description
+            self.optionalTag = optionalTag
+        }
+    }
 }
 
 // MARK: - NotIndexed Models
@@ -241,6 +274,33 @@ extension TestingModels.NotIndexed {
     struct StringModel {
         let id: String
         let text: String
+    }
+
+    @EntityModel
+    struct RichProperty: Sendable {
+        let id: String
+        let age: Int
+        let isActive: Bool
+        let status: Status
+        let createdAt: Date
+        let title: String
+        let description: String
+        let optionalTag: String?
+
+        enum Status: String, Hashable, Sendable, Codable {
+            case draft, published, archived
+        }
+
+        init(id: String, age: Int, isActive: Bool, status: Status, createdAt: Date, title: String, description: String, optionalTag: String? = nil) {
+            self.id = id
+            self.age = age
+            self.isActive = isActive
+            self.status = status
+            self.createdAt = createdAt
+            self.title = title
+            self.description = description
+            self.optionalTag = optionalTag
+        }
     }
 }
 
@@ -302,6 +362,54 @@ extension TestingModels.Indexed.HashSingleProperty {
         return (0..<count)
             .map { idx in TestingModels.Indexed.HashSingleProperty(id: "\(idx)", category: categories[idx % 5], value: idx) }
             .shuffled()
+    }
+}
+
+extension TestingModels.Indexed.RichProperty {
+    static func shuffled(_ count: Int, baseDate: Date = Date()) -> [TestingModels.Indexed.RichProperty] {
+        let statuses: [TestingModels.Indexed.RichProperty.Status] = [.draft, .published, .archived]
+        let titles = ["Introduction", "Overview", "Summary", "Details", "Conclusion"]
+        let descriptions = ["A brief intro", "General overview", "Quick summary", "In-depth details", "Final thoughts"]
+        var result: [TestingModels.Indexed.RichProperty] = []
+        for idx in 0..<count {
+            let tag: String? = idx % 3 == 0 ? "tag-\(idx)" : nil
+            let model = TestingModels.Indexed.RichProperty(
+                id: "\(idx)",
+                age: idx % 100,
+                isActive: idx % 2 == 0,
+                status: statuses[idx % 3],
+                createdAt: baseDate.addingTimeInterval(Double(idx) * 3600),
+                title: titles[idx % 5],
+                description: descriptions[idx % 5],
+                optionalTag: tag
+            )
+            result.append(model)
+        }
+        return result.shuffled()
+    }
+}
+
+extension TestingModels.NotIndexed.RichProperty {
+    static func shuffled(_ count: Int, baseDate: Date = Date()) -> [TestingModels.NotIndexed.RichProperty] {
+        let statuses: [TestingModels.NotIndexed.RichProperty.Status] = [.draft, .published, .archived]
+        let titles = ["Introduction", "Overview", "Summary", "Details", "Conclusion"]
+        let descriptions = ["A brief intro", "General overview", "Quick summary", "In-depth details", "Final thoughts"]
+        var result: [TestingModels.NotIndexed.RichProperty] = []
+        for idx in 0..<count {
+            let tag: String? = idx % 3 == 0 ? "tag-\(idx)" : nil
+            let model = TestingModels.NotIndexed.RichProperty(
+                id: "\(idx)",
+                age: idx % 100,
+                isActive: idx % 2 == 0,
+                status: statuses[idx % 3],
+                createdAt: baseDate.addingTimeInterval(Double(idx) * 3600),
+                title: titles[idx % 5],
+                description: descriptions[idx % 5],
+                optionalTag: tag
+            )
+            result.append(model)
+        }
+        return result.shuffled()
     }
 }
 
