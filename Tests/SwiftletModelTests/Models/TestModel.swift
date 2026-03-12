@@ -211,6 +211,7 @@ extension TestingModels.Indexed {
     struct RichProperty: Sendable {
         @Index<Self>(\.age) private var ageIndex
         @Index<Self>(\.createdAt) private var dateIndex
+        @Index<Self>(\.title) private var titleIndex
         @HashIndex<Self>(\.isActive) private var activeIndex
         @HashIndex<Self>(\.status) private var statusIndex
         @FullTextIndex<Self>(\.title, \.description) private var textIndex
