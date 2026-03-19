@@ -8,7 +8,7 @@
 import Foundation
 
 extension Array {
-    func removingDuplicates<Key: Hashable>(by key: (Element) -> Key) -> [Element] {
+    func distinct<Key: Hashable>(by key: (Element) -> Key) -> [Element] {
         var existingDict = [Key: Bool]()
 
         return filter {
