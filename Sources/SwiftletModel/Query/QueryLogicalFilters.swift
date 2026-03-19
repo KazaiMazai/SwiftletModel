@@ -38,7 +38,7 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
         then { context, queries in
             [queries, queryList().queries(context)]
                 .flatMap { $0 }
-                .removingDuplicates(by: { $0.id(context) })
+                .distinct(by: { $0.id(context) })
         }
     }
 }

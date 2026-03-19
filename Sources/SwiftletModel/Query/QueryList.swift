@@ -69,4 +69,10 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
             queries.limit(limit, offset: offset)
         }
     }
+    
+    func distinct() -> QueryList<Entity> {
+        then { context, queries in
+            queries.distinct(by: { $0.id(context) })
+        }
+    }
 }

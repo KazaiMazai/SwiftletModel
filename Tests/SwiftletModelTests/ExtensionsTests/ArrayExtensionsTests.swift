@@ -17,7 +17,7 @@ struct ArrayExtensionsTests {
     @Test("Empty array returns empty after removing duplicates")
     func removingDuplicates_WhenArrayIsEmpty_ThenReturnsEmptyArray() {
         let emptyArray: [Int] = []
-        let result = emptyArray.removingDuplicates(by: { $0 })
+        let result = emptyArray.distinct(by: { $0 })
 
         #expect(result == [])
     }
@@ -25,7 +25,7 @@ struct ArrayExtensionsTests {
     @Test("Array without duplicates returns unchanged")
     func removingDuplicates_WhenArrayHasNoDuplicates_ThenReturnsOriginalArray() {
         let array = [1, 2, 3, 4, 5]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == [1, 2, 3, 4, 5])
     }
@@ -33,7 +33,7 @@ struct ArrayExtensionsTests {
     @Test("Array with duplicates returns deduplicated")
     func removingDuplicates_WhenArrayHasDuplicates_ThenReturnsDeduplicated() {
         let array = [1, 2, 3, 2, 4, 3, 5]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == [1, 2, 3, 4, 5])
     }
@@ -41,7 +41,7 @@ struct ArrayExtensionsTests {
     @Test("Array with all duplicates returns single element")
     func removingDuplicates_WhenArrayHasAllDuplicates_ThenReturnsSingleElement() {
         let array = [1, 1, 1, 1, 1]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == [1])
     }
@@ -49,7 +49,7 @@ struct ArrayExtensionsTests {
     @Test("Single element array returns unchanged")
     func removingDuplicates_WhenArrayHasSingleElement_ThenReturnsSingleElement() {
         let array = [42]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == [42])
     }
@@ -57,7 +57,7 @@ struct ArrayExtensionsTests {
     @Test("Removing duplicates preserves first occurrence")
     func removingDuplicates_WhenRemovingDuplicates_ThenPreservesFirstOccurrence() {
         let array = [1, 2, 3, 2, 4, 3, 5, 1]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == [1, 2, 3, 4, 5])
     }
@@ -76,7 +76,7 @@ struct ArrayExtensionsTests {
             Person(id: 3, name: "Charlie")
         ]
 
-        let result = people.removingDuplicates(by: { $0.id })
+        let result = people.distinct(by: { $0.id })
 
         #expect(result.count == 3)
         #expect(result[0].id == 1)
@@ -88,7 +88,7 @@ struct ArrayExtensionsTests {
     @Test("String deduplication removes duplicate strings")
     func removingDuplicates_WhenUsingStringKey_ThenDeduplicatesByString() {
         let array = ["apple", "banana", "apple", "cherry", "banana", "date"]
-        let result = array.removingDuplicates(by: { $0 })
+        let result = array.distinct(by: { $0 })
 
         #expect(result == ["apple", "banana", "cherry", "date"])
     }
