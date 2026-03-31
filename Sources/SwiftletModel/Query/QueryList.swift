@@ -51,6 +51,19 @@ extension ContextQuery where Result == [Query<Entity>], Key == Void, Entity: Ent
     }
 }
 
+extension ContextQuery where Result == [[Query<Entity>]], Key == Void, Entity: EntityModelProtocol {
+    func queries(_ context: Context) -> [[Query<Entity>]] {
+        result(context, key(context))
+    }
+    
+    func then<T>(perform: @escaping (Context, [[Query<Entity>]]) -> [Query<T>]) -> QueryList<T> {
+        QueryList<T> { context in
+            let queries = queries(context)
+            return perform(context, queries)
+        }
+    }
+}
+
 public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     func first() -> Query<Entity> {
         Query { context in

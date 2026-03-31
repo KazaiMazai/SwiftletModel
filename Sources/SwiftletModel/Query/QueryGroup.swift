@@ -23,3 +23,13 @@ extension ContextQuery where Result == [[Query<Entity>]], Key == Void {
         result(context, key(context))
     }
 }
+
+public extension ContextQuery where Result == [[Query<Entity>]], Key == Void {
+    func flatMap<T: EntityModelProtocol>(_ transform: @escaping (Query<Entity>) -> Query<T>) -> QueryList<T> {
+        then { context, queries in
+            queries
+                .flatMap { $0 }
+                .map(transform)
+        }
+    }
+}
