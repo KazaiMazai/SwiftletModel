@@ -184,4 +184,131 @@ struct FilterQueryTests {
 
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
+
+    // MARK: - AND Query List Tests
+
+    @Test("AND query list indexed filter equals intersection")
+    func whenAndQueryListFilterIndexed_ThenEqualIntersection() throws {
+        let (context, _, indexed) = try makeContext()
+        let set1 = Set(indexed.filter { $0.numOf1 == 1 }.map { $0.id })
+        let set2 = Set(indexed.filter { $0.numOf10 == 2 }.map { $0.id })
+        let expected = set1.intersection(set2)
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .and(.filter(\.numOf10 == 2))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == expected)
+    }
+
+    @Test("AND query list non-indexed filter equals intersection")
+    func whenAndQueryListFilterNotIndexed_ThenEqualIntersection() throws {
+        let (context, notIndexed, _) = try makeContext()
+        let set1 = Set(notIndexed.filter { $0.numOf1 == 1 }.map { $0.id })
+        let set2 = Set(notIndexed.filter { $0.numOf10 == 2 }.map { $0.id })
+        let expected = set1.intersection(set2)
+
+        let filterResult = TestingModels.NotIndexed.Model
+            .filter(\.numOf1 == 1)
+            .and(.filter(\.numOf10 == 2))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == expected)
+    }
+
+    @Test("AND query list with no common elements returns empty")
+    func whenAndQueryListNoCommonElements_ThenReturnsEmpty() throws {
+        let (context, _, _) = try makeContext()
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .and(.filter(\.numOf1 == 2))
+            .resolve(in: context)
+
+        #expect(filterResult.isEmpty)
+    }
+
+    @Test("AND query list with subset returns subset")
+    func whenAndQueryListWithSubset_ThenReturnsSubset() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter { $0.numOf1 == 1 && $0.numOf10 == 2 }
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .and(.filter(\.numOf1 == 1).filter(\.numOf10 == 2))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test("Chained AND query lists equals intersection of all")
+    func whenChainedAndQueryLists_ThenEqualIntersectionOfAll() throws {
+        let (context, _, indexed) = try makeContext()
+        let set1 = Set(indexed.filter { $0.numOf1 <= 5 }.map { $0.id })
+        let set2 = Set(indexed.filter { $0.numOf10 <= 3 }.map { $0.id })
+        let set3 = Set(indexed.filter { $0.numOf100 == 0 }.map { $0.id })
+        let expected = set1.intersection(set2).intersection(set3)
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 <= 5)
+            .and(.filter(\.numOf10 <= 3))
+            .and(.filter(\.numOf100 == 0))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == expected)
+    }
+
+    @Test("Complex AND and OR combination equals plain filtering")
+    func whenComplexAndOrCombination_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter {
+                ($0.numOf1 == 1 || $0.numOf1 == 2)
+                && ($0.numOf10 == 3 || $0.numOf10 == 4)
+            }
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .or(.filter(\.numOf1 == 2))
+            .and(.filter(\.numOf10 == 3).or(.filter(\.numOf10 == 4)))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
+
+    @Test("AND query list preserves order from first query list")
+    func whenAndQueryList_ThenPreservesOrderFromFirstList() throws {
+        let (context, _, indexed) = try makeContext()
+        let expectedIds = indexed
+            .filter { $0.numOf1 == 1 && $0.numOf10 == 2 }
+            .map { $0.id }
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .and(.filter(\.numOf10 == 2))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == Set(expectedIds))
+    }
+
+    @Test("AND with predicate and query list combined")
+    func whenAndPredicateAndQueryListCombined_ThenEqualPlainFiltering() throws {
+        let (context, _, indexed) = try makeContext()
+        let expected = indexed
+            .filter {
+                $0.numOf1 == 1
+                && $0.numOf10 <= 5
+                && $0.numOf100 == 0
+            }
+
+        let filterResult = TestingModels.Indexed.ManyProperties
+            .filter(\.numOf1 == 1)
+            .and(\.numOf10 <= 5)
+            .and(.filter(\.numOf100 == 0))
+            .resolve(in: context)
+
+        #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
+    }
 }
