@@ -33,6 +33,18 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     T: Hashable & Comparable {
         filter(predicate)
     }
+    
+    func and(_ queryList: @escaping @autoclosure () -> QueryList<Entity>) -> QueryList<Entity> {
+        then { context, queries in
+            let ids = queryList()
+                .queries(context)
+                .map { query in query.id(context) }
+            
+            let set = Set(ids)
+            return queries
+                .filter { query in set.contains(query.id(context)) }
+        }
+    }
 
     func or(_ queryList: @escaping @autoclosure () -> QueryList<Entity>) -> QueryList<Entity> {
         then { context, queries in
