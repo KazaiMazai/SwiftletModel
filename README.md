@@ -1735,6 +1735,51 @@ This example demonstrates three different collision handling strategies:
    - When a new user is marked as current, automatically updates the existing current user not being current anymore
    - Ensures only one user can be marked as current at a time
 
+#### Unique Constraints for Optional Values
+
+Sometimes you need uniqueness constraints that only apply when a value is present — for example, an optional email field where multiple `nil` values are allowed, but non-nil values must be unique.
+
+You can achieve this by implementing a custom `CollisionResolver` that ignores collisions when the value is `nil`:
+
+```swift
+@EntityModel
+struct User {
+    @Unique<Self>(\.email, collisions: .ignoreNil)
+    private var uniqueEmail
+
+    let id: String
+    var email: String?
+}
+
+extension CollisionResolver {
+    static var ignoreNil: Self {
+        CollisionResolver { existingId, newEntity, keyPath, context in
+            // Only throw if the new value is non-nil
+            guard newEntity[keyPath: keyPath] != nil else {
+                return
+            }
+            throw UniqueConstraintViolation(existingId: existingId, keyPath: keyPath)
+        }
+    }
+}
+
+// Usage:
+var context = Context()
+
+// Multiple users with nil email are allowed
+let user1 = User(id: "1", email: nil)
+let user2 = User(id: "2", email: nil)
+try user1.save(to: &context) // OK
+try user2.save(to: &context) // OK
+
+// Non-nil emails must be unique
+let user3 = User(id: "3", email: "alice@example.com")
+let user4 = User(id: "4", email: "alice@example.com")
+try user3.save(to: &context) // OK
+try user4.save(to: &context) // Throws UniqueConstraintViolation
+```
+
+This pattern keeps the API minimal and composable while supporting common real-world use cases like optional unique identifiers.
 
 ### FullTextIndex
 
