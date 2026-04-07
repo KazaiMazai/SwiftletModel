@@ -714,9 +714,17 @@ let results = User.filter(\.age == 25)
     .or(.filter(\.age == 30))
     .resolve(in: context)
 
-// AND operation
+// AND operation with predicate
 let results = User.filter(\.age > 18)
     .and(\.status == .active)
+    .resolve(in: context)
+
+// AND operation with another query
+// Useful for combining complex filter conditions
+let premiumUsers = User.filter(\.subscription == .premium)
+let activeAdults = User.filter(\.age > 18)
+    .and(\.status == .active)
+    .and(premiumUsers)
     .resolve(in: context)
 
 // Complex combinations
