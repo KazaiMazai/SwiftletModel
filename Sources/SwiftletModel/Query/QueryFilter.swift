@@ -60,6 +60,17 @@ public extension ContextQuery where Result == Entity?, Key == Entity.ID {
     }
 }
 
+@available(iOS 16.0, *)
+public extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    static func filter(
+        _ predicate: RegexPredicate<Entity>) -> QueryList<Entity> {
+
+        QueryList { context in
+            Query.filter(predicate, in: context)
+        }
+    }
+}
+
 // MARK: - Metadata Predicate Filter
 
 public extension ContextQuery {
@@ -244,5 +255,21 @@ private extension ContextQuery where Result == Entity?, Key == Entity.ID {
             .resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
+    }
+}
+
+// MARK: - Private Query StringPredicate Filter
+
+@available(iOS 16.0, *)
+private extension ContextQuery where Result == Entity?, Key == Entity.ID {
+    static func filter(
+        _ predicate: RegexPredicate<Entity>,
+        in context: Context) -> [Query<Entity>] {
+ 
+            Entity
+                .query()
+                .resolve(in: context)
+                .filter(predicate.isIncluded)
+                .query()
     }
 }
