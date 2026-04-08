@@ -156,6 +156,12 @@ public extension EntityModelProtocol {
         _ predicate: MetadataPredicate) -> QueryList<Self> {
         Query<Self>.filter(predicate)
     }
+    
+    @available(iOS 16.0, *)
+    static func filter(
+        _ predicate: RegexPredicate<Self>) -> QueryList<Self> {
+        Query<Self>.filter(predicate)
+    }
 }
 
 extension EntityModelProtocol {

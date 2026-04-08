@@ -128,8 +128,8 @@ public struct StringPredicate<Entity> {
         case matches(tokens: [String])
         case notHavingPrefix(caseSensitive: Bool)
         case notHavingSuffix(caseSensitive: Bool)
-        case regex(RegexType)
-        case notMatchingRegex(RegexType)
+        case regex(Regex)
+        case notMatchingRegex(Regex)
         
         var isMatching: Bool {
             switch self {
@@ -149,23 +149,38 @@ public struct StringPredicate<Entity> {
             }
         }
         
-        enum RegexType {
-            case regularExpression(NSRegularExpression, NSRegularExpression.MatchingOptions)
-            case regex(Regex<AnyRegexOutput>)
+        struct Regex {
+            let expression: NSRegularExpression
+            let options: NSRegularExpression.MatchingOptions
             
             func hasMatches(in string: String) -> Bool {
-                return switch self {
-                case let .regularExpression(expr, options):
-                     expr.firstMatch(
-                        in: string,
-                        options: options,
-                        range: NSRange(location: .zero, length: string.count)
-                    ) != nil
-                case .regex(let regex):
-                    string.firstMatch(of: regex) != nil
-                }
+                expression.firstMatch(
+                   in: string,
+                   options: options,
+                   range: NSRange(location: .zero, length: string.count)
+               ) != nil
             }
         }
+    }
+}
+
+@available(iOS 16.0, *)
+public struct RegexPredicate<Entity> {
+    let keyPaths: [KeyPath<Entity, String>]
+    let method: Method
+
+    func isIncluded(_ entity: Entity) -> Bool {
+        switch method {
+        case let .matching(regex):
+            keyPaths.contains { entity[keyPath: $0].firstMatch(of: regex) != nil }
+        case let .notMatching(regex):
+            !keyPaths.contains { entity[keyPath: $0].firstMatch(of: regex) != nil }
+        }
+    }
+    
+    enum Method {
+        case matching(Regex<AnyRegexOutput>)
+        case notMatching(Regex<AnyRegexOutput>)
     }
 }
 
@@ -212,20 +227,11 @@ public extension StringPredicate {
         
         StringPredicate(
             keyPaths: keyPaths,
-            method: .regex(.regularExpression(regex, options)),
+            method: .regex(.init(expression: regex, options: options)),
             value: ""
         )
     }
     
-    static func string(_ keyPaths: KeyPath<Entity, String>...,
-                       matches regex: Regex<AnyRegexOutput>) -> StringPredicate<Entity> {
-        
-        StringPredicate(
-            keyPaths: keyPaths,
-            method: .regex(.regex(regex)),
-            value: ""
-        )
-    }
     
     static func string(_ keyPaths: KeyPath<Entity, String>...,
                        notMatching regex: NSRegularExpression,
@@ -233,18 +239,31 @@ public extension StringPredicate {
         
         StringPredicate(
             keyPaths: keyPaths,
-            method: .notMatchingRegex(.regularExpression(regex, options)),
+            method: .notMatchingRegex(.init(expression: regex, options: options)),
             value: ""
         )
     }
     
+}
+
+@available(iOS 16.0, *)
+extension RegexPredicate {
+    
     static func string(_ keyPaths: KeyPath<Entity, String>...,
-                       notMatching regex: Regex<AnyRegexOutput>) -> StringPredicate<Entity> {
+                       matches regex: Regex<AnyRegexOutput>) -> RegexPredicate<Entity> {
         
-        StringPredicate(
+        RegexPredicate(
             keyPaths: keyPaths,
-            method: .notMatchingRegex(.regex(regex)),
-            value: ""
+            method: .matching(regex)
+        )
+    }
+    
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       notMatching regex: Regex<AnyRegexOutput>) -> RegexPredicate<Entity> {
+        
+        RegexPredicate(
+            keyPaths: keyPaths,
+            method: .notMatching(regex)
         )
     }
 }

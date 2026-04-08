@@ -54,6 +54,18 @@ public extension ContextQuery where Result == [Query<Entity>], Key == Void {
     }
 }
 
+@available(iOS 16.0, *)
+public extension ContextQuery where Result == [Query<Entity>], Key == Void {
+    func filter( _ predicate: RegexPredicate<Entity>) -> QueryList<Entity> {
+        then { context, queries in queries.filter(predicate, in: context) }
+    }
+
+    static func filter(
+        _ predicate: RegexPredicate<Entity>) -> QueryList<Entity> {
+            Query.filter(predicate)
+    }
+}
+
 // MARK: - Metadata Predicate Filter
 
 public extension ContextQuery {
@@ -209,6 +221,21 @@ private extension Collection {
 
         return self
             .resolve(in: context)
+            .filter(predicate.isIncluded)
+            .query()
+    }
+}
+
+@available(iOS 16.0, *)
+private extension Collection {
+
+    func filter<Entity>(
+        _ predicate: RegexPredicate<Entity>,
+        in context: Context) -> [Query<Entity>]
+    where
+    Element == Query<Entity> {
+
+        self.resolve(in: context)
             .filter(predicate.isIncluded)
             .query()
     }
