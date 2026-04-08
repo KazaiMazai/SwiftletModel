@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RegexBuilder
 
 public extension KeyPath where Value: Comparable & Sendable {
     static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
@@ -114,6 +115,10 @@ public struct StringPredicate<Entity> {
             !keyPaths.contains { entity[keyPath: $0].hasPrefix(value, caseSensitive: caseSensitive) }
         case .notHavingSuffix(let caseSensitive):
             !keyPaths.contains { entity[keyPath: $0].hasSuffix(value, caseSensitive: caseSensitive) }
+        case let .regex(regex):
+            keyPaths.contains { regex.hasMatches(in: entity[keyPath: $0]) }
+        case let .notMatchingRegex(regex):
+            !keyPaths.contains { regex.hasMatches(in: entity[keyPath: $0]) }
         }
     }
 
@@ -124,6 +129,26 @@ public struct StringPredicate<Entity> {
         case matches(tokens: [String])
         case notHavingPrefix(caseSensitive: Bool)
         case notHavingSuffix(caseSensitive: Bool)
+        case regex(RegexType)
+        case notMatchingRegex(RegexType)
+        
+        enum RegexType {
+            case regularExpression(NSRegularExpression, NSRegularExpression.MatchingOptions)
+            case regex(Regex<AnyRegexOutput>)
+            
+            func hasMatches(in string: String) -> Bool {
+                return switch self {
+                case let .regularExpression(expr, options):
+                     expr.firstMatch(
+                        in: string,
+                        options: options,
+                        range: NSRange(location: .zero, length: string.count)
+                    ) != nil
+                case .regex(let regex):
+                    string.firstMatch(of: regex) != nil
+                }
+            }
+        }
 
         var isMatching: Bool {
             switch self {
@@ -180,6 +205,48 @@ public extension StringPredicate {
                        notHavingSuffix value: String,
                        caseSensitive: Bool = false) -> StringPredicate<Entity> {
         StringPredicate(keyPaths: keyPaths, method: .notHavingSuffix(caseSensitive: caseSensitive), value: value)
+    }
+    
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       matches regex: NSRegularExpression,
+                       options: NSRegularExpression.MatchingOptions = []) -> StringPredicate<Entity> {
+        
+        StringPredicate(
+            keyPaths: keyPaths,
+            method: .regex(.regularExpression(regex, options)),
+            value: ""
+        )
+    }
+    
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       matches regex: Regex<AnyRegexOutput>) -> StringPredicate<Entity> {
+        
+        StringPredicate(
+            keyPaths: keyPaths,
+            method: .regex(.regex(regex)),
+            value: ""
+        )
+    }
+    
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       notMatching regex: NSRegularExpression,
+                       options: NSRegularExpression.MatchingOptions = []) -> StringPredicate<Entity> {
+        
+        StringPredicate(
+            keyPaths: keyPaths,
+            method: .notMatchingRegex(.regularExpression(regex, options)),
+            value: ""
+        )
+    }
+    
+    static func string(_ keyPaths: KeyPath<Entity, String>...,
+                       notMatching regex: Regex<AnyRegexOutput>) -> StringPredicate<Entity> {
+        
+        StringPredicate(
+            keyPaths: keyPaths,
+            method: .notMatchingRegex(.regex(regex)),
+            value: ""
+        )
     }
 }
 
