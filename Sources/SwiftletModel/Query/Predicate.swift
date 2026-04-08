@@ -247,7 +247,7 @@ public extension StringPredicate {
 }
 
 @available(iOS 16.0, *)
-extension RegexPredicate {
+public extension RegexPredicate {
     
     static func string(_ keyPaths: KeyPath<Entity, String>...,
                        matches regex: Regex<AnyRegexOutput>) -> RegexPredicate<Entity> {
