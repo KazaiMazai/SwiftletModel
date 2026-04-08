@@ -120,6 +120,7 @@ struct FilterStringRegexTests {
 
     // MARK: - Swift Regex Tests
 
+    @available(iOS 16.0, *)
     @Test("Swift Regex filter without index equals plain filtering")
     func whenSwiftRegexFilterNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
@@ -137,6 +138,7 @@ struct FilterStringRegexTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
+    @available(iOS 16.0, *)
     @Test("Swift Regex filter with index equals plain filtering")
     func whenSwiftRegexFilterIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
@@ -154,6 +156,7 @@ struct FilterStringRegexTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
+    @available(iOS 16.0, *)
     @Test("Swift Regex case-insensitive filter without index")
     func whenSwiftRegexCaseInsensitiveNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
@@ -171,6 +174,7 @@ struct FilterStringRegexTests {
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
 
+    @available(iOS 16.0, *)
     @Test("Swift Regex with complex pattern without index")
     func whenSwiftRegexComplexPatternNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
@@ -242,7 +246,7 @@ struct FilterStringRegexTests {
     }
 
     // MARK: - Not Matching Regex Tests (Swift Regex)
-
+    @available(iOS 16.0, *)
     @Test("Swift Regex not matching filter without index")
     func whenSwiftRegexNotMatchingNoIndex_ThenEqualPlainFiltering() throws {
         let (context, notIndexed, _) = try makeContext()
@@ -259,7 +263,7 @@ struct FilterStringRegexTests {
         #expect(!filterResult.isEmpty)
         #expect(Set(filterResult.map { $0.id }) == Set(expected.map { $0.id }))
     }
-
+    @available(iOS 16.0, *)
     @Test("Swift Regex not matching filter with index")
     func whenSwiftRegexNotMatchingIndexed_ThenEqualPlainFiltering() throws {
         let (context, _, indexed) = try makeContext()
@@ -290,7 +294,8 @@ struct FilterStringRegexTests {
 
         #expect(filterResult.isEmpty)
     }
-
+    
+    @available(iOS 16.0, *)
     @Test("Swift Regex matching nothing returns empty")
     func whenSwiftRegexMatchesNothing_ThenReturnsEmpty() throws {
         let (context, _, _) = try makeContext()
