@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RegexBuilder
 
 public extension KeyPath where Value: Comparable & Sendable {
     static func == (lhs: KeyPath<Root, Value>, rhs: Value) -> Predicate<Root, Value> {
@@ -132,24 +131,6 @@ public struct StringPredicate<Entity> {
         case regex(RegexType)
         case notMatchingRegex(RegexType)
         
-        enum RegexType {
-            case regularExpression(NSRegularExpression, NSRegularExpression.MatchingOptions)
-            case regex(Regex<AnyRegexOutput>)
-            
-            func hasMatches(in string: String) -> Bool {
-                return switch self {
-                case let .regularExpression(expr, options):
-                     expr.firstMatch(
-                        in: string,
-                        options: options,
-                        range: NSRange(location: .zero, length: string.count)
-                    ) != nil
-                case .regex(let regex):
-                    string.firstMatch(of: regex) != nil
-                }
-            }
-        }
-
         var isMatching: Bool {
             switch self {
             case .matches:
@@ -165,6 +146,24 @@ public struct StringPredicate<Entity> {
                 return true
             default:
                 return false
+            }
+        }
+        
+        enum RegexType {
+            case regularExpression(NSRegularExpression, NSRegularExpression.MatchingOptions)
+            case regex(Regex<AnyRegexOutput>)
+            
+            func hasMatches(in string: String) -> Bool {
+                return switch self {
+                case let .regularExpression(expr, options):
+                     expr.firstMatch(
+                        in: string,
+                        options: options,
+                        range: NSRange(location: .zero, length: string.count)
+                    ) != nil
+                case .regex(let regex):
+                    string.firstMatch(of: regex) != nil
+                }
             }
         }
     }
