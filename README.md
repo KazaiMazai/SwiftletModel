@@ -220,6 +220,7 @@ This approach is a clear embodiment of **Functional Core, Imperative Shell**.
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
   * [Incomplete Data Handling Summary](#incomplete-data-handling-summary)
+  * [Inspecting Relation Load State](#inspecting-relation-load-state)
 - [Indexing](#indexing)
   * [Index](#index)
   * [Unique](#unique)
@@ -1572,6 +1573,42 @@ Set relation accordingly to the case to carry out a proper relation update when 
 | `.appending(...)`    | Append to an existing to-many relation                |
 | `.null`              | Explicitly nullify a relation (only if optional)      |
 | `.none`              | No-op; leaves existing relation unchanged             |
+
+
+### Inspecting Relation Load State
+
+A `Relation` carries the load state of its data. It's often useful to check what the relation currently holds — for instance, to decide whether to fetch the full entity, render a placeholder, etc.
+
+These read-only properties on `Relation` expose its load state:
+
+| Property      | Description                                                                    | Available on        |
+|---------------|--------------------------------------------------------------------------------|---------------------|
+| `isNone`      | `true` when the relation has no data (`.none`)                                 | All relations       |
+| `isId`        | `true` when the relation only holds an id or ids, not full entities            | All relations       |
+| `isFragment`  | `true` when related entities were stored as fragments (partial models)         | All relations       |
+| `isSlice`     | `true` when the to-many relation contains only a slice of the whole collection | To-many relations   |
+
+Access them through the projected value of a `@Relationship` property:
+
+```swift
+let chat: Chat = ...
+
+if chat.$messages.isNone {
+    // No messages loaded yet — kick off a fetch
+}
+
+if chat.$messages.isSlice {
+    // The current state is only a part of the collection
+}
+
+if chat.$author.isId {
+    // Only the author's id is known — resolve the full entity if needed
+}
+
+if chat.$author.isFragment {
+    // The loaded author is a partial model
+}
+```
 
 
 ## Indexing
