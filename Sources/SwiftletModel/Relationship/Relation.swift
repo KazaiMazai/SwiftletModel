@@ -76,9 +76,16 @@ public extension Relation {
             return false
         }
     }
-}
-
-extension Relation {
+    
+    var isId: Bool {
+        switch state {
+        case .none, .entity, .entities:
+            return false
+        case .id, .ids:
+            return true
+        }
+    }
+    
     var isFragment: Bool {
         switch state {
         case .entity(_, let fragment), .entities(_, _, let fragment):
@@ -87,17 +94,17 @@ extension Relation {
             return false
         }
     }
+}
 
+public extension Relation where Cardinality == Relations.ToMany<Entity> {
     var isSlice: Bool {
-        switch state {
-        case .entity, .id:
-            return false
-        case .entities(_, let slice, _), .ids(_, let slice):
-            return slice
-        case .none:
-            return true
-        }
-    }
+       switch state {
+       case .entity, .id, .none:
+           return false
+       case .entities(_, let slice, _), .ids(_, let slice):
+           return slice
+       }
+   }
 }
 
 extension Relation {
