@@ -98,6 +98,12 @@ public extension Relation {
 
 public extension Relation where Cardinality == Relations.ToMany<Entity> {
     var isSlice: Bool {
+        isSliceRelation
+   }
+}
+ 
+extension Relation {
+    var isSliceRelation: Bool {
        switch state {
        case .entity, .id, .none:
            return false

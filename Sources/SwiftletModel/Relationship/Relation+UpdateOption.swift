@@ -9,7 +9,7 @@ import Foundation
 
 extension Relation {
     func updateOption<Parent>() -> Link<Parent, Entity>.UpdateOption {
-        isSlice ? .append : .replace
+        isSliceRelation ? .append : .replace
     }
 
     static func inverseUpdateOption<Parent>() -> Link<Parent, Entity>.UpdateOption {
