@@ -220,6 +220,7 @@ This approach is a clear embodiment of **Functional Core, Imperative Shell**.
   * [Handling incomplete data for to-many Relations](#handling-incomplete-data-for-to-many-relations)
   * [Handling missing data for to-one Relations](#handling-missing-data-for-to-one-relations)
   * [Incomplete Data Handling Summary](#incomplete-data-handling-summary)
+  * [Inspecting Relation Load State](#inspecting-relation-load-state)
 - [Indexing](#indexing)
   * [Index](#index)
   * [Unique](#unique)
