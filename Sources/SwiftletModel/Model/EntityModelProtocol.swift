@@ -168,7 +168,7 @@ extension EntityModelProtocol {
     func relationIds<Child, Direction, Cardinality, Constraint>(
         _ keyPath: KeyPath<Self, Relation<Child, Direction, Cardinality, Constraint>>
     ) -> [Child.ID] {
-        self[keyPath: keyPath].ids
+        self[keyPath: keyPath].relationIds
     }
 
     func relation<Child, Direction, Cardinality, Constraint>(

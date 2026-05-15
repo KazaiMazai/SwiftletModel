@@ -58,7 +58,7 @@ extension Relation where Cardinality == Relations.ToOne<Entity> {
 }
 
 extension Relation {
-    var ids: [Entity.ID] {
+    var relationIds: [Entity.ID] {
         state.ids
     }
 
@@ -96,6 +96,17 @@ public extension Relation {
     }
 }
 
+public extension Relation where Cardinality == Relations.ToOne<Entity> {
+    var id: Entity.ID? {
+        switch state {
+        case .none, .entities, .ids:
+            return nil
+        case .entity, .id:
+            return relationIds.first
+        }
+    }
+}
+
 public extension Relation where Cardinality == Relations.ToMany<Entity> {
     var isSlice: Bool {
         switch state {
@@ -105,6 +116,15 @@ public extension Relation where Cardinality == Relations.ToMany<Entity> {
             return slice
         }
    }
+    
+    var ids: [Entity.ID]? {
+        switch state {
+        case .none, .entity, .id:
+            return nil
+        case .entities, .ids:
+            return relationIds
+        }
+    }
 }
  
 extension Relation {
