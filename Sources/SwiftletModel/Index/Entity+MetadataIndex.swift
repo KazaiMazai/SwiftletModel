@@ -8,6 +8,22 @@
 import Foundation
 
 public extension EntityModelProtocol {
+    private static func updatedAtIndex(in context: Context) -> SortIndex<Self>.ComparableValue<Date>? {
+        SortIndex<Self>.ComparableValue<Date>
+            .query(Metadata.updatedAt.indexName)
+            .resolve(in: context)
+    }
+
+    static func lastUpdatedAt(in context: Context) -> Date? {
+        updatedAtIndex(in: context)?.lastValue
+    }
+
+    func updatedAt(in context: Context) -> Date? {
+        Self.updatedAtIndex(in: context)?.valueFor(id)
+    }
+}
+
+public extension EntityModelProtocol {
     func updateMetadata<Value>(
         _ metadata: Metadata,
         value: Value,
