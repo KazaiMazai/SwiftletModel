@@ -44,6 +44,8 @@ public protocol EntityModelProtocol: Sendable {
     static func nestedQueryModifier(_ query: Query<Self>, nested: [Nested]) -> Query<Self>
     
     static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String
+    
+    func lastUpdatedAt(in context: Context) -> Date?
 }
  
 public extension EntityModelProtocol {

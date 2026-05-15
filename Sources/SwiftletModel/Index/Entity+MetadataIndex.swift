@@ -21,6 +21,14 @@ public extension EntityModelProtocol {
     func updatedAt(in context: Context) -> Date? {
         Self.updatedAtIndex(in: context)?.valueFor(id)
     }
+    
+    func lastUpdatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, E?>, in context: Context) -> Date? {
+        self[keyPath: keypath]?.lastUpdatedAt(in: context)
+    }
+    
+    func lastUpdatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, [E]?>, in context: Context) -> Date? {
+        self[keyPath: keypath]?.map { $0.lastUpdatedAt(in: context) ?? .distantPast }.max()
+    }
 }
 
 public extension EntityModelProtocol {

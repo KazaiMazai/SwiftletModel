@@ -214,6 +214,10 @@ extension ExtensionDeclSyntax {
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
+            \(raw: FunctionDeclSyntax.lastUpdatedAt(
+                accessAttribute,
+                relationshipAttributes)
+            )
         }
         """
         )
@@ -263,6 +267,10 @@ extension ExtensionDeclSyntax {
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
+            \(raw: FunctionDeclSyntax.lastUpdatedAt(
+                accessAttribute,
+                relationshipAttributes)
+            )
         }
         """
         )
@@ -270,6 +278,28 @@ extension ExtensionDeclSyntax {
 }
 
 extension FunctionDeclSyntax {
+    static func lastUpdatedAt(
+        _ accessAttributes: AccessAttribute,
+        _ relationshipAttributes: [RelationshipAttributes]
+    ) throws -> FunctionDeclSyntax {
+
+        try FunctionDeclSyntax(
+        """
+        \(raw: accessAttributes.name) func lastUpdatedAt(in context: Context) -> Date? {
+            [
+                updatedAt(in: context),
+                \(raw: relationshipAttributes
+                    .map { "lastUpdatedAt(\($0.keyPath), in: context)" }
+                    .joined(separator: ",\n")
+                )
+            ]
+            .compactMap { $0 }
+            .max()
+        }
+        """
+        )
+    }
+    
     static func save(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes],

@@ -20,6 +20,7 @@ struct RelationshipAttributes {
     let propertyName: String
     let keyPathAttributes: KeyPathAttributes
     let deleteRule: DeleteRuleAttribute
+    var keyPath: String { "\\.\(propertyName)" }
 }
 
 extension RelationshipAttributes {
