@@ -27,7 +27,7 @@ public extension EntityModelProtocol {
     }
     
     func lastUpdatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, [E]?>, in context: Context) -> Date? {
-        self[keyPath: keypath]?.map { $0.lastUpdatedAt(in: context) }.compactMap { $0 }.max()
+        self[keyPath: keypath]?.compactMap { $0.lastUpdatedAt(in: context) }.max()
     }
 }
 
