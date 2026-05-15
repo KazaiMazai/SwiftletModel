@@ -2070,6 +2070,19 @@ let recentChanges = User
 
 ```
 
+You can also read the tracked `updatedAt` timestamps directly:
+
+```swift
+// The save time of a specific entity, or nil if it was never saved
+let userUpdatedAt = user.updatedAt(in: context)
+
+// The most recent save time across all entities of a type,
+// or nil if none were saved
+let lastUserChange = User.lastUpdatedAt(in: context)
+```
+
+`lastUpdatedAt(in:)` is handy as a sync cursor — use it as the lower bound for the next incremental fetch without scanning every entity.
+
 The metadata system supports both Comparable and Hashable values, allowing you to:
 - Track timestamps for entity changes
 - Implement efficient sync mechanisms
