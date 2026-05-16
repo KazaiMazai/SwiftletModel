@@ -214,7 +214,7 @@ extension ExtensionDeclSyntax {
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
-            \(raw: FunctionDeclSyntax.lastUpdatedAt(
+            \(raw: FunctionDeclSyntax.updatedAt(
                 accessAttribute,
                 relationshipAttributes)
             )
@@ -267,7 +267,7 @@ extension ExtensionDeclSyntax {
                 uniqueAttributes,
                 fullTextIndexAttributes)
             )
-            \(raw: FunctionDeclSyntax.lastUpdatedAt(
+            \(raw: FunctionDeclSyntax.updatedAt(
                 accessAttribute,
                 relationshipAttributes)
             )
@@ -278,18 +278,22 @@ extension ExtensionDeclSyntax {
 }
 
 extension FunctionDeclSyntax {
-    static func lastUpdatedAt(
+    static func updatedAt(
         _ accessAttributes: AccessAttribute,
         _ relationshipAttributes: [RelationshipAttributes]
     ) throws -> FunctionDeclSyntax {
 
         try FunctionDeclSyntax(
         """
-        \(raw: accessAttributes.name) func lastUpdatedAt(in context: Context) -> Date? {
-            [
+        \(raw: accessAttributes.name) func updatedAt(in context: Context, withNested: Bool) -> Date? {
+            guard withNested else {
+                return updatedAt(in: context)
+            }
+
+            return [
                 updatedAt(in: context),
                 \(raw: relationshipAttributes
-                    .map { "lastUpdatedAt(\($0.keyPath), in: context)" }
+                    .map { "updatedAt(\($0.keyPath), in: context, withNested: true)" }
                     .joined(separator: ",\n")
                 )
             ]

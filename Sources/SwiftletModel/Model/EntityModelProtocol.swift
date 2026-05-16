@@ -45,7 +45,7 @@ public protocol EntityModelProtocol: Sendable {
     
     static func indexedKeyPathName<T>(_ keyPath: KeyPath<Self, T>) -> String
     
-    func lastUpdatedAt(in context: Context) -> Date?
+    func updatedAt(in context: Context, withNested: Bool) -> Date?
 }
  
 public extension EntityModelProtocol {

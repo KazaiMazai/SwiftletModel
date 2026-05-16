@@ -13,21 +13,17 @@ public extension EntityModelProtocol {
             .query(Metadata.updatedAt.indexName)
             .resolve(in: context)
     }
-
-    static func lastUpdatedAt(in context: Context) -> Date? {
-        updatedAtIndex(in: context)?.lastValue
-    }
-
+ 
     func updatedAt(in context: Context) -> Date? {
         Self.updatedAtIndex(in: context)?.valueFor(id)
     }
     
-    func lastUpdatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, E?>, in context: Context) -> Date? {
-        self[keyPath: keypath]?.lastUpdatedAt(in: context)
+    func updatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, E?>, in context: Context, withNested: Bool) -> Date? {
+        self[keyPath: keypath]?.updatedAt(in: context, withNested: withNested)
     }
     
-    func lastUpdatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, [E]?>, in context: Context) -> Date? {
-        self[keyPath: keypath]?.compactMap { $0.lastUpdatedAt(in: context) }.max()
+    func updatedAt<E: EntityModelProtocol>(_ keypath: KeyPath<Self, [E]?>, in context: Context, withNested: Bool) -> Date? {
+        self[keyPath: keypath]?.compactMap { $0.updatedAt(in: context, withNested: withNested) }.max()
     }
 }
 
