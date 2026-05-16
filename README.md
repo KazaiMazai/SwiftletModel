@@ -2070,6 +2070,18 @@ let recentChanges = User
 
 ```
 
+You can also read the tracked `updatedAt` timestamps directly:
+
+```swift
+// The save time of a specific entity, or nil if it was never saved
+let userUpdatedAt = user.updatedAt(in: context)
+
+// The most recent save time across the entity and its loaded relations,
+// or nil if none were saved. Only relations that are loaded on the
+// instance are traversed.
+let latestInGraph = chat.updatedAt(in: context, withNested: true)
+```
+
 The metadata system supports both Comparable and Hashable values, allowing you to:
 - Track timestamps for entity changes
 - Implement efficient sync mechanisms

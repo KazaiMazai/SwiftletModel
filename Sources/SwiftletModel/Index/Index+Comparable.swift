@@ -60,7 +60,19 @@ extension Index.ComparableValue {
         }
     }
     
+    func valueFor(_ id: Entity.ID) -> Value?  {
+        lock.withLock {
+            _valueFor(id)
+        }
+    }
+    
+    var lastValue: Value?  {
+        lock.withLock {
+            index.last?.0
+        }
+    }
 }
+
 extension Index.ComparableValue {
     
     func filter(_ predicate: Predicate<Entity, Value>) -> [Entity.ID] {
@@ -190,6 +202,10 @@ private extension Index.ComparableValue {
 }
 
 private extension Index.ComparableValue {
+    func _valueFor(_ id: Entity.ID) -> Value? {
+        indexedValues[id]
+    }
+    
     func _update(_ entity: Entity, value: Value) {
         let existingValue = indexedValues[entity.id]
 
